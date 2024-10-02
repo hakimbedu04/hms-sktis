@@ -1,0 +1,180 @@
+﻿@using HMS.SKTIS.Application.Resources
+@using HMS.SKTIS.Application.Resources.Views.MasterGenBrandPackageMapping
+@using SKTISWebsite.Helper
+@model SKTISWebsite.Models.MasterGenBrandPackageMapping.InitBrandPackageMapping
+
+@{Html.SetPageTitle(@MasterGenBrandPackageMapping.PageTitle);}
+<div class="col-lg-12">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="action-btn">
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.Save.ToString())) {
+                    <button type="button" class="btn btn-primary btnSave">@CommonLabel.btnSave</button>
+                }
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.Excel.ToString())) {
+                    using (Html.BeginForm("GenerateExcel", "MasterGenBrandPackageMapping", FormMethod.Post))
+                    {
+                        <button type="submit" class="btn btn-primary">@CommonLabel.btnExcel</button>
+                    }
+                }
+
+            </div>
+        </div>
+    </div>
+    <div class="table-overflow">
+        <table class="table table-striped">
+            <thead>
+                <tr class="head">
+                    <th>@MasterGenBrandPackageMapping.lblTitleBrand</th>
+                    @foreach (var t in @Model.BrandGroupCodes)
+                    {
+                        <th>@t.BrandGroupCode</th>
+                    }
+                    <th class="widthdate">Updated By</th>
+                    <th class="widthdate">Updated Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    for (var i = 1; i < @Model.BrandGroupCodes.Count + 1; i++)
+                    {
+                        <tr>
+                            <td class="head">@Model.BrandGroupCodes[i - 1].BrandGroupCode</td>
+                            @for (var j = 1; j < @Model.BrandGroupCodes.Count + 1; j++)
+                            {
+                                @Html.CreatePackageMappingTable(i, j, Model.BrandGroupCodes[i - 1].BrandGroupCode, Model.BrandGroupCodes[j - 1].BrandGroupCode,
+                                                                     @Model.BrandPackageMapping, "edit-column form-control dg4");
+                            }
+
+                            @Html.CreatePackageMappingTableUpdatedBy(Model.BrandGroupCodes[i - 1].BrandGroupCode, Model.BrandGroupCodes[0].BrandGroupCode,@Model.BrandPackageMapping, "edit-column form-control dg4");
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+
+    </div>
+</div>
+
+@section Scripts
+{
+    <script type="text/javascript" language="javascript">
+        var listBrandPackage = @Html.Raw(Json.Encode(@Model.BrandPackageMapping));
+        //console.log(listBrandPackage);
+        $(".edit-column").keyup(function (){
+            var val = $(this).val();
+            console.log(val);
+            var col = $(this).parent().attr('data-column');
+            var row = $(this).parent().attr('data-row');
+            var td = $('td[data-column="'+row+'"][data-row="'+col+'"]');
+            var result = parseFloat(val) != 0 ? 1/parseFloat(val) : 0;
+
+            var findsource = $.grep(listBrandPackage, function(e){
+                return e.BrandGroupCodeSource == row &&e.BrandGroupCodeDestination == col; });
+
+            if (findsource.length > 0){
+                //findsource[0].MappingValue = parseFloat(val);
+                findsource[0].MappingValue = numeral(parseFloat(val)).format('0,0.[000]');
+                //console.log(val);
+            }
+            else {
+                listBrandPackage.push({
+                    BrandGroupCodeSource: row,
+                    BrandGroupCodeDestination: col,
+                    MappingValue: numeral(val).format('0,0.[000]')
+                });
+            }
+
+            var finddest = $.grep(listBrandPackage, function(e){
+                return e.BrandGroupCodeSource == col &&e.BrandGroupCodeDestination == row; });
+
+            if (finddest.length > 0){
+                finddest[0].MappingValue = numeral(result).format('0,0.[000]');
+                //console.log(numeral(result).format('0,0.[000]'))
+            }
+            else {
+                listBrandPackage.push({
+                    BrandGroupCodeSource: col,
+                    BrandGroupCodeDestination: row,
+                    MappingValue: numeral(result).format('0,0.[000]')
+                });
+            }
+
+            td.html(numeral(result).format('0,0.[000]'));
+            //console.log(numeral(result).format('0,0.[000]'));
+        });
+
+        $(".brand-value").keydown(function (e) {
+            // Allow: backspace, delete, tab, escape, enter and .
+            if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) !== -1 ||
+                // Allow: Ctrl+A
+                (e.keyCode == 65 && e.ctrlKey === true) ||
+                // Allow: Ctrl+C
+                (e.keyCode == 67 && e.ctrlKey === true) ||
+                // Allow: Ctrl+X
+                (e.keyCode == 88 && e.ctrlKey === true) ||
+                // Allow: home, end, left, right
+                (e.keyCode >= 35 && e.keyCode <= 39)) {
+                // let it happen, don't do anything
+                return;
+            }
+            // Ensure that it is a number and stop the keypress
+            if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+                e.preventDefault();
+            }
+        });
+
+        $(".btnSave").click(function() {
+            
+            //Remove notification that existing before
+            console.log($('#noty_top_layout_container').length);
+            if ($('#noty_top_layout_container').length > 0) {
+                $('#noty_top_layout_container').remove();
+            }
+            
+            var datas = JSON.stringify(listBrandPackage);
+
+            var findsource = $.grep(listBrandPackage, function(e){
+                return  e.MappingValue == "0"; });
+            console.log(findsource);
+            if (findsource.length > 0)
+            {
+                SKTIS.Helper.Notification("<strong>Cannot Insert zero (0)</strong>", "info");
+                return;
+            }
+            
+            $.ajax({
+                url: @Html.BaseUrl("MasterGenBrandPackageMapping/SavePackageMapping"),
+                type: 'POST',
+                contentType: 'application/json',
+                data: datas,
+                dataType: 'json',
+                success: function(data) {
+                    var success = false;
+                    var error = [];
+                   
+                    if (data) {
+                        $.each(data, function(k, value) {
+                            if (value) {
+                                if (value.ResponseType == "Success") {
+                                    success = true;
+                                } else {
+                                    error.push(value.BrandGroupCodeSource + " --> " + value.BrandGroupCodeDestination + " error : " + value.Message);
+                                }
+                            }
+                        });
+                    }
+
+                    if (success)
+                        SKTIS.Helper.Notification("<strong>Insert/Update brand package mapping</strong> : Success", "success");
+
+
+                    $.each(error, function(k, value) {
+                        SKTIS.Helper.Notification("Insert/Update " + value + "", "error");
+                    });
+                }
+            });
+        });
+
+    </script>
+}

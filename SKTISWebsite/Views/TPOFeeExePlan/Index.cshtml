@@ -1,0 +1,347 @@
+﻿@using HMS.SKTIS.Application.Resources
+@using SKTISWebsite.Helper
+@model SKTISWebsite.Models.TPOFeeExePlan.InitTPOFeeExePlanViewModel
+@{ Html.SetPageTitle(" TPO Fee Plan"); }
+
+<div class="col-lg-12" data-bind="with: gridView">
+    <div class="col-lg-6">
+        <div class="row">
+            <label class="form-label col-lg-3">
+                Regional
+            </label>
+            <div class="col-lg-3">
+                @*@Html.DropDownList("filterRegional", Model.Regional, new
+                {
+                    @class = "selectpicker show-tick form-control",
+                    data_live_search = "true",
+                    data_bind = "selectPicker: $root.filterRegional"
+                })*@
+                <select id="filterRegional"
+                        class="selectpicker show-tick form-control"
+                        data-live-search="true"
+                        data-bind="selectPicker:$root.filterRegional, optionsText: 'Text', optionsValue : 'Value',  optionsAfterRender : $root.afterRender, selectPickerOptions: { optionsArray: $root.modelRegional }"></select>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="row">
+            <label class="form-label col-lg-3">
+                KPS Year
+            </label>
+            <div class="col-lg-4">
+                @Html.DropDownList("filterKPSYear", Model.KpsYear, new
+                {
+                    @class = "selectpicker show-tick form-control",
+                    data_live_search = "true",
+                    data_bind = "selectPicker: $root.filterKPSYear"
+                })
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-3">
+                KPS Week
+            </label>
+            <div class="col-lg-4">
+                @Html.DropDownList("filterKPSWeek", Model.KpsWeek, new
+                {
+                    @class = "selectpicker show-tick form-control",
+                    data_live_search = "true",
+                    data_bind = "selectPicker: $root.filterKPSWeek"
+                })
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="action-btn">
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.View.ToString()))
+                {
+                    <button type="button" class="btn btn-primary" data-bind="click: $root.search">View</button>
+                }
+                @*@if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.P1Template.ToString()))
+                {
+                    <button type="button" class="btn btn-primary" data-bind="click: $root.printP1Template">P1 Template</button>
+                }*@
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.P1Template.ToString()))
+                {
+                    using (Html.BeginForm("GenerateP1", "TPOFeeExePlan", FormMethod.Post, new { @id = "printp1", @data_bind = "click: $root.printP1Template" }))
+                    {
+                        <button type="submit" class="btn btn-primary">P1Template</button>
+                    }
+                }
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.Excel.ToString()))
+                {
+                    using (Html.BeginForm("GenerateExcel", "TPOFeeExePlan", FormMethod.Post))
+                    {
+                        <input type="hidden" name="ParentLocationCode" data-bind="value: $root.filterRegional" />
+                        <input type="hidden" name="KpsYear" data-bind="value: $root.filterKPSYear" />
+                        <input type="hidden" name="KpsWeek" data-bind="value: $root.filterKPSWeek" />
+                        <button type="submit" class="btn btn-primary">Excel</button>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+    <div class="table-overflow">
+        <table class="table table-striped tpo-fee-plan-list">
+            <thead>
+                <tr class="head">
+                    <th rowspan="2"><input type="checkbox" id="checkboxAll" /></th>
+                    <th rowspan="2">Location</th>
+                    <th rowspan="2" class="fifteen">Location Name</th>
+                    <th rowspan="2" class="widthsmall">Brand</th>
+                    <th rowspan="2">Note</th>
+                    <th rowspan="2">JKN Box</th>
+                    <th rowspan="2">JL1 Box</th>
+                    <th rowspan="2">JL2 Box</th>
+                    @*<th rowspan="2">JL3 Box</th>
+                    <th rowspan="2">JL4 Box</th>*@
+                    <th rowspan="2">Biaya Produksi</th>
+                    <th rowspan="2">Jasa Maklon</th>
+                    <th rowspan="2">Productivity Incentives</th>
+                    <th colspan="2">Pajak</th>
+                    <th colspan="3">Output</th>
+                    <th rowspan="2">Total Bayar</th>
+                </tr>
+                <tr class="head">
+                    <th>Jasa Manajemen 2%</th>
+                    <th>Productivity Incentives 2%</th>
+                    <th>Biaya Produksi 10%</th>
+                    <th>Jasa Maklon 10%</th>
+                    <th>Productivity Incetives 10%</th>
+                </tr>
+            </thead>
+            <tbody data-bind="foreach: listDataItems">
+                <tr class="submit">
+                    <td class="column-check"><input type="checkbox" name=""></td>
+                    <td class="last" data-bind="if: ($parent.editingRowIndex() !== $index()), event: { click : $root.onGridClick } ">
+                        <span data-bind="text: $data.LocationCode"></span>
+                    </td>
+                    <td class="last" data-bind="if: ($parent.editingRowIndex() !== $index()), event: { click : $root.onGridClick } ">
+                        <span data-bind="text: $data.LocationName"></span>
+                    </td>
+                    <td class="last" data-bind="if: ($parent.editingRowIndex() !== $index()), event: { click : $root.onGridClick } ">
+                        <span data-bind="text: $data.SktBrandCode"></span>
+                    </td>
+                    <td class="last" data-bind="if: ($parent.editingRowIndex() !== $index()), event: { click : $root.onGridClick } "></td>
+                    <td class="last" data-bind="if: ($parent.editingRowIndex() !== $index()), event: { click : $root.onGridClick } ">
+                        <span data-bind="roundedMoney: $data.JknBox"></span>
+                    </td>
+                    <td class="last" data-bind="if: ($parent.editingRowIndex() !== $index()), event: { click : $root.onGridClick } ">
+                        <span data-bind="roundedMoney: $data.Jl1Box"></span>
+                    </td>
+                    <td class="last" data-bind="if: ($parent.editingRowIndex() !== $index()), event: { click : $root.onGridClick } ">
+                        <span data-bind="roundedMoney: $data.Jl2Box"></span>
+                    </td>
+                    @*<td class="last" data-bind="if: ($parent.editingRowIndex() !== $index()), event: { click : $root.onGridClick } ">
+                        <span data-bind="text: $data.Jl3Box"></span>
+                    </td>
+                    <td class="last" data-bind="if: ($parent.editingRowIndex() !== $index()), event: { click : $root.onGridClick } ">
+                        <span data-bind="text: $data.Jl4Box"></span>
+                    </td>*@
+                    <td class="last" data-bind="if: ($parent.editingRowIndex() !== $index()), event: { click : $root.onGridClick } ">
+                        <span data-bind="roundedMoney: $data.ProductionCost"></span>
+                    </td>
+                    <td class="last" data-bind="if: ($parent.editingRowIndex() !== $index()), event: { click : $root.onGridClick } ">
+                        <span data-bind="roundedMoney: $data.MaklonFee"></span>
+                    </td>
+                    <td class="last" data-bind="if: ($parent.editingRowIndex() !== $index()), event: { click : $root.onGridClick } ">
+                        <span data-bind="roundedMoney: $data.ProductivityIncentives"></span>
+                    </td>
+                    <td class="last" data-bind="if: ($parent.editingRowIndex() !== $index()), event: { click : $root.onGridClick } ">
+                        <span data-bind="roundedMoney: $data.MaklonFeeTwoPercent"></span>
+                    </td>
+                    <td class="last" data-bind="if: ($parent.editingRowIndex() !== $index()), event: { click : $root.onGridClick } ">
+                        <span data-bind="roundedMoney: $data.ProductivityIncentivesTwoPercent"></span>
+                    </td>
+                    <td class="last" data-bind="if: ($parent.editingRowIndex() !== $index()), event: { click : $root.onGridClick } ">
+                        <span data-bind="roundedMoney: $data.ProductionCostTenPercent"></span>
+                    </td>
+                    <td class="last" data-bind="if: ($parent.editingRowIndex() !== $index()), event: { click : $root.onGridClick } ">
+                        <span data-bind="roundedMoney: $data.MaklonFeeTenPercent"></span>
+                    </td>
+                    <td class="last" data-bind="if: ($parent.editingRowIndex() !== $index()), event: { click : $root.onGridClick } ">
+                        <span data-bind="roundedMoney: $data.ProductivityIncentivesTenPercent"></span>
+                    </td>
+                    <td class="last" data-bind="if: ($parent.editingRowIndex() !== $index()), event: { click : $root.onGridClick } ">
+                        <span data-bind="roundedMoney: $data.TotalCost"></span>
+                    </td>
+                </tr>
+            </tbody>
+            <tbody data-bind="visible: !listDataItems().length">
+                <tr>
+                    <td colspan="17" class="empty-row-message"><div class="loader"></div></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div data-bind="if: (listDataItems() != null && listDataItems().length !== 0)">
+        @Html.Partial("GridViewFooter")
+    </div>
+</div>
+
+@section Scripts
+{
+    <script src="~/Scripts/common/app.GridViewModel.js" type="text/javascript"></script>
+    <script src="~/Scripts/app/globalFunctions.js" type="text/javascript"></script>
+    <script type="text/javascript">
+
+    (function(app) {
+        app.EditGrid = function() {
+            var self = this;
+            var cFilter = getCookie('cRegional');
+            var dFilter = '@Model.DefaultRegional';
+            if(!!cFilter) {
+                dFilter = cFilter;
+            }
+
+            self.modelRegional = ko.observableArray(@Html.Raw(Json.Encode(@Model.Regional)));
+            self.filterRegional = ko.observable(dFilter);
+            self.filterKPSYear = ko.observable(@Model.DefaultKpsYear);
+            self.filterKPSWeek = ko.observable(@Model.DefaultKpsWeek);
+
+            self.onGridClick = function(e) {
+                //console.log(e);
+                setCookie('cRegional',self.filterRegional(),0.01);
+                window.document.location = @Html.BaseUrl("TPOFeeExePlanDetail") + "/index/" + e.TpoFeeCode().replace(/([/])/g, '_');
+            };
+
+            self.afterRender = function(options, item)
+            {
+                if (typeof(item) === 'undefined') return;
+
+                $(options).attr('title', item.Value);
+            }
+
+            self.gridView = new app.GridViewModel({
+                Criteria: {
+                    PageSize: 9999,
+                    PageIndex: 1,
+                    SortExpression: "",
+                    SortOrder: "",
+                    ParentLocationCode: self.filterRegional,
+                    KpsYear: self.filterKPSYear,
+                    KpsWeek: self.filterKPSWeek
+                },
+                DataSourceUrl: @Html.BaseUrl("/TPOFeeExePlan/GetTpoFeePlan"),
+                InlineEdit: false
+            });
+
+            function MappingCheckbox(data) {
+                ko.mapping.fromJS(data, {}, this);
+                this.Checkbox = ko.observable(false);
+            }
+
+            self.gridView.mapping = {
+                create: function(options) {
+                    return new MappingCheckbox(options.data);
+                }
+            };
+
+            self.gridView.applyValidationRules = function(entity) {
+
+            };
+
+            self.search = function() {
+                $('#printp1').find('input').remove();
+                //self.filterExcelListGroup = self.filterListGroup();
+                self.gridView.search({}, function(response) {
+                    if (response.status == 'KO') {
+                        SKTIS.Helper.Notification(response.message, 'error');
+                        $('.empty-row-message').html(response.message);
+                    } else if (response.status == 'Empty') {
+
+                        self.RemoveNotification();
+
+                        //SKTIS.Helper.Notification(response.message,'warning');
+                        $('.empty-row-message').html('@CommonLabel.lblDataEmpty');
+                    }
+                });
+            };
+
+            @*self.printP1Template = function() {
+                if($('table tbody tr input[type=checkbox]:checked').length){
+                    self.RemoveNotification();
+                    $.ajax({
+                        url: @Html.BaseUrl("/TPOFeeExePlan/GenerateP1"),
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: ko.toJSON(self.gridView.listDataItems()),
+                        dataType: 'json',
+                        cache: false,
+                        success: function(data) {
+                            $('#checkboxAll').prop('checked', false);
+                            $('table tbody tr input:checkbox').prop('checked', false);
+                            self.search();
+                            SKTIS.Helper.ResponseNotification('success', "Upload P1 Template Successful", "");
+                        }
+                    });
+                }
+            };*@
+
+            self.printP1Template = function() {
+                //clear data before generate or refill
+                $('#printp1').find('input').remove();
+                
+                //count how many checkbox is true
+                var count = self.gridView.listDataItems().filter(function(value){
+                    return value.Checkbox() === true;
+                }).length
+
+                //prevent form to send null data
+                if(count>0){
+
+                    $.each(self.gridView.listDataItems(), function(i, v) {
+                        //console.log(i +" "+v);
+                        $.each(v, function(ii, vv) {
+                            var input = $('<input>', {
+                                type: 'hidden',
+                                id: 'DataId',
+                                name: 'Data['+i+']['+ii+']',
+                                value: ko.utils.unwrapObservable(vv)
+                            });
+                        
+                            $('#printp1').append(input);
+                        });
+                    });
+                    $('#printp1').submit();
+                    return false;
+                }else{
+                    SKTIS.Helper.Notification("Cannot generate <strong>P1Template</strong> without selected data!", "error");
+                }
+            };
+
+
+            self.RemoveNotification = function() {
+                if ($('#noty_top_layout_container').length > 0) {
+                    $('#noty_top_layout_container').remove();
+                }
+            };
+            self.search();
+
+            $('#checkboxAll').change(function(e) {
+                if (this.checked) {
+                    $('table tbody tr input:checkbox').prop('checked', true);
+                    $('table tbody tr input:checkbox').change();
+                } else {
+                    $('table tbody tr input:checkbox').prop('checked', false);
+                    $('table tbody tr input:checkbox').change();
+                }
+
+            });
+
+            $(document).on('change', 'table tbody tr input[type=checkbox]', function() {
+                var thisChk = $(this);
+                var context1 = ko.dataFor(this);
+                //console.log(thisChk.prop('checked'));
+                context1.Checkbox(thisChk.prop('checked'));
+            });
+
+
+
+        };
+        ko.applyBindings(new app.EditGrid());
+        })(app = this.app || {});
+
+    </script>
+}

@@ -1,0 +1,1079 @@
+﻿@model SKTISWebsite.Models.PlanningPlantIndividualCapacity.InitPlanningPlantIndividualCapacityViewModel
+@using HMS.SKTIS.Application.Resources
+@using SKTISWebsite.Helper
+@{ Html.SetPageTitle("Individual Capacity"); }
+<div class="col-lg-12">
+    <div class="tabs" role="tabpanel">
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs" role="tablist">
+            <li role="presentation" class="active"><a href="#allwh" aria-controls="home" role="tab" data-toggle="tab">By Work Hours</a></li>
+            <li role="presentation"><a href="#byreference" aria-controls="profile" role="tab" data-toggle="tab">By Reference</a></li>
+        </ul>
+        <!-- Tab panes -->
+        <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade in active" id="allwh" data-bind="with: gridViewAllWorkHours">
+                <div class="col-lg-6">
+                    <div class="row">
+                        <label class="form-label col-lg-4">
+                            Location
+                        </label>
+                        <div class="col-lg-5">
+                            @*@Html.DropDownList("filterLocationAllWorkHours", new SelectList(Model.LocationSelectList, "LocationCode", "LocationCode"),
+                                new
+                                {
+                                    @class = "selectpicker show-tick form-control",
+                                    id = "filterLocationAllWorkHours",
+                                    data_live_search = "true",
+                                    data_bind = "value:$root.filterLocationAllWorkHours , event : { change : $root.onLocationCodeChangeAllWorkHours}"
+                                })*@
+                            <select class="selectpicker show-tick form-control" data-live-search="true" id="filterLocationAllWorkHours"
+                                    data-bind="selectPicker: $root.filterLocationAllWorkHours, optionsText: 'LocationCompat', optionsValue : 'LocationCode', optionsAfterRender : $root.afterRender, selectPickerOptions: { optionsArray: $root.ListLocation }, event : { change : $root.onLocationCodeChangeAllWorkHours}"></select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label class="form-label col-lg-4">
+                            Unit
+                        </label>
+                        <div class="col-lg-5">
+                            <select id="filterUnitAllWorkHours" class="selectpicker show-tick form-control" data-live-search="true"
+                                    data-bind="selectPicker: $root.filterUnitAllWorkHours, optionsText: 'Value', optionsValue : 'Text', selectPickerOptions: { optionsArray: $root.UnitSelectListAllWorkHours }, event: {change: $root.onUnitChangeAllWorkHours}"></select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label class="form-label col-lg-4">
+                            Brand Group
+                        </label>
+                        <div class="col-lg-5">
+                            <select id="filterBrandGroupAllWorkHours" class="selectpicker show-tick form-control" data-live-search="true"
+                                    data-bind="selectPicker: $root.filterBrandGroupAllWorkHours, optionsText: 'Value', optionsValue : 'Text', selectPickerOptions: { optionsArray: $root.BrandGroupCodeSelectListAllWorkHours }, event: {change : $root.GetProcessSelectListWorkHours}"></select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label class="form-label col-lg-4">
+                            Process
+                        </label>
+                        <div class="col-lg-5">
+                            <select id="filterProcessAllWorkHours" class="selectpicker show-tick form-control" data-live-search="true"
+                                    data-bind="selectPicker: $root.filterProcessAllWorkHours, event : { change : $root.onProcessChangeAllWorkHours}, optionsText: 'Value', optionsValue : 'Text', selectPickerOptions: { optionsArray: $root.ProcessSelectListAllWorkHours }"></select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label class="form-label col-lg-4">
+                            Group
+                        </label>
+                        <div class="col-lg-5">
+                            <select id="filterGroupAllWorkHours" class="selectpicker show-tick form-control" data-live-search="true"
+                                    data-bind="selectPicker: $root.filterGroupAllWorkHours, optionsText: 'Value', optionsValue : 'Text', selectPickerOptions: { optionsArray: $root.GroupSelectListAllWorkHours }, event : { change : $root.GetCapacityOfProcessSelectListWorkHours}"></select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label class="form-label col-lg-4">
+                            Capacity of Process
+                        </label>
+                        <div class="col-lg-5">
+                            <select id="filterCapacityOfProcessAllWorkHours" class="selectpicker show-tick form-control" data-live-search="true"
+                                    data-bind="selectPicker: $root.filterCapacityOfProcessAllWorkHours, optionsText: 'Value', optionsValue : 'Text', selectPickerOptions: { optionsArray: $root.CapacityOfProcessSelectListAllWorkHours }"></select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="action-btn">
+                            @if (ViewBag.ButtonAccess.Contains(String.Format("{0}/{1}", HMS.SKTIS.Core.Enums.TabName.AllWorkHours, HMS.SKTIS.Core.Enums.ButtonName.View)))
+                            {
+                                <button type="button" class="btn btn-primary" data-bind="click:$root.searchAllWorkHours">@CommonLabel.btnView</button>
+                            }
+                            @if (ViewBag.ButtonAccess.Contains(String.Format("{0}/{1}", HMS.SKTIS.Core.Enums.TabName.AllWorkHours, HMS.SKTIS.Core.Enums.ButtonName.Save)))
+                            {
+                                <button type="button" class="btn btn-primary" data-bind="click:$root.saveDataAllWorkHours">@CommonLabel.btnSave</button>
+                            }
+                            @if (ViewBag.ButtonAccess.Contains(String.Format("{0}/{1}", HMS.SKTIS.Core.Enums.TabName.AllWorkHours, HMS.SKTIS.Core.Enums.ButtonName.Excel)))
+                            {
+                                using (Html.BeginForm("GenerateExcel", "PlanningPlantIndividualCapacity", FormMethod.Post, new  { @data_bind = "submit: $root.generateExcelAllWorkHours" }))
+                                {
+                                    <input type="hidden" name="Location" data-bind="value:$root.filterLocationAllWorkHours" />
+                                    <input type="hidden" name="Unit" data-bind="value:$root.filterUnitAllWorkHours" />
+                                    <input type="hidden" name="BrandGroupCode" data-bind="value:$root.filterBrandGroupAllWorkHours" />
+                                    <input type="hidden" name="Process" data-bind="value:$root.filterProcessAllWorkHours" />
+                                    <input type="hidden" name="Group" data-bind="value:$root.filterGroupAllWorkHours" />
+                                    <input type="hidden" name="CapacityOfProcess" data-bind="value:$root.filterCapacityOfProcessAllWorkHours" />
+                                    <input type="hidden" name="Date" data-bind="value:$root.filterDateAllWorkHours" />
+                                    <input type="hidden" name="Year" data-bind="value:@Model.DefaultYear" />
+                                    <input type="hidden" name="Week" data-bind="value:@Model.DefaultWeek" />
+                                    <input type="hidden" name="LastUpdate" data-bind="value:$root.filterLastUpdatedAllWorkHours" />
+
+                                    <button type="submit" class="btn btn-primary">@CommonLabel.btnExcel</button>
+                                }
+                            }
+                            @*@Html.Partial("GridViewPageSizeSelector")*@
+                        </div>
+                    </div>
+                </div>
+                <div class="table-overflow">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr class="head">
+                                <th colspan="3">Employee</th>
+                                <th colspan="7">Capacity (hours)</th>
+                                <th rowspan="2" class="widthsmall" data-bind="click:sortBy.bind($data,'UpdatedBy'), css:sortCss('UpdatedBy', $data.sortExpression(), $data.sortOrder())">User Updates</th>
+                                <th rowspan="2" class="widthsmall" data-bind="click:sortBy.bind($data,'UpdatedDate'), css:sortCss('UpdatedDate', $data.sortExpression(), $data.sortOrder())">Updated Date</th>
+                            </tr>
+                            <tr class="head">
+                                <th class="widthsmall" data-bind="click:sortBy.bind($data,'EmployeeID'), css:sortCss('EmployeeID', $data.sortExpression(), $data.sortOrder())">ID</th>
+                                <th class="widthsmall" data-bind="click:sortBy.bind($data,'MstPlantEmpJobsDataAcv.EmployeeNumber'), css:sortCss('MstPlantEmpJobsDataAcv.EmployeeNumber', $data.sortExpression(), $data.sortOrder())">Number</th>
+                                <th data-bind="click:sortBy.bind($data,'MstPlantEmpJobsDataAcv.EmployeeName'), css:sortCss('MstPlantEmpJobsDataAcv.EmployeeName', $data.sortExpression(), $data.sortOrder())">Name</th>
+                                <th data-bind="click:sortBy.bind($data,'HoursCapacity3'), css:sortCss('HoursCapacity3', $data.sortExpression(), $data.sortOrder())">3</th>
+                                <th data-bind="click:sortBy.bind($data,'HoursCapacity5'), css:sortCss('HoursCapacity5', $data.sortExpression(), $data.sortOrder())">5</th>
+                                <th data-bind="click:sortBy.bind($data,'HoursCapacity6'), css:sortCss('HoursCapacity6', $data.sortExpression(), $data.sortOrder())">6</th>
+                                <th data-bind="click:sortBy.bind($data,'HoursCapacity7'), css:sortCss('HoursCapacity7', $data.sortExpression(), $data.sortOrder())">7</th>
+                                <th data-bind="click:sortBy.bind($data,'HoursCapacity8'), css:sortCss('HoursCapacity8', $data.sortExpression(), $data.sortOrder())">8</th>
+                                <th data-bind="click:sortBy.bind($data,'HoursCapacity9'), css:sortCss('HoursCapacity9', $data.sortExpression(), $data.sortOrder())">9</th>
+                                <th data-bind="click:sortBy.bind($data,'HoursCapacity10'), css:sortCss('HoursCapacity10', $data.sortExpression(), $data.sortOrder())">10</th>
+                            </tr>
+                        </thead>
+                        <tbody data-bind="foreach: listDataItems">
+                            <tr data-bind="if: ($parent.editingRowIndex() !== $index()), click: $parent.editInline3.bind($data,$index())">
+                                <td><span data-bind="text:$data.EmployeeID"></span></td>
+                                <td><span data-bind="text:$data.EmployeeNumber"></span></td>
+                                <td><span data-bind="text:$data.EmployeeName"></span></td>
+                                <td class="current"><span data-bind="text:$data.HoursCapacity3"></span></td>
+                                <td class="current"><span data-bind="text:$data.HoursCapacity5"></span></td>
+                                <td class="current"><span data-bind="text:$data.HoursCapacity6"></span></td>
+                                <td class="current"><span data-bind="text:$data.HoursCapacity7"></span></td>
+                                <td class="current"><span data-bind="text:$data.HoursCapacity8"></span></td>
+                                <td class="current"><span data-bind="text:$data.HoursCapacity9"></span></td>
+                                <td class="current"><span data-bind="text:$data.HoursCapacity10"></span></td>
+                                <td><span data-bind="text:$data.UpdatedBy"></span></td>
+                                <td><span data-bind="text:$data.UpdatedDate"></span></td>
+                            </tr>
+                            <tr data-bind="validationOptions: {insertMessages: false, showTooltip:true, decorateInputElement: true, errorElementClass: 'input-error'}, inlineProccess:[$parent,$data],
+                                       if:($parent.editingRowIndex() === $index()),
+                                       click: $parent.selectRow.bind($data, $index()),
+                                        event: {keydown:$parent.keydown}">
+                                <td><span data-bind="text:$data.EmployeeID"></span></td>
+                                <td><span data-bind="text:$data.EmployeeNumber"></span></td>
+                                <td><span data-bind="text:$data.EmployeeName"></span></td>
+                                <td class="current"><input data-bind="value:$data.HoursCapacity3, valueUpdate:'afterkeydown'" class="form-control transparent" type="number" data-sktis-validation="decimal-dot" /></td>
+                                <td class="current"><input data-bind="value:$data.HoursCapacity5, valueUpdate:'afterkeydown'" class="form-control transparent" type="number" data-sktis-validation="decimal-dot" /></td>
+                                <td class="current"><input data-bind="value:$data.HoursCapacity6, valueUpdate:'afterkeydown'" class="form-control transparent" type="number" data-sktis-validation="decimal-dot" /></td>
+                                <td class="current"><input data-bind="value:$data.HoursCapacity7, valueUpdate:'afterkeydown'" class="form-control transparent" type="number" data-sktis-validation="decimal-dot" /></td>
+                                <td class="current"><input data-bind="value:$data.HoursCapacity8, valueUpdate:'afterkeydown'" class="form-control transparent" type="number" data-sktis-validation="decimal-dot" /></td>
+                                <td class="current"><input data-bind="value:$data.HoursCapacity9, valueUpdate:'afterkeydown'" class="form-control transparent" type="number" data-sktis-validation="decimal-dot" /></td>
+                                <td class="current"><input data-bind="value:$data.HoursCapacity10, valueUpdate:'afterkeydown'" class="form-control transparent" type="number" data-sktis-validation="decimal-dot" /></td>
+                                <td><span data-bind="text:$data.UpdatedBy"></span></td>
+                                <td><span data-bind="text:$data.UpdatedDate"></span></td>
+                            </tr>
+                        </tbody>
+                        <tbody data-bind="visible: !listDataItems().length">
+                            <tr>
+                                <td colspan="12" class="empty-row-message"><div class="loader"></div></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                @*<div data-bind="if: (listDataItems() != null && listDataItems().length !== 0)">
+                    @Html.Partial("GridViewFooter")
+                </div>*@
+            </div>
+            <div role="tabpanel" class="tab-pane fade in" id="byreference" data-bind="with: gridViewByReference">
+                <div class="col-lg-6">
+                    <div class="row">
+                        <label class="form-label col-lg-4">
+                            Location
+                        </label>
+                        <div class="col-lg-5">
+                            @*@Html.DropDownList("filterLocationByReference", new SelectList(Model.LocationSelectList, "LocationCode", "LocationCode"),
+                                new
+                                {
+                                    @class = "selectpicker show-tick form-control",
+                                    id = "filterLocationByReference",
+                                    data_live_search = "true",
+                                    data_bind = "value:$root.filterLocationByReference , event : { change : $root.onLocationCodeChangeByReference}"
+                                })*@
+                            <select class="selectpicker show-tick form-control" data-live-search="true" id="filterLocationByReference"
+                                    data-bind="selectPicker: $root.filterLocationByReference, optionsText: 'LocationCompat', optionsValue : 'LocationCode', optionsAfterRender : $root.afterRender, selectPickerOptions: { optionsArray: $root.ListLocation }, event : { change : $root.onLocationCodeChangeByReference}"></select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label class="form-label col-lg-4">
+                            Unit
+                        </label>
+                        <div class="col-lg-5">
+                            <select id="filterUnitByReference" class="selectpicker show-tick form-control" data-live-search="true"
+                                    data-bind="selectPicker: $root.filterUnitByReference, optionsText: 'Value', optionsValue : 'Text', selectPickerOptions: { optionsArray: $root.UnitSelectListByReference }, event : { change : $root.onProcessChangeByReference}"></select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label class="form-label col-lg-4">
+                            Brand Group
+                        </label>
+                        <div class="col-lg-5">
+                            <select id="filterBrandByReference" class="selectpicker show-tick form-control" data-live-search="true"
+                                    data-bind="selectPicker: $root.filterBrandByReference, event : { change : $root.onBrandChangeByReference}, optionsText: 'Value', optionsValue : 'Text', selectPickerOptions: { optionsArray: $root.BrandSelectListByReference }"></select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label class="form-label col-lg-4">
+                            Process
+                        </label>
+                        <div class="col-lg-5">
+                            <select id="filterProcessByReference" class="selectpicker show-tick form-control" data-live-search="true"
+                                    data-bind="selectPicker: $root.filterProcessByReference, event : { change : $root.onProcessChangeByReference}, optionsText: 'Value', optionsValue : 'Text', selectPickerOptions: { optionsArray: $root.ProcessSelectListByReference }"></select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label class="form-label col-lg-4">
+                            Group
+                        </label>
+                        <div class="col-lg-5">
+                            <select id="filterGroupByReference" class="selectpicker show-tick form-control" data-live-search="true"
+                                    data-bind="selectPicker: $root.filterGroupByReference, optionsText: 'Value', optionsValue : 'Text', selectPickerOptions: { optionsArray: $root.GroupSelectListByReference }"></select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="row">
+                        <label class="form-label col-lg-4">
+                            Work Hours
+                        </label>
+                        <div class="col-lg-3">
+                            <select id="basic" class="selectpicker show-tick form-control" data-live-search="true" data-bind="selectPicker: $root.filterWorkHoursByReference">
+                                <option value="3">3</option>
+                                <option value="5">5</option>
+                                <option value="6">6</option>
+                                <option value="7">7</option>
+                                <option value="8">8</option>
+                                <option value="9">9</option>
+                                <option value="10">10</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label class="form-label col-lg-4">
+                            Date
+                        </label>
+                        <div class="col-lg-3">
+                            <div id="filterDateFromByReference" class='input-group date time' data-bind="dateTimePicker: $root.filterDateFromByReference, value: $root.filterDateFromByReference, dateTimePickerOptions: {widgetPositioning: {vertical: 'bottom'}, showClear: true, ignoreReadonly: true}">
+                                <input id="dtfilterDateFromByReference" class="form-control" readonly="readonly" />
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                            </div>
+                        </div>
+                        <label class="form-label col-lg-1">
+                            To
+                        </label>
+                        <div class="col-lg-3">
+                            <div id="filterDateToByReference" class='input-group date time' data-bind="dateTimePicker: $root.filterDateToByReference, value: $root.filterDateToByReference, dateTimePickerOptions: {widgetPositioning: {vertical: 'bottom'}, showClear: true, ignoreReadonly: true}">
+                                <input id="dtfilterDateToByReference" class="form-control" readonly="readonly" />
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label class="form-label col-lg-4">
+                            Last Updated
+                        </label>
+                        <div class="col-lg-6">
+                            <label class="form-label">
+                                <span data-bind="text: $root.filterLastUpdatedByReference">12/10/2015 00:00:00</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="action-btn">
+                            @if (ViewBag.ButtonAccess.Contains(String.Format("{0}/{1}", HMS.SKTIS.Core.Enums.TabName.ByReference, HMS.SKTIS.Core.Enums.ButtonName.View)))
+                            {
+                                <button type="button" class="btn btn-primary" data-bind="click:$root.searchByReference">View</button>
+                            }
+                            @if (ViewBag.ButtonAccess.Contains(String.Format("{0}/{1}", HMS.SKTIS.Core.Enums.TabName.ByReference, HMS.SKTIS.Core.Enums.ButtonName.Save)))
+                            {
+                                <button type="button" class="btn btn-primary" data-bind="click:$root.saveDataAllByReference">@CommonLabel.btnSave</button>
+                            }
+                            @if (ViewBag.ButtonAccess.Contains(String.Format("{0}/{1}", HMS.SKTIS.Core.Enums.TabName.ByReference, HMS.SKTIS.Core.Enums.ButtonName.Excel)))
+                            {
+                                using (Html.BeginForm("GenerateExcelByReference", "PlanningPlantIndividualCapacity", FormMethod.Post, new {@data_bind = "submit: $root.generateExcelByReference"}))
+                                 {
+                                     <input type="hidden" name="Location" data-bind="value:$root.filterLocationByReference" />
+                                     <input type="hidden" name="Unit" data-bind="value:$root.filterUnitByReference" />
+                                     <input type="hidden" name="BrandGroupCode" data-bind="value:$root.filterBrandByReference" />
+                                     <input type="hidden" name="Process" data-bind="value:$root.filterProcessByReference" />
+                                     <input type="hidden" name="Group" data-bind="value:$root.filterGroupByReference" />
+                                     <input type="hidden" name="WorkHours" data-bind="value:$root.filterWorkHoursByReference" />
+                                     <input type="hidden" name="DateFrom" data-bind="value:$root.filterDateFromByReference" />
+                                     <input type="hidden" name="DateTo" data-bind="value:$root.filterDateToByReference" />
+                                     <input type="hidden" name="LastUpdated" data-bind="value: $root.filterLastUpdatedByReference" />
+                                     <button type="submit" class="btn btn-primary">@CommonLabel.btnExcel</button>
+                                 }
+                            }
+                            @Html.Partial("GridViewPageSizeSelector")
+                        </div>
+                    </div>
+                </div>
+                <div class="table-overflow">
+                    <table class="table table-striped" id="allwh2" width="100%">
+                        <thead>
+                            <tr class="head">
+                                <th colspan="3">Employee</th>
+                                <th colspan="5">Process Productivity</th>
+
+                            </tr>
+                            <tr class="head">
+                                <th>ID</th>
+                                <th>Pengenal</th>
+                                <th>Capacity</th>
+                                <th>Min.</th>
+                                <th>Max.</th>
+                                <th>Avg.</th>
+                                <th>Med.</th>
+                                <th>Latest</th>
+                            </tr>
+                        </thead>
+                        @*<tbody data-bind="foreach: listDataItems">
+                                <tr data-bind="if: ($parent.editingRowIndex() !== $index()), click: $parent.editInline3.bind($data,$index())">
+                                    <td><span data-bind="text:$data.EmployeeID"></span></td>
+                                    <td><span data-bind="text:$data.EmployeeNumber"></span></td>
+                                    <td><span data-bind="text:$data.HoursCapacity"></span></td>
+                                    <td><span data-bind="text:$data.MinimumValue"></span></td>
+                                    <td><span data-bind="text:$data.MaximumValue"></span></td>
+                                    <td><span data-bind="text:$data.AverageValue"></span></td>
+                                    <td><span data-bind="text:$data.MedianValue"></span></td>
+                                    <td class="current"><span data-bind="text:$data.LatestValue"></span></td>
+                                </tr>
+                                <tr data-bind="validationOptions: {insertMessages: false, showTooltip:true, decorateInputElement: true, errorElementClass: 'input-error'}, inlineProccess:[$parent,$data],
+                                           if:($parent.editingRowIndex() === $index()),
+                                           click: $parent.selectRow.bind($data, $index()),
+                                            event: {keydown:$parent.keydown}">
+                                    <td><span data-bind="text:$data.EmployeeID"></span></td>
+                                    <td><span data-bind="text:$data.EmployeeNumber"></span></td>
+                                    <td><span data-bind="text:$data.HoursCapacity"></span></td>
+                                    <td><span data-bind="text:$data.MinimumValue"></span></td>
+                                    <td><span data-bind="text:$data.MaximumValue"></span></td>
+                                    <td><span data-bind="text:$data.AverageValue"></span></td>
+                                    <td><span data-bind="text:$data.MedianValue"></span></td>
+                                    <td class="current"><input data-bind="value:$data.LatestValue, valueUpdate:'afterkeydown'" class="form-control transparent" type="number" data-sktis-validation="number" /></td>
+                                </tr>
+                            </tbody>*@
+                        <tbody data-bind="foreach: listDataItems">
+                            <tr data-bind="if: ($parent.editingRowIndex() !== $index()), click: $parent.editInline3.bind($data,$index())">
+                                <td><span data-bind="text:$data.EmployeeID"></span></td>
+                                <td><span data-bind="text:$data.EmployeeNumber"></span> - <span data-bind="text:$data.EmployeeName"></span></td>
+                                <td class="current"><span data-bind="decimal:$data.HoursCapacity"></span></td>
+                                <td><span data-bind="decimal:$data.MinimumValue"></span></td>
+                                <td><span data-bind="decimal:$data.MaximumValue"></span></td>
+                                <td><span data-bind="decimal:$data.AverageValue"></span></td>
+                                <td><span data-bind="decimal:$data.MedianValue"></span></td>
+                                <td><span data-bind="decimal:$data.LatestValue"></span></td>
+                            </tr>
+                            <tr data-bind="validationOptions: {insertMessages: false, showTooltip:true, decorateInputElement: true, errorElementClass: 'input-error'}, inlineProccess:[$parent,$data],
+                                       if:($parent.editingRowIndex() === $index()),
+                                       click: $parent.selectRow.bind($data, $index()),
+                                        event: {keydown:$parent.keydown}">
+                                <td><span data-bind="text:$data.EmployeeID"></span></td>
+                                <td><span data-bind="text:$data.EmployeeNumber"></span> - <span data-bind="text:$data.EmployeeName"></span></td>
+                                @*<td class="current"><span data-bind="text:$data.HoursCapacity"></span></td>*@
+                                <td class="current"><input data-bind="value:$data.HoursCapacity, valueUpdate:'afterkeydown'" class="form-control transparent" type="number" data-sktis-validation="number" /></td>
+                                <td><span data-bind="decimal:$data.MinimumValue"></span></td>
+                                <td><span data-bind="decimal:$data.MaximumValue"></span></td>
+                                <td><span data-bind="decimal:$data.AverageValue"></span></td>
+                                <td><span data-bind="decimal:$data.MedianValue"></span></td>
+                                <td><span data-bind="decimal:$data.LatestValue"></span></td>
+                            </tr>
+                        </tbody>
+                        <tbody data-bind="visible: !listDataItems().length">
+                            <tr>
+                                <td colspan="12" class="empty-row-message"><div class="loader"></div></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div data-bind="if: (listDataItems() != null && listDataItems().length !== 0)">
+                    @Html.Partial("GridViewFooter")
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script src="~/Scripts/common/app.GridViewModel.js" type="text/javascript"></script>
+    <script type="text/javascript">
+
+        (function(app) {
+            app.EditGrid = function() {
+                var self = this;
+                // description: filter All Work Hours
+                self.filterLocationAllWorkHours = ko.observable('ID21');
+                self.filterUnitAllWorkHours = ko.observable('');
+                self.filterBrandGroupAllWorkHours = ko.observable('');
+                self.filterProcessAllWorkHours = ko.observable('');
+                self.filterGroupAllWorkHours = ko.observable('');
+                self.filterCapacityOfProcessAllWorkHours = ko.observable('');
+                self.filterDateAllWorkHours = ko.observable('@Model.DefaultDate');
+                self.filterLastUpdatedAllWorkHours = ko.observable('');
+
+                // flag first load
+                self.firstLoadAllWorkHours = true;
+                self.firstLoadByReference = true;
+
+                // description: data source select list All Work Hours
+                self.UnitSelectListAllWorkHours = ko.observableArray([]);
+                self.BrandGroupCodeSelectListAllWorkHours = ko.observableArray([]);
+                self.ProcessSelectListAllWorkHours = ko.observableArray([]);
+                self.GroupSelectListAllWorkHours = ko.observableArray([]);
+                self.CapacityOfProcessSelectListAllWorkHours = ko.observableArray([]);
+
+                // description: function All Work Hours
+                self.onLocationCodeChangeAllWorkHours = function(callback) {
+                    async.series([
+                        function(cb) {
+                            self.GetUnitSelectListAllWorkHours(cb);
+                        },
+                        function(cb) {
+                            self.GetBrandGroupSelectListAllWorkHours(cb);
+                        }
+                    ]);
+                    //self.GetUnitSelectListAllWorkHours(); TODO AJAX
+                    //self.GetBrandGroupSelectListAllWorkHours();
+                    
+                };
+
+                self.onProcessChangeAllWorkHours = function() {
+                    self.GetGroupSelectList();
+                    self.CapacityOfProcessSelectListAllWorkHours();
+                };
+
+                self.onUnitChangeAllWorkHours = function() {
+                    self.GetGroupSelectList();
+                };
+
+
+
+                self.GetUnitSelectListAllWorkHours = function(cb) {
+                    $.ajax({
+                        url: @Html.BaseUrl("PlanningPlantIndividualCapacity/GetUnitsByLocationCode"),
+                        type: 'GET',
+                        contentType: 'application/json',
+                        data: { locationCode: self.filterLocationAllWorkHours() },
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#filterUnitAllWorkHours').find('option').remove();
+                            $('#filterUnitAllWorkHours').selectpicker('refresh');
+
+                            self.UnitSelectListAllWorkHours(data);
+
+                            self.filterUnitAllWorkHours($('#filterUnitAllWorkHours :selected').val());
+                            if (typeof cb == 'function') cb();
+                        }
+                    });
+                };
+
+                self.GetBrandGroupSelectListAllWorkHours = function(cb) {
+                    var filterLocation = self.filterLocationAllWorkHours();
+                    var brandGroupCodeModel = [];
+
+                    $('#filterBrandGroupAllWorkHours').find('option').remove();
+                    $('#filterBrandGroupAllWorkHours').selectpicker('refresh');
+
+                    $.ajax({
+                        url: @Html.BaseUrl("PlanningPlantIndividualCapacity/GetBrandGroupByLocationCode"),
+                        type: 'GET',
+                        contentType: 'application/json',
+                        data: {
+                            LocationCode: filterLocation
+                        },
+                        dataType: 'json',
+                        success: function(data) {
+                            $.each(data, function(index, value) {
+                                brandGroupCodeModel.push({ "Text": value.Text, "Value": value.Value });
+                            });
+                            self.BrandGroupCodeSelectListAllWorkHours(brandGroupCodeModel);
+                            self.filterBrandGroupAllWorkHours($('#filterBrandGroupAllWorkHours :selected').val());
+                        },
+                        complete: function() {
+                            self.GetProcessSelectListWorkHours();
+                        }
+                    });
+                    self.BrandGroupCodeSelectListAllWorkHours(brandGroupCodeModel);
+                    self.filterBrandGroupAllWorkHours($('#filterBrandGroupAllWorkHours :selected').val());
+                    
+                    if (typeof cb == 'function') cb();
+                };
+
+                self.GetProcessSelectListWorkHours = function() {
+                    if (self.filterBrandGroupAllWorkHours() != '') {
+                        $.ajax({
+                            url: @Html.BaseUrl("PlanningPlantIndividualCapacity/GetProcessByLocationCodeAndBrandGroup"),
+                            type: 'GET',
+                            async: false,
+                            contentType: 'application/json',
+                            data: { locationCode: self.filterLocationAllWorkHours(), brandGroupCode: self.filterBrandGroupAllWorkHours() },
+                            dataType: 'json',
+                            success: function(data) {
+                                $('#filterProcessAllWorkHours').find('option').remove();
+                                $('#filterProcessAllWorkHours').selectpicker('refresh');
+
+                                self.ProcessSelectListAllWorkHours(data);
+                                self.GetGroupSelectList();
+                            }
+                        });
+
+                    }
+                };
+
+                self.GetGroupSelectList = function() {
+                    $.ajax({
+                        url: @Html.BaseUrl("PlanningPlantIndividualCapacity/GetGroupFromPlantProductionGroupByLocationUnitProcess"),
+                        type: 'GET',
+                        async: false,
+                        contentType: 'application/json',
+                        data: { locationCode: self.filterLocationAllWorkHours(), unit: self.filterUnitAllWorkHours(), process: self.filterProcessAllWorkHours() },
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#filterGroupAllWorkHours').find('option').remove();
+                            $('#filterGroupAllWorkHours').selectpicker('refresh');
+
+                            self.GroupSelectListAllWorkHours(data);
+                            self.filterGroupAllWorkHours($('#filterGroupAllWorkHours :selected').val());
+
+                            //flag
+                            if (self.firstLoadAllWorkHours) {
+                                self.firstLoadAllWorkHours = false;
+                                if(self.filterLocationAllWorkHours() == 'undefined' && self.filterUnitAllWorkHours == 'undefined' && self.filterBrandGroupAllWorkHours() == 'undefined'
+                                    && self.filterProcessAllWorkHours() == 'undefined' && self.filterGroupAllWorkHours() == 'undefined' ){
+                                    self.searchAllWorkHours();
+                                }
+                            }
+                            self.GetCapacityOfProcessSelectListWorkHours();
+
+                        }
+                    });
+                };
+
+                self.GetCapacityOfProcessSelectListWorkHours = function() {
+                    $.ajax({
+                        url: @Html.BaseUrl("PlanningPlantIndividualCapacity/GetProcessFromCapacityWorkHour"),
+                        type: 'GET',
+                        async: false,
+                        contentType: 'application/json',
+                        data: { locationCode: self.filterLocationAllWorkHours(), unitCode: self.filterUnitAllWorkHours(), brandGroupCode: self.filterBrandGroupAllWorkHours(), groupCode : self.filterGroupAllWorkHours() },
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#filterCapacityOfProcessAllWorkHours').find('option').remove();
+                            $('#filterCapacityOfProcessAllWorkHours').selectpicker('refresh');
+
+                            self.CapacityOfProcessSelectListAllWorkHours(data);
+                            self.filterCapacityOfProcessAllWorkHours($('#filterProcessAllWorkHours :selected').val());
+                        }
+                    });
+                };
+
+                //gridViewAllWorkHours
+                self.newDataAllWorkHours = {
+                    EmployeeID: ko.observableArray([]),
+                    EmployeeNumber: ko.observable(''),
+                    EmployeeName: ko.observable(''),
+                    HoursCapacity3: ko.observable(''),
+                    HoursCapacity5: ko.observable(''),
+                    HoursCapacity6: ko.observable(''),
+                    HoursCapacity7: ko.observable(''),
+                    HoursCapacity8: ko.observable(''),
+                    HoursCapacity9: ko.observable(''),
+                    HoursCapacity10: ko.observable('')
+                };
+
+                self.gridViewAllWorkHours = new app.GridViewModel({
+                    Criteria: {
+                        PageSize: 100,
+                        PageIndex: 1,
+                        SortExpression: "UpdatedDate",
+                        SortOrder: "DESC",
+                        LocationCode: self.filterLocationAllWorkHours,
+                        Unit: self.filterUnitAllWorkHours,
+                        BrandCode: self.filterBrandGroupAllWorkHours,
+                        Process: self.filterProcessAllWorkHours,
+                        Group: self.filterGroupAllWorkHours,
+                        CapacityOfProcess: self.filterCapacityOfProcessAllWorkHours,
+                        Date: self.filterDateAllWorkHours
+                    },
+                    DataSourceUrl: @Html.BaseUrl("PlanningPlantIndividualCapacity/GetPlanningPlantIndividualCapacityWorkHours"),
+                    InlineEdit: true
+                });
+
+                self.gridViewAllWorkHours.applyValidationRules = function(entity) {
+                    self.RemoveNotification();
+                };
+
+                self.gridViewAllWorkHours.resetDefault = function(viewModel) {
+                    viewModel.HoursCapacity3(0);
+                    viewModel.HoursCapacity5(0);
+                    viewModel.HoursCapacity6(0);
+                    viewModel.HoursCapacity7(0);
+                    viewModel.HoursCapacity8(0);
+                    viewModel.HoursCapacity9(0);
+                    viewModel.HoursCapacity10(0);
+                };
+
+                self.saveDataAllWorkHours = function() {
+                    if (self.gridViewAllWorkHours.editingRowIndex() !== -1)
+                        return;
+
+                    var datas = {
+                        //"Parameters": { "LocationCode": self.filterLocationES(), "TransactionDate": self.filterTransactionDateES() },
+                        "new": self.gridViewAllWorkHours.listNewItems(),
+                        "edit": self.gridViewAllWorkHours.listEditItems()
+                    };
+
+                    datas = JSON.stringify(datas);
+
+                    $.ajax({
+                        url: @Html.BaseUrl("PlanningPlantIndividualCapacity/SaveAllPlanningPlantIndividualCapacityWorkHours"),
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: datas,
+                        dataType: 'json',
+                        success: function(data) {
+                            if (data.New) {
+                                $.each(data.New, function(k, value) {
+                                    if (value)
+                                        SKTIS.Helper.ResponseNotification(value, "Save Individual Capacity", value.EmployeeID + " - " + value.EmployeeName);
+                                });
+                            }
+
+                            if (data.Edit) {
+                                $.each(data.Edit, function(k, value) {
+                                    if (value)
+                                        SKTIS.Helper.ResponseNotification(value, "Save Individual Capacity", value.EmployeeID + " - " + value.EmployeeName);
+                                });
+                            }
+                           //self.gridViewAllWorkHours.sort('UpdatedDate', 'DESC');
+                            self.gridViewAllWorkHours.listNewItems.removeAll();
+                            self.gridViewAllWorkHours.listEditItems.removeAll();
+                        }
+                    });
+                };
+
+                self.generateExcelAllWorkHours = function(formElement) {
+                    return true;
+                };
+
+                // Load Data gridViewAllWorkHours
+                self.searchAllWorkHours = function() {
+                    $('.empty-row-message').html('<div class="loader"></div>'); // Reset New and Edit row
+                    // Check whether New or Edit data is existing and not saved to database yet (on Ajax Action)
+                    if (SKTIS.Checker.modifiedDataExistsForAjax([self.gridViewAllWorkHours.listNewItems, self.gridViewAllWorkHours.listEditItems]) == true) {
+                        return;
+                    } else {
+                        self.gridViewAllWorkHours.listNewItems.removeAll();
+                        self.gridViewAllWorkHours.listEditItems.removeAll();
+                    }
+
+                    self.gridViewAllWorkHours.search({}, function(response) {
+                        if (response.status == 'KO') {
+                            SKTIS.Helper.Notification(response.message, 'error');
+                            $('.empty-row-message').html(response.message);
+                        } else if (response.status == 'Empty') {
+
+                            self.RemoveNotification();
+
+                            //SKTIS.Helper.Notification(response.message,'warning');
+                            $('.empty-row-message').html('@HMS.SKTIS.Application.Resources.CommonLabel.lblDataEmpty');
+                        }
+                    });
+
+                    // refresh last updated label
+                    $.ajax({
+                        url: @Html.BaseUrl("PlanningPlantIndividualCapacity/GetLastUpdated"),
+                        type: 'GET',
+                        contentType: 'application/json',
+                        data: {
+                            LocationCode: self.filterLocationAllWorkHours(),
+                            Unit: self.filterUnitAllWorkHours(),
+                            BrandCode: self.filterBrandGroupAllWorkHours(),
+                            Process: self.filterProcessAllWorkHours(),
+                            Group: self.filterGroupAllWorkHours(),
+                            CapacityOfProcess: self.filterCapacityOfProcessAllWorkHours(),
+                            Date: self.filterDateAllWorkHours()
+                        },
+                        dataType: 'json',
+                        success: function(data) {
+                            var datas = JSON.parse(data);
+                            if (datas) {
+                                self.filterLastUpdatedAllWorkHours(datas.UpdatedDate);
+                            }
+
+                        }
+                    });
+                    self.filterLastUpdatedAllWorkHours('');
+                };
+
+
+                // By Reference
+                self.filterLocationByReference = ko.observable('ID21');
+                self.filterUnitByReference = ko.observable('');
+                self.filterBrandByReference = ko.observable('');
+                self.filterProcessByReference = ko.observable('');
+                self.filterGroupByReference = ko.observable('');
+                self.filterWorkHoursByReference = ko.observable('');
+                self.filterDateFromByReference = ko.observable('@Model.DefaultDatePreviousThreeWeeks');
+                self.filterDateToByReference = ko.observable('@Model.DefaultDate');
+                self.filterLastUpdatedByReference = ko.observable('');
+
+                self.onLocationCodeChangeByReference = function() {
+                    async.series([
+                        function(callback) {
+                            self.GetUnitSelectListByReference(callback);
+                        },
+                        function(callback) {
+                            self.GetBrandSelectListByReference(callback);
+                        },
+                        function(callback) {
+                            self.GetProcessSelectListByReference();
+                        }
+                    ]);
+                    //self.GetUnitSelectListByReference(); TODO AJAX
+                    //self.GetBrandSelectListByReference();
+                    //self.GetProcessSelectListByReference();
+                };
+
+                self.onBrandChangeByReference = function() {
+                    self.GetProcessSelectListByReference();
+                }
+
+                self.onProcessChangeByReference = function() {
+                    self.GetGroupSelectListByReference();
+                };
+
+                self.UnitSelectListByReference = ko.observableArray([]);
+                self.GetUnitSelectListByReference = function(cb) {
+                    $.ajax({
+                        url: @Html.BaseUrl("PlanningPlantIndividualCapacity/GetUnitsByLocationCode"),
+                        type: 'GET',
+                        contentType: 'application/json',
+                        data: { locationCode: self.filterLocationByReference() },
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#filterUnitByReference').find('option').remove();
+                            $('#filterUnitByReference').selectpicker('refresh');
+
+                            self.UnitSelectListByReference(data);
+
+                            self.filterUnitByReference($('#filterUnitByReference :selected').val());
+
+                            if (typeof cb == 'function') cb();
+                        }
+                    });
+                };
+
+                self.BrandSelectListByReference = ko.observableArray([]);
+                self.GetBrandSelectListByReference = function(cb) {
+                    var filterLocation = self.filterLocationByReference();
+                    var brandGroupCodeModel = [];
+
+                    $('#filterBrandByReference').find('option').remove();
+                    $('#filterBrandByReference').selectpicker('refresh');
+
+                    $.ajax({
+                        url: @Html.BaseUrl("PlanningPlantIndividualCapacity/GetBrandGroupByLocationCode"),
+                        type: 'GET',
+                        contentType: 'application/json',
+                        data: {
+                            LocationCode: filterLocation
+                        },
+                        dataType: 'json',
+                        success: function(data) {
+                            $.each(data, function(index, value) {
+                                brandGroupCodeModel.push({ "Text": value.Text, "Value": value.Value });
+                            });
+                            self.BrandSelectListByReference(brandGroupCodeModel);
+                            self.filterBrandByReference($('#filterBrandGroupAllWorkHours :selected').val());
+                        }
+                    });
+                    self.BrandSelectListByReference(brandGroupCodeModel);
+                    self.filterBrandByReference($('#filterBrandGroupAllWorkHours :selected').val());
+                    if (typeof cb == 'function') cb();
+                };
+
+                self.ProcessSelectListByReference = ko.observableArray([]);
+                self.GetProcessSelectListByReference = function() {
+                    $.ajax({
+                        url: @Html.BaseUrl("PlanningPlantIndividualCapacity/GetProcessByLocationCodeAndBrandGroup"),
+                        type: 'GET',
+                        contentType: 'application/json',
+                        data: {
+                            locationCode: self.filterLocationByReference(),
+                            brandGroupCode: self.filterBrandByReference()
+                        },
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#filterProcessByReference').find('option').remove();
+                            $('#filterProcessByReference').selectpicker('refresh');
+
+                            self.ProcessSelectListByReference(data);
+                            self.filterProcessByReference($('filterProcessByReference :selected').val());
+
+                            self.GetGroupSelectListByReference();
+                        }
+                    });
+                };
+
+                self.GroupSelectListByReference = ko.observableArray([]);
+                self.GetGroupSelectListByReference = function() {
+                    $.ajax({
+                        url: @Html.BaseUrl("PlanningPlantIndividualCapacity/GetGroupFromPlantProductionGroupByLocationUnitProcess"),
+                        type: 'GET',
+                        contentType: 'application/json',
+                        data: { locationCode: self.filterLocationByReference(), unit: self.filterUnitByReference(), process: self.filterProcessByReference() },
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#filterGroupByReference').find('option').remove();
+                            $('#filterGroupByReference').selectpicker('refresh');
+                            self.GroupSelectListByReference(data);
+
+                            //flag
+                            if (self.firstLoadByReference) {
+                                self.firstLoadByReference = true;
+                                self.searchByReference();
+                            }
+                        }
+                    });
+                };
+
+
+                self.gridViewByReference = new app.GridViewModel({
+                    Criteria: {
+                        PageSize: 10,
+                        PageIndex: 1,
+                        //SortExpression: "EmployeeID",
+                        //SortOrder: "DESC",
+                        SortExpression: "EmployeeNumber",
+                        SortOrder: "ASC",
+                        SortExpression2: "ProductionDate",
+                        SortOrder2: "DESC",
+                        Location: self.filterLocationByReference,
+                        Unit: self.filterUnitByReference,
+                        BrandGroupCode: self.filterBrandByReference,
+                        Process: self.filterProcessByReference,
+                        Group: self.filterGroupByReference,
+                        WorkHours: self.filterWorkHoursByReference,
+                        DateFrom: self.filterDateFromByReference,
+                        DateTo: self.filterDateToByReference
+                    },
+                    DataSourceUrl: @Html.BaseUrl("PlanningPlantIndividualCapacity/GetPlanningPlantIndividualCapacityByReference"),
+                    InlineEdit: true
+                });
+
+                // new data By Reference
+                self.newDataByReference = {
+                    EmployeeID: ko.observable(''),
+                    HoursCapacity: ko.observable(null)
+                };
+
+                self.gridViewByReference.applyValidationRules = function(entity) {
+                    self.RemoveNotification();
+                };
+
+                self.gridViewByReference.resetDefault = function(viewModel) {
+                    viewModel.EmployeeID(null);
+                    viewModel.HoursCapacity(null);
+                };
+
+                self.saveDataAllByReference = function() {
+                    if (self.gridViewByReference.editingRowIndex() !== -1)
+                        return;
+
+                    var datas = {
+                        "Parameters":
+                        {
+                            "Location": self.filterLocationByReference(),
+                            "Unit": self.filterUnitByReference(),
+                            "BrandGroupCode": self.filterBrandByReference(),
+                            "Process": self.filterProcessByReference(),
+                            "Group": self.filterGroupByReference(),
+                            "WorkHours": self.filterWorkHoursByReference()
+                        },
+                        "new": self.gridViewByReference.listNewItems(),
+                        "edit": self.gridViewByReference.listEditItems()
+                    };
+
+                    datas = JSON.stringify(datas);
+
+                    $.ajax({
+                        url: @Html.BaseUrl("PlanningPlantIndividualCapacity/SaveAllPlanningPlantIndividualByReference"),
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: datas,
+                        dataType: 'json',
+                        success: function(data) {
+                            if (data.New) {
+                                $.each(data.New, function(k, value) {
+                                    if (value)
+                                        SKTIS.Helper.ResponseNotification(value, "Save Individual Capacity", value.EmployeeID);
+                                });
+                            }
+
+                            if (data.Edit) {
+                                $.each(data.Edit, function(k, value) {
+                                    if (value)
+                                        SKTIS.Helper.ResponseNotification(value, "Save Individual Capacity", value.EmployeeID);
+                                });
+                            }
+
+                            self.gridViewAllWorkHours.sort('EmployeeID', 'DESC');
+                            self.gridViewAllWorkHours.listNewItems.removeAll();
+                            self.gridViewAllWorkHours.listEditItems.removeAll();
+                            self.gridViewByReference.sort('EmployeeID', 'DESC');
+                            self.gridViewByReference.listNewItems.removeAll();
+                            self.gridViewByReference.listEditItems.removeAll();
+                        }
+                    });
+                };
+
+                self.generateExcelByReference = function(formElement) {
+                    return true;
+                };
+
+                // Load Data gridViewAllWorkHours
+                self.searchByReference = function() {
+                    $('.empty-row-message').html('<div class="loader"></div>'); // Reset New and Edit row
+                    // Check whether New or Edit data is existing and not saved to database yet (on Ajax Action)
+                    if (SKTIS.Checker.modifiedDataExistsForAjax([self.gridViewByReference.listNewItems, self.gridViewByReference.listEditItems]) == true) {
+                        return;
+                    } else {
+                        self.gridViewByReference.listNewItems.removeAll();
+                        self.gridViewByReference.listEditItems.removeAll();
+                    }
+
+                    self.gridViewByReference.search({}, function(response) {
+                        if (response.status == 'KO') {
+
+                            SKTIS.Helper.Notification(response.message, 'error');
+                            $('.empty-row-message').html(response.message);
+                        } else if (response.status == 'Empty') {
+
+                            self.RemoveNotification();
+
+                            //SKTIS.Helper.Notification(response.message,'warning');
+                            $('.empty-row-message').html('@HMS.SKTIS.Application.Resources.CommonLabel.lblDataEmpty');
+                        }
+                        //self.filterWorkHoursByReference($('#basic :selected').val());
+                    });
+
+                    // refresh last updated label
+                    $.ajax({
+                        url: @Html.BaseUrl("PlanningPlantIndividualCapacity/GetLastUpdatedByReference"),
+                        async: false,
+                        cache:false,
+                        type: 'GET',
+                        contentType: 'application/json',
+                        data: {
+                            LocationCode: self.filterLocationByReference(),
+                            Unit: self.filterUnitByReference(),
+                            BrandCode: self.filterBrandByReference(),
+                            Process: self.filterProcessByReference(),
+                            Group: self.filterGroupByReference(),
+                            WorkHours: self.filterWorkHoursByReference(),
+                            DateFrom: self.filterDateFromByReference(),
+                            DateTo: self.filterDateToByReference()
+                        },
+                        dataType: 'json',
+                        success: function(data) {
+                            var datas = JSON.parse(data);
+                            if (datas) {
+                                self.filterLastUpdatedByReference(datas.UpdatedDate);
+                            }
+
+                        }
+                    });
+                    //self.filterLastUpdatedByReference('');
+                };
+
+                self.RemoveNotification = function() {
+                    if ($('#noty_top_layout_container').length > 0) {
+                        $('#noty_top_layout_container').remove();
+                    }
+                };
+
+                // Check whether New or Edit data is existing and not saved to database yet (on Request action)
+                SKTIS.Checker.modifiedDataExists([self.gridViewAllWorkHours.listNewItems, self.gridViewAllWorkHours.listEditItems]);
+
+                self.afterRender = function(options, item)
+                {
+                    if (typeof(item) === 'undefined') return;
+
+                    $(options).attr('title', item.LocationCode);
+                    $(options).attr(
+                        'data-content',
+                        "<span class='text'><span style='width: 35px; display: inline-block;'>"+item.LocationCode+"</span> - "+item.LocationName+"</span>"
+                    );
+                }
+
+                self.ListLocation = ko.observableArray([]);
+                self.getPlantLocationCodes = function(cb){
+                    $.ajax({
+                        url: @Html.BaseUrl("PlanningPlantIndividualCapacity/GetPlantLocationCode"),
+                        type: 'GET',
+                        cache: false,
+                        contentType: 'application/json',
+                        dataType: 'json',
+                        success: function(data) {
+                            var listGroupModel = [];
+                            $.each(data, function (index, value) {
+                                listGroupModel.push({
+                                    LocationCode: value.LocationCode,
+                                    LocationName: value.LocationName,
+                                    LocationCompat: value.LocationCompat
+                                });
+                            });
+                            self.ListLocation(listGroupModel);
+                            if (typeof cb == 'function') cb();
+                        }
+                    });
+                };
+
+                self.init = function() {
+                    //Asynch setting
+                    async.series([
+                        function(callback) {
+                            self.getPlantLocationCodes(callback);
+                        },
+                        function(callback) {
+                            self.onLocationCodeChangeAllWorkHours(callback);
+                        },
+                        function(callback) {
+                            self.onLocationCodeChangeByReference();
+                        }
+                    ]);
+                };
+
+                $(document).ready(function() {
+                    //self.onLocationCodeChangeAllWorkHours(); TODO AJAX
+                    //self.onLocationCodeChangeByReference(); TODO AJAX
+                    self.init();
+                });
+
+                $('#filterDateAllWorkHours').on('dp.change', function(e) {
+                    self.filterDateAllWorkHours('');
+                });
+
+                $('#dtfilterDateFromByReference').on('dp.change', function(e) {
+                    self.filterDateFromByReference('');
+                });
+
+                $('#dtfilterDateToByReference').on('dp.change', function(e) {
+                    self.filterDateToByReferenc('');
+                });
+
+                $('.col-lg-4 .input-group.date input').val('');
+                $('.col-lg-3 .input-group.date input').val('');
+            };
+            ko.applyBindings(new app.EditGrid());
+        }
+        )(app = this.app || {});
+    </script>
+}

@@ -1,0 +1,262 @@
+﻿@using System.Web.Razor.Parser.SyntaxTree
+@using SKTISWebsite.Helper
+@using HMS.SKTIS.Application.Resources
+@using HMS.SKTIS.Application.Resources.Views.News
+@model SKTISWebsite.Models.News.NewsInfoFormModel
+@{ Html.SetPageTitle("News Info Create"); }
+
+@*<div class="form-group odd">
+        <label class="col-lg-2">
+            Location
+        </label>
+        <div class="col-lg-10">
+            <div class="tree">
+                <ul>
+                        @foreach (var data in model.Details.DetailLevel0)
+                        {
+                            <li class="collapsed">
+                                <div class="tree-contain">
+                                    <input type="checkbox" value="@data.LocationCode">
+                                    <span>@data.LocationName</span>
+                                </div>
+                                <ul>
+
+                                @foreach (var datalevel1 in data.Level1Detail)
+                                {
+                                    <li class="collapsed">
+                                        <div class="tree-contain">
+                                            <input type="checkbox" value="@datalevel1.LocationCode">
+                                            <span>@datalevel1.LocationName</span>
+                                        </div>
+                                        <ul>
+                                            @foreach (var datalevel2 in datalevel1.Level2Detail)
+                                            {
+                                                if (datalevel2.Level3Detail.Count > 0)
+                                                {
+                                                    <li class="collapsed">
+                                                        <div class="tree-contain">
+                                                            <input type="checkbox" value="@datalevel2.LocationCode">
+                                                            <span>@datalevel2.LocationName</span>
+                                                        </div>
+                                                        <ul>
+                                                            @foreach (var datalevel3 in datalevel2.Level3Detail)
+                                                            {
+                                                                <li>
+                                                                    <div class="tree-contain">
+                                                                        <input type="checkbox" name="locationCode" value="@datalevel3.LocationCode">
+                                                                        <span>@datalevel3.LocationName</span>
+                                                                    </div>
+                                                                </li>
+                                                            }
+                                                        </ul>
+                                                    </li>
+                                                }
+                                                else {
+                                                    <li>
+                                                        <div class="tree-contain">
+                                                            <input type="checkbox" name="locationCode" value="@datalevel2.LocationCode">
+                                                            <span>@datalevel2.LocationName</span>
+                                                        </div>
+                                                    </li>
+                                                }
+                                            }
+                                        </ul>
+                                    </li>
+                                }
+                                </ul>
+                            </li>
+                        }
+                </ul>
+            </div>
+        </div>
+    </div>*@
+<div class="col-lg-12">
+@using (Html.BeginForm("Create", "News", null, FormMethod.Post, new { @class = "form-excise", role = "form", enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(false)
+    <div class="col-lg-12">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="action-btn">
+                    <input type="submit" class="btn btn-primary" value="Save"/>
+                    @Html.ActionLink("Cancel", "Index", null, new {@class = "btn btn-primary"})
+                </div>
+            </div>
+        </div>
+        <div class="form-content">
+            <div class="box">
+                <div class="box-content">
+                    @*<div class="form-group odd">
+                        <label class="col-lg-2">
+                            @News.lblLocation
+                        </label>
+                        <div class="col-lg-10">
+                            <div id="locationtree"></div>
+                        </div>
+                    </div>*@
+                    <div class="form-group">
+                        <label class="col-lg-2">
+                            @News.lblTitleID
+                        </label>
+                        <div class="col-lg-10">
+                            @Html.EditorFor(model => model.Details.TitleID, new {htmlAttributes = new {@class = "form-control"}})
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-lg-2">
+                            @News.lblTitleEN
+                        </label>
+                        <div class="col-lg-10">
+                            @Html.EditorFor(model => model.Details.TitleEN, new {htmlAttributes = new {@class = "form-control"}})
+                        </div>
+                    </div>
+                    <div class="form-group odd">
+                        <label class="col-lg-2">
+                            @News.lblImage
+                        </label>
+                        <div class="col-lg-10">
+                            <div class="input-group">
+                                @Html.TextBoxFor(model => model.ImageUpload, new {@class = "filestyle", type = "file", @data_buttonname = "btn-primary", @data_icon = "false"})
+                                <span class="small">(* Best image resolution 718px x 352px)</span>
+                            </div>
+                            @*@if (!String.IsNullOrEmpty(model.Details.Image))
+                                {
+                                    <a href='@Url.Content(model.Details.Image)' target="_blank"><span class="glyphicon glyphicon-picture"></span> view</a>
+                                }*@
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-lg-2">
+                            @News.lblShortDescID
+                        </label>
+                        <div class="col-lg-10">
+                            @Html.TextAreaFor(model => model.Details.ShortDescriptionID, new {@class = "form-control sd"})
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-lg-2">
+                            @News.lblShortDescEN
+                        </label>
+                        <div class="col-lg-10">
+                            @Html.TextAreaFor(model => model.Details.ShortDescriptionEN, new {@class = "form-control sd"})
+                        </div>
+                    </div>
+                    <div class="form-group odd">
+                        <label class="col-lg-2">
+                            @News.lblContentID
+                        </label>
+                        <div class="col-lg-10">
+                            @Html.EditorFor(model => model.Details.ContentID)
+                        </div>
+                    </div>
+                    <div class="form-group odd">
+                        <label class="col-lg-2">
+                            @News.lblContentEN
+                        </label>
+                        <div class="col-lg-10">
+                            @Html.EditorFor(model => model.Details.ContentEN)
+                        </div>
+                    </div>
+                    @*<div class="form-group">
+                        <label class="col-lg-2">
+                            @News.lblSlider
+                        </label>
+                        <div class="col-lg-10">
+                            @Html.CheckBoxFor(model => model.Details.IsSlider)
+                        </div>
+                    </div>
+                    <div class="form-group odd">
+                        <label class="col-lg-2">
+                            @News.lblInformatips
+                        </label>
+                        <div class="col-lg-10">
+                            @Html.CheckBoxFor(model => model.Details.IsInformatips)
+                        </div>
+                    </div>*@
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="action-btn">
+                    <input type="submit" class="btn btn-primary" value="Save"/>
+                    @Html.ActionLink("Cancel", "Index", null, new {@class = "btn btn-primary"})
+                </div>
+            </div>
+        </div>
+    </div>
+}
+    </div>
+</div>
+@section Scripts
+{
+    <link rel="stylesheet" href="~/Content/css/vendors/jquery.tree.css" media="screen">
+    <script src="~/Scripts/jquery-ui.js"></script>
+    <script src="~/Scripts/jquery.tree.js" type="text/javascript"></script>
+    <script type="text/javascript">
+    if("@Model.message" != ""){
+        if (@Model.success.ToString().ToLower() == true)
+            SKTIS.Helper.ResponseNotification("", "@Model.message", "");
+        else
+            SKTIS.Helper.Notification("@Model.message", 'error');
+    }
+
+    $(function () {
+        //window.URL = window.URL || window.webkitURL;
+        //$("form").submit( function( e ) {
+        //    var form = this;
+        //    e.preventDefault(); //Stop the submit for now
+        //    //Replace with your selector to find the file input in your form
+        //    var fileInput = $(this).find("input[type=file]")[0],
+        //        file = fileInput.files && fileInput.files[0];
+
+        //    if( file ) {
+        //        var img = new Image();
+
+        //        img.src = window.URL.createObjectURL( file );
+
+        //        img.onload = function() {
+        //            var width = img.naturalWidth,
+        //                height = img.naturalHeight;
+
+        //            window.URL.revokeObjectURL( img.src );
+
+        //            if(width < height){
+        //                // with minimum ratio 1.5 : 1 and minimum resolution 660px x 400
+        //                SKTIS.Helper.Notification('Please upload landscape image.', 'error');
+        //                return false;
+        //            }
+
+        //            if( width >= 660 && height >= 400 ) {
+        //                form.submit()
+        //            }
+        //            else {
+        //                SKTIS.Helper.Notification('Please upload minimum image resolution 660px x 400px.', 'error');
+        //            }
+        //        };
+        //    }
+        //    else { //No file was input or browser doesn't support client side reading
+        //        SKTIS.Helper.Notification("Image Can't be Empty", 'error');
+        //        return false;
+        //    }
+
+        //});
+
+        $('div.tree').tree({
+            collapseAll: true,
+            collapseUiIcon: 'ui-icon-plusthick',
+            expandUiIcon: 'ui-icon-minusthick',
+            onCheck: {
+                ancestors: 'checkIfFull',
+                descendants: 'check'
+            },
+            onUncheck: {
+                ancestors: 'uncheck'
+            },
+            selectable: false
+        });
+    });
+    </script>
+}
+

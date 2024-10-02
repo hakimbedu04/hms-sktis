@@ -1,0 +1,1094 @@
+﻿@using HMS.SKTIS.Application.Resources
+@using SKTISWebsite.Helper
+@model SKTISWebsite.Models.EquipmentFulfillment.InitEquipmentFulfillment
+
+@{ Html.SetPageTitle(" Equipment Fulfillment"); }
+<div class="col-lg-12" data-bind="with: gridView">
+    <div class="col-lg-6">
+        <div class="row">
+            <label class="form-label col-lg-4">
+                Request Location
+            </label>
+            <div class="col-lg-2">
+                @*@Html.DropDownListFor(m => m.FilterLocationCode, Model.FilterLocation,
+                    new
+                    {
+                        @class = "selectpicker show-tick form-control",
+                        data_live_search = "true",
+                        data_bind = "selectPicker: $root.filterLocation, event : { change : $root.GetLocationNameFilter }"
+                    })*@
+
+                @*@Html.DropDownList("FilterLocationCode", new SelectList(Model.FilterLocation, "LocationCode", "LocationCode"),
+                new
+                {
+                    @class = "selectpicker show-tick form-control",
+                    id = "FilterLocationCode",
+                    data_live_search = "true",
+                    data_bind = "selectPicker: $root.filterLocation, event : { change : $root.GetLocationNameFilter }",
+                    data_size = "15"
+                })*@
+
+                <select id="filterLocation"
+                        class="selectpicker show-tick form-control"
+                        data-live-search="true"
+                        data-bind="enable: !$root.isBusy(), selectPicker:$root.filterLocation, optionsText: 'LocationCode', optionsValue : 'LocationCode', optionsAfterRender: locationDesc, selectPickerOptions: { optionsArray: $root.menuItemLocations }, event : { change : $root.onLocationFilterChange }"></select>
+
+            </div>
+            <div class="col-lg-4">
+                <input type="text" class="form-control" id="spLocationNameFilter" data-bind="value:$root.filterLocationDesc" readonly>
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-4">
+                Request Date
+            </label>
+            <div class="col-lg-6">
+                <div id="dtpRequestDate" class='input-group date time' data-bind="dateTimePicker: $root.filterRequestDate, value:$root.filterRequestDate, dateTimePickerOptions: {widgetPositioning: {vertical: 'bottom'}, ignoreReadonly: true, defaultDate: new Date() }, event: { change: $root.onDateRequestChange }">
+                    <input type='text' class="form-control" readonly data-bind="enable: !$root.isBusy()" />
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-4">
+                Request No.
+            </label>
+            <div class="col-lg-6">
+                <select id="filterRequestNumber" class="selectpicker show-tick form-control" data-live-search="true"
+                        data-bind="enable: !$root.isBusy(), selectPicker: $root.newData.filterRequestNumber, optionsText: 'Value', optionsValue : 'Text',
+                                   selectPickerOptions: { optionsArray: $root.filterRequestNumberSelectList }, event : { change : $root.onRequestNumberChange }"></select>
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-4">
+                Requestor
+            </label>
+            <div class="col-lg-6">
+                <select id="FilterRequestor" class="selectpicker show-tick form-control" data-live-search="true"
+                        data-bind="enable: !$root.isBusy(), selectPicker: $root.filterRequestor, optionsText: 'Value', optionsValue : 'Text',
+                                   selectPickerOptions: { optionsArray: $root.requestorSelectList }, event : { change : $root.ResetInput }"></select>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="action-btn">
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.View.ToString()))
+                {
+                    <button type="button" class="btn btn-primary" data-bind="enable: !$root.isBusy(), click: $root.search">View</button>
+                }
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.Save.ToString()))
+                {
+                    <button type="button" class="btn btn-primary" data-bind="enable: !$root.isBusy(), click: $root.save">Save</button>
+                }
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.Excel.ToString())) { 
+                    using (Html.BeginForm("GenerateExcel", "EquipmentFulfillment", FormMethod.Post, new { @data_bind = "submit: $root.generateExcel" }))
+                    {
+                        <input type="hidden" name="reqLocation" />
+                        <input type="hidden" name="reqDate" />
+                        <input type="hidden" name="reqNo" />
+                        <input type="hidden" name="requestor" />
+                        <button type="submit" class="btn btn-primary" data-bind="enable: !$root.isBusy()">@CommonLabel.btnExcel</button>
+                    }
+                }
+                @Html.Partial("GridViewPageSizeSelector")
+            </div>
+        </div>
+    </div>
+    <div class="table-overflow">
+        <table class="table table-striped">
+            <thead>
+                <tr class="head">
+                    <th rowspan="2">FulFillment Date</th>
+                    <th rowspan="2">Item Code</th>
+                    <th rowspan="2">Item Description</th>
+                    <th colspan="3">Current Stock</th>
+                    <th rowspan="2">Requested Quantity</th>
+                    <th rowspan="2" class="widthsmall">Approved Quantity</th>
+                    <th rowspan="2">Request to Others Quantity</th>
+                    <th rowspan="2">Purchase Quantity</th>
+                    <th rowspan="2">PR/PO No.</th>
+                </tr>
+                <tr class="head">
+                    <th>Ready To Use</th>
+                    <th>On Use</th>
+                    <th>On Repair</th>
+                </tr>
+                @*<tr class="insertRow" data-bind="click: cancelInline.bind(),inlineAddProccess:[$data, $root.newData]">
+                    <th>
+                        <div id="insertFulfillmentDate" class='input-group date time insidetable' data-bind="dateTimePicker: $root.newData.FulfillmentDate, value:$root.newData.FulfillmentDate, dateTimePickerOptions: {widgetPositioning: {vertical: 'bottom'}, showClear: true, ignoreReadonly: true, useCurrent: false, appendToBody: true }">
+                            <input type='text' class="form-control" readonly="readonly" />
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                        </div>
+                    </th>
+                    <th>
+                        <select id="ddlItemCodeSourceSelectList" class="selectpicker show-tick form-control" data-live-search="true"
+                                data-bind="selectPicker: $root.newData.ItemCode, value: $root.newData.ItemCode, optionsText: 'ItemCompact', optionsValue : 'Value', selectPickerOptions: { optionsArray: $root.ItemCodeSourceSelectList, container: 'body' }, optionsAfterRender : $root.afterRender, event : { change : $root.GetItemRequestDetail}"></select>
+
+                    </th>
+                    <th>
+                        <span data-bind="text:$root.newData.ItemDescription"></span>
+                    </th>
+                    <th>
+                        <span data-bind="text:$root.newData.ReadyToUse"></span>
+                    </th>
+                    <th>
+                        <span data-bind="text:$root.newData.OnUse"></span>
+                    </th>
+                    <th>
+                        <span data-bind="text:$root.newData.OnRepair"></span>
+                    </th>
+                    <th>
+                        <span data-bind="text:$root.newData.RequestedQuantity"></span>
+                    </th>
+                    <th><input data-bind="value:$root.newData.ApprovedQuantity, valueUpdate: 'afterkeydown'" class="form-control transparent" /></th>
+                    <th>
+                        <span data-bind="hideWhenPrimaryFieldFilled:[$root.newData.FulfillmentDate, $root.newData.ItemCode]">
+                            <a data-target="#eqrequest" data-bind="text:$root.newData.RequestToOthersQuantity, click:$root.ShowPopupInsert"></a>
+                        </span>
+                    </th>
+                    <th><span data-bind="text:$root.computedPurchaseQty"></span></th>
+                    <th>
+                        <input data-bind="value:$root.newData.PurchaseNumber, valueUpdate: 'afterkeydown'" class="form-control transparent" />
+                    </th>
+                </tr>*@
+            </thead>
+            <tbody data-bind="foreach: listDataItems">
+                <tr data-bind="if: ($parent.editingRowIndex() !== $index()),
+                                   click: $parent.editInline3.bind($data,$index())">
+                    <td class="current"><span data-bind="text:$data.FulfillmentDate"></span></td>
+                    <td><span data-bind="text:$data.ItemCode"></span></td>
+                    <td><span data-bind="text:$data.ItemDescription"></span></td>
+                    <td><span data-bind="decimal:$data.ReadyToUse"></span></td>
+                    <td><span data-bind="decimal:$data.OnUse"></span></td>
+                    <td><span data-bind="decimal:$data.OnRepair"></span></td>
+                    <td><span data-bind="decimal:$data.RequestedQuantity"></span></td>
+                    <td class="widthsmall current"><span data-bind="decimal:$data.ApprovedQuantity"></span></td>
+                    <td>
+                        <span data-bind="text:$data.RequestToOthersQuantity"></span>
+                    </td>
+                    <td><span data-bind="decimal:$data.PurchaseQty"></span></td>
+                    <td class="current"><span data-bind="text:$data.PurchaseNumber"></span></td>
+                </tr>
+                <tr data-bind="validationOptions: {insertMessages: false, showTooltip:true, decorateInputElement: true, errorElementClass: 'input-error'}, inlineProccess:[$parent,$data],
+                                   if:($parent.editingRowIndex() === $index()),
+                                   click: $parent.selectRow.bind($data, $index())">
+                    @*<td><span data-bind="text:$data.FulfillmentDate"></span></td>*@
+                    <td class="current">
+                        <div class='input-group date time insidetable' data-bind="dateTimePickerClick: $data.FulfillmentDate, value:$data.FulfillmentDate, dateTimePickerOptions: {widgetPositioning: {vertical: 'bottom'}, ignoreReadonly: true, appendToBody: true, defaultDate: $root.filterRequestDate()}">
+                            @*<div class='input-group date time insidetable' data-bind="dateTimePickerClick: $data.FulfillmentDate, value:$data.FulfillmentDate, dateTimePickerOptions: {widgetPositioning: {vertical: 'bottom'}, ignoreReadonly: true, appendToBody: true}, defaultRequestDate: moment('01/01/2016','DD/MM/YYYY').format('dd/MM/YYYY')">*@
+                            @*<div class='input-group date time insidetable' data-bind="dateTimePicker: $data.FulfillmentDate, value:$data.FulfillmentDate, dateTimePickerOptions: {widgetPositioning: {vertical: 'bottom'}, ignoreReadonly: true, appendToBody: true}">*@
+                            <input type='text' class="form-control" readonly="readonly" />
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                        </div>
+                    </td>
+                    <td><span data-bind="text:$data.ItemCode"></span></td>
+                    <td><span data-bind="text:$data.ItemDescription"></span></td>
+                    <td><span data-bind="decimal:$data.ReadyToUse"></span></td>
+                    <td><span data-bind="decimal:$data.OnUse"></span></td>
+                    <td><span data-bind="decimal:$data.OnRepair"></span></td>
+                    <td><span data-bind="decimal:$data.RequestedQuantity"></span></td>
+                    <td class="widthsmall current">
+                        <input data-bind="value:$data.ApprovedQuantity, valueUpdate: 'afterkeydown'" class="form-control transparent" type="number" data-sktis-validation="number" min="1" />
+                    </td>
+                    <td>
+                        <a data-toggle="modal" data-target="#eqrequestUpdate" data-bind="click:$root.ShowPopupEdit.bind($parent,$data,$index())">
+                            <span data-bind="text:$data.RequestToOthersQuantity"></span>
+                        </a>
+                    </td>
+                    <td><span data-bind="decimal:$data.PurchaseQty"></span></td>
+                    <td class="current">
+                        <input data-bind="value:$data.PurchaseNumber, valueUpdate: 'afterkeydown'" class="form-control transparent" />
+                    </td>
+                </tr>
+            </tbody>
+            <tbody data-bind="visible: !listDataItems().length">
+                <tr>
+                    <td colspan="11" class="empty-row-message"><div class="loader"></div></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div data-bind="if: (listDataItems() != null && listDataItems().length !== 0)">
+        @Html.Partial("GridViewFooter")
+    </div>
+</div>
+
+<!-- Modal Insert -->
+<div class="modal fade" id="eqrequest" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Request To Others Quantity Detail</h4>
+            </div>
+            <div class="modal-body">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Location</th>
+                            <th>Qty Ready on Use</th>
+                            <th>Qty</th>
+                            <th style="display: none">FulFillment Date</th>
+                        </tr>
+                    </thead>
+                    <tbody data-bind='foreach: RequestToOthersQuantityDetails'>
+                        <tr>
+                            <td><span data-bind="text: LocationCode"></span></td>
+                            <td class="right"><span data-bind="text: EndingStock"></span></td>
+                            <td class="current"><input class="form-control transparent right" data-bind="value: Quantity" type="number" data-sktis-validation="number" min="1"></td>
+                            <td style="display: none"><span data-bind="text: FulfillmentDate"></span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" data-bind="click:$root.saveDataItemDestination">Save</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+<!-- Modal End -->
+<!-- Modal Update -->
+<div class="modal fade" id="eqrequestUpdate" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Request To Others Quantity Detail</h4>
+            </div>
+            <div class="modal-body">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Location</th>
+                            <th>Qty Ready on Use</th>
+                            <th>Qty</th>
+                            <th style="display: none">FulFillment Date</th>
+                        </tr>
+                    </thead>
+                    <tbody data-bind='foreach: RequestToOthersQuantityDetails'>
+                        <tr>
+                            <td><span data-bind="text: LocationCode"></span></td>
+                            <td class="right"><span data-bind="text: EndingStock"></span></td>
+                            <td class="current"><input class="form-control transparent right" data-bind="value: Quantity" type="number" data-sktis-validation="number" min="1"></td>
+                            <td style="display: none"><span data-bind="text: FulfillmentDate"></span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" data-bind="click:$root.saveDataItemDestinationEdit">Save</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Modal End -->
+@section Scripts
+{
+    <script src="~/Scripts/app/globalfunctions.js" type="text/javascript"></script>
+    <script src="~/Scripts/common/app.GridViewModel.js" type="text/javascript"></script>
+    <script type="text/javascript">
+
+    (function(app) {
+        app.EditGrid = function() {
+            var self = this;
+
+            self.firstInitFromUrl = ko.observable(false);
+            self.itemLocations = @Html.Raw(Json.Encode(@Model.LocationDescs));
+            self.menuItemLocations = ko.observableArray(@Html.Raw(Json.Encode(@Model.FilterLocation)));
+            //self.filterLocation = ko.observable(self.menuItemLocations()[0].LocationCode);
+
+            self.masterItems = @Html.Raw(Json.Encode(@Model.ItemsList));
+            self.isLoading = ko.observable(true);
+            self.isFirstLoad = ko.observable(true);
+            self.spLocationNameFilter = ko.observable();
+            // description : detail popup observable
+            self.DetailValue = ko.observableArray([]);
+            //self.RequestToOtherQuantityDetails = ko.observableArray([]);
+
+            //================= busy button state ================//
+            self.isBusy = ko.observable(true);
+
+            $(document).ajaxComplete(function () {
+                if ($.active <= 1) {
+                    self.isBusy(false);
+                }
+            });
+
+            $(document).ajaxStart(function () {
+                if (!self.isBusy()) self.isBusy(true);
+            });
+            //================= busy button state ================//
+            
+            // description : filter
+            if(self.firstInitFromUrl()){
+                self.filterLocation('@Model.Param1Locationcode');
+                self.filterRequestDate(moment('@Model.Param2Date','DD/MM/YYYY').format("DD/MM/YYYY"));
+            }else{
+                self.filterLocation = ko.observable(self.menuItemLocations()[0].LocationCode);
+                self.filterRequestDate = ko.observable(moment().format("DD/MM/YYYY"));
+            }
+            
+            self.filterLocationDesc = ko.observable('');
+            
+            self.todayDate = ko.observable(moment().format("DD/MM/YYYY"));
+            self.filterRequestNumber = ko.observable('');
+            self.filterRequestor = ko.observable();
+            self.defaultRequestor = '@Model.DefaultRequestor';
+
+            self.onLocationFilterChange = function() {
+                if (self.isLoading() && self.isFirstLoad()) return;
+
+                self.isLoading(true);
+
+                async.series([
+                    function(cb) {
+                        self.getDefaultLocationDescription(cb);
+                    },
+                    function(cb) {
+                        self.getRequestNumberSelectList(cb);
+                    },
+                    function(cb) {
+                        self.GetRequestor(cb);
+                    }
+                ], function() {
+                    self.isLoading(false);
+                });
+            };
+
+            self.onDateRequestChange = function() {
+                if (self.isLoading() && self.isFirstLoad()) return;
+
+                self.isLoading(true);
+
+                async.series([
+                    function(cb) {
+                        self.getRequestNumberSelectList(cb);
+                    },
+                    function(cb) {
+                        self.GetRequestor(cb);
+                    }
+                ], function() {
+                    self.isLoading(false);
+                    //$("#fulfilEdit").val(self.filterRequestDate);
+                });
+            };
+
+            self.onRequestNumberChange = function() {
+                if (self.isLoading() && self.isFirstLoad()) return;
+
+                self.isLoading(true);
+
+                async.series([
+                    function(cb) {
+                        self.GetRequestor(cb);
+                    }
+                ], function() {
+                    self.isLoading(false);
+                });
+            };
+
+            self.editIndexRow = ko.observable(0);
+
+            self.getDefaultLocationDescription = function(cb) {
+                self.menuItemLocations().map(function(v) {
+                    if (typeof v.LocationCode !== 'undefined' && v.LocationCode == self.filterLocation()) {
+                        self.filterLocationDesc(v.LocationName);
+                        if (typeof cb != 'undefined') cb();
+                    }
+                });
+            };
+
+            self.afterRender = function(options, item)
+            {
+                if (typeof(item) === 'undefined') return;
+
+                $(options).attr('title', item.Text);
+            }
+
+            self.dateLoaded = false;
+            self.requestorSelectList = ko.observableArray([]);
+            self.GetRequestor = function(cb) {
+                var param = {
+                    requestNumber: self.filterRequestNumber()
+                };
+
+                $('#FilterRequestor').find('option').remove();
+                $('#FilterRequestor').selectpicker('refresh');
+                $.ajax({
+                    url: @Html.BaseUrl("EquipmentFulfillment/GetRequestorByRequestNumber"),
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(param),
+                    dataType: 'json',
+                    cache: false,
+                    success: function(data) {
+                        var found = false;
+                        var listModel = [];
+                        var fallbackDefault = '';
+                        $.each(data, function(index, value) {
+                            //get the first element to use if no default requestor found
+                            if (index === 0) {
+                                fallbackDefault = value;
+                            }
+                            if (value === self.defaultRequestor) {
+                                found = true;
+                            }
+                            if (found === false) {
+                                //self.filterRequestor(fallbackDefault);
+                            }
+                            listModel.push({ "Text": value, "Value": value });
+                        });
+                        self.requestorSelectList(listModel);
+                        //self.filterRequestor(listModel[0]);
+                    }
+                }).done(function() {
+                    if (typeof cb != 'undefined') cb();
+                });
+            }
+
+            self.filterRequestNumberSelectList = ko.observableArray([]);
+            self.getRequestNumberSelectList = function(cb) {
+                var param = {
+                    locationCode: self.filterLocation(),
+                    requestDate: self.filterRequestDate()
+                };
+
+                $.ajax({
+                    url: @Html.BaseUrl("EquipmentFulfillment/GetRequestNumberByLocationCodeAndRequestDate"),
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(param),
+                    dataType: 'json',
+                    cache: false,
+                    success: function(data) {
+                        $('#filterRequestNumber').find('option').remove();
+                        self.filterRequestNumberSelectList(data);
+                        $('#filterRequestNumber').selectpicker('refresh');
+
+                        if (data.length)
+                            self.filterRequestNumber(data[0].Value);
+                        else
+                            self.filterRequestNumber('');
+                    }
+                }).done(function() {
+                    if (typeof cb != 'undefined') cb();
+                });
+            };
+
+            self.ResetInput = function() {
+                self.gridView.resetDefault(self.newData);
+            }
+
+            // description : chaining dropdown
+            self.ItemCodeSourceSelectList = ko.observableArray([]);
+            self.getItemCodeSourceSelectList = function(reqNo) {
+                $.ajax({
+                    url: @Html.BaseUrl("EquipmentFulfillment/GetItemCodeFromEquipmentRequestByRequestNumber"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: { requestNumber: reqNo },
+                    dataType: 'json',
+                    cache: false,
+                    success: function(data) {
+                        //console.log(data);
+                        var newData = [];
+                        for (var j = 0; j < data.length; j++) {
+                            for (var i = 0; i < self.masterItems.length; i++) {
+                                if (self.masterItems[i].ItemCode == data[j].Value) {
+                                    newData.push({
+                                        Text: self.masterItems[i].ItemCode,
+                                        Value: self.masterItems[i].Value,
+                                        ItemDescription: self.masterItems[i].ItemDescription,
+                                        ItemCompact: self.masterItems[i].ItemDescription + ' - ' + self.masterItems[i].ItemCode,
+                                        UOM: self.masterItems[i].UOM,
+                                        Disabled:data[j].Disabled,
+                                        Group:data[j].Group,
+                                        Selected:data[j].Selected,
+                                        Text:data[j].Text,
+                                        Value:data[j].Value,
+
+                                    });
+                                    break;
+                                }
+                            }
+                        }
+                        //sorting
+                        for (var j = 0; j < newData.length; j++) {
+                            for (var i = j; i < newData.length; i++) {
+                                if (newData[i].ItemDescription<newData[j].ItemDescription){
+                                    var temp = newData[i];
+                                    newData[i] = newData[j];
+                                    newData[j] = temp;
+                                }
+
+                            }
+                        }
+                        $('#ddlItemCodeSourceSelectList').find('option').remove();
+                        $('#ddlItemCodeSourceSelectList').selectpicker('refresh');
+                        //console.log(newData);
+                        self.ItemCodeSourceSelectList(newData);
+
+
+                    }
+                });
+            };
+
+            self.GetItemRequestDetail = function() {
+                $.ajax({
+                    url: @Html.BaseUrl("EquipmentFulfillment/GetMaintenanceInventory"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: {
+                        LocationCode: self.filterLocation(),
+                        RequestDate: self.filterRequestDate(),
+                        RequestNumber: self.filterRequestNumber(),
+                        Requestor: self.filterRequestor(),
+                        ItemCode: self.newData.ItemCode()
+                    },
+                    dataType: 'json',
+                    cache: false,
+                    success: function(data) {
+                        //console.log(data);
+                        self.newData.ItemDescription(data.ItemDescription);
+                        self.newData.ReadyToUse(data.ReadyToUse);
+                        self.newData.OnUse(data.OnUse);
+                        self.newData.OnRepair(data.OnRepair);
+                        self.newData.RequestedQuantity(data.RequestedQuantity);
+                    }
+                });
+                //alert(self.newData.ItemCode());
+                //for (var i = 0; i < self.equipmentRequestList.length; i++) {
+                //    if (self.equipmentRequestList[i].RequestDate == self.filterRequestDate()
+                //        && self.equipmentRequestList[i].ItemCode == self.newData.ItemCode()
+                //        && self.equipmentRequestList[i].LocationCode == self.filterLocation()
+                //        && self.equipmentRequestList[i].RequestNumber == $('#filterRequestNumber').val()) {
+
+                //        self.newData.ItemDescription(self.equipmentRequestList[i].ItemDescription);
+                //        self.newData.ReadyToUse(self.equipmentRequestList[i].ReadyToUse);
+                //        self.newData.OnUse(self.equipmentRequestList[i].OnUse);
+                //        self.newData.OnRepair(self.equipmentRequestList[i].OnRepair);
+                //        self.newData.RequestedQuantity(self.equipmentRequestList[i].TotalQuantity);
+
+
+
+
+
+                //    }
+                //}
+            };
+
+            self.newData = {
+                FulfillmentDate: ko.observable(''),
+                ItemCode: ko.observable(''),
+                ItemDescription: ko.observable(''),
+                ReadyToUse: ko.observable(''),
+                OnUse: ko.observable(''),
+                OnRepair: ko.observable(''),
+                RequestedQuantity: ko.observable(''),
+                ApprovedQuantity: ko.observable(0),
+                RequestToOthersQuantity: ko.observable(0),
+                PurchaseQty: self.computedPurchaseQty,
+                PurchaseNumber: ko.observable(''),
+                RequestToOthersQuantityDetails: ko.observableArray([])
+            };
+
+            self.computedPurchaseQty = ko.computed({
+                read: function() {
+                    var value = parseFloat(self.newData.ApprovedQuantity()) - parseFloat(self.newData.RequestToOthersQuantity());
+                    //console.log(value);
+                    return isNaN(value) ? 0 : value;
+                },
+                write: function(value) {
+                    //update your self.chosenAge().population value here
+                },
+                owner: this
+            });
+
+            self.RequestToOthersQuantityDetails = ko.observableArray([]);
+            self.ShowPopupInsert = function() {
+                $('div').attr("style", "position:;");
+                self.GetDataFromOldOrAjax(self.newData.FulfillmentDate(), self.newData.ItemCode(), false);
+                $("#eqrequest").modal('show');
+            };
+
+            self.ShowPopupEdit = function(event, index) {
+                self.GetDataFromOldOrAjax(event.FulfillmentDate(), event.ItemCode(), true);
+                self.editIndexRow(index);
+                //console.log(index);
+            };
+
+            self.GetDataFromOldOrAjax = function(FulfillmentDate, itemCodeSource, isUpdate) {
+                //console.log(self.DetailValue());
+                self.RequestToOthersQuantityDetails([]);
+                var list = [];
+                $.each(self.DetailValue(), function(index, value) {
+                    if (value.FulfillmentDate == FulfillmentDate && value.ItemCode == itemCodeSource) {
+                        $.each(value.Items, function(i, val) {
+                            list.push({
+                                "ItemCode": val.ItemCode,
+                                "LocationCode": val.LocationCode,
+                                "EndingStock": val.EndingStock,
+                                "Quantity": val.Quantity,
+                                "FulfillmentDate": FulfillmentDate
+                            });
+                        });
+                    }
+                });
+                //console.log(list.length );
+                if (list.length > 0){
+                    self.RequestToOthersQuantityDetails(list);
+                }
+                else
+                    self.GetRequestToOthersQuantityDetails(FulfillmentDate, itemCodeSource, isUpdate);
+            };
+
+            self.GetRequestToOthersQuantityDetails = function(FulfillmentDate, itemCode, isUpdate) {
+                $.ajax({
+                    url: @Html.BaseUrl("EquipmentFulfillment/GetRequestToOthersQuantityDetail"),
+                    type: "GET",
+                    data: { itemCode: itemCode, fulfillmentDate: FulfillmentDate },
+                    dataType: "json",
+                    traditional: true,
+                    contentType: "application/json; charset=utf-8",
+                    success: function(data) {
+                        var list = [];
+                        $.each(data, function(index, val) {
+                            if(self.filterLocation() != val.LocationCode){
+                                list.push({
+                                    "ItemCode": val.ItemCode,
+                                    "LocationCode": val.LocationCode,
+                                    "EndingStock": val.EndingStock,
+                                    "Quantity": val.Quantity,
+                                    "FulfillmentDate": FulfillmentDate
+                                });
+                            }
+
+                        });
+
+                        if(isUpdate){
+                            self.GetQtyDetailEdit(FulfillmentDate, list);
+                        }else{
+                            self.RequestToOthersQuantityDetails(list);
+                        }
+                    }
+                });
+            };
+
+            // todo get edit detail
+            self.GetQtyDetailEdit = function(FulfillmentDate, list) {
+                $.ajax({
+                    url: @Html.BaseUrl("EquipmentFulfillment/GetQtyMntcRequestToLocation"),
+                    type: "POST",
+                    data: JSON.stringify({ requestNumber: self.filterRequestNumber(), fulfillmentDate: FulfillmentDate }),
+                    dataType: "json",
+                    traditional: true,
+                    contentType: "application/json; charset=utf-8",
+                    success: function(data) {
+                        //console.log(data);
+                        $.each(data, function(index, val) {
+                            $.each(list, function(i, v){
+                                if(v.LocationCode == val.LocationCode){
+                                    //console.log(v.LocationCode + ' ' + val.LocationCode);
+                                    list[i].Quantity = val.QtyFromLocation;
+                                    //console.log(v.Quantity + ' = ' + list[i].Quantity);
+                                }
+                            });
+                        });
+                        //console.log(list);
+                        self.RequestToOthersQuantityDetails(list);
+                    }
+                });
+            };
+
+            //description: save detail
+            self.saveDataItemDestination = function() {
+                self.newData.RequestToOthersQuantityDetails(self.RequestToOthersQuantityDetails());
+                var totalQty = 0;
+                var detailValue = [];
+                var valueDetail = [];
+                var list = [];
+                var ItemCode = "";
+                var FulfillmentDate = "";
+                $.each(self.RequestToOthersQuantityDetails(), function(index, value) {
+                    if (value.Quantity == '') {
+                        value.Quantity = null;
+                    } else {
+                        value.Quantity = parseInt(value.Quantity);
+                    }
+                    valueDetail = {
+                        "ItemCode": value.ItemCode,
+                        "LocationCode": value.LocationCode,
+                        "EndingStock": value.EndingStock,
+                        "Quantity": value.Quantity,
+                        "FulfillmentDate": value.FulfillmentDate
+                    };
+                    FulfillmentDate = value.FulfillmentDate;
+                    ItemCode = value.ItemCode;
+                    totalQty += isNaN(value.Quantity) ? 0 : value.Quantity;
+                    list.push(valueDetail);
+                });
+                detailValue = { "ItemCode": ItemCode, "FulfillmentDate": FulfillmentDate, Items: list };
+
+                if (self.DetailValue().length > 0) {
+                    $.each(self.DetailValue(), function(index, value) {
+                        if (typeof value != 'undefined') {
+                            if (value.FulfillmentDate == FulfillmentDate && value.ItemCode == ItemCode) {
+                                self.DetailValue.remove(value);
+                            }
+                        }
+                    });
+                }
+                self.newData.RequestToOthersQuantity(totalQty);
+                self.DetailValue.push(detailValue);
+            };
+
+            self.saveDataItemDestinationEdit = function() {
+                var totalQty = 0;
+                var detailValue = [];
+                var valueDetail = [];
+                var list = [];
+                var ItemCode = "";
+                var FulfillmentDate = "";
+                $.each(self.RequestToOthersQuantityDetails(), function(index, value) {
+                    if (value.Quantity == '') {
+                        value.Quantity = null;
+                    } else {
+                        value.Quantity = parseInt(value.Quantity);
+                    }
+                    valueDetail = {
+                        "ItemCode": value.ItemCode,
+                        "LocationCode": value.LocationCode,
+                        "EndingStock": value.EndingStock,
+                        "Quantity": value.Quantity,
+                        "FulfillmentDate": value.FulfillmentDate
+                    };
+                    FulfillmentDate = value.FulfillmentDate;
+                    ItemCode = value.ItemCode;
+                    totalQty += isNaN(value.Quantity) ? 0 : value.Quantity;
+                    list.push(valueDetail);
+                });
+                detailValue = { "ItemCode": ItemCode, "FulfillmentDate": FulfillmentDate, Items: list };
+
+                if (self.DetailValue().length > 0) {
+                    $.each(self.DetailValue(), function(index, value) {
+                        if (typeof value != 'undefined') {
+                            if (value.FulfillmentDate == FulfillmentDate && value.ItemCode == ItemCode) {
+                                self.DetailValue.remove(value);
+                            }
+                        }
+                    });
+                }
+
+                self.gridView.listDataItems()[self.editIndexRow()].RequestToOthersQuantity(totalQty);
+                self.gridView.listDataItems()[self.editIndexRow()].RequestToOthersQuantityDetails(list);
+                self.backupValue = ko.observableArray([]);
+                self.DetailValue.push(detailValue);
+            };
+
+            function fulfillment(data) {
+                ko.mapping.fromJS(data, {}, this);
+                //console.log(data);
+                this.PurchaseQty = ko.computed({
+                    read: function() {
+                        var result = parseFloat(this.ApprovedQuantity()) - parseFloat((this.RequestToOthersQuantity() == null) ? 0 :this.RequestToOthersQuantity());
+                        return isNaN(result) ? 0 : result;
+                    },
+                    write: function(value) {
+                        //update your self.chosenAge().population value here
+                    },
+                    owner: this
+                }, this);
+            }
+
+            //description : function
+            self.save = function() {
+                if (self.gridView.editingRowIndex() !== -1)
+                    return;
+                $.each(self.gridView.listNewItems(), function(k, v) {
+                    var shouldBeAsNew = ko.utils.arrayFirst(self.gridView.listEditItems(), function(editItem) {
+                        if (editItem) {
+                            return editItem['FulfillmentDate'] == v['FulfillmentDate'] && editItem['ItemCode'] == v['ItemCode'];
+                        }
+                    });
+                    if (shouldBeAsNew) {
+                        self.gridView.listNewItems()[k] = shouldBeAsNew;
+                    }
+                    self.gridView.listEditItems.remove(function(data) {
+                        if (data) {
+                            return data['FulfillmentDate'] == v['FulfillmentDate'] && data['ItemCode'] == v['ItemCode'];
+                        }
+                    });
+                });
+
+                var datas = {
+                    "Parameters": {
+                        "LocationCode": self.filterLocation(),
+                        "RequestDate": self.filterRequestDate(),
+                        "RequestNumber": $('#filterRequestNumber').val()
+                    },
+                    "new": self.gridView.listNewItems(),
+                    "edit": self.gridView.listEditItems()
+                };
+
+                datas = JSON.stringify(datas);
+                $.ajax({
+                    url: @Html.BaseUrl("EquipmentFulfillment/SaveAllEquipmentFulfillments"),
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: datas,
+                    dataType: 'json',
+                    success: function(data) {
+                        //console.log(data);
+                        if (data.New) {
+                            $.each(data.New, function(k, value) {
+                                if (value)
+                                    SKTIS.Helper.ResponseNotification(value, "Insert Equipment Fulfillment", value.FulfillmentDate + " - " + value.ItemCode);
+                            });
+                        }
+
+                        if (data.Edit) {
+                            $.each(data.Edit, function(k, value) {
+                                if (value)
+                                    SKTIS.Helper.ResponseNotification(value, "Edit Equipment Fulfillment", value.FulfillmentDate + " - " + value.ItemCode);
+                            });
+                        }
+
+                        self.gridView.sort('UpdatedDate', 'DESC');
+                        self.gridView.listNewItems.removeAll();
+                        self.gridView.listEditItems.removeAll();
+                    }
+                });
+            };
+
+            // description : init grid
+            self.gridView = new app.GridViewModel({
+                Criteria:
+                {
+                    PageSize: 10,
+                    PageIndex: 1,
+                    SortExpression: "UpdatedDate",
+                    SortOrder: "DESC",
+                    RequestLocation: self.filterLocation,
+                    RequestDate: self.filterRequestDate,
+                    RequestNumber: self.filterRequestNumber,
+                    Requestor: self.filterRequestor
+                },
+                DataSourceUrl: @Html.BaseUrl("EquipmentFulfillment/GetEquipmentFulfillment"),
+                InlineEdit: true
+            });
+
+            self.gridView.mapping = {
+                create: function(options) {
+                    return new fulfillment(options.data);
+                }
+            };
+
+            //// Remove Value in Dropdownlist after Insert
+            //self.gridView.onAfterInsert = function(insertedData) {
+            //    $.each(self.ItemCodeSourceSelectList(), function(index, value) {
+            //        if (typeof value != 'undefined') {
+            //            if (value.Value == insertedData.ItemCode()) {
+            //                self.ItemCodeSourceSelectList.remove(function(value) {
+            //                    return value.Value == insertedData.ItemCode();
+            //                });
+            //            }
+            //        }
+            //    });
+            //    if (self.ItemCodeSourceSelectList().length < 1) {
+            //        $('#ddlItemCodeSourceSelectList').find('option').remove();
+            //        $('#ddlItemCodeSourceSelectList').selectpicker('refresh');
+            //    }
+            //    ;
+            //};
+
+            // Reset Fields for Insert Row gridView
+            self.gridView.resetDefault = function(viewModel) {
+                //console.log('empty list');
+                viewModel.FulfillmentDate('');
+                //$('#dtpRequestDate').data('DateTimePicker').clear();
+                $('.insertRow .input-group.date input').val('');
+                self.ItemCodeSourceSelectList([]);
+                $('#ddlItemCodeSourceSelectList').find('option').remove();
+                $('#ddlItemCodeSourceSelectList').selectpicker('refresh');
+                viewModel.ItemDescription('');
+                viewModel.ReadyToUse('');
+                viewModel.OnUse('');
+                viewModel.OnRepair('');
+                viewModel.RequestedQuantity('');
+                viewModel.ApprovedQuantity(0);
+                viewModel.RequestToOthersQuantity(0);
+                viewModel.PurchaseNumber('');
+                viewModel.RequestToOthersQuantityDetails('');
+            };
+
+            //description: validations
+            self.gridView.applyValidationRules = function(entity) {
+
+                self.RemoveNotification();
+
+                entity.FulfillmentDate.extend({
+                    required: {
+                        message: "<strong>Fulfillment Date</strong> cannot be empty!"
+                    },
+                    cannotLessThan: {
+                        params: self.filterRequestDate,
+                        message: "<strong>Fulfillment Date</strong> cannot be less than <strong>request date</strong>"
+                    },
+                    isAfter: {
+                        params: self.todayDate,
+                        message: "<strong>Fulfillment Date</strong> cannot be greater than <strong>today</strong>"
+                    }
+                });
+
+                entity.ApprovedQuantity.extend({
+                    max: {
+                        params: entity.RequestedQuantity,
+                        message: '<strong>Approved Quantity</strong> cannot higher than Request Quantity!'
+                    }
+                });
+
+                entity.ItemCode.extend({
+                    required: {
+                        message: "<strong>Item Code</strong> cannot be empty!"
+                    }
+                });
+
+                entity.ApprovedQuantity.extend({
+                    required: {
+                        message: "<strong>Approved Quantity</strong> cannot be empty!"
+                    },
+                    number: {
+                        message: "<strong>Approved Quantity</strong> must be a number!"
+                    }
+                    //max: {
+                    //    params: entity.RequestedQuantity(),
+                    //    message: "<strong>Approved Quantity</strong> cannot larger than Requested Quantity (" + entity.RequestedQuantity() + ")!"
+                    //}
+
+                });
+
+                entity.RequestToOthersQuantity.extend({
+                    max: {
+                        params: entity.ApprovedQuantity,
+                        message: '<strong>Request To Others Quantity</strong> cannot higher than Approved Quantity!'
+                    }
+                });
+            };
+
+            self.generateExcel = function(formElement) {
+                $(formElement).find("input[name=reqLocation]").val(self.filterLocation());
+                $(formElement).find("input[name=reqDate]").val(self.filterRequestDate());
+                $(formElement).find("input[name=reqNo]").val(self.filterRequestNumber());
+                $(formElement).find("input[name=requestor]").val(self.filterRequestor());
+                return true;
+            };
+
+            //description: load data
+            self.search = function() {
+                //console.log(self.filterRequestDate());
+                $('.empty-row-message').html('<div class="loader"></div>'); // Reset New and Edit row
+                // Check whether New or Edit data is existing and not saved to database yet (on Ajax Action)
+                if (SKTIS.Checker.modifiedDataExistsForAjax([self.gridView.listNewItems, self.gridView.listEditItems]) == true) {
+                    return;
+                } else {
+                    self.gridView.listNewItems.removeAll();
+                    self.gridView.listEditItems.removeAll();
+                }
+
+                self.gridView.search({}, function(response) {
+                    if (response.status == 'KO') {
+                        SKTIS.Helper.Notification(response.message, 'error');
+                        $('.empty-row-message').html(response.message);
+                    } else if (response.status == 'Empty') {
+
+                        self.RemoveNotification();
+
+                        //SKTIS.Helper.Notification(response.message,'warning');
+                        $('.empty-row-message').html('@CommonLabel.lblDataEmpty');
+                    }
+                });
+
+                // repopulate itemcode dropdown
+                //self.getItemCodeSourceSelectList(self.reqNumSelected());
+
+            };
+
+            //$('#dtpRequestDate').on('dp.change', function(e) {
+            //    console.log($('#dtpRequestDate').val());
+            //    //self.filterRequestDate();
+            //    //self.getRequestNumberSelectList(self.filterLocation());
+            //});
+
+            self.RemoveNotification = function() {
+                if ($('#noty_top_layout_container').length > 0) {
+                    $('#noty_top_layout_container').remove();
+                }
+            };
+
+            // Check whether New or Edit data is existing and not saved to database yet (on Request action)
+            SKTIS.Checker.modifiedDataExists([self.gridView.listNewItems, self.gridView.listEditItems]);
+
+            //$(document).ready(function() {
+            //self.search();
+            //});
+
+            var firstOpen = true;
+            $(document).ready(function() {
+                $('#dtpRequestDate').on('dp.change', function() {
+                    self.onDateRequestChange();
+                });
+
+                $('#insertFulfillmentDate').on('dp.change', function(val) {
+                    if(self.newData.FulfillmentDate() != ''){
+                        self.getItemCodeSourceSelectList(self.filterRequestNumber());
+                    }
+                });
+            });
+
+            self.init = (function() {
+                if (typeof '@Model.Param1Locationcode' != 'undefined' && '@Model.Param1Locationcode') {
+                    self.firstInitFromUrl(true);
+                };
+
+                async.series([
+                    function(cb) {
+                        self.getDefaultLocationDescription(cb);
+                    },
+                    function(cb) {
+                        self.getRequestNumberSelectList(cb);
+                    },
+                    function(cb) {
+                        self.GetRequestor(cb);
+                    }
+                ], function() {
+                    self.isFirstLoad(false);
+                    self.isLoading(false);
+                    console.log(self.firstInitFromUrl());
+                    if(self.firstInitFromUrl()){
+                        $("#filterLocation").val('@Model.Param1Locationcode').change();
+                        self.filterRequestDate(moment('@Model.Param2Date','DD/MM/YYYY').format("DD/MM/YYYY"));
+                    }
+                    self.search();
+                });
+            })();
+        };
+        ko.applyBindings(new app.EditGrid());
+    })(app = this.app || {});
+
+    </script>
+}

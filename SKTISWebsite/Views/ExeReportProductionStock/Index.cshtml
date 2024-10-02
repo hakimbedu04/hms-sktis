@@ -1,0 +1,458 @@
+﻿@model SKTISWebsite.Models.ExeReportProductionStock.InitExeReportProductionStockViewModel
+@using HMS.SKTIS.Application.Resources
+@using SKTISWebsite.Helper
+@{ Html.SetPageTitle("Production and Stock Report by Process"); }
+
+<div class="col-lg-12">
+    <div class="col-lg-4">
+        <div class="row">
+            <label class="form-label col-lg-3">
+                Location
+            </label>
+            <div class="col-lg-3 offset-right">
+                @*@Html.DropDownList("filterLocationCode", new SelectList(Model.LocationCodeSelectList, "LocationCode", "LocationCode"),
+                    new
+                    {
+                        @class = "selectpicker show-tick form-control",
+                        id = "filterLocationCode",
+                        data_live_search = "true",
+                        data_bind = "value:$root.filterLocationCode, event : { change : $root.onFilterLocationCodeChange}"
+                    })*@
+                <select id="filterLocationCode"
+                        class="selectpicker show-tick form-control"
+                        data-live-search="true"
+                        data-bind="selectPicker:$root.filterLocationCode, optionsText: 'LocationCode', optionsValue : 'LocationCode', optionsAfterRender: locationDesc, selectPickerOptions: { optionsArray: $root.itemLocations }, event : { change : $root.onFilterLocationCodeChange}"></select>
+            </div>
+            <div class="col-lg-4">
+                <input id="filterLocationName" type="text" class="form-control" readonly="readonly" data-bind="value:$root.filterLocationName" />
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-3">
+                Unit
+            </label>
+            <div class="col-lg-7">
+                <select class="selectpicker show-tick form-control" id="filterUnitCode"
+                        data-live-search="true"
+                        data-bind="selectPicker: $root.filterUnitCode, optionsText: 'Value', optionsValue : 'Text', selectPickerOptions: { optionsArray: $root.unitCodeList }, event : { change : $root.onChangeUnitCode }"></select>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-8">
+        <div class="row">
+            <div class="col-sm-5">
+                <div class="row">
+                    <label class="form-label col-lg-4 off-right">
+                        <input type="radio" name="period" id="rdYear" data-bind="event : { change : $root.radioChange }">
+                        Year
+                    </label>
+                    <div class="col-lg-3 off-right off-left">
+                        @Html.DropDownList("filterYearFrom", Model.ListYear,
+                            new Dictionary<string, object> { { "data-bind", "value:$root.filterYearFrom" },
+                            { "class", "selectpicker show-tick form-controlt" },
+                            {"data-live-search","true"},{"id","filterYearFrom"} })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-5">
+                <div class="row">
+                    <label class="form-label col-lg-4 off-right">
+                        <input type="radio" name="period" id="rdYearMonth" data-bind="event : { change : $root.radioChange }">
+                        Year
+                    </label>
+                    <div class="col-lg-3 off-right off-left">
+                        @Html.DropDownList("filterYearFromMonthly", Model.ListYear,
+                            new Dictionary<string, object> { { "data-bind", "value:$root.filterYearFromMonthly" },
+                            { "class", "selectpicker show-tick form-controlt" },
+                            {"data-live-search","true"},{"id","filterYearFromMonthly"} })
+                    </div>
+                    <label class="form-label col-lg-2">
+                        Month
+                    </label>
+                    <div class="col-lg-3 off-right">
+                        @Html.DropDownList("filterMonthFromMonthly", Model.ListMonth,
+                            new Dictionary<string, object> { { "data-bind", "value:$root.filterMonthFromMonthly" },
+                            { "class", "selectpicker show-tick form-controlt" },
+                            {"data-live-search","true"},{"id","filterMonthFromMonthly"} })
+                    </div>
+                </div>
+            </div>
+            <label class="form-label col-sm-1 break-to">
+                To
+            </label>
+            <div class="col-sm-5">
+                <div class="row">
+                    <label class="form-label col-lg-4 off-right">
+                        Year
+                    </label>
+                    <div class="col-lg-3 off-right off-left">
+                        @Html.DropDownList("filterYearToMonthly", Model.ListYear,
+                            new Dictionary<string, object> { { "data-bind", "value:$root.filterYearToMonthly" },
+                            { "class", "selectpicker show-tick form-controlt" },
+                            {"data-live-search","true"},{"id","filterYearToMonthly"} })
+                    </div>
+                    <label class="form-label col-lg-2">
+                        Month
+                    </label>
+                    <div class="col-lg-3 off-right">
+                        @Html.DropDownList("filterMonthToMonthly", Model.ListMonthTo,
+                            new Dictionary<string, object> { { "data-bind", "value:$root.filterMonthToMonthly" },
+                            { "class", "selectpicker show-tick form-controlt" },
+                            {"data-live-search","true"},{"id","filterMonthToMonthly"} })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-5">
+                <div class="row">
+                    <label class="form-label col-lg-4 off-right">
+                        <input type="radio" name="period" id="rdYearWeek" data-bind="event : { change : $root.radioChange }">
+                        Year
+                    </label>
+                    <div class="col-lg-3 off-right off-left">
+                        @Html.DropDownList("filterYearFromWeekly", Model.ListYear,
+                            new Dictionary<string, object> { { "data-bind", "value:$root.filterYearFromWeekly, event : { change : $root.onYearChangeFromWeekly}" },
+                            { "class", "selectpicker show-tick form-controlt" },
+                            {"data-live-search","true"},{"id","filterYearFromWeekly"} })
+                    </div>
+                    <label class="form-label col-lg-2">
+                        Week
+                    </label>
+                    <div class="col-lg-3 off-right">
+                        <select id="filterWeekFrom" class="selectpicker show-tick form-control" data-live-search="true"
+                                data-bind="selectPicker: $root.filterWeekFrom, optionsText: 'Value', optionsValue : 'Text', selectPickerOptions: { optionsArray: $root.WeekFromList }"></select>
+                    </div>
+                </div>
+            </div>
+            <label class="form-label col-sm-1 break-to">
+                To
+            </label>
+            <div class="col-sm-5">
+                <div class="row">
+                    <label class="form-label col-lg-4 off-right">
+                        Year
+                    </label>
+                    <div class="col-lg-3 off-right off-left">
+                        @Html.DropDownList("filterYearToWeekly", Model.ListYear,
+                            new Dictionary<string, object> { { "data-bind", "value:$root.filterYearToWeekly, event : { change : $root.onYearChangeToWeekly}" },
+                            { "class", "selectpicker show-tick form-controlt" },
+                            {"data-live-search","true"},{"id","filterYearToWeekly"} })
+                    </div>
+                    <label class="form-label col-lg-2">
+                        Week
+                    </label>
+                    <div class="col-lg-3 off-right">
+                        <select id="filterWeekTo" class="selectpicker show-tick form-control" data-live-search="true"
+                                data-bind="selectPicker: $root.filterWeekTo, optionsText: 'Value', optionsValue : 'Text', selectPickerOptions: { optionsArray: $root.WeekToList }"></select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-5">
+                <div class="row">
+                    <label class="form-label col-lg-4 off-right">
+                        <input type="radio" name="period" id="rdDate" data-bind="event : { change : $root.radioChange }" checked>
+                        Date
+                    </label>
+                    <div class="col-lg-8 off-right off-left">
+                        <div id="filterDateFrom" class='input-group date time' data-bind="dateTimePicker: $root.filterDateFrom, value: $root.filterDateFrom, dateTimePickerOptions: {widgetPositioning: {vertical: 'bottom'}, showClear: true, ignoreReadonly: true}">
+                            <input id="filterDateFrom" class="form-control" readonly="readonly" />
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <label class="form-label col-sm-1 break-to">
+                To
+            </label>
+            <div class="col-sm-5">
+                <div class="row">
+                    <label class="form-label col-lg-4 off-right">
+                        Date
+                    </label>
+                    <div class="col-lg-8 off-right off-left">
+                        <div id="filterDateTo" class='input-group date time' data-bind="dateTimePicker: $root.filterDateTo, value: $root.filterDateTo, dateTimePickerOptions: {widgetPositioning: {vertical: 'bottom'}, showClear: true, ignoreReadonly: true}">
+                            <input id="filterDateTo" class="form-control" readonly="readonly" />
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="action-btn">
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.View.ToString()))
+                {
+                    <button type="button" class="btn btn-primary" data-bind="click:$root.viewReport">View</button>
+                }
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.Excel.ToString()))
+                {
+                    using (Html.BeginForm("GenerateExcel", "ExeReportProductionStock", FormMethod.Post, new { @data_bind = "submit: $root.generateExcel" }))
+                    {
+                        <input type="hidden" name="FilterLocation">
+                        <input type="hidden" name="FilterLocationName">
+                        <input type="hidden" name="FilterUnitCode" />
+                        <input type="hidden" name="FilterYear" />
+                        <input type="hidden" name="FilterYearMonthFrom" />
+                        <input type="hidden" name="FilterMonthFrom" />
+                        <input type="hidden" name="FilterYearMonthTo" />
+                        <input type="hidden" name="FilterMonthTo" />
+                        <input type="hidden" name="FilterYearWeekFrom" />
+                        <input type="hidden" name="FilterWeekFrom" />
+                        <input type="hidden" name="FilterYearWeekTo" />
+                        <input type="hidden" name="FilterWeekTo" />
+                        <input type="hidden" name="FilterDateFrom" />
+                        <input type="hidden" name="FilterDateTo" />
+                        <input type="hidden" name="IsFilterAnnualy" />
+                        <input type="hidden" name="IsFilterMonthly" />
+                        <input type="hidden" name="IsFilterWeekly" />
+                        <input type="hidden" name="IsFilterDaily" />
+                        <button type="submit" class="btn btn-primary">@CommonLabel.btnExcel</button>
+                    }
+                }
+                
+            </div>
+        </div>
+    </div>
+    <div>
+        <div id="GridStockProdProcess"></div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script src="~/Scripts/app/globalfunctions.js" type="text/javascript"></script>
+    <script src="~/Scripts/common/app.GridViewModel.js" type="text/javascript"></script>
+    <script src="~/Scripts/common/app.Extenders.js" type="text/javascript"></script>
+    <script type="text/javascript">
+    (function (app) {
+        app.EditGrid = function ()
+        {
+            var self = this;
+
+                // Variable knockout declaration
+                self.itemLocations = ko.observableArray(@Html.Raw(Json.Encode(@Model.LocationCodeSelectList)));
+                self.filterLocationCode         = ko.observable($("#filterLocationCode").val());
+                self.filterLocationName         = ko.observable();
+                self.filterUnitCode             = ko.observable('');
+                self.filterYearFrom             = ko.observable('@Model.CurrentYear');
+                self.filterYearFromMonthly      = ko.observable('@Model.CurrentYear');
+                self.filterMonthFromMonthly     = ko.observable('@Model.CurrentMonth');
+                self.filterYearToMonthly        = ko.observable('@Model.CurrentYear');
+                self.filterMonthToMonthly       = ko.observable('@Model.CurrentMonth');
+                self.filterYearFromWeekly       = ko.observable('@Model.CurrentYear');
+                self.filterWeekFrom             = ko.observable('@Model.CurrentWeek');
+                self.filterYearToWeekly         = ko.observable('@Model.CurrentYear');
+                self.filterWeekTo               = ko.observable('@Model.CurrentWeek');
+                self.filterDateTo               = ko.observable(moment().toDate());
+                self.filterDateFrom             = ko.observable(moment().toDate());
+                self.filterType                 = ko.observable('Date');
+
+                // Variable knockout declaration list/array
+                self.unitCodeList   = ko.observableArray([]);
+                self.WeekFromList   = ko.observableArray([]);
+                self.WeekToList     = ko.observableArray([]);
+
+                // Event filter location code on change
+                self.onFilterLocationCodeChange = function () {
+                    self.getLocationNameFilter();
+                    self.getUnitCodeList();
+                };
+
+                // Event filter unit code on change
+                self.onChangeUnitCode = function(){
+                };
+
+                // Event filter year change from weekly
+                self.onYearChangeFromWeekly = function(){
+                    self.GetWeekListFrom();
+                };
+
+                // Event filter year change to weekly
+                self.onYearChangeToWeekly = function(){
+                    self.GetWeekListTo();
+                }
+
+                // Event radio button period change
+                self.radioChange = function() {
+                    self.filterType($('input[name=period]:checked').val());
+                };
+
+                // Function get location name by location code
+                self.getLocationNameFilter = function () {
+                    //for (var i = 0; i < self.itemLocations.length; i++) {
+                    //    if (self.itemLocations[i].LocationCode == self.filterLocationCode()) {
+                    //        self.filterLocationName(self.itemLocations[i].LocationName);
+                    //        break;
+                    //    }
+                    //}
+                    self.itemLocations().map(function(v) {
+                        if (typeof v.LocationCode !== 'undefined' && v.LocationCode == self.filterLocationCode()) {
+                            self.filterLocationName(v.LocationName);
+                        }
+                    });
+
+                    if (typeof cb == 'function') cb();
+                };
+
+                // Function get unit code by location code
+                self.getUnitCodeList = function() {
+                    $.ajax({
+                        url: @Html.BaseUrl("ExeReportProductionStock/GetUnitCodeList"),
+                        type: 'GET',
+                        cache: false,
+                        async: false,
+                        contentType: 'application/json',
+                        data: { locationCode: self.filterLocationCode() },
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#filterUnitCode').find('option').remove();
+                            $('#filterUnitCode').selectpicker('refresh');
+                            var unitCodeList = [];
+                            $.each(data, function(index, value) {
+                                unitCodeList.push({ "Text": value, "Value": value });
+                            });
+                            self.unitCodeList(unitCodeList);
+                            if(data.length > 0)
+                                self.filterUnitCode(unitCodeList[0].Value);
+                        }
+                    });
+                };
+
+                // Function get week from by year
+                self.GetWeekListFrom = function() {
+                    $.ajax({
+                        url: @Html.BaseUrl("ExeReportProductionStock/GetWeekByYear"),
+                        type: 'GET',
+                        cache: false,
+                        contentType: 'application/json',
+                        data: { year: self.filterYearFromWeekly() },
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#filterWeekFrom').find('option').remove();
+                            $('#filterWeekFrom').selectpicker('refresh');
+                            var kpsWeekModel = [];
+                            $.each(data, function(index, value) {
+                                kpsWeekModel.push({ "Text": value, "Value": value });
+                            });
+                            self.WeekFromList(kpsWeekModel);
+                            self.filterWeekFrom('@Model.CurrentWeek');
+                        }
+                    });
+                };
+
+                // Function get week to by year
+                self.GetWeekListTo = function() {
+                    $.ajax({
+                        url: @Html.BaseUrl("ExeReportProductionStock/GetWeekByYear"),
+                        type: 'GET',
+                        cache: false,
+                        contentType: 'application/json',
+                        data: { year: self.filterYearToWeekly() },
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#filterWeekTo').find('option').remove();
+                            $('#filterWeekTo').selectpicker('refresh');
+                            var kpsWeekModel = [];
+                            $.each(data, function(index, value) {
+                                kpsWeekModel.push({ "Text": value, "Value": value });
+                            });
+                            self.WeekToList(kpsWeekModel);
+                            self.filterWeekTo('@Model.CurrentWeek');
+                        }
+                    });
+                };
+
+                // Function get data report
+                self.viewReport = function() {
+                
+                    var input = {
+                        FilterLocation      : self.filterLocationCode(),
+                        FilterUnitCode      : self.filterUnitCode(),
+                        FilterYear          : self.filterYearFrom(),
+                        FilterYearMonthFrom : self.filterYearFromMonthly(),
+                        FilterMonthFrom     : self.filterMonthFromMonthly(),
+                        FilterYearMonthTo   : self.filterYearToMonthly(),
+                        FilterMonthTo       : self.filterMonthToMonthly(),
+                        FilterYearWeekFrom  : self.filterYearFromWeekly(),
+                        FilterWeekFrom      : self.filterWeekFrom(),
+                        FilterYearWeekTo    : self.filterYearToWeekly(),
+                        FilterWeekTo        : self.filterWeekTo(),
+                        FilterDateFrom      : self.filterDateFrom(),
+                        FilterDateTo        : self.filterDateTo(),
+                        IsFilterAnnualy     : $('#rdYear').is(':checked'),
+                        IsFilterMonthly     : $('#rdYearMonth').is(':checked'),
+                        IsFilterWeekly      : $('#rdYearWeek').is(':checked'),
+                        IsFilterDaily       : $('#rdDate').is(':checked'),
+                    };
+                    
+                    $.ajax({
+                        url: @Html.BaseUrl("ExeReportProductionStock/GetReportProductionStockByProcess"),
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify(input),
+                        success: function(data) {
+                            $("#GridStockProdProcess").html('');
+                            $("#GridStockProdProcess").html(data);
+                        }
+                    });
+                };
+
+                // Function generate excel
+                self.generateExcel = function(formElement) {
+                    $(formElement).find("input[name=FilterLocation]").val($('#filterLocationCode').val());
+                    $(formElement).find("input[name=FilterLocationName]").val($('#filterLocationName').val());
+                    $(formElement).find("input[name=FilterUnitCode]").val($('#filterUnitCode').val());
+                    $(formElement).find("input[name=FilterYear]").val($('#filterYearFrom').val()); 
+                    $(formElement).find("input[name=FilterYearMonthFrom]").val($('#filterYearFromMonthly').val());                    
+                    $(formElement).find("input[name=FilterMonthFrom]").val($('#filterMonthFromMonthly').val());
+                    $(formElement).find("input[name=FilterYearMonthTo]").val($('#filterYearToMonthly').val());
+                    $(formElement).find("input[name=FilterMonthTo]").val($('#filterMonthToMonthly').val());
+                    $(formElement).find("input[name=FilterYearWeekFrom]").val($('#filterYearFromWeekly').val());
+                    $(formElement).find("input[name=FilterWeekFrom]").val($('#filterWeekFrom').val());
+                    $(formElement).find("input[name=FilterYearWeekTo]").val($('#filterYearToWeekly').val());
+                    $(formElement).find("input[name=FilterWeekTo]").val($('#filterWeekTo').val());
+                    $(formElement).find("input[name=FilterDateFrom]").val($('#filterDateFrom').val());
+                    $(formElement).find("input[name=FilterDateTo]").val($('#filterDateTo').val());
+                    $(formElement).find("input[name=IsFilterAnnualy]").val($('#rdYear').is(':checked'));
+                    $(formElement).find("input[name=IsFilterMonthly]").val($('#rdYearMonth').is(':checked'));
+                    $(formElement).find("input[name=IsFilterWeekly]").val($('#rdYearWeek').is(':checked'));
+                    $(formElement).find("input[name=IsFilterDaily]").val($('#rdDate').is(':checked'));
+                    return true;
+                };
+
+                // Initial function when first load
+                //self.onFilterLocationCodeChange();
+               
+                self.init = function() {
+                    //Asynch setting
+                    async.series([
+                        function(callback) {
+                            self.getUnitCodeList(callback);
+                            self.onYearChangeFromWeekly(callback);
+                            self.onYearChangeToWeekly(callback);
+                            self.viewReport(callback);
+                            self.onFilterLocationCodeChange(callback);
+                        }
+                    ]);
+                };
+
+                
+                $(document).ready(function(){
+                    self.init();
+                });
+        };
+        ko.applyBindings(new app.EditGrid());
+    })(app = this.app || {});
+    </script>
+}

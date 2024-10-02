@@ -1,0 +1,656 @@
+﻿@model SKTISWebsite.Models.ExeReportByProcess.InitExeReportByProcessViewModel
+@using HMS.SKTIS.Application.Resources
+@using SKTISWebsite.Helper
+@{ Html.SetPageTitle("Generator Report by Process"); }
+<div class="col-lg-12" data-bind="with: gridView">
+    <div class="col-lg-6">
+        <div class="row">
+            <label class="form-label col-lg-3">
+                Location
+            </label>
+            <div class="col-lg-7">
+                @Html.DropDownList("ddlFilterLocationCode", new SelectList(Model.PLNTChildLocationLookupList, "LocationCode", "LocationCode"),
+                new
+                {
+                    @class = "selectpicker show-tick form-control",
+                    id = "ddlFilterLocationCode",
+                    data_live_search = "true",
+                    data_bind = "value:$root.filterLocationCode, event : { change : $root.onLocationCodeChange}"
+                })
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-3">
+                Unit
+            </label>
+            <div class="col-lg-7">
+                <select class="selectpicker show-tick form-control" id="ddlUnitCodeFilter"
+                        data-live-search="true"
+                        data-bind="selectPicker: $root.filterUnitCode, optionsText: 'Text', optionsValue : 'Value', selectPickerOptions: { optionsArray: $root.unitCodeSelectList }, event : {change : $root.onUnitAndProcessSelectedChange}"></select>
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-3">
+                Brand
+            </label>
+            <div class="col-lg-7">
+                <select class="selectpicker show-tick form-control" id="ddlbrandFilter"
+                        data-live-search="true"
+                        data-bind="selectPicker: $root.filterBrand, optionsText: 'Text', optionsValue : 'Text', selectPickerOptions: { optionsArray: $root.brandSelectList }"></select>
+            </div>
+        </div>  
+    </div>
+    <div class="col-lg-6">
+        <div class="row">
+            <div class="col-sm-5">
+                <div class="row">
+                    <label class="form-label col-lg-4 off-right">
+                        Date
+                    </label>
+                    <div class="col-lg-8 off-right off-left">
+                        <div id="filterDateFrom" class='input-group date time' data-bind="dateTimePicker: $root.filterDateFrom, value: $root.filterDateFrom, dateTimePickerOptions: {widgetPositioning: {vertical: 'bottom'}, showClear: true, ignoreReadonly: true}, dateChange: $root.onDateChange">
+                            @*<div id="filterDateFrom" class='input-group date time' data-bind="dateTimePicker: $root.filterDateFrom, value: $root.filterDateFrom, dateTimePickerOptions: {widgetPositioning: {vertical: 'bottom'}, showClear: true, ignoreReadonly: true}">*@
+                            <input id="filterDateFrom" class="form-control" readonly="readonly" />
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-5">
+                <div class="row">
+                    <label class="form-label col-lg-4 off-right">
+                        Date to
+                    </label>
+                    <div class="col-lg-8 off-right off-left">
+                        <div id="filterDateTo" class='input-group date time' data-bind="dateTimePicker: $root.filterDateTo, value: $root.filterDateTo, dateTimePickerOptions: {widgetPositioning: {vertical: 'bottom'}, showClear: true, ignoreReadonly: true}">
+                            @*<div id="filterDateTo" class='input-group date time' data-bind="dateTimePicker: $root.filterDateTo, value: $root.filterDateTo, dateTimePickerOptions: {widgetPositioning: {vertical: 'bottom'}, showClear: true, ignoreReadonly: true}">*@
+                            <input id="filterDateTo" class="form-control" readonly="readonly" />
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-12">
+        <div class="action-btn">
+            @*<button type="button" id="buttonView" class="btn btn-primary" data-bind="click: $root.search">@CommonLabel.btnView</button>*@
+            <button type="button" id="buttonSubmit" class="btn btn-primary" data-bind="click:$root.submit">GENERATE !!!</button>
+        </div>
+    </div>
+    @*<div class="col-lg-12">
+        <div class="table-overflow">
+            <table class="table table-striped">
+                <thead>
+                    <tr class="head">
+                        <th rowspan="2">Process</th>
+                    </tr>
+                </thead>
+                <tbody data-bind="foreach: listDataItems">
+                    <tr data-bind="if: ($parent.editingRowIndex() !== $index())">
+                        <td data-bind="text: $data.ProcessGroup"></td>
+                    </tr>
+                </tbody>
+                <tbody data-bind="visible: !listDataItems().length">
+                    <tr>
+                        <td colspan="7" class="empty-row-message"><div class="loader"></div></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>*@
+</div>
+@section Scripts
+{
+    <script src="~/Scripts/app/globalfunctions.js" type="text/javascript"></script>
+    <script src="~/Scripts/common/app.GridViewModel.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        (function(app) {
+            app.EditGrid = function() {
+                var self = this;
+                self.firstInitFromUrl = ko.observable(false);
+                self.itemLocations = ko.observableArray(@Html.Raw(Json.Encode(@Model.PLNTChildLocationLookupList)));
+                self.unitCodeSelectList = ko.observableArray();
+                self.shiftSelectList = ko.observableArray([]);
+                self.brandSelectList = ko.observableArray([]);
+                self.brandGroupCodeSelectList = ko.observableArray([]);
+                self.WeekFromSelectList = ko.observableArray([]);
+                self.WeekToSelectList = ko.observableArray([]);
+
+                self.filterLocationCode = ko.observable($("#ddlFilterLocationCode").val());
+                self.filterLocationName = ko.observable();
+                self.filterUnitCode = ko.observable('');
+                self.filterShift = ko.observable('');
+                self.filterBrand = ko.observable('');
+                self.filterBrandGroupCode = ko.observable('');
+                self.filterYearFrom = ko.observable('@Model.DefaultYear');
+                self.filterYearTo = ko.observable('@Model.DefaultYear');
+                self.filterMonthFrom = ko.observable('@Model.DefaultMonth');
+                self.filterMonthTo = ko.observable('@Model.DefaultMonth');
+                self.filterWeekFrom = ko.observable('@Model.DefaultWeek');
+                self.filterWeekTo = ko.observable('@Model.DefaultWeek');
+                self.filterDateFrom = ko.observable(moment().toDate());
+                self.filterDateTo = ko.observable(moment().toDate());
+                self.filterType = ko.observable('Date');
+                //self.filterType = ko.observable('Year');
+
+                self.footerAverageBalanceIndex = ko.observable('0.000');
+                self.footerAverageWorkHour = ko.observable(0);
+
+                self.firstLoad = true;
+                self.isLoading = ko.observable(false);
+
+        //
+                // Events
+                self.onLocationCodeChange = function() {
+                    if ((! self.firstLoad) && (! self.isLoading())) {
+                        self.isLoading(true);
+                        async.series([
+                            function(cb) {
+                                self.getLocationNameFilter(cb);
+                            },
+                            function(cb) {
+                                self.getUnitCodeSelectListByLocation(cb);
+                            },
+                            function(cb) {
+                                self.getShiftSelectList(cb);
+                            },
+                            function(cb) {
+                                self.getActiveBrandGroupByLocationUnit(cb);
+                            },
+                            function(cb) {
+                                self.getActiveBrandFromByLocationBrandGroupCode(cb);
+                            }
+                        ], function() {
+                            self.isLoading(false);
+                        });
+                    }
+                };
+
+                self.onBrandGroupCodeChange = function() {
+                    if ((! self.firstLoad) && (! self.isLoading())) {
+                        self.getActiveBrandFromByLocationBrandGroupCode();
+                    }
+                };
+
+                self.onYearSelectedChangeFrom = function() {
+                    if ((! self.firstLoad) && (! self.isLoading())) {
+                        self.isLoading(true);
+                        async.series([
+                            function(cb) {
+                                self.GetWeekFromSelectListFrom(cb);
+                            },
+                            function(cb) {
+                                self.getActiveBrandGroupByLocationUnit(cb);
+                            }
+                        ], function() {
+                            self.isLoading(false);
+                        });
+                    }
+                };
+
+                self.onYearSelectedChangeTo = function() {
+                    //self.GetWeekFromSelectListTo();
+                    if ((! self.firstLoad) && (! self.isLoading())) {
+                        self.isLoading(true);
+                        async.series([
+                            function(cb) {
+                                self.GetWeekFromSelectListTo(cb);
+                            }
+                        ], function() {
+                            self.isLoading(false);
+                        });
+                    }
+                };
+
+                self.onWeekChange = function() {
+                    //self.getActiveBrandGroupByLocationUnit();
+                    if ((! self.firstLoad) && (! self.isLoading())) {
+                        self.isLoading(true);
+                        async.series([
+                            function(cb) {
+                                self.getActiveBrandGroupByLocationUnit(cb);
+                            }
+                        ], function() {
+                            self.isLoading(false);
+                        });
+                    }
+                }
+
+                self.onDateChange = function() {
+                    //self.getActiveBrandGroupByLocationUnit();
+                    if ((! self.firstLoad) && (! self.isLoading())) {
+                        self.isLoading(true);
+                        async.series([
+                            function(cb) {
+                                self.getActiveBrandGroupByLocationUnit(cb);
+                            }
+                        ], function() {
+                            self.isLoading(false);
+                        });
+                    }
+                }
+
+                self.radioChange = function() {
+                    self.filterType($('input[name=period]:checked').val());
+                    if ((! self.firstLoad) && (! self.isLoading())) {
+                        self.getActiveBrandGroupByLocationUnit();
+                    }
+                };
+
+                //get location name by location code
+                self.getLocationNameFilter = function(cb) {
+                    //for (var i = 0; i < self.itemLocations.length; i++) {
+                    //    if (self.itemLocations[i].LocationCode == self.filterLocationCode()) {
+                    //        self.filterLocationName(self.itemLocations[i].LocationName);
+                    //        break;
+                    //    }
+                    //}
+                    self.itemLocations().map(function(v) {
+                        if (typeof v.LocationCode !== 'undefined' && v.LocationCode == self.filterLocationCode()) {
+                            self.filterLocationName(v.LocationName);
+                        }
+                    });
+
+                    if (typeof cb == 'function') cb();
+                };
+
+                //get unit code by location
+                self.getUnitCodeSelectListByLocation = function(cb) {
+                    $.ajax({
+                        url: @Html.BaseUrl("ExeReportByProcess/GetUnitCodeSelectListByLocationCode"),
+                        type: 'GET',
+                        contentType: 'application/json',
+                        data: { locationCode: self.filterLocationCode() },
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#ddlUnitCodeFilter').find('option').remove();
+                            $('#ddlUnitCodeFilter').selectpicker('refresh');
+                            self.unitCodeSelectList(data);
+
+                            if(self.firstInitFromUrl()){
+                                self.filterUnitCode('@Model.Param2UnitCode');
+                            }
+                        },
+                        complete : function() {
+                            if (typeof cb == 'function') cb();
+                        }
+                    });
+                };
+
+                //get shift
+                self.getShiftSelectList = function(cb) {
+                    $.ajax({
+                        url: @Html.BaseUrl("ExeReportByProcess/GetShiftByLocation"),
+                        type: 'GET',
+                        contentType: 'application/json',
+                        data: { locationCode: self.filterLocationCode() },
+                        dataType: 'json',
+                        success: function(data) {
+                            @*$('#ddlShiftFilter').find('option').remove();
+                            $('#ddlShiftFilter').selectpicker('refresh');
+                            var kpsWeekModel = [];
+                            $.each(data, function(index, value) {
+                                kpsWeekModel.push({ "Text": value.Text, "Value": value.Text });
+                            });
+                            self.shiftSelectList(kpsWeekModel);
+                            self.filterShift(kpsWeekModel[0].Text);
+
+                            if(self.firstInitFromUrl()){
+                                self.filterShift('@Model.Param3Shift');
+                            }*@
+                        },
+                        complete : function() {
+                            if (typeof cb == 'function') cb();
+                        }
+                    });
+                };
+
+                //get active brand group
+                self.getActiveBrandGroupByLocationUnit = function(cb) {
+                    //console.log(self.filterDateFrom());
+                    $.ajax({
+                        url: @Html.BaseUrl("ExeReportByProcess/getActiveBrandGroupByLocationUnit"),
+                        type: 'GET',
+                        contentType: 'application/json',
+                        data: {
+                            locationCode: self.filterLocationCode(),
+                            YearFrom: self.filterYearFrom(),
+                            YearTo: self.filterYearTo(),
+                            MonthFrom: self.filterMonthFrom(),
+                            MonthTo: self.filterMonthTo(),
+                            WeekFrom: self.filterWeekFrom(),
+                            WeekTo: self.filterWeekTo(),
+                            DateFrom: self.filterDateFrom(),
+                            DateTo: self.filterDateTo(),
+                            FilterType: self.filterType()
+                        },
+                        dataType: 'Json',
+                        success: function(data) {
+                            $('#ddlbrandgroupCodeFilter').find('option').remove();
+                            $('#ddlbrandgroupCodeFilter').selectpicker('refresh');
+                            var brandGroupModel = [];
+                            $.each(data, function(index, value) {
+                                brandGroupModel.push({ "Text": value, "Value": value });
+                            });
+                            //console.log(brandGroupModel);
+                            self.brandGroupCodeSelectList(brandGroupModel);
+                            if (self.brandGroupCodeSelectList().length > 0) {
+                                self.filterBrandGroupCode(self.brandGroupCodeSelectList()[0].Value);
+                            } else {
+                                self.brandGroupCodeSelectList([]);
+                                self.filterBrandGroupCode('');
+                            }
+
+                            if(self.firstInitFromUrl()){
+                                self.filterBrandGroupCode('@Model.Param5BrandGroupCode');
+                            }
+                        },
+                        complete : function() {
+                            if (typeof cb == 'function') cb();
+                        }
+                    });
+                };
+
+                self.getActiveBrandFromByLocationBrandGroupCode = function(cb) {
+                    $.ajax({
+                        url: @Html.BaseUrl("GeneratorReportByProccess/GetActiveBrandFromByLocation"),
+                        type: 'GET',
+                        contentType: 'application/json',
+                        data: {
+                            locationCode: self.filterLocationCode()
+                        },
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#ddlbrandFilter').find('option').remove();
+                            $('#ddlbrandFilter').selectpicker('refresh');
+                            var brandCodeModel = [];
+                            //console.log("jumlah data " + data.length);
+                            if (data.length > 1) {
+                                //brandCodeModel.push({ "Text": "All", "Value": "All" });
+                            }
+
+                            $.each(data, function(index, value) {
+                                brandCodeModel.push({ "Text": value, "Value": value });
+                            });
+                            self.brandSelectList(brandCodeModel);
+                            //console.log(brandCodeModel);
+                            if(self.brandSelectList().length > 0)
+                            {
+                                self.filterBrand(self.brandSelectList()[0].Value);
+                            }
+                            else
+                            {
+                                self.brandSelectList([]);
+                                self.filterBrand('');
+                            }
+
+                            if(self.firstInitFromUrl()){
+                                self.filterBrand('@Model.Param4BrandCode');
+                            }
+                        },
+                        complete : function() {
+                            if (typeof cb == 'function') cb();
+                        }
+                    });
+                };
+
+                self.GetWeekFromSelectListFrom = function(cb) {
+                    $.ajax({
+                        url: @Html.BaseUrl("ExeReportByProcess/GetWeekByYear"),
+                        type: 'GET',
+                        contentType: 'application/json',
+                        data: { year: self.filterYearFrom() },
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#filterWeekFrom').find('option').remove();
+                            $('#filterWeekFrom').selectpicker('refresh');
+                            var kpsWeekModel = [];
+                            $.each(data, function(index, value) {
+                                kpsWeekModel.push({ "Text": value, "Value": value });
+                            });
+                            self.WeekFromSelectList(kpsWeekModel);
+                            self.filterWeekFrom('@Model.DefaultWeek');
+                        },
+                        complete: function() {
+                            if (typeof cb == 'function') cb();
+                        }
+                    });
+                };
+                self.GetWeekFromSelectListTo = function(cb) {
+                    $.ajax({
+                        url: @Html.BaseUrl("ExeReportByProcess/GetWeekByYear"),
+                        type: 'GET',
+                        contentType: 'application/json',
+                        data: { year: self.filterYearTo() },
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#filterWeekTo').find('option').remove();
+                            $('#filterWeekTo').selectpicker('refresh');
+                            var kpsWeekModel = [];
+                            $.each(data, function(index, value) {
+                                kpsWeekModel.push({ "Text": value, "Value": value });
+                            });
+                            self.WeekToSelectList(kpsWeekModel);
+                            self.filterWeekTo('@Model.DefaultWeek');
+                        },
+                        complete: function() {
+                            if (typeof cb == 'function') cb();
+                        }
+                    });
+                };
+
+                self.gridView = new app.GridViewModel({
+                    Criteria: {
+                        PageSize: 1000,
+                        PageIndex: 1,
+                        SortExpression: "Decription",
+                        SortOrder: "ASC",
+                        LocationCode: self.filterLocationCode,
+                        UnitCode: self.filterUnitCode,
+                        Shift: self.filterShift,
+                        ProcessGroup: self.filterProcessGroup,
+                        BrandCode: self.filterBrand,
+                        BrandGroupCode: self.filterBrandGroupCode,
+                        YearFrom: self.filterYearFrom,
+                        YearTo: self.filterYearTo,
+                        MonthFrom: self.filterMonthFrom,
+                        MonthTo: self.filterMonthTo,
+                        WeekFrom: self.filterWeekFrom,
+                        WeekTo: self.filterWeekTo,
+                        DateFrom: self.filterDateFrom,
+                        DateTo: self.filterDateTo,
+                        FilterType: self.filterType
+                    },
+                    DataSourceUrl: @Html.BaseUrl("GeneratorReportByProccess/GetData"),
+                    InlineEdit: true,
+                    InsertRowFocusedControlIndex: 1
+                });
+
+                //function ReportByStatusParent(data) {
+                //    selfModel = this;
+                //    ko.mapping.fromJS(data, {}, selfModel);
+                //};
+
+                //function ReportByStatus(data) {
+                //    ko.mapping.fromJS(data, {}, this);
+                //}
+
+                ////custom mapping knockout
+                //self.gridView.mapping = {
+                //    create: function(options) {
+                //        var parent = new ReportByStatusParent(options.data);
+
+                //        parent.StatusPerProcess = ko.utils.arrayMap(parent.StatusPerProcess() || [], function(item) {
+                //            return new ReportByStatus(item);
+                //        });
+                //        return parent;
+                //    }
+                //};
+
+                // Load Data
+                self.search = function() {
+                    $('.empty-row-message').html('<div class="loader"></div>'); // Reset New and Edit row
+                    // Check whether New or Edit data is existing and not saved to database yet (on Ajax Action)
+                    if (SKTIS.Checker.modifiedDataExistsForAjax([self.gridView.listNewItems, self.gridView.listEditItems]) == true) {
+                        return;
+                    } else {
+                        self.gridView.listNewItems.removeAll();
+                        self.gridView.listEditItems.removeAll();
+                    }
+
+                    //self.filterExcelListGroup = self.filterListGroup();
+                    self.gridView.search({}, function(response) {
+                        if (response.status == 'KO') {
+                            SKTIS.Helper.Notification(response.message, 'error');
+                            $('.empty-row-message').html(response.message);
+                        } else if (response.status == 'Empty') {
+
+                            self.RemoveNotification();
+
+                            //SKTIS.Helper.Notification(response.message,'warning');
+                            $('.empty-row-message').html('@CommonLabel.lblDataEmpty');
+                        }
+                        //console.log(self.gridView.listDataItems());
+                        //self.gridView.listDataItems();
+                    });
+
+                    self.RemoveNotification = function() {
+                        if ($('#noty_top_layout_container').length > 0) {
+                            $('#noty_top_layout_container').remove();
+                        }
+                    };
+                    //console.log(self.gridView.listDataItems());
+                };
+
+                self.submit = function() {
+                    if (self.gridView.editingRowIndex() !== -1)
+                        return;
+
+                    var datas = {
+                        "Edit": ko.mapping.toJS(self.gridView.listDataItems()).reverse(),
+                        "Parameters": {
+                            "LocationCode": self.filterLocationCode(),
+                            "UnitCode": self.filterUnitCode(),
+                            "BrandCode": self.filterBrand(),
+                            "ProductionDateFrom": self.filterDateFrom(),
+                            "ProductionDateTo": self.filterDateTo()
+                            //"Year": self.filterYear(),
+                            //"Week": self.filterWeek(),
+                            //"Date": self.filterDate(),
+                            //"Shift": self.filterShift()
+                        }
+                    };
+
+                    datas = JSON.stringify(datas);
+                    //console.log(datas);
+                    $.ajax({
+                        url: @Html.BaseUrl("GeneratorReportByProccess/generateData"),
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: datas,
+                        dataType: 'json',
+                        beforeSend: function(){
+                            $('#buttonSubmit').prop('disabled',true);
+                        },
+                        success: function(data) {
+                            //SKTIS.Helper.Notification(data[0], data[1]);
+                            if(data.length === 0) 
+                                SKTIS.Helper.Notification("Generate Success", 'success');
+                            else
+                                SKTIS.Helper.Notification(data[0], data[1]);
+                            //self.search();
+                        },complete: function() {
+                            $('#buttonSubmit').prop('disabled',false);
+                        }
+                    })
+                };
+
+                //description : generateExcel
+                self.generateExcel = function(formElement) {
+                    $(formElement).find("input[name=locationCode]").val($('#ddlFilterLocationCode').val());
+                    $(formElement).find("input[name=unitCode]").val($('#ddlUnitCodeFilter').val());
+                    $(formElement).find("input[name=shift]").val($('#ddlShiftFilter').val());
+                    $(formElement).find("input[name=brand]").val($('#ddlbrandFilter').val());
+                    $(formElement).find("input[name=brandGroupCode]").val($('#ddlbrandgroupCodeFilter').val());
+                    $(formElement).find("input[name=filterType]").val($('input[name=period]:checked').val());
+                    $(formElement).find("input[name=yearFrom]").val($('#filterYearFrom').val());
+                    $(formElement).find("input[name=yearTo]").val($('#filterYearTo').val());
+                    $(formElement).find("input[name=monthFrom]").val($('#filterMonthFrom').val());
+                    $(formElement).find("input[name=monthTo]").val($('#filterMonthTo').val());
+                    $(formElement).find("input[name=weekFrom]").val($('#filterWeekFrom').val());
+                    $(formElement).find("input[name=weekTo]").val($('#filterWeekTo').val());
+                    $(formElement).find("input[name=dateFrom]").val($('#filterDateFrom').val());
+                    $(formElement).find("input[name=dateTo]").val($('#filterDateTo').val());
+                    return true;
+                };
+
+                $(document).ready(function(){
+                    //self.onLocationCodeChange();
+                    //self.onYearSelectedChangeFrom();
+                    //self.onYearSelectedChangeTo();
+                    //self.radioChange();
+                    $(document).ready(function() {
+                        $('#rdDate').attr('checked', true);
+                        $('#rdDate').change();
+                    });
+                });
+
+                self.init = (function() {
+                    //Asynch setting
+                    self.isLoading(true);
+                    if (typeof '@Model.Param1LocationCode' != 'undefined' && '@Model.Param1LocationCode') {
+                        self.firstInitFromUrl(true);
+                    };
+
+                    if(self.firstInitFromUrl()){
+                        var dt = moment('@Model.Param6Date','DD/MM/YYYY').format('DD/MM/YYYY');
+                        self.filterDateFrom(dt);
+                        self.filterDateTo(dt);
+                        self.filterLocationCode('@Model.Param1LocationCode');
+                    }
+
+                    async.series([
+                        function(cb) {
+                            self.getLocationNameFilter(cb);
+                        },
+                        function(callback) {
+                            if(self.firstInitFromUrl()){
+                                self.filterLocationCode('@Model.Param1LocationCode');
+                            }
+                            self.GetWeekFromSelectListFrom(callback);
+                        },
+                        function(callback) {
+                            self.GetWeekFromSelectListTo(callback);
+                        },
+                        function(callback) {
+                            self.getUnitCodeSelectListByLocation(callback);
+                        },
+                        function(callback) {
+                            self.getShiftSelectList(callback);
+                        },
+                        function(callback) {
+                            self.getActiveBrandGroupByLocationUnit(callback);
+                        },
+                        function(callback) {
+                            self.getActiveBrandFromByLocationBrandGroupCode(callback);
+                        }
+                    ], function() {
+                        self.search();
+                        self.firstLoad = false;
+                        self.isLoading(false);
+                        self.firstInitFromUrl(false);
+                    });
+
+                }());
+
+
+            };
+            ko.applyBindings(new app.EditGrid());
+        })(app = this.app || {});
+</script>
+}

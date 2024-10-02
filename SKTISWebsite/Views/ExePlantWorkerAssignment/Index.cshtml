@@ -1,0 +1,2405 @@
+﻿@model SKTISWebsite.Models.ExePlantWorkerAssignment.InitExePlantWorkerAssignmentViewModel
+@using HMS.SKTIS.Application.Resources
+@using SKTISWebsite.Helper
+@{ Html.SetPageTitle(" Worker Assignment"); }
+
+<div class="container-fluid" data-bind="with: gridView">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="col-lg-4">
+                <div class="row">
+                    <label class="form-label col-lg-2">
+                        Location
+                    </label>
+                    <div class="col-lg-4">
+                        @Html.DropDownList("ddlFilterLocationCodeSource", new SelectList(Model.PLNTChildLocationLookupList, "LocationCode", "LocationCompat"),
+                            new
+                            {
+                                @class = "selectpicker show-tick form-control",
+                                id = "ddlFilterLocationCodeSource",
+                                data_live_search = "true",
+                                data_bind = "value:$root.filterLocationCodeSource, event : { change : $root.onLocationCodeChangeSource}"
+                            })
+                    </div>
+                    <div class="col-lg-5">
+                        <input id="LocationName" type="text" class="form-control" readonly="readonly" data-bind="value:$root.filterLocationName">
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="form-label col-lg-2">
+                        Unit
+                    </label>
+                    <div class="col-lg-6">
+                        <select class="selectpicker show-tick form-control" id="ddlUnitCodeFilterSource"
+                                data-live-search="true"
+                                data-bind="selectPicker: $root.filterUnitCodeSource, optionsText: 'Text', optionsValue : 'Value', selectPickerOptions: { optionsArray: $root.unitCodeSelectListSource }, event : {change : $root.onUnitCodeChangeSource}"></select>
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="form-label col-lg-2">
+                        Shift
+                    </label>
+                    <div class="col-lg-6">
+                        <select class="selectpicker show-tick form-control" id="ddlShiftCodeFilterSource"
+                                data-live-search="true"
+                                data-bind="selectPicker: $root.filterShiftCodeSource, optionsText: 'Text', optionsValue : 'Value', selectPickerOptions: { optionsArray: $root.shiftCodeSelectListSource }, event : {change : $root.onShiftCodeChangeSource}"></select>
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="form-label col-lg-2">
+                        Brand
+                    </label>
+                    <div class="col-lg-7">
+                        <select class="selectpicker show-tick form-control" id="ddlBrandFilterSource"
+                                data-live-search="true"
+                                data-bind="selectPicker: $root.filterBrandSource, optionsText: 'Text', optionsValue : 'Value', selectPickerOptions: { optionsArray: $root.brandSelectListSource }, event : {change : $root.onBrandCodeChangeSource}"></select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-8">
+                <div class="row">
+                    <label class="form-label col-lg-3">
+                        Year
+                    </label>
+                    <div class="col-lg-2">
+                        @Html.DropDownList("filterYear", Model.YearSelectList,
+                            new Dictionary<string, object> { { "data-bind", "value:$root.filterYear, event : { change : $root.onYearSelectedChange}" },
+                                { "class", "selectpicker show-tick form-controlt" },
+                                {"data-live-search","true"},{"id","filterYear"} })
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="form-label col-lg-3">
+                        Week
+                    </label>
+                    <div class="col-lg-4">
+                        <select id="filterWeek" class="selectpicker show-tick form-control" data-live-search="true"
+                                data-bind="selectPicker: $root.filterWeek, optionsText: 'Value', optionsValue : 'Text', selectPickerOptions: { optionsArray: $root.WeekFromSelectList },  event : { change : $root.onWeekSelectedChange }"></select>
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="form-label col-lg-3" id="rdWeek">
+                        <input type="radio" value="rdbDate" data-bind="checked: $root.dateTypeFilter" name="productionDate" id="rdbDate" />
+                        Date
+                    </label>
+                    <div class="col-lg-3">
+                        <div id="filterDate" class='input-group date time' data-bind="dateTimePicker: $root.filterDate, value: $root.filterDate, dateTimePickerOptions: {widgetPositioning: {vertical: 'bottom'}, showClear: true, ignoreReadonly: true}, dateChange:  $root.onChangeFilterDate">
+                            <input id="filterDate" class="form-control" readonly="readonly" />
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="form-label col-lg-3">
+                        <input type="radio" value="rdbProductionDate" data-bind="checked: $root.dateTypeFilter" name="productionDate" id="rdbProductionDate" />
+                        Production Date
+                    </label>
+                    <div class="col-lg-3">
+                        <div id="filterTransactionDateFrom" class='input-group date time' data-bind="dateTimePicker: $root.filterTransactionDateFrom, value: $root.filterTransactionDateFrom, dateTimePickerOptions: {widgetPositioning: {vertical: 'bottom'}, showClear: true, ignoreReadonly: true}">
+                            <input id="filterDate" class="form-control" readonly="readonly" />
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                        </div>
+                    </div>
+                    <label class="form-label col-lg-1">
+                        to
+                    </label>
+                    <div class="col-lg-3">
+                        <div id="filterTransactionDateTo" class='input-group date time' data-bind="dateTimePicker: $root.filterTransactionDateTo, value: $root.filterTransactionDateTo, dateTimePickerOptions: {widgetPositioning: {vertical: 'bottom'}, showClear: true, ignoreReadonly: true}">
+                            <input id="filterDate" class="form-control" readonly="readonly" />
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="action-btn">
+                        @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.View.ToString()))
+                        {
+                            <button type="button" class="btn btn-primary" data-bind="click:$root.search, disable: $root.isBusy">View</button>
+                        }
+                        @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.Save.ToString()))
+{
+    <button type="button" class="btn btn-primary" data-bind="click:$root.save, disable: $root.isBusy">Save</button>
+}
+                        @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.Save.ToString()))
+                        {
+                            using (Html.BeginForm("GenerateExcel", "ExePlantWorkerAssignment", FormMethod.Post, new { @data_bind = "submit: $root.generateExcel" }))
+                            {
+                            <input type="hidden" name="LocationCompat">
+                                <input type="hidden" name="LocationCode">
+                                <input type="hidden" name="UnitCode">
+                                <input type="hidden" name="KPSYear">
+                                <input type="hidden" name="KPSWeek">
+                                <input type="hidden" name="Date">
+                                <input type="hidden" name="Shift">
+                                <input type="hidden" name="BrandCode">
+                                <input type="hidden" name="ProductionDateFrom">
+                                <input type="hidden" name="ProductionDateTo">
+                                <input type="hidden" name="DateTypeFilter">
+    <button type="submit" class="btn btn-primary" data-bind="disable: $root.isBusy">Excel</button>
+                            }
+                        }
+                        @Html.Partial("GridViewPageSizeSelector")
+                    </div>
+                </div>
+            </div>
+            <div class="table-overflow">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr class="head">
+                            <th colspan="5">Source</th>
+                            <th colspan="8">Destination</th>
+                            <th></th>
+                        </tr>
+                        <tr class="head">
+                            <th>Process</th>
+                            <th>Group</th>
+                            <th></th>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Location</th>
+                            <th>Unit</th>
+                            <th>Brand</th>
+                            <th>Process</th>
+                            <th>Group</th>
+                            <th>Dummy Group</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th></th>
+                        </tr>
+                        <tr class="insertRow" data-bind="click: cancelInline.bind(),inlineAddProccessWorkerAssignment:[$data, $root.newData]" tabindex="-1">
+                            <th class="current right">
+                                <span style="display:none" data-bind="text: $root.newData.SourceLocationCode"></span>
+                                <span style="display:none" data-bind="text: $root.newData.SourceUnitCode"></span>
+                                <select id="ddlProcessSource" class="selectpicker show-tick form-control" data-live-search="true" data-bind="selectPicker: $root.newData.SourceProcessGroup, value: $root.newData.SourceProcessGroup, optionsText: 'Value', optionsValue : 'Text', selectPickerOptions: { optionsArray: $root.processGroupSelectListSource,container: 'body' }, event : { change : $root.onProcessGroupChangeSource }"></select>
+                            </th>
+                            <th>
+                                <span id="lblGroupCodeSource" data-bind="text: $root.newData.SourceGroupCode"></span>
+                            </th>
+                            <th>
+                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#groupCodePopUpInsert">..</button>
+                            </th>
+                            <th class="current right">
+                                <select id="ddlEmployeeID" class="selectpicker show-tick form-control" data-live-search="true" data-bind="selectPicker: $root.newData.EmployeeID, value: $root.newData.EmployeeID, optionsText: 'EmployeeID', optionsValue : 'EmployeeID', selectPickerOptions: { optionsArray: $root.employeeSelectList, container: 'body' }, event : { change : $root.onEmployeeChange }, optionsAfterRender : EmployeeDropDownAfterRender2"></select>
+                            </th>
+                            <th><span id="ddlEmployeeDetail" data-bind="text: $root.newData.EmployeeNameMix"></span></th>
+                            <th class="current right">
+                                <select id="ddlFilterDestLocationCode" class="selectpicker show-tick form-control" data-live-search="true" data-bind="selectPicker: $root.newData.DestinationLocationCode, value: $root.newData.DestinationLocationCode, optionsText: 'Value', optionsAfterRender : $root.afterRender, optionsValue : 'Text', selectPickerOptions: { optionsArray: $root.destLocationSelectList, container: 'body' }, event : { change : $root.onDestLocationCodeChange }"></select>
+                            </th>
+                            <th class="current right">
+                                <select id="ddlUnitCodeDest" class="selectpicker show-tick form-control" data-live-search="true" data-bind="selectPicker: $root.newData.DestinationUnitCode, value: $root.newData.DestinationUnitCode, optionsText: 'Value', optionsValue : 'Text', selectPickerOptions: { optionsArray: $root.destUnitCodeSelectList, container: 'body' }, event : { change : $root.onDestUnitCodeChange }"></select>
+                            </th>
+                            <th class="current right">
+                                <select id="ddlDestBrandCode" class="selectpicker show-tick form-control" data-live-search="true" data-bind="selectPicker: $root.newData.DestinationBrandCode, value: $root.newData.DestinationBrandCode, optionsText: 'Value', optionsValue : 'Text', selectPickerOptions: { optionsArray: $root.destBrandCodesSelectList, container: 'body' }, event : { change : $root.onDestBrandCodesChange }"></select>
+                            </th>
+                            <th class="current right">
+                                <select id="ddlDestProcessGroup" class="selectpicker show-tick form-control" data-live-search="true" data-bind="selectPicker: $root.newData.DestinationProcessGroup, value: $root.newData.DestinationProcessGroup, optionsText: 'Value', optionsValue : 'Text', selectPickerOptions: { optionsArray: $root.destProcessGroupSelectList, container: 'body' }, event : { change : $root.onDestProcessGroupChange }"></select>
+                            </th>
+                            <th>
+                                <select id="ddlDestGroup" class="selectpicker show-tick form-control" data-live-search="true" data-bind="selectPicker: $root.newData.DestinationGroupCode, value: $root.newData.DestinationGroupCode, optionsText: 'Value', optionsValue : 'Text', selectPickerOptions: { optionsArray: $root.destGroupCodesSelectList,container: 'body' }, event : { change : $root.onDestGroupCodesChange }"></select>
+                            </th>
+                            <th>
+                                <span id="lblGroupCodeDummy" data-bind="text: $root.newData.DestinationGroupCodeDummy"></span>
+                            </th>
+                            <th class="current">
+                                <div id="dtpStartDate" class='input-group date time insidetable out-of-bond' data-bind="dateTimePicker: $root.newData.StartDate, value:$root.newData.StartDate, dateTimePickerOptions: {widgetPositioning: {vertical: 'bottom', horizontal: 'right'}, showClear: true, ignoreReadonly: true, useCurrent: true, appendToBody: true }">
+                                    <input type='text' class="form-control" readonly="readonly" />
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div>
+
+                                @*<div id="dtpStartDate" class='input-group date time insidetable out-of-bond' data-bind="dateTimePicker: $root.newData.StartDate, value:$root.newData.StartDate, dateTimePickerOptions: {widgetPositioning: {vertical: 'bottom', horizontal: 'right'}, showClear: true, ignoreReadonly: true, useCurrent: true, appendToBody: true }">
+                                    <input type='text' class="form-control" readonly="readonly" />
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div>*@
+                            </th>
+                            <th class="current">
+                                @*<div id="dtpEndDate" class='input-group date time insidetable out-of-bond' data-bind="dateTimePicker: $root.newData.EndDate, value:$root.newData.EndDate, dateTimePickerOptions: {widgetPositioning: {vertical: 'bottom', horizontal: 'right'}, showClear: true, ignoreReadonly: true, useCurrent: true, appendToBody: true }">
+                                    <input type='text' class="form-control" readonly="readonly" />
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                    <span style="display:none" data-bind="text: $root.newData.OldEmployeeID"></span>
+                                    <span style="display:none" data-bind="text: $root.newData.OldStartDate"></span>
+                                </div>*@
+
+                                <div id="dtpEndDate" class='input-group date time insidetable out-of-bond' data-bind="dateTimePicker: $root.newData.EndDate, value:$root.newData.EndDate, dateTimePickerOptions: {widgetPositioning: {vertical: 'bottom', horizontal: 'right'}, showClear: true, ignoreReadonly: true, useCurrent: true, appendToBody: true }">
+                                    <input type='text' class="form-control" readonly="readonly" />
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                    <span style="display:none" data-bind="text: $root.newData.OldEmployeeID"></span>
+                                    <span style="display:none" data-bind="text: $root.newData.OldStartDate"></span>
+                                </div>
+                            </th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody data-bind="foreach: listDataItems">
+                        @*insert template*@
+                        <tr class="insertRow" data-bind="if: ($parent.editingRowIndex() !== $index() && (ko.utils.unwrapObservable($data.OldEmployeeID) === '' || $root.ValidateDateIsFuture($data.OldStartDate))),
+                                   click: $parent.editInlineWithCallback.bind($data,$index(), $root.onPopulateGridMenu.bind())" tabindex="-1">
+                            <td class="current">
+                                <span data-bind="text:$data.SourceProcessGroup"></span>
+                                <span style="display:none" data-bind="text: $data.SourceLocationCode"></span>
+                                <span style="display:none" data-bind="text: $data.SourceUnitCode"></span>
+                            </td>
+                            <td class="current"><span data-bind="text:$data.SourceGroupCode"></span></td>
+                            <td class="center-btn">
+                                @*<button type="button" class="btn btn-primary" data-toggle="modal" data-target=".choose-group-8">..</button>*@
+                            </td>
+                            <td class="current"><span data-bind="text:$data.EmployeeID"></span></td>
+                            <td><span data-bind="text:$data.EmployeeNameMix"></span></td>
+                            <td class="current"><span data-bind="text:$data.DestinationLocationCode"></span></td>
+                            <td class="current"><span data-bind="text:$data.DestinationUnitCode"></span></td>
+                            <td class="current"><span data-bind="text:$data.DestinationBrandCode"></span></td>
+                            <td class="current"><span data-bind="text:$data.DestinationProcessGroup"></span></td>
+                            <td class="current"><span data-bind="text:$data.DestinationGroupCode"></span></td>
+                            <td class="current"><span data-bind="text:$data.DestinationGroupCodeDummy"></span></td>
+                            <td class="current"><span data-bind="text:$data.StartDate"></span></td>
+                            <td class="current">
+                                <span data-bind="text:$data.EndDate"></span>
+                                <span style="display:none" data-bind="text: $data.OldEmployeeID"></span>
+                                <span style="display:none" data-bind="text: $data.OldStartDate"></span>
+                                <span style="display:none" data-bind="text: $data.OldEndDate"></span>
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-danger" disabled="disabled">Delete</button>
+                            </td>
+                        </tr>
+                        @*insert template*@
+                        <tr class="insertRow" data-bind="if: ($parent.editingRowIndex() !== $index() && $root.ValidateDateIsPast($data.OldStartDate) && $root.ValidateDateIsFuture($data.OldEndDate)),
+                                   click: $parent.editInlineWithCallback.bind($data,$index(), $root.onPopulateGridMenu.bind())" tabindex="-1">
+                            <td>
+                                <span data-bind="text: $data.SourceProcessGroup"></span>
+                                <span style="display:none" data-bind="text: $data.SourceLocationCode"></span>
+                                <span style="display:none" data-bind="text: $data.SourceUnitCode"></span>
+                            </td>
+                            <td><span id="lblSourceGroupCodeEdit" data-bind="text:$data.SourceGroupCode"></span></td>
+                            <td></td>
+                            <td><span data-bind="text: $data.EmployeeID"></span></td>
+                            <td><span data-bind="text: $data.EmployeeNameMix"></span></td>
+                            <td><span data-bind="text: $data.DestinationLocationCode"></span></td>
+                            <td><span data-bind="text: $data.DestinationUnitCode"></span></td>
+                            <td><span data-bind="text: $data.DestinationBrandCode"></span></td>
+                            <td><span data-bind="text: $data.DestinationProcessGroup"></span></td>
+                            <td><span data-bind="text: $data.DestinationGroupCode"></span></td>
+                            <td><span data-bind="text:$data.DestinationGroupCodeDummy"></span></td>
+                            <td><span data-bind="text:$data.StartDate"></span></td>
+                            @*<td class="current">
+                                <div class='input-group date time insidetable out-of-bond' data-bind="dateTimePicker: $data.EndDate, value:$data.EndDate, dateTimePickerOptions: {widgetPositioning: {vertical: 'bottom', horizontal: 'right'}, ignoreReadonly: true}">
+                                    <input type='text' class="form-control" />
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                    <span style="display:none" data-bind="text: $data.OldEmployeeID"></span>
+                                    <span style="display:none" data-bind="text: $data.OldStartDate"></span>
+                                    <span style="display:none" data-bind="text: $data.OldEndDate"></span>
+                                </div>
+                            </td>*@
+                            <td class="current"><span data-bind="text:$data.EndDate, click: $parent.editInlineWithCallback.bind($data,$index(), $root.onPopulateGridMenu.bind())"></span></td>
+                            <td>
+                                <button type="button" class="btn btn-danger" disabled="disabled">Delete</button>
+                            </td>
+                        </tr>
+                        @*insert template*@
+                        <tr class="insertRow" data-bind="if: ($parent.editingRowIndex() !== $index() && $root.ValidateDateIsPast($data.OldEndDate)),
+                                   click: $parent.editInlineWithCallback.bind($data,$index(), $root.onPopulateGridMenu.bind())" tabindex="-1">
+                            <td>
+                                <span data-bind="text: $data.SourceProcessGroup"></span>
+                                <span style="display:none" data-bind="text: $data.SourceLocationCode"></span>
+                                <span style="display:none" data-bind="text: $data.SourceUnitCode"></span>
+                            </td>
+                            <td><span id="lblSourceGroupCodeEdit" data-bind="text:$data.SourceGroupCode"></span></td>
+                            <td></td>
+                            <td><span data-bind="text: $data.EmployeeID"></span></td>
+                            <td><span data-bind="text: $data.EmployeeNameMix"></span></td>
+                            <td><span data-bind="text: $data.DestinationLocationCode"></span></td>
+                            <td><span data-bind="text: $data.DestinationUnitCode"></span></td>
+                            <td><span data-bind="text: $data.DestinationBrandCode"></span></td>
+                            <td><span data-bind="text: $data.DestinationProcessGroup"></span></td>
+                            <td><span data-bind="text: $data.DestinationGroupCode"></span></td>
+                            <td><span data-bind="text:$data.DestinationGroupCodeDummy"></span></td>
+                            <td><span data-bind="text:$data.StartDate"></span></td>
+                            <td>
+                                <span data-bind="text:$data.EndDate"></span>
+                                <span style="display:none" data-bind="text: $data.OldEmployeeID"></span>
+                                <span style="display:none" data-bind="text: $data.OldStartDate"></span>
+                                <span style="display:none" data-bind="text: $data.OldEndDate"></span>
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-danger" disabled="disabled">Delete</button>
+                            </td>
+                        </tr>
+                        @*edit template*@
+                        <tr class="insertRow" data-bind="validationOptions: {insertMessages: false, showTooltip:true, decorateInputElement: true, errorElementClass: 'input-error'}, inlineProccess:[$parent,$data],
+                                   if:($parent.editingRowIndex() === $index() && (ko.utils.unwrapObservable($data.OldEmployeeID) === '' || $root.ValidateDateIsFuture($data.OldStartDate))),
+                                   click: $parent.selectRow.bind($data, $index())" tabindex="-1">
+                            <td class="current">
+                                <select id="ddlSourceProcessGroupEdit" class="selectpicker show-tick form-control" data-live-search="true" data-bind="selectPickerCustom: $data.SourceProcessGroup, value: $data.SourceProcessGroup, optionsText: 'Value', optionsValue : 'Text', selectPickerOptions: { optionsArray: $root.processGroupSelectListSource}, event : { change : $root.onProcessGroupChangeSourceEdit.bind($data) }"></select>
+                                <span style="display:none" data-bind="text: $data.SourceLocationCode"></span>
+                                <span style="display:none" data-bind="text: $data.SourceUnitCode"></span>
+                            </td>
+                            <td class="current"><spanid id="lblSourceGroupCodeEdit" data-bind="text:$data.SourceGroupCode"></spanid></td>
+                            <td class="current">
+                                @*<button type="button" class="btn btn-primary" data-toggle="modal" data-target=".choose-group-8">..</button>*@
+                                <button id="btnShowGroupCodePopUp" type="button" class="btn btn-primary" data-toggle="modal"
+                                        data-target="#groupCodePopUpEdit"
+                                        data-bind="click:$root.getGroupPopUpEdit.bind($parent, $data, $index())">
+                                    ...
+                                </button>
+                            </td>
+                            <td class="current">
+                                <select id="ddlEmployeeIDEdit" class="selectpicker show-tick form-control" data-live-search="true" data-bind="selectPickerCustom: $data.EmployeeID, value: $data.EmployeeID, optionsText: 'EmployeeID', optionsValue : 'EmployeeID', selectPickerOptions: { optionsArray: $root.employeeSelectListEdit }, event : { change : $root.onEmployeeChangeSourceEdit.bind($data) }, optionsAfterRender : EmployeeDropDownAfterRender"></select>
+                            </td>
+                            <td><span data-bind="text: $data.EmployeeNameMix"></span></td>
+                            <td class="current">
+                                <select id="ddlFilterDestLocationCodeEdit" class="selectpicker show-tick form-control" data-live-search="true" data-bind="selectPickerCustom: $data.DestinationLocationCode, value: $data.DestinationLocationCode, optionsAfterRender : $root.afterRender, optionsText: 'Value', optionsValue : 'Text',selectPickerOptions: { optionsArray: $root.destLocationSelectListEdit }, event : { change : $root.onDestLocationCodeChangeEdit.bind($data, $index()) }"></select>
+                            </td>
+                            <td class="current">
+                                <select id="ddlUnitCodeDestEdit" class="selectpicker show-tick form-control" data-live-search="true" data-bind="selectPickerCustom: $data.DestinationUnitCode, value: $data.DestinationUnitCode, optionsText: 'Value', optionsValue : 'Text',selectPickerOptions: { optionsArray: $root.destUnitCodeSelectListEdit } , event : { change : $root.onDestUnitChangeEdit.bind($data) }"></select>
+                            </td>
+                            <td class="current">
+                                <select id="ddlDestBrandCodeEdit" class="selectpicker show-tick form-control" data-live-search="true" data-bind="selectPickerCustom: $data.DestinationBrandCode, value: $data.DestinationBrandCode, optionsText: 'Value', optionsValue : 'Text', selectPickerOptions: { optionsArray: $root.destBrandCodesSelectListEdit }, event : { change : $root.onDestBrandCodeChangeEdit.bind($data, $index()) }"></select>
+                            </td>
+                            <td class="current">
+                                <select id="ddlDestProcessGroupEdit" class="selectpicker show-tick form-control" data-live-search="true" data-bind="selectPickerCustom: $data.DestinationProcessGroup, value: $data.DestinationProcessGroup, optionsText: 'Value', optionsValue : 'Text',selectPickerOptions: { optionsArray: $root.destProcessGroupSelectListEdit } , event : { change : $root.onDestProcessGroupChangeEdit.bind($data, $index()) }"></select>
+                            </td>
+                            <td class="current">
+                                <input data-bind="value: $data.DestinationGroupCode" type="hidden" />
+                                <select id="ddlDestGroupEdit" class="selectpicker show-tick form-control" data-live-search="true" data-bind="selectPickerCustom: $data.DestinationGroupCode, value: $data.DestinationGroupCode, optionsText: 'Value', optionsValue : 'Text', selectPickerOptions: { optionsArray: $root.destGroupCodesSelectListEdit } , event : { change : $root.onDestGroupCodeChangeEdit.bind($data) }"></select>
+                            </td>
+                            <td class="current"><span data-bind="text:$data.DestinationGroupCodeDummy"></span></td>
+                            <td class="current">
+                                <div class='input-group date time insidetable out-of-bond' data-bind="dateTimePicker: $data.StartDate, value:$data.StartDate, dateTimePickerOptions: {widgetPositioning: {vertical: 'bottom', horizontal: 'right'}, ignoreReadonly: true,appendToBody: true}">
+                                    <!-- tantan -->
+                                    <span class="form-control" data-bind="text: $data.StartDate, ignoreReadonly: true">
+                                        <input class="form-control" />
+                                    </span>
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div>
+                            </td>
+                            <td class="current">
+                                <div class='input-group date time insidetable out-of-bond' data-bind="dateTimePicker: $data.EndDate, value:$data.EndDate, dateTimePickerOptions: {widgetPositioning: {vertical: 'bottom', horizontal: 'right'}, ignoreReadonly: true, appendToBody: true}">
+                                    <span class="form-control" data-bind="text: $data.EndDate, ignoreReadonly: true">
+                                        <input class="form-control" />
+                                    </span>
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                    <span style="display:none" data-bind="text: $data.OldEmployeeID"></span>
+                                    <span style="display:none" data-bind="text: $data.OldStartDate"></span>
+                                    <span style="display:none" data-bind="text: $data.OldEndDate"></span>
+                                </div>
+                            </td>
+                            <td>
+                                <button data-bind="attr:{'data-employeeID':$data.EmployeeID,'data-startDate':$data.StartDate,'data-employeeIDOld':$data.OldEmployeeID,'data-startDateOld':$data.OldStartDate}"
+                                        type="button" class="btn btn-danger row-delete">
+                                    Delete
+                                </button>
+                            </td>
+                        </tr>
+                        @*edit template*@
+                        <tr class="insertRow" data-bind="validationOptions: {insertMessages: false, showTooltip:true, decorateInputElement: true, errorElementClass: 'input-error'}, inlineProccess:[$parent,$data],
+                                   if:($parent.editingRowIndex() === $index() && $root.ValidateDateIsPast($data.OldStartDate) && $root.ValidateDateIsFuture($data.OldEndDate)),
+                                   click: $parent.selectRow.bind($data, $index())" tabindex="-1">
+                            <td>
+                                <span data-bind="text: $data.SourceProcessGroup"></span>
+                                <span style="display:none" data-bind="text: $data.SourceLocationCode"></span>
+                                <span style="display:none" data-bind="text: $data.SourceUnitCode"></span>
+                            </td>
+                            <td><span id="lblSourceGroupCodeEdit" data-bind="text:$data.SourceGroupCode"></span></td>
+                            <td></td>
+                            <td><span data-bind="text: $data.EmployeeID"></span></td>
+                            <td><span data-bind="text: $data.EmployeeNameMix"></span></td>
+                            <td><span data-bind="text: $data.DestinationLocationCode"></span></td>
+                            <td><span data-bind="text: $data.DestinationUnitCode"></span></td>
+                            <td><span data-bind="text: $data.DestinationBrandCode"></span></td>
+                            <td><span data-bind="text: $data.DestinationProcessGroup"></span></td>
+                            <td><span data-bind="text: $data.DestinationGroupCode"></span></td>
+                            <td><span data-bind="text:$data.DestinationGroupCodeDummy"></span></td>
+                            <td><span data-bind="text:$data.StartDate"></span></td>
+                            <td class="current">
+                                <div class='input-group date time insidetable out-of-bond' data-bind="dateTimePicker: $data.EndDate, value:$data.EndDate, dateTimePickerOptions: {widgetPositioning: {vertical: 'bottom', horizontal: 'right'}, ignoreReadonly: true}">
+                                    <input type='text' class="form-control" />
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                    <span style="display:none" data-bind="text: $data.OldEmployeeID"></span>
+                                    <span style="display:none" data-bind="text: $data.OldStartDate"></span>
+                                    <span style="display:none" data-bind="text: $data.OldEndDate"></span>
+                                </div>
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-danger row-delete">Delete</button>
+                            </td>
+                        </tr>
+                        @*edit template*@
+                        <tr class="insertRow" data-bind="validationOptions: {insertMessages: false, showTooltip:true, decorateInputElement: true, errorElementClass: 'input-error'}, inlineProccess:[$parent,$data],
+                                   if:($parent.editingRowIndex() === $index() && $root.ValidateDateIsPast($data.OldEndDate)),
+                                   click: $parent.selectRow.bind($data, $index())" tabindex="-1">
+                            <td>
+                                <span data-bind="text: $data.SourceProcessGroup"></span>
+                                <span style="display:none" data-bind="text: $data.SourceLocationCode"></span>
+                                <span style="display:none" data-bind="text: $data.SourceUnitCode"></span>
+                            </td>
+                            <td><span id="lblSourceGroupCodeEdit" data-bind="text:$data.SourceGroupCode"></span></td>
+                            <td></td>
+                            <td><span data-bind="text: $data.EmployeeID"></span></td>
+                            <td><span data-bind="text: $data.EmployeeNameMix"></span></td>
+                            <td><span data-bind="text: $data.DestinationLocationCode"></span></td>
+                            <td><span data-bind="text: $data.DestinationUnitCode"></span></td>
+                            <td><span data-bind="text: $data.DestinationBrandCode"></span></td>
+                            <td><span data-bind="text: $data.DestinationProcessGroup"></span></td>
+                            <td><span data-bind="text: $data.DestinationGroupCode"></span></td>
+                            <td><span data-bind="text:$data.DestinationGroupCodeDummy"></span></td>
+                            <td><span data-bind="text:$data.StartDate"></span></td>
+                            <td>
+                                <span data-bind="text:$data.EndDate"></span>
+                                <span style="display:none" data-bind="text: $data.OldEmployeeID"></span>
+                                <span style="display:none" data-bind="text: $data.OldStartDate"></span>
+                                <span style="display:none" data-bind="text: $data.OldEndDate"></span>
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-danger" disabled="disabled">Delete</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tbody data-bind="visible: !listDataItems().length">
+                        <tr>
+                            <td colspan="13" class="empty-row-message"><div class="loader"></div></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div data-bind="if: (listDataItems() != null && listDataItems().length !== 0)">
+                @Html.Partial("GridViewFooter")
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Choose Group Modal -->
+<!-- Modal Insert -->
+<div class="modal fade choose-group-8" id="groupCodePopUpInsert" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Choose Source Group</h4>
+            </div>
+            <div class="modal-body">
+                <div class="table-overflow no-margin">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr class="head">
+                                <th class="column-check"></th>
+                                <th>Group</th>
+                                <th>Allocation</th>
+                                <th>Attendance</th>
+                            </tr>
+                        </thead>
+                        <tbody data-bind='foreach: itemListGroupCodePopUp'>
+                            <tr>
+                                <td class="column-check"><input type="radio" name="group" data-bind="text: GroupCode" checked="checked"></td>
+                                <td><span data-bind="text: GroupCode"></span></td>
+                                <td><span data-bind="text: Allocation"></span></td>
+                                <td><span data-bind="text: Attendance"></span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-lg-12">
+                    <div class="row">
+                        <div class="action-btn">
+                            <button type="button" class="btn btn-primary pull-right" data-dismiss="modal" data-bind="click:$root.chooseSourceGroup">Choose</button>
+                            <button type="button" class="btn btn-primary pull-right" data-dismiss="modal">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Edit -->
+<div class="modal fade choose-group-8" id="groupCodePopUpEdit" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Choose Source Group</h4>
+            </div>
+            <div class="modal-body">
+                <div class="table-overflow no-margin">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr class="head">
+                                <th class="column-check"></th>
+                                <th>Group</th>
+                                <th>Allocation</th>
+                                <th>Attendance</th>
+                            </tr>
+                        </thead>
+                        <tbody data-bind='foreach: itemListGroupCodePopUpEdit'>
+                            <tr>
+                                <td class="column-check"><input type="radio" name="group" data-bind="text: GroupCode" checked="checked"></td>
+                                <td><span data-bind="text: GroupCode"></span></td>
+                                <td><span data-bind="text: Allocation"></span></td>
+                                <td><span data-bind="text: Attendance"></span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-lg-12">
+                    <div class="row">
+                        <div class="action-btn">
+                            <button type="button" class="btn btn-primary pull-right" data-dismiss="modal" data-bind="click:$root.chooseSourceGroupEdit">Choose</button>
+                            <button type="button" class="btn btn-primary pull-right" data-dismiss="modal">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Choose Group Modal -->
+@section Scripts
+{
+    <script src="~/Scripts/app/globalfunctions.js" type="text/javascript"></script>
+    <script src="~/Scripts/common/app.GridViewModel.js" type="text/javascript"></script>
+    <script src="~/Scripts/common/app.Extenders.js" type="text/javascript"></script>
+    <script type="text/javascript">
+
+    (function(app) {
+        app.EditGrid = function() {
+            var self = this;
+
+            //================= Filter Variable Common ================//
+            self.itemLocations              = @Html.Raw(Json.Encode(@Model.PLNTChildLocationLookupList));
+            self.menuItemLocations          = ko.observableArray(@Html.Raw(Json.Encode(@Model.PLNTChildLocationLookupList)));
+            self.filterLocationName         = ko.observable();
+            self.filterYear                 = ko.observable('@Model.DefaultYear');
+            self.filterWeek                 = ko.observable('@Model.DefaultWeek');
+            self.filterDate                 = ko.observable('@Model.TodayDate');
+            self.filterTransactionDateFrom  = ko.observable('@Model.TodayDate');
+            self.filterTransactionDateTo    = ko.observable('@Model.TodayDate');
+            self.filterdtpStartDate         = ko.observable('@Model.TodayDate');
+            self.filterdtpEndDate           = ko.observable('@Model.TodayDate');
+            self.dateTypeFilter             = ko.observable('rdbDate');
+            self.ClosingPayrollDate         = ko.observable('@Model.ClosingPayrollDate');
+            self.firstLoad = true;
+            self.isLoading = ko.observable(false);
+
+            //================= Filter Variable Source ================//
+            self.filterLocationCodeSource   = ko.observable($("#ddlFilterLocationCodeSource").val());
+            self.filterUnitCodeSource       = ko.observable('');
+            self.filterShiftCodeSource      = ko.observable('');
+            self.filterBrandSource          = ko.observable('');
+
+            //================= Filter Variable Destination ================//
+            self.filterDestLocationCode = ko.observable($("#ddlFilterDestLocationCode").val());
+
+            //================= Filter Select List Common ================//
+            self.WeekFromSelectList = ko.observableArray();
+            self.employeeSelectList = ko.observableArray();
+            self.employeeSelectListEdit = ko.observableArray();
+
+            //================= Filter Select List Source ================//
+            self.unitCodeSelectListSource       = ko.observableArray();
+            self.shiftCodeSelectListSource      = ko.observableArray();
+            self.brandSelectListSource          = ko.observableArray();
+            self.processGroupSelectListSource   = ko.observableArray();
+
+            //================= Filter Select List Destination ================//
+            self.destUnitCodeSelectList     = ko.observableArray();
+            self.destBrandCodesSelectList   = ko.observableArray();
+            self.destProcessGroupSelectList = ko.observableArray();
+            self.destGroupCodesSelectList   = ko.observableArray();
+            self.destLocationSelectList    = ko.observableArray();
+
+            self.destBrandCodesSelectListEdit = ko.observableArray();
+            self.destUnitCodeSelectListEdit = ko.observableArray();
+            self.destProcessGroupSelectListEdit = ko.observableArray();
+            self.destGroupCodesSelectListEdit = ko.observableArray();
+            self.destLocationSelectListEdit    = ko.observableArray();
+
+            self.editIndexRow = ko.observable(0);
+
+            //================= List Group Code Pop Up ================//
+            self.itemListGroupCodePopUp = ko.observableArray([]);
+            self.itemListGroupCodePopUpEdit = ko.observableArray([]);
+
+            //================= Variable Grid View ================//
+            self.newData = {
+                SourceLocationCode:         ko.observable(''),
+                SourceUnitCode:             ko.observable(''),
+                SourceProcessGroup:         ko.observable(''),
+                SourceGroupCode:            ko.observable(''),
+                EmployeeID:                 ko.observableArray([]),
+                EmployeeNumber:             ko.observable(''),
+                EmployeeName:               ko.observable(''),
+                EmployeeNameMix:            ko.observable(''),
+                DestinationLocationCode:    ko.observable(self.filterDestLocationCode()),
+                DestinationBrandCode:       ko.observable(''),
+                DestinationProcessGroup:    ko.observable(''),
+                DestinationGroupCode:       ko.observable(''),
+                DestinationGroupCodeDummy:  ko.observable(''),
+                DestinationUnitCode:        ko.observable(''),
+                StartDate:                  ko.observable('@Model.TodayDate'),
+                EndDate:                    ko.observable('@Model.TodayDate'),
+                OldEmployeeID:              ko.observable(''),
+                OldStartDate:               ko.observable(''),
+                OldEndDate:                 ko.observable('')
+            };
+
+            self.isBusy = ko.observable(false);
+
+
+
+            //================= Event Handler Filter Top ================//
+            self.onLocationCodeChangeSource = function() {
+                if ((! self.firstLoad) && (! self.isLoading())) {
+                    self.isLoading(true);
+
+                    async.series([
+                        function(cb) {
+                            self.getLocationNameFilter(cb);
+                        },
+                        function(cb) {
+                            self.getUnitCodeByLocationSource(cb);
+                        },
+                        function(cb) {
+                            self.getShiftByLocationSource(cb);
+                        },
+                        function(cb) {
+                            self.getBrandCodesSource(cb);
+                        }
+                    ], function() {
+                        self.newData.DestinationLocationCode(self.filterLocationCodeSource());
+                        self.onDestLocationCodeChange();
+                        self.isLoading(false);
+                    });
+                }
+            };
+
+            self.onUnitCodeChangeSource = function (){
+                if ((! self.firstLoad) && (! self.isLoading())) {
+                    self.isLoading(true);
+                    async.series([
+                        function(cb) {
+                            self.getBrandCodesSource(cb);
+                        }
+                    ], function() {
+                        self.isLoading(false);
+                    });
+                }
+            };
+
+            self.onShiftCodeChangeSource = function (){
+                if ((! self.firstLoad) && (! self.isLoading())) {
+                    self.isLoading(true);
+                    async.series([
+                        function(cb) {
+                            self.getBrandCodesSource(cb);
+                        }
+                    ], function() {
+                        self.isLoading(false);
+                    });
+                }
+            };
+
+            self.onYearSelectedChange = function(){
+                if ((! self.firstLoad) && (! self.isLoading())) {
+                    self.isLoading(true);
+                    async.series([
+                        function(cb) {
+                            self.GetWeekFromSelectList(cb);
+                        },
+                        function(callback) {
+                            self.setDateRange(callback);
+                        },
+                        function(cb) {
+                            self.getBrandCodesSource(cb);
+                        }
+                    ], function() {
+                        self.isLoading(false);
+                    });
+                }
+            };
+
+            self.onWeekSelectedChange = function() {
+                if ((! self.firstLoad) && (! self.isLoading())) {
+                    self.isLoading(true);
+                    async.series([
+                        function(callback) {
+                            self.setDateRange(callback);
+                        },
+                        function(cb) {
+                            self.getBrandCodesSource(cb);
+                        }
+                    ], function() {
+                        self.isLoading(false);
+                    });
+                }
+            }
+
+            //================= Event Handler Filter Grid Source ================//
+
+            self.onProcessGroupChangeSource = function(){
+                self.getGroupPopUpInsert();
+            }
+
+            self.onEmployeeChange = function(){
+                self.getEmployeeDetail(self.newData);
+            };
+
+            self.onBrandCodeChangeSource = function(){
+                if ((! self.firstLoad) && (! self.isLoading())) {
+                    self.isLoading(true);
+                    async.series([
+                        function(callback) {
+                            self.validateBrandDest(callback);
+                        },
+                    ], function() {
+                        self.isLoading(false);
+                    });
+                }
+            };
+
+            self.afterRender = function(options, item)
+            {
+
+                $(options).attr('title', item.Value);
+                $(options).attr(
+                    'data-content',
+                    "<span class='text'><span style='width: 35px; display: inline-block;'>" + item.Value + "</span> - " + item.LocationName + "</span>"
+                );
+
+            }
+
+            //================= Event Handler Filter Grid Source EDIT ================//
+
+            self.onEmployeeChangeSourceEdit = function(data){
+                if ((! self.firstLoad) && (! self.isLoading())) {
+                    self.getEmployeeDetail(data);
+                }
+            };
+
+            self.onProcessGroupChangeSourceEdit = function(data){
+                self.getGroupPopUpEdit(data);
+            };
+
+            //================= Event Handler Filter Grid Destination ================//
+
+            self.onDestLocationCodeChange = function(){
+                if ((! self.firstLoad) && (! self.isLoading())) {
+                    self.isLoading(true);
+                    async.series([
+                        function(cb) {
+                            self.getUnitCodeDestByDestLocation(cb);
+                        },
+                        function(cb) {
+                            self.getDestinationBrandCodes(cb);
+                        },
+                        function(cb) {
+                            self.getDestProcessGroup(cb);
+                        },
+                        function(cb) {
+                            self.getDestGroupByLocationUnitProcess(cb);
+                        },
+                        //function(cb) {
+                        //    self.validateBrandDest(cb);
+                        //}
+                    ], function() {
+                        self.isLoading(false);
+                    });
+                }
+            }
+
+            self.onDestUnitCodeChange = function(){
+                if ((! self.firstLoad) && (! self.isLoading())) {
+                    if (self.newData.DestinationUnitCode() === 'PROD'){
+                        self.destBrandCodesSelectList([]);
+                        $('#ddlDestProcessGroup').find('option').remove();
+                        $('#ddlDestProcessGroup').selectpicker('refresh');
+                    } else {
+                        self.validateBrandDest();
+                        self.getDestGroupByLocationUnitProcess();
+                    }
+                }
+
+            };
+
+            self.onDestProcessGroupChange = function(){
+                if ((! self.firstLoad) && (! self.isLoading())) {
+                    self.getDestGroupByLocationUnitProcess();
+                }
+            };
+
+            self.onDestGroupCodesChange = function(){
+                var dummyGroup = self.newData.DestinationGroupCode().replace(/(.{1}).{1}/,"$15");
+                self.newData.DestinationGroupCodeDummy(dummyGroup)
+            };
+
+            self.onDestBrandCodesChange = function(){
+                if ((! self.firstLoad) && (! self.isLoading())) {
+                    self.getDestProcessGroup();
+                }
+            };
+
+            //================= Event Handler Filter Grid Destination EDIT ================//
+
+            self.onDestLocationCodeChangeEdit = function(index, data){
+                var old = ko.toJS(data)
+                if (! self.isLoading()) {
+                    self.isLoading(true);
+                    async.series([
+                        function(cb) {
+                            self
+                            .triggerUnitByLocationCode(data, index)
+                            .done(function(data) {
+                                cb();
+                            })
+                        },
+                        function(cb) {
+                            self
+                            .triggerBrandByLocation(old, index)
+                            .done(function(data) {
+                                cb();
+                            })
+                        },
+                        function(cb) {
+                            self
+                            .triggerProcessByLocationAndBrand(data, old, index)
+                            .done(function(data) {
+                                cb();
+                            })
+                        },
+                        function(cb) {
+                            self
+                            .triggerGroupByLocationUnitAndProcess(data, index)
+                            .done(function() {
+                                cb();
+                            });
+                            
+                        }
+                    ], function() {
+                        self.isLoading(false);
+                    });
+                }
+            };
+
+            self.onDestUnitChangeEdit = function(data){
+                //console.log('onDestUnitChangeEdit', data)
+                //self.getDestGroupCodesEdit(data.DestinationLocationCode, data.DestinationInputCode, data.DestinationProcessGroup);
+                //$('#ddlDestGroupEdit').selectpicker('refresh');
+                //self.getDestinationBrandCodesEdit(data.DestinationLocationCode, data.DestinationUnitCode);
+                //$('#ddlDestBrandCodeEdit').selectpicker('refresh');
+            };
+
+            self.onDestBrandCodeChangeEdit = function(index, data){
+
+            };
+
+            self.onDestProcessGroupChangeEdit = function(index, data){
+
+                if (self.isLoading()) return;
+
+                self.isLoading(true);
+                async.series([
+                    function(cb) {
+                        self
+                        .triggerGroupByLocationUnitAndProcess(data, index)
+                        .done(function() {
+                            cb();
+                        });
+                    }
+                ], function() {
+                    self.isLoading(false);
+                });
+            };
+
+            self.firstPopulateGridMenu = ko.observable(true);
+
+            self.onPopulateGridMenu = function(data, index){
+
+                var old = ko.toJS(data)
+
+                //if (self.firstPopulateGridMenu()) {
+                //    self.triggerUnitByLocationCode(data, index);
+                //    self.triggerBrandByLocation(data, index);
+                //    self.triggerProcessByLocationAndBrand(data, index);
+                //    self.triggerGroupByLocationUnitAndProcess(data, index);
+
+                //    self.firstPopulateGridMenu(false);
+
+                //    return
+                //}
+
+                if ((! self.firstLoad) && (! self.isLoading())) {
+                    self.isLoading(true);
+                    async.series([
+                        function(cb) {
+                            self
+                            .triggerUnitByLocationCode(data, index)
+                            .done(function(data) {
+                                cb();
+                            })
+                        },
+                        function(cb) {
+                            self
+                            .triggerBrandByLocation(old, index)
+                            .done(function(data) {
+                                cb();
+                            })
+                        },
+                        function(cb) {
+                            self
+                            .triggerProcessByLocationAndBrand(data, old, index)
+                            .done(function(data) {
+                                cb();
+                            })
+                        },
+                        function(cb) {
+                            self
+                            //.triggerGroupByLocationUnitAndProcess(data, index)
+                            .triggerGroupByLocationUnitAndProcess(old, index)
+                            .done(function() {
+                                cb();
+                            });
+                            
+                        },
+                        function(cb) {
+                            self
+                            //.triggerIdOnInlineEdit(data, index)
+                            .triggerIdOnInlineEdit(old, index)
+                            .done(function() {
+                                cb();
+                            });
+                            
+                        }
+                    ], function() {
+                        self.isLoading(false);
+                    });
+                }
+            };
+
+            self.onDestGroupCodeChangeEdit = function(data){
+                if ( data.DestinationGroupCode() != null )
+                {
+                    var dummyGroup = data.DestinationGroupCode().replace(/(.{1}).{1}/,"$15");
+                    data.DestinationGroupCodeDummy(dummyGroup)
+                } else {
+                    data.DestinationGroupCodeDummy(null);
+                }
+            };
+
+            self.onStartDateChangeEdit = function(data){
+                var StartDate = data.StartDate();
+                data.StartDateDummy(StartDate)
+            };
+
+            //================= FUNCTIONS SOURCE ================//
+
+            //Function Get Location Name
+            self.getLocationNameFilter = function(cb) {
+                for (var i = 0; i < self.itemLocations.length; i++) {
+                    if (self.itemLocations[i].LocationCode == self.filterLocationCodeSource()) {
+                        self.filterLocationName(self.itemLocations[i].LocationName);
+                        $('option:selected', $("#ddlFilterLocationCodeSource")).text(self.itemLocations[i].LocationCode);
+                        break;
+                    }
+                }
+                if (typeof cb == 'function') cb();
+            };
+
+            //Function Get Unit Code Source by Location
+            self.getUnitCodeByLocationSource = function(cb) {
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantWorkerAssignment/GetListUnitCode"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: { locationCode: self.filterLocationCodeSource() },
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#ddlUnitCodeFilterSource').find('option').remove();
+                        $('#ddlUnitCodeFilterSource').selectpicker('refresh');
+
+                        self.unitCodeSelectListSource(data);
+                        self.filterUnitCodeSource(self.unitCodeSelectListSource[0]);
+                    },
+                    complete : function() {
+                        if (typeof cb == 'function') cb();
+                    }
+                });
+            };
+
+            //Function Get Shift by Location
+            self.getShiftByLocationSource = function(cb) {
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantWorkerAssignment/GetListShift"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: { locationCode: self.filterLocationCodeSource() },
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#ddlShiftCodeFilterSource').find('option').remove();
+                        $('#ddlShiftCodeFilterSource').selectpicker('refresh');
+                        var list = [];
+                        $.each(data, function(index, value) {
+                            list.push({ "Text": value.Text, "Value": value.Text });
+                        });
+                        self.shiftCodeSelectListSource(list);
+                        self.filterShiftCodeSource(list[0].Text);
+                    },
+                    complete : function() {
+                        if (typeof cb == 'function') cb();
+                    }
+                });
+            };
+
+            //Function Get BrandCode Source
+            self.getBrandCodesSource = function(cb) {
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantWorkerAssignment/GetListBrandFromPlantTpu"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: { locationCode: self.filterLocationCodeSource(), unitCode: self.filterUnitCodeSource(), shift: self.filterShiftCodeSource(), year: self.filterYear(), week: self.filterWeek()},
+                    dataType: 'json',
+                    success: function(data) {
+                        var list = [];
+                        $.each(data, function(index, value) {
+                            list.push({ "Text": value, "Value": value });
+                        });
+
+                        $('#ddlBrandFilterSource').find('option').remove();
+                        $('#ddlBrandFilterSource').selectpicker('refresh');
+                        self.brandSelectListSource(list);
+                    },
+                    complete : function() {
+                        if (typeof cb == 'function') cb();
+                    }
+                });
+            };
+
+            //Function Get ProcessGroup Source
+            self.getProcessGroupSource = function(cb) {
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantWorkerAssignment/GetProcess"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: { locationCode: self.filterLocationCodeSource(), brandCode: self.filterBrandSource()},
+                    dataType: 'json',
+                    success: function(data) {
+                        $("#ddlProcessSource").find('option').remove();
+                        $("#ddlProcessSource").selectpicker('refresh');
+                        var getProcessModel = [];
+                        $.each(data, function(index, value) {
+                            getProcessModel.push({ "Text": value.Value, "Value": value.Value });
+                            if(data.length == getProcessModel.length){
+                                getProcessModel.push({ "Text": "DAILY", "Value": "DAILY" })
+                            }
+                        });
+                        self.processGroupSelectListSource(getProcessModel);
+                        //self.getGroupPopUpInsert();
+                    },
+                    complete : function() {
+                        if (typeof cb == 'function') cb();
+                    }
+                });
+            };
+
+            //Function Get Group Code Pop Up
+            self.getGroupPopUpInsert = function() {
+                var inputCriteria = {
+                    LocationCode: self.filterLocationCodeSource(),
+                    UnitCode: self.filterUnitCodeSource(),
+                    BrandCode: (typeof self.filterBrandSource() == 'undefined' ? "" : self.filterBrandSource()),
+                    ProcessCode: (typeof self.newData.SourceProcessGroup == 'undefined' ? "" : self.newData.SourceProcessGroup()),
+                    Date:moment(self.filterDate(), "DD/MM/YYYY").format("MM/DD/YYYY"),
+                    KPSYear: self.filterYear(),
+                    KPSWeek: self.filterWeek(),
+                    Shift: self.filterShiftCodeSource()
+                };
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantWorkerAssignment/GetGroupCodePopUp"),
+                    type: "GET",
+                    data:  inputCriteria,
+                    dataType: "json",
+                    traditional: true,
+                    contentType: "application/json;",
+                    success: function(data) {
+                        var list = [];
+                        $.each(data, function(index, value) {
+                            list.push({
+                                "GroupCode": value.GroupCode,
+                                "Allocation": value.Allocation,
+                                "Attendance": value.Attendance
+                            });
+                        });
+                        self.itemListGroupCodePopUp(list);
+                        if(list.length > 0)
+                            self.newData.SourceGroupCode(list[0].GroupCode);
+                        if(list.length == 0)
+                            $('#lblGroupCodeSource').text('');
+                        self.getEmployees(self.filterLocationCodeSource, self.filterUnitCodeSource, self.newData.SourceProcessGroup, self.newData.SourceGroupCode);
+                    }
+                });
+            };
+
+            //Function Get Group Code Pop Up for Edit Template
+            self.getGroupPopUpEdit = function(context) {
+                var inputCriteria = {
+                    LocationCode: self.filterLocationCodeSource(),
+                    UnitCode: self.filterUnitCodeSource(),
+                    BrandCode: (typeof self.filterBrandSource() == 'undefined' ? "" : self.filterBrandSource()),
+                    ProcessCode: (typeof context.SourceProcessGroup == 'undefined' ? "" : context.SourceProcessGroup()),
+                    Date:moment(self.filterDate(), "DD/MM/YYYY").format("MM/DD/YYYY"),
+                    KPSYear: self.filterYear(),
+                    KPSWeek: self.filterWeek(),
+                    Shift: self.filterShiftCodeSource()
+                };
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantWorkerAssignment/GetGroupCodePopUp"),
+                    type: "GET",
+                    data:  inputCriteria,
+                    dataType: "json",
+                    traditional: true,
+                    contentType: "application/json;",
+                    success: function(data) {
+                        var list = [];
+                        $.each(data, function(index, value) {
+                            list.push({
+                                "GroupCode": value.GroupCode,
+                                "Allocation": value.Allocation,
+                                "Attendance": value.Attendance
+                            });
+                        });
+                        if(list.length > 0)
+                            context.SourceGroupCode(list[0].GroupCode);
+                    }
+                });
+            };
+
+            //Function choose pop up group code
+            self.chooseSourceGroup = function() {
+                $("input[name=group]:radio").each(function() {
+                    if($(this).is(":checked")) {
+                        self.newData.SourceGroupCode($(this).text());
+                        self.getEmployees(self.filterLocationCodeSource, self.filterUnitCodeSource, self.newData.SourceProcessGroup, $(this).text());
+                        return;
+                    }
+                });
+            }
+
+            //Function Get Employees Source
+            self.getEmployees = function(locationCode, unitCode, processCode, groupCode) {
+                $('#ddlEmployeeID').find('option').remove();
+                $('#ddlEmployeeID').selectpicker('refresh');
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantWorkerAssignment/GetEmployeesActive"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: { LocationCode: locationCode(), UnitCode: unitCode(), ProcessSettingCode: processCode, GroupCode: groupCode },
+                    dataType: 'json',
+                    success: function(data) {
+                        var list = [];
+                        $.each(data, function(index, value) {
+                            list.push({
+                                "EmployeeID"        : value.EmployeeID,
+                                "EmployeeNumber"    : value.EmployeeNumber,
+                                "EmployeeName"      : value.EmployeeName
+                            });
+                        });
+                        if(list.length == 0)
+                            $('#ddlEmployeeDetail').text('');
+                        self.employeeSelectList(list);
+                        //self.employeeSelectListEdit(list);
+                        //$('.on-edit-employee').selectpicker('refresh');
+                    }
+                });
+            };
+
+            //Function Get Employee Detail
+            self.getEmployeeDetail = function(context) {
+                if(typeof context.EmployeeID() != 'undefined'){
+                    $.ajax({
+                        url: @Html.BaseUrl("ExePlantWorkerAbsenteeism/GetEmployeeDetail"),
+                        type: 'GET',
+                        contentType: 'application/json',
+                        data: { EmployeeID: context.EmployeeID() },
+                        dataType: 'json',
+                        success: function(data) {
+                            context.EmployeeNumber(data.EmployeeNumber);
+                            context.EmployeeName(data.EmployeeName);
+                            var employeeNumber = data.EmployeeNumber;
+                            var lastTwoNumber = employeeNumber.slice(-2);
+                            context.EmployeeNameMix(lastTwoNumber + " - " + data.EmployeeName);
+                        }
+                    });
+                }else{
+                    context.EmployeeNumber("");
+                    context.EmployeeName("");
+                    context.EmployeeNameMix("");
+                }
+            };
+
+            //================= FUNCTIONS DESTINATION ================//
+
+            //Function Get Unit Code Destination by Location Code Destination
+            self.getUnitCodeDestByDestLocation = function(cb) {
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantWorkerAssignment/GetListDestinationUnitCode"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: { locationCode: self.newData.DestinationLocationCode() },
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#ddlUnitCodeDest').find('option').remove();
+                        $('#ddlUnitCodeDest').selectpicker('refresh');
+                        self.destUnitCodeSelectList(data);
+                        self.newData.DestinationUnitCode(self.filterUnitCodeSource());
+                    },
+                    complete : function() {
+                        if (typeof cb == 'function') cb();
+                    }
+                });
+            };
+
+            self.setUnitCodeDestByDestLocationEdit = function(unitCode, cb) {
+                if ((data.DestinationLocationCode.length)==0){
+                    var unit = self.getUnitCodeDestByDestLocationEdit(data.DestinationLocationCode())();
+                }else{
+                    var unit = self.getUnitCodeDestByDestLocationEdit(data.DestinationLocationCode)();
+                }
+
+                $('#ddlUnitCodeDestEdit').find('option').remove();
+                self.destUnitCodeSelectListEdit(unit);
+                $('#ddlUnitCodeDestEdit').selectpicker('val', unitCode);
+                $('#ddlUnitCodeDestEdit').selectpicker('refresh');
+                if (typeof cb == 'function') cb();
+
+            };
+
+            self.setDestinationBrandCodes = function(cb,data) {
+
+                if ((data.DestinationLocationCode.length)==0){
+                    var brand = self.getDestinationBrandCodesEdit(data.DestinationLocationCode(), data.DestinationUnitCode())();
+                    $('#ddlDestBrandCodeEdit').find('option').remove();
+                    self.destBrandCodesSelectListEdit(brand);
+                    $('#ddlDestBrandCodeEdit').selectpicker('refresh');
+
+                    if (typeof cb == 'function') cb();
+                }else{
+                    var brand = self.getDestinationBrandCodesEdit(data.DestinationLocationCode, data.DestinationUnitCode)();
+                    $('#ddlDestBrandCodeEdit').find('option').remove();
+                    self.destBrandCodesSelectListEdit(brand);
+                    $('#ddlDestBrandCodeEdit').selectpicker('refresh');
+
+                    if (typeof cb == 'function') cb();
+                }
+
+
+
+            };
+
+            //Function Get  Location Code Destination
+            self.getLocationCode = function(cb) {
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantWorkerAssignment/GetPLNTTPOChildLocationLookupList"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#ddlFilterDestLocationCode').find('option').remove();
+                        $('#ddlFilterDestLocationCode').selectpicker('refresh');
+                        var list = [];
+                        
+                        $.each(data, function(index, value) {
+                            list.push({ "Text": value.LocationCode, "Value": value.LocationCode, "LocationCode": value.LocationCode, "LocationName": value.LocationName, "LocationCompat":value.LocationCompat });
+                        });
+                        self.destLocationSelectList(list);
+                        self.destLocationSelectListEdit(list);
+                        if (data.length > 0){
+                            self.newData.DestinationLocationCode($("#ddlFilterLocationCodeSource").val());
+                        }
+                    },
+                    complete : function() {
+                        if (typeof cb == 'function') cb();
+                    }
+                });
+            };
+
+            //Function Get Brand Code Destination by Location Code Destination
+            self.getDestinationBrandCodes = function(cb) {
+                self.destBrandCodesSelectList([]);
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantWorkerAssignment/GetListBrandFromPlantTpu"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: { locationCode: self.newData.DestinationLocationCode(), unitCode: self.newData.DestinationUnitCode(), shift: self.filterShiftCodeSource(), year: self.filterYear(), week: self.filterWeek() },
+                    dataType: 'json',
+                    success: function(data) {
+                        var list = [];
+                        if (data.length > 0){
+                            self.newData.DestinationBrandCode(data[0]);
+                        }else{
+                            self.destProcessGroupSelectList([]);
+                            $('#ddlDestBrandCode').find('option').remove();
+                            $('#ddlDestBrandCode').selectpicker('refresh');
+                        }
+
+                        $.each(data, function(index, value) {
+                            list.push({ "Text": value, "Value": value });
+                        });
+
+                        self.destBrandCodesSelectList(list);
+
+                        if (self.newData.DestinationUnitCode() === 'PROD'){
+                            self.destProcessGroupSelectList([]);
+                            $('#ddlDestBrandCode').find('option').remove();
+                            $('#ddlDestBrandCode').selectpicker('refresh');
+                        }
+                    },
+                    complete : function() {
+                        if (typeof cb == 'function') cb();
+                    }
+                });
+            };
+
+
+            //Function Get Process Group Destination by Location Code Destination
+            self.getDestProcessGroup = function(cb) {
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantWorkerAssignment/GetProcess"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: { locationCode: self.newData.DestinationLocationCode(), brandCode: self.newData.DestinationBrandCode() },
+                    dataType: 'json',
+                    success: function(data) {
+                        if (self.newData.DestinationUnitCode() === 'PROD'){
+                            self.destProcessGroupSelectList([]);
+                            $('#ddlDestProcessGroup').find('option').remove();
+                            $('#ddlDestProcessGroup').selectpicker('refresh');
+                            $('#ddlDestProcessGroup').change();
+                        } else {
+                            $('#ddlDestProcessGroup').find('option').remove();
+                            $("#ddlDestProcessGroup").selectpicker('refresh');
+                            $('#ddlDestProcessGroup').change();
+                            self.destProcessGroupSelectList(data);
+                        }
+                        //self.destProcessGroupSelectList(data);
+                    },
+                    complete : function() {
+                        if (typeof cb == 'function') cb();
+                    }
+                });
+            };
+
+            self.setDestProcessGroupEdit = function(cb,data) {
+
+                if ((data.DestinationLocationCode.length)==0){
+                    var process = self.getDestProcessGroupEdit(data.DestinationLocationCode(), data.DestinationBrandCode())();
+                    var unit = self.getUnitCodeDestByDestLocationEdit(data.DestinationLocationCode())();
+                }else{
+                    var process = self.getDestProcessGroupEdit(data.DestinationLocationCode, data.DestinationBrandCode)();
+                    var unit = self.getUnitCodeDestByDestLocationEdit(data.DestinationLocationCode)();
+                }
+
+
+                if((unit[0].Value=='PROD')){
+                    $('#ddlDestProcessGroupEdit').find('option').remove();
+                    $('#ddlDestProcessGroupEdit').selectpicker('refresh');
+                    if (typeof cb == 'function') cb();
+                }else{
+                    $('#ddlDestProcessGroupEdit').find('option').remove();
+                    self.destProcessGroupSelectListEdit(process);
+                    $('#ddlDestProcessGroupEdit').selectpicker('refresh');
+                    if (typeof cb == 'function') cb();
+                }
+            };
+
+            self.setDestGroupByLocationUnitProcess = function(cb,data) {
+
+                if ((data.DestinationLocationCode.length)==0){
+                    var unit = self.getUnitCodeDestByDestLocationEdit(data.DestinationLocationCode())();
+                    var group= self.getDestGroupCodesEdit(data.DestinationLocationCode(), data.DestinationUnitCode(), data.DestinationProcessGroup(), data.DestinationBrandCode())();
+
+                }else{
+                    var unit = self.getUnitCodeDestByDestLocationEdit(data.DestinationLocationCode)();
+                    var group= self.getDestGroupCodesEdit(data.DestinationLocationCode, data.DestinationUnitCode, data.DestinationProcessGroup, data.DestinationBrandCode())();
+
+                }
+
+                if((unit[0].Value=='PROD')){
+                    $('#ddlDestGroupEdit').find('option').remove();
+                    $('#ddlDestGroupEdit').selectpicker('refresh');
+                    data.DestinationGroupCodeDummy('');
+                    if (typeof cb == 'function') cb();
+                }else{
+                    $('#ddlDestGroupEdit').find('option').remove();
+                    self.destGroupCodesSelectListEdit(group);
+                    //self.getDestGroupCodesEdit(data.DestinationLocationCode, data.DestinationUnitCode, data.DestinationProcessGroup);
+                    $('#ddlDestGroupEdit').selectpicker('refresh');
+                    if (typeof cb == 'function') cb();
+                }
+
+
+            };
+
+            //Function Get Group Destination by Location Code Destination
+            self.getDestGroupByLocationUnitProcess = function(cb) {
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantWorkerAssignment/GetGroupCode"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: { locationCode: self.newData.DestinationLocationCode(), 
+                        unitCode: self.newData.DestinationUnitCode(), 
+                        process: self.newData.DestinationProcessGroup(),
+                        brandCode: self.newData.DestinationBrandCode(),
+                        year: self.filterYear(),
+                        week: self.filterWeek() },
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#ddlDestGroup').find('option').remove();
+                        $('#ddlDestGroup').selectpicker('refresh');
+                        self.destGroupCodesSelectList(data);
+                        //self.destGroupCodesSelectListEdit(data);
+                        if(data.length > 0)
+                            self.newData.DestinationGroupCodeDummy(data[0].Value.replace(/(.{1}).{1}/,"$15"));
+                        else
+                            self.newData.DestinationGroupCodeDummy('');
+                    },
+                    complete : function() {
+                        if (typeof cb == 'function') cb();
+                    }
+
+                });
+            };
+
+            //================= FUNCTIONS SOURCE EDIT ================//
+            //Function Get Location Source Edit
+            self.getLocationEdit = function() {
+                var list = [];
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantWorkerAssignment/GetPLNTTPOChildLocationLookupList"),
+                    type: 'GET',
+                    async: false,
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    success: function(data) {
+                        $.each(data, function(index, value) {
+                            list.push({ "Text": value.LocationCode, "Value": value.LocationCode });
+                        });
+                    }
+                })
+                return ko.observableArray(list);
+            };
+
+            //Function Get ProcessGroup Source Edit
+            self.getProcessGroupSourceEdit = function(locationCode) {
+                var list = [];
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantWorkerAssignment/GetProcess"),
+                    type: 'GET',
+                    async: false,
+                    contentType: 'application/json',
+                    data: { locationCode: locationCode, brandCode: self.filterBrandSource},
+                    dataType: 'json',
+                    success: function(data) {
+                        list = data;
+                    }
+                });
+                return list;
+            };
+
+            //Function Get Employees Source
+            self.getEmployeesEdit = function(locationCode, unitCode, processCode, groupCode) {
+                var list = [];
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantWorkerAssignment/GetEmployeesActive"),
+                    type: 'GET',
+                    async: false,
+                    contentType: 'application/json',
+                    data: { LocationCode: locationCode, UnitCode: unitCode, ProcessSettingCode: processCode, GroupCode: groupCode },
+                    dataType: 'json',
+                    success: function(data) {
+                        $.each(data, function(index, value) {
+                            list.push({ "EmployeeID": value.EmployeeID, "EmployeeName": value.EmployeeName , "EmployeeNumber": value.EmployeeNumber});
+                        });
+                        $('#ddlEmployeeIDEdit').find('option').remove();
+                        self.employeeSelectListEdit(list);
+                        //$('#ddlEmployeeIDEdit').selectpicker('val', obj.employeeID)
+                        $('#ddlEmployeeIDEdit').selectpicker('refresh');
+
+                    }
+                });
+                return list;
+                //$('#ddlEmployeeIDEdit').selectpicker('refresh');
+            };
+
+            //Function Get Group Code Pop Up Edit
+            self.getGroupPopUpEdit = function(event, index){
+                self.editIndexRow(index);
+                var BrandCode = typeof self.filterBrandSource == 'undefined' ? "" : self.filterBrandSource();
+                var inputCriteria = {
+                    LocationCode: self.filterLocationCodeSource(),
+                    UnitCode: self.filterUnitCodeSource(),
+                    BrandCode: (typeof self.filterBrandSource() == 'undefined' ? "" : self.filterBrandSource()),
+                    ProcessCode: (typeof event.SourceProcessGroup() == 'undefined' ? "" : event.SourceProcessGroup()),
+                    Date:moment(self.filterDate(), "DD/MM/YYYY").format("MM/DD/YYYY"),
+                    KPSYear: self.filterYear(),
+                    KPSWeek: self.filterWeek()
+                };
+
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantWorkerAssignment/GetGroupCodePopUp"),
+                    type: "GET",
+                    data:  inputCriteria,
+                    dataType: "json",
+                    traditional: true,
+                    contentType: "application/json;",
+                    success: function(data) {
+                        var list = [];
+                        $.each(data, function(index, value) {
+                            list.push({
+                                "GroupCode": value.GroupCode,
+                                "Allocation": value.Allocation,
+                                "Attendance": value.Attendance
+                            });
+                        });
+                        self.itemListGroupCodePopUpEdit(list);
+                        if(list.length > 0)
+                            event.SourceGroupCode(list[0].GroupCode);
+                        if(list.length == 0)
+                            $('#lblSourceGroupCodeEdit').text('');
+                        self.getEmployeesEdit(event.SourceLocationCode, event.SourceUnitCode, event.SourceProcessGroup, event.SourceGroupCode);
+                    }
+                });
+
+            };
+
+            //Function choose pop up group code edit
+            self.chooseSourceGroupEdit = function(data) {
+                $("input[name=group]:radio").each(function() {
+                    if($(this).is(":checked")) {
+                        self.gridView.listDataItems()[self.editIndexRow()].SourceGroupCode($(this).text());
+                        self.getEmployeesEdit(data.SourceLocationCode, data.SourceUnitCode, data.SourceProcessGroup, $(this).text());
+                        return;
+                    }
+                });
+            }
+
+            //================= FUNCTIONS DESTINATION EDIT ================//
+
+            //Function Get Unit Code Destination by Location Code Destination
+            self.getUnitCodeDestByDestLocationEdit = function(locationCode) {
+                var list = [];
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantWorkerAssignment/GetListUnitCode"),
+                    type: 'GET',
+                    async: false,
+                    contentType: 'application/json',
+                    data: { locationCode: locationCode },
+                    dataType: 'json',
+                    success: function(data) {
+                        list = data;
+                    }
+                });
+                return ko.observableArray(list);
+            };
+
+            //Function Get Brand Code Destination by Location Code Destination
+            self.getDestinationBrandCodesEdit = function(locationCode, unitCode) {
+                var list = [];
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantWorkerAssignment/GetListBrandFromPlantTpu"),
+                    type: 'GET',
+                    async: false,
+                    contentType: 'application/json',
+                    data: { locationCode: locationCode, unitCode: unitCode},
+                    dataType: 'json',
+                    success: function(data) {
+                        $.each(data, function(index, value) {
+                            list.push({ "Text": value, "Value": value });
+                        });
+                        //if(self.filterLocationCodeSource() != ko.utils.unwrapObservable(locationCode)){
+                        //list.push({ "Text": self.filterBrandSource(), "Value": self.filterBrandSource()});
+                        // }else {
+                        //list = data;
+                        //}
+                    }
+                });
+                return ko.observableArray(list);
+            };
+
+            //Function Get Process Group Destination by Location Code Destination
+            self.getDestProcessGroupEdit = function(locationCode, brandCode) {
+                var list = [];
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantWorkerAssignment/GetProcess"),
+                    type: 'GET',
+                    async: false,
+                    contentType: 'application/json',
+                    data: { locationCode: locationCode, brandCode: brandCode},
+                    dataType: 'json',
+                    success: function(data) {
+                        list = data;
+                    }
+                });
+                return ko.observableArray(list);
+            };
+
+            self.getDestGroupByLocationUnitProcessEdit = function(locationCode, unitCode, process, brandCode, destinationGroupCode, index) {
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantWorkerAssignment/GetGroupCode"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: { locationCode: locationCode, unitCode: unitCode, process: process, brandCode: brandCode, year:self.filterYear(), week: self.filterWeek() },
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#ddlDestGroupEdit').find('option').remove();
+                        self.destGroupCodesSelectListEdit(data);
+                        $('#ddlDestGroupEdit').selectpicker('val', destinationGroupCode);
+                        $('#ddlDestGroupEdit').selectpicker('refresh');
+                        //self.gridView.listDataItems()[index].DestinationGroupCode(destinationGroupCode);
+                        //self.onDestGroupCodeChangeEdit(self.gridView.listDataItems()[index]);
+                    }
+
+                });
+            };
+
+            // Function Get Group Destination by Location Code Destination Edit
+            self.getDestGroupCodesEdit = function(locationCode, unitCode, process, brandCode){
+                var list = [];
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantWorkerAssignment/GetGroupCode"),
+                    type: 'GET',
+                    async: false,
+                    contentType: 'application/json',
+                    data: { locationCode: locationCode, unitCode: unitCode, process: process, brandCode: brandCode,  week: self.filterWeek(), year: self.filterYear() },
+                    dataType: 'json',
+                    success: function(data) {
+                        list = data;
+                    }
+                });
+                return ko.observableArray(list);
+
+            };
+
+            //================= FUNCTIONS COMMON ================//
+
+            //Set Disabled Brand Destination by Location Code Source and Destination
+            self.validateBrandDest = function(cb){
+                if (self.newData.DestinationUnitCode() != 'PROD'){
+                    if(self.filterLocationCodeSource() != self.newData.DestinationLocationCode()){
+                        self.destBrandCodesSelectList([]);
+                        var list = [];
+                        list.push({ "Text": self.filterBrandSource(), "Value": self.filterBrandSource()});
+                        self.destBrandCodesSelectList(list);
+                    }else {
+                        self.getDestinationBrandCodes();
+                    }
+                }
+
+                if (typeof cb == 'function') cb();
+            };
+
+
+            //Function Get Week Source
+            self.GetWeekFromSelectList = function(cb) {
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantWorkerAssignment/GetWeek"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: { year: self.filterYear() },
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#filterWeek').find('option').remove();
+                        $('#filterWeek').selectpicker('refresh');
+                        var kpsWeekModel = [];
+                        $.each(data, function(index, value) {
+                            kpsWeekModel.push({ "Text": value, "Value": value });
+                        });
+                        self.WeekFromSelectList(kpsWeekModel);
+                        self.filterWeek('@Model.DefaultWeek');
+
+                        //self.setDateRange();
+
+                        //if (self.firstLoad) {
+                        //    self.search();
+                        //    self.firstLoad = false;
+                        //}
+                    },
+                    complete : function() {
+                        if (typeof cb == 'function') cb();
+                    }
+                });
+
+            };
+
+            //Function Set Date Range Filter
+            self.setDateRange = function(cb) {
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantWorkerAssignment/GetDate"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: { year: self.filterYear(), week: self.filterWeek() },
+                    dataType: 'json',
+                    success: function(data) {
+                        //self.getBrandCodesSource();
+                        $('#filterDate').data("DateTimePicker").options({
+                            maxDate: moment(data.EndDate),
+                            minDate: moment(data.StartDate).subtract(1, 'days')
+                        });
+
+                        if ((moment(self.filterDate(), "DD-MM-YYYY").diff(moment(data.StartDate), 'days') < 0) || (moment(self.filterDate(), "DD-MM-YYYY").diff(moment(data.EndDate), 'days') > 0)) {
+                            self.filterDate(moment(data.StartDate));
+                        }
+
+                        $('#dtpStartDate').data("DateTimePicker").options({
+                            maxDate: moment(data.EndDate),
+                            minDate: moment(data.StartDate).subtract(1, 'days')
+                        });
+
+                        if ((moment(self.filterTransactionDateFrom(), "DD-MM-YYYY").diff(moment(data.StartDate), 'days') < 0) || (moment(self.filterTransactionDateFrom(), "DD-MM-YYYY").diff(moment(data.EndDate), 'days') > 0)) {
+                            self.filterdtpStartDate(moment(data.StartDate));
+                            self.newData.StartDate(moment(data.StartDate));
+                        }
+
+                        $('#dtpEndDate').data("DateTimePicker").options({
+                            minDate: moment(data.StartDate).subtract(1, 'days')
+                        });
+
+                        if ((moment(self.filterTransactionDateFrom(), "DD-MM-YYYY").diff(moment(data.StartDate), 'days') < 0) || (moment(self.filterTransactionDateFrom(), "DD-MM-YYYY").diff(moment(data.EndDate), 'days') > 0)) {
+                            self.filterdtpEndDate(moment(data.StartDate));
+                            self.newData.EndDate(moment(data.StartDate));
+                        }
+
+                        //$('#filterTransactionDateFrom').data("DateTimePicker").options({
+                        //    maxDate: moment(data.EndDate),
+                        //    minDate: moment(data.StartDate).subtract(1, 'days')
+                        //});
+
+                        //if ((moment(self.filterTransactionDateFrom(), "DD-MM-YYYY").diff(moment(data.StartDate), 'days') < 0) || (moment(self.filterTransactionDateFrom(), "DD-MM-YYYY").diff(moment(data.EndDate), 'days') > 0)) {
+                        //    self.filterTransactionDateFrom(moment(data.StartDate));
+                        //}
+
+                        //$('#filterTransactionDateTo').data("DateTimePicker").options({
+                        //    maxDate: moment(data.EndDate),
+                        //    minDate: moment(data.StartDate).subtract(1, 'days')
+                        //});
+
+                        //if ((moment(self.filterTransactionDateTo(), "DD-MM-YYYY").diff(moment(data.StartDate), 'days') < 0) || (moment(self.filterTransactionDateTo(), "DD-MM-YYYY").diff(moment(data.EndDate), 'days') > 0)) {
+                        //    self.filterTransactionDateTo(moment(data.StartDate));
+                        //}
+                    },
+                    complete : function() {
+                        if (typeof cb == 'function') cb();
+                    }
+                });
+            };
+
+            self.onChangeFilterDate = function() {
+                self.newData.EndDate(self.filterDate());
+                self.newData.StartDate(self.filterDate());
+            };
+
+            //generateExcel
+            self.generateExcel = function(formElement) {
+                var locCode = self.filterLocationCodeSource();
+                var locName = self.filterLocationName();
+                var locCompat = locCode+' - '+locName;
+                $(formElement).find("input[name=LocationCode]").val($('#ddlFilterLocationCodeSource').val());
+                $(formElement).find("input[name=LocationCompat]").val(locCompat);
+                $(formElement).find("input[name=UnitCode]").val($('#ddlUnitCodeFilterSource').val());
+                $(formElement).find("input[name=KPSYear]").val($('#filterYear').val());
+                $(formElement).find("input[name=KPSWeek]").val($('#filterWeek').val());
+                $(formElement).find("input[name=BrandCode]").val($('#ddlBrandFilterSource').val());
+                $(formElement).find("input[name=Date]").val($("#rdbDate").is(":checked") ? $('#filterDate').val() : null);
+                $(formElement).find("input[name=Shift]").val($('#ddlShiftCodeFilterSource').val());
+                $(formElement).find("input[name=ProductionDateFrom]").val($("#rdbProductionDate").is(":checked") ? $('#filterTransactionDateFrom').val() : null);
+                $(formElement).find("input[name=ProductionDateTo]").val($("#rdbProductionDate").is(":checked") ? $('#filterTransactionDateTo').val() : null);
+                $(formElement).find("input[name=DateTypeFilter]").val(self.dateTypeFilter());
+                return true;
+            };
+
+            self.ValidateDateIsFuture= function(date){
+                if(ko.utils.unwrapObservable(date) === '' || typeof ko.utils.unwrapObservable(date) === 'undefined') return false;
+                //return moment().startOf('day') <= moment(ko.utils.unwrapObservable(date), 'DD/MM/YYYY').startOf('day');
+                return (moment(moment(ko.utils.unwrapObservable(date), 'DD/MM/YYYY').format('YYYY-MM-DD')).isAfter(moment(self.ClosingPayrollDate(), 'DD/MM/YYYY').format('YYYY-MM-DD')) || moment(moment(ko.utils.unwrapObservable(date), 'DD/MM/YYYY').format('YYYY-MM-DD')).isSame(moment(self.ClosingPayrollDate(), 'DD/MM/YYYY').format('YYYY-MM-DD')));
+            };
+
+            self.ValidateDateIsPast= function(date){
+                if(ko.utils.unwrapObservable(date) === '' || typeof ko.utils.unwrapObservable(date) === 'undefined') return false;
+                //return moment().startOf('day') > moment(ko.utils.unwrapObservable(date), 'DD/MM/YYYY').startOf('day');
+                return moment(moment(ko.utils.unwrapObservable(date), 'DD/MM/YYYY').format('YYYY-MM-DD')).isBefore(moment(self.ClosingPayrollDate(), 'DD/MM/YYYY').format('YYYY-MM-DD'));
+            };
+
+
+            //================= GRID VIEW ================//
+
+            self.gridView = new app.GridViewModel({
+                Criteria: {
+                    PageSize: 10,
+                    PageIndex: 1,
+                    SortExpression: "UpdatedDate",
+                    SortOrder: "ASC",
+                    LocationCode: self.filterLocationCodeSource,
+                    UnitCode: self.filterUnitCodeSource,
+                    Year: self.filterYear,
+                    Week: self.filterWeek,
+                    Date: self.filterDate,
+                    ProductionDateFrom:  self.filterTransactionDateFrom,
+                    ProductionDateTo:  self.filterTransactionDateTo,
+                    Shift: self.filterShiftCodeSource,
+                    SourceBrandCode: self.filterBrandSource,
+                    DateTypeFilter: self.dateTypeFilter
+                },
+                DataSourceUrl: @Html.BaseUrl("ExePlantWorkerAssignment/GetExePlantWorkerAssignment"),
+                InlineEdit: true,
+                InsertRowFocusedControlIndex: 1
+            });
+
+            self.gridView.mapping = {
+                create: function(options) {
+                    return new assignment(options.data);
+                }
+            };
+            
+            self.gridView.isBusy.subscribe(function(value) {
+                self.isBusy(value);
+            });
+
+            function assignment(data) {
+                ko.mapping.fromJS(data, {}, this);
+
+                this.EmployeeNameMix = ko.computed({
+                    read: function() {
+                        var employeeNumber = this.EmployeeNumber();
+                        var lastTwoNumber = employeeNumber.slice(-2);
+                        return lastTwoNumber + " - " + this.EmployeeName();
+                    },
+                    write: function(value) {
+                        //update your self.chosenAge().population value here
+                    },
+                    owner: this
+                }, this);
+            }
+
+            // Load Data
+            self.search = function() {
+                $('.empty-row-message').html('<div class="loader"></div>'); // Reset New and Edit row
+
+                //var startDate = new Date($('#filterTransactionDateFrom').val());
+                var startDate = moment($('#filterTransactionDateFrom').val(), "DD/MM/YYYY");
+                //var endDate = new Date($('#filterTransactionDateTo').val());
+                var endDate = moment($('#filterTransactionDateTo').val(), "DD/MM/YYYY");
+
+                if($("#rdbProductionDate").is(":checked")){
+                    if (startDate > endDate){
+                        SKTIS.Helper.Notification('<strong>Production Date</strong> cannot be greater than <strong>to Date</strong>','warning');
+                        return;
+                    }
+                }
+
+                // get select list process group source
+                self.getProcessGroupSource();
+                self.getDestinationBrandCodes();
+                self.getDestProcessGroup();
+                self.newData.SourceUnitCode(self.filterUnitCodeSource());
+                self.newData.SourceLocationCode(self.filterLocationCodeSource());
+                // Check whether New or Edit data is existing and not saved to database yet (on Ajax Action)
+                if (SKTIS.Checker.modifiedDataExistsForAjax([self.gridView.listNewItems, self.gridView.listEditItems]) == true) {
+                    return;
+                } else {
+                    self.gridView.listNewItems.removeAll();
+                    self.gridView.listEditItems.removeAll();
+                }
+
+                //self.filterExcelListGroup = self.filterListGroup();
+                self.gridView.search({}, function(response) {
+                    if (response.status == 'KO') {
+                        SKTIS.Helper.Notification(response.message, 'error');
+                        $('.empty-row-message').html(response.message);
+                    } else if (response.status == 'Empty') {
+
+                        self.RemoveNotification();
+
+                        //SKTIS.Helper.Notification(response.message,'warning');
+                        $('.empty-row-message').html('@CommonLabel.lblDataEmpty');
+                    }
+                });
+            };
+
+            self.RemoveNotification = function() {
+                if ($('#noty_top_layout_container').length > 0) {
+                    $('#noty_top_layout_container').remove();
+                }
+            };
+
+            self.gridView.applyValidationRules = function (entity) {
+                self.RemoveNotification();
+
+                entity.DestinationGroupCode.extend({
+                    validation: {
+                        async: false,
+                        validator: function() {
+                            var result;
+                            if(entity.DestinationGroupCode() === entity.SourceGroupCode() && entity.DestinationLocationCode() === self.filterLocationCodeSource())
+                                result = false;
+                            else
+                                result = true;
+                            return result;
+                        },
+                        message: "Cannot Assign Employee From The Same Location and Group"
+                    }
+                });
+
+                entity.SourceGroupCode.extend({
+                    validation: {
+                        async: false,
+                        validator: function() {
+                            var result;
+                            if(entity.SourceGroupCode() === null || entity.SourceGroupCode() === '')
+                                result = false;
+                            else
+                                result = true;
+
+                            return result;
+                        },
+                        message: "Source Group Code is empty. please make sure Production Entry already Generated!"
+                    }
+                });
+
+                entity.StartDate.extend({
+                    validation: {
+                        async: false,
+                        validator: function(val, otherVal, callBack) {
+                            var isSubmitted;
+                            $.ajax({
+                                url: @Html.BaseUrl("ExePlantWorkerAssignment/CheckEblek"),
+                                type: 'GET',
+                                async: false,
+                                contentType: 'application/json',
+                                data: {
+                                    startDate: entity.StartDate,
+                                    endDate: entity.EndDate,
+                                    locationCode : entity.DestinationLocationCode,
+                                    shift: self.filterShiftCodeSource(),
+                                    unitCode: entity.DestinationUnitCode,
+                                    group: entity.DestinationGroupCode,
+                                    brand: entity.DestinationBrandCode,
+                                    locationCodeSource : entity.SourceLocationCode,
+                                    unitCodeSource: entity.SourceUnitCode,
+                                    groupSource: entity.SourceGroupCode,
+                                    brandSource: self.filterBrandSource,
+                                    oldStartDate: entity.OldStartDate,
+                                    oldEndDate: entity.OldEndDate
+                                },
+                                dataType: 'json',
+                                success: function(data) {
+                                    if(data.length > 0){
+                                        isSubmitted = false;
+                                    }
+                                    else
+                                        isSubmitted = true;
+                                }
+                            });
+                            return isSubmitted;
+                        },
+                        message: "Production Entry Already Submitted for this employee in selected range date."
+                    }
+                    ,cannotLessThan: {
+                        params: self.ClosingPayrollDate,
+                        message: "<strong>Start Date</strong> cannot be less than <strong>Last Closing Payroll Date Before Today</strong>"
+                    }
+                });
+
+            };
+
+            // Save action
+            self.save = function() {
+                if (self.gridView.editingRowIndex() !== -1)
+                    return;
+
+                // Prevent Edited new Row data for triggering Edited message
+                // Primary Key : StartDateAbsent, EmployeeID (need to compare both of arrays using unique key[s])
+                var newItemLength = self.gridView.listNewItems().length;
+                $.each(self.gridView.listNewItems(), function(k, v) {
+                    var shouldBeAsNew = ko.utils.arrayFirst(self.gridView.listEditItems(), function(editItem) {
+                        if (editItem) {
+                            return editItem['StartDateAbsent'] == v['StartDateAbsent'] && editItem['EmployeeID'] == v['EmployeeID'];
+                        }
+                    });
+                    if (shouldBeAsNew) {
+                        self.gridView.listNewItems()[k] = shouldBeAsNew;
+                    }
+                    self.gridView.listEditItems.remove(function(data) {
+                        if (data) {
+                            return data['StartDateAbsent'] == v['StartDateAbsent'] && data['EmployeeID'] == v['EmployeeID'];
+                        }
+                    });
+                });
+
+                var datas = {
+                    "Parameters": { "LocationCode": self.filterLocationCodeSource(), "UnitCode": self.filterUnitCodeSource(), "TransactionDate": self.filterDate(), "Shift": self.filterShiftCodeSource(), "Brand": self.filterBrandSource(),
+                        "KPSYear": self.filterYear(), "KPSWeek": self.filterWeek()},
+                    "new": self.gridView.listNewItems(),
+                    "edit": self.gridView.listEditItems()
+                };
+
+                datas = JSON.stringify(datas);
+
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantWorkerAssignment/SaveAllPlantWokerAssignment"),
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: datas,
+                    dataType: 'json',
+                    success: function(data) {
+                        if (data.New) {
+                            $.each(data.New, function(k, value) {
+                                if (value)
+                                    SKTIS.Helper.ResponseNotification(value, "Insert Worker Assignment", value.StartDate + " - " + value.EmployeeID);
+                            });
+                        }
+
+                        if (data.Edit) {
+                            $.each(data.Edit, function(k, value) {
+                                if (value)
+                                    SKTIS.Helper.ResponseNotification(value, "Edit Worker Assignment", value.StartDate + " - " + value.EmployeeID);
+                            });
+                        }
+
+                        self.gridView.sort('UpdatedDate', 'DESC');
+                        self.gridView.listNewItems.removeAll();
+                        self.gridView.listEditItems.removeAll();
+
+                    }
+                });
+            };
+
+            //================= INIT CALL FILTER TOP ================//
+            //self.getLocationNameFilter();
+            //self.getUnitCodeByLocationSource();
+            //self.getShiftByLocationSource();
+            //self.getBrandCodesSource();
+            //self.GetWeekFromSelectList();
+            //self.validateBrandDest();
+
+            //================= INIT CALL FILTER DESTINATION ================//
+            //self.getLocationCode();
+            //self.getUnitCodeDestByDestLocation();
+            //self.getDestinationBrandCodes();
+            //self.getDestProcessGroup();
+            //self.search();
+
+            $(document).ready(function(){
+                $('table tr.insertRow .selectpicker').change(focusTableRow);
+                $('table tr.insertRow').on('dp.change','#dtpStartDate,#dtpEndDate',focusTableRow);
+                $('#ddlFilterLocationCodeSource').selectpicker('refresh');
+                $('#ddlFilterLocationCodeSource').change();
+                $('.modal ').insertAfter($('body'));
+
+                $(document).off('click','.row-delete');
+                $(document).on('click','.row-delete',function(e){
+                    e.preventDefault();
+                    e.stopPropagation();
+                    var $self = this;
+                    // Check whether New or Edit data is existing and not saved to database yet (on Request action)
+                    if (SKTIS.Checker.checkmodifiedDataExists([self.gridView.listNewItems, self.gridView.listEditItems])) {
+                        var confirm = window.confirm("Changes have not been saved, continue to delete the data?");
+                        if (confirm) deleteRow($self);
+                    } else {
+                        var confirm = window.confirm("continue to delete the data?");
+                        if (confirm) deleteRow($self);
+
+                    }
+                });
+            });
+
+            function deleteRow(caller) {
+
+                var employeeID = $(caller).attr('data-employeeID');
+                var startDate = $(caller).attr('data-startDate');
+
+                var employeeIDOld = $(caller).attr('data-employeeIDOld');
+                var startDateOld = $(caller).attr('data-startDateOld');
+
+                $.ajax({
+                    url:  @Html.BaseUrl("ExePlantWorkerAssignment/DeleteWorkerAssignment"),
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        EmployeeID:employeeID,
+                        StartDate: startDate,
+                        OldEmployeeID : employeeIDOld,
+                        OldStartDate : startDateOld
+
+                    }),
+                    dataType: 'json',
+                    success: function(data) {
+                        SKTIS.Helper.ResponseNotification(data, "Delete Worker Assignment ", data.OldEmployeeID);
+
+                        self.gridView.listNewItems.removeAll();
+                        self.gridView.listEditItems.removeAll();
+
+                        self.search();
+                        self.gridView.editingRowIndex(-1);
+                    }
+                });
+            }
+
+            function focusTableRow(){
+                $('table tr.insertRow').focus();
+            };
+
+            self.initFilter = function(cb) {
+                self.isLoading(true);
+                async.series([
+                    function(callback) {
+                        self.GetWeekFromSelectList(callback);
+                    },
+                    function(callback) {
+                        self.setDateRange(callback);
+                    },
+                    function(callback) {
+                        self.getLocationNameFilter(callback);
+                    },
+                    function(callback) {
+                        self.getUnitCodeByLocationSource(callback);
+                    },
+                    function(callback) {
+                        self.getShiftByLocationSource(callback);
+                    },
+                    function(callback) {
+                        self.getBrandCodesSource(callback);
+                    }
+                ], function() {
+                    self.isLoading(false);
+                    if (typeof cb == 'function') cb();
+                });
+            };
+
+            // SHARED FUNCTION !!
+            self.triggerUnitByLocationCode = function(obj, index) {
+                var obj = ko.toJS(obj);
+                return $.ajax({
+                    url: @Html.BaseUrl("ExePlantWorkerAssignment/GetListDestinationUnitCode"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: { locationCode: obj.DestinationLocationCode },
+                    dataType: 'json',
+                    success: function(data) {
+                        self.destUnitCodeSelectListEdit(data);
+                        $('#ddlUnitCodeDestEdit').selectpicker('val', obj.DestinationUnitCode)
+                        $('#ddlUnitCodeDestEdit').selectpicker('refresh');
+
+                        self.gridView.listDataItems()[index].DestinationUnitCode(obj.DestinationUnitCode);
+                    }
+                });
+            }
+
+            self.triggerProcessByLocationAndBrand = function(obj, oldValue, index) {
+                var obj = ko.toJS(obj);
+                if (typeof obj.DestinationProcessGroup == 'undefined')
+                    obj.DestinationProcessGroup = oldValue.DestinationProcessGroup
+
+                return $.ajax({
+                    url: @Html.BaseUrl("ExePlantWorkerAssignment/GetProcess"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: {
+                        locationCode: obj.DestinationLocationCode,
+                        brandCode: obj.DestinationBrandCode
+                    },
+                    dataType: 'json',
+                    success: function(data) {
+                        if (obj.DestinationUnitCode != "PROD") {
+                            $('#ddlDestProcessGroupEdit').find('option').remove();
+                            self.destProcessGroupSelectListEdit(data);
+                            $('#ddlDestProcessGroupEdit').selectpicker('val', obj.DestinationProcessGroup)
+                            $('#ddlDestProcessGroupEdit').selectpicker('refresh');
+
+                            self.gridView.listDataItems()[index].DestinationProcessGroup(obj.DestinationProcessGroup);
+                        }
+                        else {
+                            $('#ddlDestProcessGroupEdit').find('option').remove();
+                            self.destProcessGroupSelectListEdit([]);
+                            $('#ddlDestProcessGroupEdit').selectpicker('val', null)
+                            $('#ddlDestProcessGroupEdit').selectpicker('refresh');
+
+                            self.gridView.listDataItems()[index].DestinationProcessGroup(null);
+                        }
+                        
+                    }
+                });
+            }
+
+            @*$.ajax({
+                url: @Html.BaseUrl("ExePlantWorkerAssignment/GetProcess"),
+                type: 'GET',
+                contentType: 'application/json',
+                data: {
+                    locationCode: self.filterLocationCodeSource(),
+                    brandCode: self.filterBrandSource()
+                },
+                dataType: 'json',
+                success: function(data) {
+                    self.destProcessGroupSelectListEdit(data);
+                }
+            });*@
+
+            self.triggerGroupByLocationUnitAndProcess = function(obj, index){
+                var obj = ko.toJS(obj);
+                return $.ajax({
+                    url: @Html.BaseUrl("ExePlantWorkerAssignment/GetGroupCode"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: {
+                        locationCode: obj.DestinationLocationCode,
+                        unitCode: obj.DestinationUnitCode,
+                        process: obj.DestinationProcessGroup,
+                        brandCode : obj.DestinationBrandCode,
+                        year: self.filterYear(),
+                        week: self.filterWeek()
+                    },
+                    dataType: 'json',
+                    success: function(data) {
+                        if (data.length == 0) obj.DestinationGroupCode = null;
+
+                        $('#ddlDestGroupEdit').find('option').remove();
+                        self.destGroupCodesSelectListEdit(data);
+                        $('#ddlDestGroupEdit').val(obj.DestinationGroupCode).change();
+                        $('#ddlDestGroupEdit').selectpicker('refresh');
+
+                        self.gridView.listDataItems()[index].DestinationGroupCode(obj.DestinationGroupCode);
+                    }
+                });
+            }
+
+            self.triggerBrandByLocation = function(obj, index) {
+                var obj = ko.toJS(obj);
+                return $.ajax({
+                    url: @Html.BaseUrl("ExePlantWorkerAssignment/GetListBrandFromPlantTpu"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: {
+                        locationCode: obj.DestinationLocationCode,
+                        unitCode: self.filterUnitCodeSource(),
+                        shift: self.filterShiftCodeSource(),
+                        year: self.filterYear(),
+                        week: self.filterWeek()
+                    },
+                    dataType: 'json',
+                    success: function(data) {
+                        var list = [];
+                        $.each(data, function(index, value) {
+                            list.push({ "Text": value, "Value": value });
+                        });
+
+                        if (data.length == 0) obj.DestinationBrandCode = null;
+
+                        $('#ddlDestBrandCodeEdit').find('option').remove();
+                        self.destBrandCodesSelectListEdit(list);
+                        $('#ddlDestBrandCodeEdit').selectpicker('val', obj.DestinationBrandCode)
+                        $('#ddlDestBrandCodeEdit').selectpicker('refresh');
+
+                        self.gridView.listDataItems()[index].DestinationBrandCode(obj.DestinationBrandCode);
+                    }
+                });
+            }
+
+            self.triggerIdOnInlineEdit = function(obj, index) {
+                var obj = ko.toJS(obj);
+                return $.ajax({
+                    url: @Html.BaseUrl("ExePlantWorkerAssignment/GetEmployeesActive"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: { LocationCode: obj.SourceLocationCode, UnitCode: obj.SourceUnitCode, ProcessSettingCode: obj.SourceProcessGroup, GroupCode: obj.SourceGroupCode },
+                    dataType: 'json',
+                    success: function(data) {
+                        var list = [];
+                        $.each(data, function(index, value) {
+                            list.push({ "EmployeeID": value.EmployeeID, "EmployeeName": value.EmployeeName , "EmployeeNumber": value.EmployeeNumber});
+                        });
+                        $('#ddlEmployeeIDEdit').find('option').remove();
+                        self.employeeSelectListEdit(list);
+                        $('#ddlEmployeeIDEdit').val(obj.EmployeeID).change();
+                        //$('#ddlEmployeeIDEdit').selectpicker('val', obj.employeeID)
+                        $('#ddlEmployeeIDEdit').selectpicker('refresh');
+                        //self.gridView.listDataItems()[index].DestinationBrandCode(obj.DestinationBrandCode);
+                    }
+                });
+            }
+
+            self.initGridFilter = function(cb) {
+                self.isLoading(true);
+                async.series([
+                    function(callback) {
+                        self.getLocationCode(callback);
+                    },
+                    function(callback) {
+                        self.getUnitCodeDestByDestLocation(callback);
+                    },
+                    function(callback) {
+                        self.getDestinationBrandCodes(callback);
+                    },
+                    function(callback) {
+                        self.getDestProcessGroup(callback);
+                    },
+                    function(callback) {
+                        self.getDestGroupByLocationUnitProcess(callback);
+                    },
+                    function(callback) {
+                        self.getProcessGroupSource(callback);
+                    },
+                //self.validateBrandDest();
+                ], function() {
+                    self.isLoading(false);
+                    if (typeof cb == 'function') cb();
+                });
+            };
+
+            self.init = (function() {
+                //Asynch setting
+                self.isLoading(true);
+                async.series([
+                    function(callback) {
+                        self.initFilter(callback);
+                    },
+                    function(callback) {
+                        self.initGridFilter(callback);
+                    },
+                    function(callback) {
+                        self.validateBrandDest(callback);
+                    }
+                ], function() {
+                    self.search();
+                    self.firstLoad = false;
+                    self.isLoading(false);
+                });
+
+            }());
+
+            
+
+        };
+        ko.applyBindings(new app.EditGrid());
+    })(app = this.app || {});
+
+    </script>
+}

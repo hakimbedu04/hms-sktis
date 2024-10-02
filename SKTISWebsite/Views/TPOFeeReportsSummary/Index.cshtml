@@ -1,0 +1,201 @@
+﻿@model SKTISWebsite.Models.TPOFeeReportsSummary.InitTPOFeeReportsSummaryViewModel
+@using SKTISWebsite.Helper
+@{ Html.SetPageTitle(" Summary TPO Fee"); }
+@using HMS.SKTIS.Application.Resources
+<div class="col-lg-12" data-bind="with: gridView">
+    <!--  Submission List Here  -->
+
+    <div class="col-lg-6">
+        <div class="row">
+            <label class="form-label col-lg-3">
+                Year
+            </label>
+            <div class="col-lg-4">
+                @Html.DropDownList("filterYearSubmission", Model.YearSelectList,
+                             new Dictionary<string, object> { { "data-bind", "value:$root.filterYearSubmission" },
+                        { "class", "selectpicker show-tick form-controlt" },
+                        {"data-live-search","true"},{"id","filterYearSubmission"} })
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="action-btn">
+                <button type="button" class="btn btn-primary" data-bind="click:$root.SearchByBiayaProduksi">Biaya Produksi</button>
+                <button type="button" class="btn btn-primary" data-bind="click:$root.SearchByJasaManagement">Jasa Management</button>
+                <button type="button" class="btn btn-primary" data-bind="click:$root.SearchByProdIncentives">Prod Incentives</button>
+                <button type="button" class="btn btn-primary" data-bind="click:$root.SearchByTotalBayar">Total Bayar</button>
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.Excel.ToString()))
+                {
+                    using (Html.BeginForm("GenerateExcel", "TPOFeeReportsSummary", FormMethod.Post, new { @data_bind = "submit: $root.generateExcel" }))
+                    {
+                        <input type="hidden" name="Year" />
+                        <input type="hidden" name="ProductionType" />
+                        <button type="submit" class="btn btn-primary">@CommonLabel.btnExcel</button>
+                    }
+                }
+                
+                @*@Html.Partial("GridViewPageSizeSelector")*@
+    </div>
+        </div>
+    </div>
+    
+    <p><span class="text" data-bind="text:$root.productionFeeType"></span></p>
+
+    <div class="table-overflow">
+        <table class="table table-striped">
+            @*<thead data-bind="foreach: listDataItems">
+                <!-- ko if : ($index() == 0)-->
+                <tr class="head">
+                    <th colspan="3">Location</th>
+                    <th data-bind="attr: { colspan: $data.MaxWeek }">Week by
+                        <span data-bind="text:$root.productionFeeType"></span>
+                    </th>
+                    <th class="widthmedium">Total</th>
+                </tr>
+                <!-- /ko -->
+            </thead>*@
+            <thead data-bind="foreach: listDataItems">
+                
+            </thead>
+
+            <tbody data-bind="foreach: listDataItems">
+                <tr>
+                    <td class="head" colspan="3" data-bind="visible: $data.IsParentRow() || $data.IsSummary()"><span data-bind="text:$data.ParentLocation"></span></td>
+
+                    <td data-bind="visible: !$data.IsParentRow() && !$data.IsSummary()"><span data-bind="text:$data.LocationCode"></span></td>
+                    <td data-bind="visible: !$data.IsParentRow() && !$data.IsSummary()"><span data-bind="text:$data.LocationAbbr"></span></td>
+                    <td data-bind="visible: !$data.IsParentRow() && !$data.IsSummary()"><span data-bind="text:$data.LocationName"></span></td>
+
+                    <!-- ko foreach: $data.ListWeekValue -->
+                        <!-- ko if : $data.IsParentRow-->
+                            <td class="head"><span data-bind="text:$data.Week"></span></td>
+                        <!-- /ko -->
+
+                        <!-- ko ifnot: $data.IsParentRow -->
+                                <!-- ko if : $data.Location -->
+                                    <td><span data-bind="text:$data.Location" style="white-space: nowrap;"></span></td>
+                                <!-- /ko -->
+
+                                <!-- ko ifnot : $data.Location -->
+                                    <td><span data-bind="text:$data.WeekValueString"></span></td>
+                                <!-- /ko -->
+                        <!-- /ko -->
+                    <!-- /ko -->
+
+                    <td><span data-bind="text:$data.TotalCalculateString"></span></td>
+                </tr>
+            </tbody>
+
+            <tbody data-bind="visible: !listDataItems().length">
+                <tr>
+                    <td colspan="6" class="empty-row-message"><div class="loader"></div></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    @*<div data-bind="if: (listDataItems() != null && listDataItems().length !== 0)">
+        @Html.Partial("GridViewFooter")
+    </div>*@
+
+</div>
+
+<!-- Modal End -->
+@section Scripts
+{
+    <script src="~/Scripts/app/globalfunctions.js" type="text/javascript"></script>
+    <script src="~/Scripts/common/app.GridViewModel.js" type="text/javascript"></script>
+    <script src="~/Scripts/common/app.Extenders.js" type="text/javascript"></script>
+    <script type="text/javascript">
+
+        (function(app) {
+
+            app.EditGrid = function() {
+                var self = this;
+
+                self.filterYearSubmission = ko.observable('@Model.DefaultYear');
+                self.productionFeeType = ko.observable('Biaya Produksi');
+
+                self.gridView = new app.GridViewModel({
+                    Criteria: {
+                        PageSize: 999999,
+                        PageIndex: 1,
+                        //SortExpression: "LocationCode",
+                        //SortOrder: "ASC",
+                        Year: self.filterYearSubmission,
+                        ProductionType: self.productionFeeType
+                    },
+                    DataSourceUrl: @Html.BaseUrl("TPOFeeReportsSummary/GetTPOReportsSummary"),
+                    InlineEdit: true
+                });
+
+                self.generateExcel = function(formElement) {
+                    $(formElement).find("input[name=Year]").val(self.filterYearSubmission());
+                    $(formElement).find("input[name=ProductionType]").val(self.productionFeeType());
+                    return true;
+                };
+
+                // Load Data
+                self.search = function() {
+                    $('.empty-row-message').html('<div class="loader"></div>'); // Reset New and Edit row
+                    // Check whether New or Edit data is existing and not saved to database yet (on Ajax Action)
+                    if (SKTIS.Checker.modifiedDataExistsForAjax([self.gridView.listNewItems, self.gridView.listEditItems]) == true) {
+                        return;
+                    } else {
+                        self.gridView.listNewItems.removeAll();
+                        self.gridView.listEditItems.removeAll();
+                    }
+
+                    self.gridView.search({}, function(response) {
+                        if (response.status == 'KO') {
+                            SKTIS.Helper.Notification(response.message, 'error');
+                            $('.empty-row-message').html(response.message);
+                        } else if (response.status == 'Empty') {
+
+                            self.RemoveNotification();
+
+                            //SKTIS.Helper.Notification(response.message,'warning');
+                            $('.empty-row-message').html('@CommonLabel.lblDataEmpty');
+                        }
+                    });
+                };
+
+                self.RemoveNotification = function() {
+                    if ($('#noty_top_layout_container').length > 0) {
+                        $('#noty_top_layout_container').remove();
+                    }
+                };
+
+                self.SearchByJasaManagement = function() {
+                    self.productionFeeType('Jasa Manajemen');
+                    self.search();
+                };
+                
+                self.SearchByBiayaProduksi = function() {
+                    self.productionFeeType('Biaya Produksi');
+                    self.search();
+                };
+
+                self.SearchByProdIncentives = function() {
+                    self.productionFeeType('Productivity Incentives');
+                    self.search();
+                };
+
+                self.SearchByTotalBayar = function() {
+                    self.productionFeeType('Total Bayar');
+                    self.search();
+                };
+
+
+                self.search();
+
+
+            };
+            ko.applyBindings(new app.EditGrid());
+        })(app = this.app || {});
+
+    </script>
+}

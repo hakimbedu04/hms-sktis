@@ -1,0 +1,2 @@
+INSERT INTO utilflows (idflow,FormSource,ActionButton,DestinationForm,DestinationRole,MessageText,CreatedDate,CreatedBy,updateddate,updatedby) 
+VALUES (69, 142, 145, 142,7, null, GETDATE(), 'PMI\bkristom', GETDATE(), 'PMI\bkristom')

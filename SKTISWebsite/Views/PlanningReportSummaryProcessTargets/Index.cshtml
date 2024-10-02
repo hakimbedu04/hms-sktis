@@ -1,0 +1,401 @@
+﻿@model SKTISWebsite.Models.PlanningReportSummaryProcessTargets.InitPlanningReportSummaryProcessTargetsViewModel
+@using HMS.SKTIS.Application.Resources
+@using SKTISWebsite.Helper
+@{ Html.SetPageTitle("Summary Process Targets"); }
+<div class="col-lg-12" data-bind="with: gridView">
+    <div class="col-lg-6">
+        <div class="row">
+            <label class="form-label col-lg-3">
+                Year
+            </label>
+            <div class="col-lg-4">
+                @Html.DropDownList("filterYear", Model.YearSelectList,
+                             new Dictionary<string, object> { { "data-bind", "value:$root.filterYear, event : { change : $root.onYearSelectedChange}" },
+                { "class", "selectpicker show-tick form-controlt" },
+                {"data-live-search","true"},{"id","filterYear"} })
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-3">
+                Location
+            </label>
+            <div class="col-lg-4">
+                @Html.DropDownList("filterLocation", Model.LocationSelectList,
+                                               new Dictionary<string, object> { { "data-bind", "value:$root.filterLocation, event : { change : $root.onLocationCodeChange}" },
+                { "class", "selectpicker show-tick form-controlt" },
+                {"data-live-search","true"},{"id","filterLocation"} })
+                
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-3">
+                Decimal
+            </label>
+            <div class="col-lg-4">
+                <select id="basic" class="selectpicker show-tick form-control" data-live-search="true" data-bind="selectPicker: $root.filterDecimal">
+                    <option>2</option>
+                    <option>3</option>
+                    <option>4</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="row">
+            <label class="form-label col-lg-3">
+                <input type="radio" name="period" value="Week" id="rdWeek" data-bind="event : { change : $root.radioChange }" />
+                Week
+            </label>
+            <div class="col-lg-4">
+                <select id="filterWeek" class="selectpicker show-tick form-control" data-live-search="true"
+                        data-bind="selectPicker: $root.filterWeek, optionsText: 'Value', optionsValue : 'Text', selectPickerOptions: { optionsArray: $root.WeekFromSelectList }, event : { change : $root.onWeekSelectedChange}"></select>
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-3">
+                <input type="radio" name="period" value="Date" id="rdDate" data-bind="event : { change : $root.radioChange }" />
+                Date
+            </label>
+            <div class="col-lg-4">
+                <div id="filterDateFrom" class='input-group date time' data-bind="dateTimePicker: $root.filterDateFrom, value: $root.filterDateFrom, dateTimePickerOptions: {widgetPositioning: {vertical: 'bottom'}, ignoreReadonly: true}">
+                    <input id="dtFilterFrom" class="form-control" readonly="readonly" />
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+            </div>
+            <label class="form-label col-lg-1">
+                To
+            </label>
+            <div class="col-lg-4">
+                <div id="filterDateTo" class='input-group date time' data-bind="dateTimePicker: $root.filterDateTo, value: $root.filterDateTo, dateTimePickerOptions: {widgetPositioning: {vertical: 'bottom'}, ignoreReadonly: true}">
+                    <input id="dtFilterTo" class="form-control" readonly="readonly" />
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <p id="labelPeriod" class="bg-primary">Period: Week 25, 2015</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="action-btn">
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.View.ToString()))
+                {
+                    <button type="button" class="btn btn-primary" data-bind="click:$root.search">@CommonLabel.btnView</button>
+                }
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.Excel.ToString()))
+                {
+                    using (Html.BeginForm("GenerateExcel", "PlanningReportSummaryProcessTargets", FormMethod.Post, new { @data_bind = "submit: $root.generateExcel" }))
+                    {
+                        <input type="hidden" name="dateFrom" />
+                        <input type="hidden" name="dateTo" />
+                        <input type="hidden" name="comma" />
+                        <input type="hidden" name="filterType" />
+                        <input type="hidden" name="location" />
+                        <input type="hidden" name="week" />
+                        <input type="hidden" name="year" />
+                        <button type="submit" class="btn btn-primary">@CommonLabel.btnExcel</button>
+                    }
+                }
+                
+                @Html.Partial("GridViewPageSizeSelector")
+            </div>
+        </div>
+    </div>
+    <div class="table-overflow">
+        <table class="table table-striped-default">
+            <thead>
+                <tr class="head">
+                    <th data-bind="click:sortBy.bind($data,'LocationCode'), css:sortCss('LocationCode', $data.sortExpression(), $data.sortOrder())">Location</th>
+                    <th data-bind="click:sortBy.bind($data,'UnitCode'), css:sortCss('UnitCode', $data.sortExpression(), $data.sortOrder())">Unit</th>
+                    <th data-bind="click:sortBy.bind($data,'BrandCode'), css:sortCss('BrandCode', $data.sortExpression(), $data.sortOrder())">Brand</th>
+                    <th data-bind="click:sortBy.bind($data,'Giling'), css:sortCss('Giling', $data.sortExpression(), $data.sortOrder())">Rolling</th>
+                    <th data-bind="click:sortBy.bind($data,'Gunting'), css:sortCss('Gunting', $data.sortExpression(), $data.sortOrder())">Cutting</th>
+                    <th data-bind="click:sortBy.bind($data,'WIPGunting'), css:sortCss('WIPGunting', $data.sortExpression(), $data.sortOrder())">WIP Cutting</th>
+                    <th data-bind="click:sortBy.bind($data,'Pak'), css:sortCss('Pak', $data.sortExpression(), $data.sortOrder())">Packing</th>
+                    <th data-bind="click:sortBy.bind($data,'WIPPak'), css:sortCss('WIPPak', $data.sortExpression(), $data.sortOrder())">WIP Packing</th>
+                    <th data-bind="click:sortBy.bind($data,'Banderol'), css:sortCss('Banderol', $data.sortExpression(), $data.sortOrder())">Stamping</th>
+                    <th data-bind="click:sortBy.bind($data,'Box'), css:sortCss('Box', $data.sortExpression(), $data.sortOrder())">Box</th>
+                </tr>
+            </thead>
+            <tbody>
+            <tbody data-bind="foreach: listDataItems">
+                <tr>
+                    <td><span data-bind="text:$data.LocationCode"></span></td>
+                    <td><span data-bind="text:$data.UnitCode"></span></td>
+                    <td><span data-bind="text:$data.BrandCode"></span></td>
+                    @*<td class="right"><span data-bind="text:$root.convertToDecimal($data.Giling)"></span></td>
+                    <td class="right"><span data-bind="text:$root.convertToDecimal($data.Gunting)"></span></td>
+                    <td class="right"><span data-bind="text:$root.convertToDecimal($data.WIPGunting)"></span></td>
+                    <td class="right"><span data-bind="text:$root.convertToDecimal($data.Pak)"></span></td>
+                    <td class="right"><span data-bind="text:$root.convertToDecimal($data.WIPPak)"></span></td>
+                    <td class="right"><span data-bind="text:$root.convertToDecimal($data.Banderol)"></span></td>
+                    <td class="right"><span data-bind="text:$root.convertToDecimal($data.Box, 3)"></span></td>*@
+                    <td class="right"><span data-bind="decimal:$data.Giling, precision:2"></span></td>
+                    <td class="right"><span data-bind="decimal:$data.Gunting, precision:2"></span></td>
+                    <td class="right"><span data-bind="decimal:$data.WIPGunting, precision:2"></span></td>
+                    <td class="right"><span data-bind="decimal:$data.Pak, precision:2"></span></td>
+                    <td class="right"><span data-bind="decimal:$data.WIPPak, precision:2"></span></td>
+                    <td class="right"><span data-bind="decimal:$data.Banderol, precision:2"></span></td>
+                    <td class="right"><span data-bind="decimal:$data.Box, precision:2"></span></td>
+                </tr>
+            </tbody>
+            <tbody data-bind="visible: !listDataItems().length">
+                <tr>
+                    <td colspan="41" class="empty-row-message">
+                        <div class="loader"></div>
+                    </td>
+                </tr>
+            </tbody>
+            <tfoot data-bind="visible: listDataItems().length">
+                <tr class="total">
+                    <td colspan="3" class="right">Total</td>
+                    <td class="right"><span data-bind="decimal: $root.totalGiling, precision:2"></span></td>
+                    <td class="right"><span data-bind="decimal: $root.totalGunting, precision:2"></span></td>
+                    <td class="right"><span data-bind="decimal: $root.totalWIPGunting, precision:2"></span></td>
+                    <td class="right"><span data-bind="decimal: $root.totalPak, precision:2"></span></td>
+                    <td class="right"><span data-bind="decimal: $root.totalWIPPak, precision:2"></span></td>
+                    <td class="right"><span data-bind="decimal: $root.totalBanderol, precision:2"></span></td>
+                    <td class="right"><span data-bind="decimal: $root.totalBox, precision:2"></span></td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+    <div data-bind="if: (listDataItems() != null && listDataItems().length !== 0)">
+        @Html.Partial("GridViewFooter")
+    </div>
+</div>
+@section Scripts
+{
+    <script src="~/Scripts/app/globalfunctions.js" type="text/javascript"></script>
+    <script src="~/Scripts/common/app.GridViewModel.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('#rdWeek').attr('checked', true);
+            $('#rdWeek').change();
+
+            $('#filterLocation').selectpicker('refresh');
+            $('#filterLocation').change();
+        });
+
+        (function(app) {
+            app.EditGrid = function() {
+                var self = this;
+                self.itemLocations = @Html.Raw(Json.Encode(@Model.LocationDescs));
+                self.firstLoad = ko.observable(true);
+                self.StartDateDefault = ko.observable('@Model.DefaultDateFrom');
+                self.EndDateDefault = ko.observable('@Model.DefaultDateTo');
+                self.filterLocation = ko.observable('SKT');
+                self.filterYear = ko.observable('@Model.DefaultYear');
+                self.filterWeek = ko.observable('@Model.DefaultWeek');
+                self.filterDateFrom = ko.observable('@Model.DefaultDateFrom');
+                self.filterDateTo = ko.observable('@Model.DefaultDateTo');
+                self.filterType = ko.observable('Week');
+                self.filterDecimal = ko.observable('2');
+
+                self.onYearSelectedChange = function() {
+                    self.GetWeekFromSelectList();
+                };
+
+                self.radioChange = function() {
+                    self.filterType($('input[name=period]:checked').val());
+                    console.log($('input[name=period]:checked').val());
+                };
+
+                self.convertToDecimal = function(data, precision) {
+                    precision = typeof precision == 'undefined' ? 2 : precision;
+
+                    return ko.computed({
+                        read: function() {
+                            return parseToFloatWithPrecision(data(), precision);
+                        }
+                    });
+                }
+
+                self.WeekFromSelectList = ko.observableArray([]);
+                self.GetWeekFromSelectList = function() {
+                    $.ajax({
+                        url: @Html.BaseUrl("PlanningReportSummaryProcessTargets/GetWeekByYear"),
+                        type: 'GET',
+                        contentType: 'application/json',
+                        data: { year: self.filterYear() },
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#filterWeekFrom').find('option').remove();
+                            $('#filterWeekFrom').selectpicker('refresh');
+                            var kpsWeekModel = [];
+                            $.each(data, function(index, value) {
+                                kpsWeekModel.push({ "Text": value, "Value": value });
+                            });
+                            self.WeekFromSelectList(kpsWeekModel);
+                            self.filterWeek(@Model.DefaultWeek);
+                        }
+                    });
+                    self.GetWeekByYearAndWeek();
+                };
+
+                self.onWeekSelectedChange = function() {
+                    if (self.firstLoad()) {
+                        self.firstLoad(false);
+                    } else
+                        self.GetWeekByYearAndWeek();
+                };
+
+                self.GetWeekByYearAndWeek = function() {
+                    $.ajax({
+                        url: @Html.BaseUrl("PlanningReportSummaryProcessTargets/GetWeekByYearAndWeek"),
+                        type: 'GET',
+                        contentType: 'application/json',
+                        data: { year: self.filterYear(), week: self.filterWeek() },
+                        dataType: 'json',
+                        success: function(data) {
+                            // if(self.firstLoad()){
+                            self.filterDateFrom(data.StartDate);
+                            self.filterDateTo(data.EndDate);
+
+                            self.StartDateDefault(data.StartDate);
+                            self.EndDateDefault(data.EndDate);
+                            // }
+                        }
+                    });
+                };
+
+                // Gridview Initialization
+                self.gridView = new app.GridViewModel({
+                    Criteria: {
+                        PageSize: 10,
+                        PageIndex: 1,
+                        SortExpression: "BrandCode",
+                        SortOrder: "DESC",
+                        Year: self.filterYear,
+                        Decimal: self.filterDecimal,
+                        FilterType: self.filterType,
+                        Week: self.filterWeek,
+                        DateFrom: self.filterDateFrom,
+                        DateTo: self.filterDateTo,
+                        Location: self.filterLocation
+                    },
+                    DataSourceUrl: @Html.BaseUrl("PlanningReportSummaryProcessTargets/GetPlanningReportProductionTargets"),
+                    InlineEdit: true,
+                });
+
+                //get location name by location code
+                self.onLocationCodeChange = function() {
+                    $('option:selected', $("#filterLocation")).text(self.filterLocation());
+                };
+
+                function getComputedTargetValue(fieldName, precision) {
+                    return ko.computed(function() {
+                        var total = 0;
+                        ko.utils.arrayForEach(self.gridView.listDataItems(), function(item) {
+                            var field = ko.isObservable(item[fieldName]) ? item[fieldName]() : item[fieldName];
+                            var value = field;
+                            if (!isNaN(value)) {
+                                total += value;
+                            }
+                        });
+
+                        return total;
+                    });
+                }
+
+                self.totalGiling = getComputedTargetValue('Giling', 2);
+                self.totalGunting = getComputedTargetValue('Gunting', 2);
+                self.totalWIPGunting = getComputedTargetValue('WIPGunting', 2);
+                self.totalPak = getComputedTargetValue('Pak', 2);
+                self.totalWIPPak = getComputedTargetValue('WIPPak', 2);
+                self.totalBanderol = getComputedTargetValue('Banderol', 2);
+                self.totalBox = getComputedTargetValue('Box', 3);
+
+                self.onWeekChange = function() {
+                    $("#labelPeriod").html("Period: Week " + self.filterWeek() + ", " + self.filterYear());
+                };
+
+                self.generateExcel = function(formElement) {
+                    $(formElement).find("input[name=dateFrom]").val(self.filterDateFrom());
+                    $(formElement).find("input[name=dateTo]").val(self.filterDateTo());
+                    $(formElement).find("input[name=comma]").val(self.filterDecimal());
+                    $(formElement).find("input[name=filterType]").val(self.filterType());
+                    $(formElement).find("input[name=location]").val(self.filterLocation());
+                    $(formElement).find("input[name=week]").val(self.filterWeek());
+                    $(formElement).find("input[name=year]").val(self.filterYear());
+                    return true;
+                };
+
+                // Load Data
+                self.search = function() {
+
+                    self.StartDateDefault = ko.observable('@Model.DefaultDateFrom');
+                    self.EndDateDefault = ko.observable('@Model.DefaultDateTo');
+
+                    var filterdatefrm = new Date(self.filterDateFrom());
+                    var filterdateto = new Date(self.filterDateTo());
+                    var defaultdatefrom = new Date(self.StartDateDefault());
+                    var defaultdateto = new Date(self.EndDateDefault());
+
+                    //console.log(filterdatefrm);
+                    //console.log(filterdateto);
+                    //console.log(defaultdatefrom);
+                    //console.log(defaultdateto);
+
+                    //if (((filterdatefrm >= defaultdatefrom) && (filterdatefrm <= defaultdateto)) &&
+                    //    ((filterdateto >= defaultdatefrom) && (filterdateto <= defaultdateto))) {
+                    //    SKTIS.Helper.Notification('Filter date correct !', '');
+                    //}
+
+                    self.onWeekChange();
+                    $('.empty-row-message').html('<div class="loader"></div>'); // Reset New and Edit row
+                    // Check whether New or Edit data is existing and not saved to database yet (on Ajax Action)
+                    if (SKTIS.Checker.modifiedDataExistsForAjax([self.gridView.listNewItems, self.gridView.listEditItems]) == true) {
+                        return;
+                    } else {
+                        self.gridView.listNewItems.removeAll();
+                        self.gridView.listEditItems.removeAll();
+                    }
+
+                    //self.filterExcelListGroup = self.filterListGroup();
+                    self.gridView.search({}, function(response) {
+                        if (response.status == 'KO') {
+                            SKTIS.Helper.Notification(response.message, 'error');
+                            $('.empty-row-message').html(response.message);
+                        } else if (response.status == 'Empty') {
+
+                            self.RemoveNotification();
+
+                            //SKTIS.Helper.Notification(response.message,'warning');
+                            $('.empty-row-message').html('@CommonLabel.lblDataEmpty');
+                        }
+                    });
+
+                    self.RemoveNotification = function() {
+                        if ($('#noty_top_layout_container').length > 0) {
+                            $('#noty_top_layout_container').remove();
+                        }
+                    };
+                };
+
+                self.onYearSelectedChange();
+                //self.onWeekSelectedChange();
+                self.search();
+
+                $('#filterDateFrom').on('dp.change', function(e) {
+                    self.filterDateFrom('');
+                });
+                $('#filterDateTo').on('dp.change', function(e) {
+                    self.filterDateTo('');
+                });
+
+                $('.row .col-lg-4 .input-group.date input').val('');
+
+            };
+            ko.applyBindings(new app.EditGrid());
+        })(app = this.app || {});
+
+    </script>
+}

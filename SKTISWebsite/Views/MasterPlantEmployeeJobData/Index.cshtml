@@ -1,0 +1,209 @@
+﻿@using HMS.SKTIS.Application.Resources
+@using HMS.SKTIS.Application.Resources.Views.MasterPlantEmployeeJobData
+@using SKTISWebsite.Helper
+
+@{Html.SetPageTitle(@MasterPlantEmployeeJobData.PageTitle);}
+<div data-bind="with: gridView" class="col-lg-12">
+    <div class="col-lg-10">
+        <div class="row">
+            <label class="form-label col-lg-2">@MasterPlantEmployeeJobData.lblFilterLocation</label>
+            <div class="col-lg-2">
+                <select id="ddlLocationCodeFilter"
+                        class="selectpicker show-tick form-controlt"
+                        data-live-search="true"
+                        data-bind="selectPicker:$root.filterLocationCode, optionsText: 'Name', optionsValue : 'Name', optionsAfterRender: $root.afterRender, selectPickerOptions: { optionsArray: $root.LocationCodeSelectList }, event : { change : $root.onLocationCodeChange}"></select>
+            </div>
+            <div class="col-lg-3">
+                <input data-bind="value: $root.filterLocationName" type="text" class="form-control" readonly="readonly">
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="action-btn">
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.View.ToString())) {
+                    <button type="button" class="btn btn-primary" data-bind="click:$root.search">@CommonLabel.btnView</button>
+                }
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.Excel.ToString())) {
+                    using (Html.BeginForm("GenerateExcel", "MasterPlantEmployeeJobData", FormMethod.Post, new { @data_bind = "submit: $root.generateExcel" }))
+                    {
+                        <input type="hidden" name="locationCode" />
+                        <button type="submit" class="btn btn-primary">@CommonLabel.btnExcel</button>
+                    }
+                }
+                @Html.Partial("GridViewPageSizeSelector")
+            </div>
+        </div>
+    </div>
+    <div id="master-employee-job-data">
+        <div class="table-overflow">
+            <table class="table table-striped-default">
+                <thead>
+                    <tr class="head">
+                        <th data-bind="click:sortBy.bind($data,'EmployeeID'), css:sortCss('EmployeeID', $data.sortExpression(), $data.sortOrder())">@MasterPlantEmployeeJobData.lblTitleID</th>
+                        <th data-bind="click:sortBy.bind($data,'EmployeeNumber'), css:sortCss('EmployeeNumber', $data.sortExpression(), $data.sortOrder())">@MasterPlantEmployeeJobData.lblTitleNumber</th>
+                        <th data-bind="click:sortBy.bind($data,'EmployeeName'), css:sortCss('EmployeeName', $data.sortExpression(), $data.sortOrder())">@MasterPlantEmployeeJobData.lblTitleName</th>
+                        <th data-bind="click:sortBy.bind($data,'JoinDate'), css:sortCss('JoinDate', $data.sortExpression(), $data.sortOrder())">@MasterPlantEmployeeJobData.lblTitleJoin</th>
+                        <th data-bind="click:sortBy.bind($data,'Title_id'), css:sortCss('Title_id', $data.sortExpression(), $data.sortOrder())">@MasterPlantEmployeeJobData.lblTitleProcessNumber</th>
+                        <th data-bind="click:sortBy.bind($data,'ProcessSettingsCode'), css:sortCss('ProcessSettingsCode', $data.sortExpression(), $data.sortOrder())">@MasterPlantEmployeeJobData.lblTitleProcess</th>
+                        <th data-bind="click:sortBy.bind($data,'Status'), css:sortCss('Status', $data.sortExpression(), $data.sortOrder())">@MasterPlantEmployeeJobData.lblTitleStatus</th>
+                        <th data-bind="click:sortBy.bind($data,'CCT'), css:sortCss('CCT', $data.sortExpression(), $data.sortOrder())">@MasterPlantEmployeeJobData.lblTitleCCT</th>
+                        <th data-bind="click:sortBy.bind($data,'CCTDescription'), css:sortCss('CCTDescription', $data.sortExpression(), $data.sortOrder())">@MasterPlantEmployeeJobData.lblTitleCCTDesc</th>
+                        <th data-bind="click:sortBy.bind($data,'HCC'), css:sortCss('HCC', $data.sortExpression(), $data.sortOrder())">@MasterPlantEmployeeJobData.lblTitleHCC</th>
+                        <th data-bind="click:sortBy.bind($data,'GroupCode'), css:sortCss('GroupCode', $data.sortExpression(), $data.sortOrder())">@MasterPlantEmployeeJobData.lblTitleGroup</th>
+                        <th data-bind="click:sortBy.bind($data,'Loc_id'), css:sortCss('Loc_id', $data.sortExpression(), $data.sortOrder())">@MasterPlantEmployeeJobData.lblTitleLocID</th>
+                        <th data-bind="click:sortBy.bind($data,'LocationCode'), css:sortCss('LocationCode', $data.sortExpression(), $data.sortOrder())">@MasterPlantEmployeeJobData.lblTitleLocation</th>
+                        <th data-bind="click:sortBy.bind($data,'UnitCode'), css:sortCss('UnitCode', $data.sortExpression(), $data.sortOrder())">@MasterPlantEmployeeJobData.lblTitleUnit</th>
+                        <th data-bind="click:sortBy.bind($data,'Remark'), css:sortCss('Remark', $data.sortExpression(), $data.sortOrder())">@MasterPlantEmployeeJobData.lblTitleRemark</th>
+                        <th data-bind="click:sortBy.bind($data,'UpdatedBy'), css:sortCss('UpdatedBy', $data.sortExpression(), $data.sortOrder())">@MasterPlantEmployeeJobData.lblTitleUpdateBy</th>
+                        <th data-bind="click:sortBy.bind($data,'UpdatedDate'), css:sortCss('UpdatedDate', $data.sortExpression(), $data.sortOrder())">@MasterPlantEmployeeJobData.lblTitleUpdateDate</th>
+                    </tr>
+                </thead>
+                <tbody data-bind="foreach: listDataItems">
+                    <tr>
+                        <td class="right"><span data-bind="text:$data.EmployeeID"></span></td>
+                        <td class="right"><span data-bind="text:$data.EmployeeNumber"></span></td>
+                        <td><span data-bind="text:$data.EmployeeName"></span></td>
+                        <td><span data-bind="text:$data.JoinDate"></span></td>
+                        <td><span data-bind="text:$data.Title_id"></span></td>
+                        <td><span data-bind="text:$data.ProcessSettingsCode"></span></td>
+                        <td class="right"><span data-bind="text:$data.Status"></span></td>
+                        <td><span data-bind="text:$data.CCT"></span></td>
+                        <td><span data-bind="text:$data.CCTDescription"></span></td>
+                        <td class="right"><span data-bind="text:$data.HCC"></span></td>
+                        <td class="right"><span data-bind="text:$data.GroupCode"></span></td>
+                        <td><span data-bind="text:$data.Loc_id"></span></td>
+                        <td><span data-bind="text:$data.LocationCode"></span></td>
+                        <td class="right"><span data-bind="text:$data.UnitCode"></span></td>
+                        <td><span data-bind="text:$data.Remark"></span></td>
+                        <td><span data-bind="text:$data.UpdatedBy"></span></td>
+                        <td><span data-bind="text:$data.UpdatedDate"></span></td>
+                    </tr>
+                </tbody>
+                <tbody data-bind="visible: !listDataItems().length">
+                    <tr>
+                        <td colspan="17" class="empty-row-message"><div class="loader"></div></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div data-bind="if: (listDataItems() != null && listDataItems().length !== 0)">
+            @Html.Partial("GridViewFooter")
+        </div>
+    </div>
+</div>
+@section Scripts
+{
+    <script src="~/Scripts/common/app.GridViewModel.js" type="text/javascript"></script>
+    <script type="text/javascript">
+
+    (function (app) {
+        app.EditGrid = function () {
+            var self = this;
+
+            // Filter
+            self.filterLocationCode = ko.observable('SKT');
+            self.filterExcelLocationCode = self.filterLocationCode();
+            self.locationDescriptions = @Html.Raw(Json.Encode(@Model.LocationNameLookupList));
+            self.filterLocationName = ko.observable('');
+
+            // Gridview Initialization
+            self.gridView = new app.GridViewModel({
+                Criteria: { PageSize: 10, PageIndex: 1, SortExpression: "UpdatedDate", SortOrder: "DESC", LocationCode: self.filterLocationCode },
+                DataSourceUrl:  @Html.BaseUrl("MasterPlantEmployeeJobData/GetEmployeeJobDatas"),
+                InlineEdit: true
+            });
+            
+            //get location name by location code
+            self.onLocationCodeChange = function() {
+                for (var i = 0; i < self.locationDescriptions.length; i++) {
+                    if (self.locationDescriptions[i].LocationCode == self.filterLocationCode()) {
+                        self.filterLocationName(self.locationDescriptions[i].LocationName);
+                        break;
+                    }
+                }
+            };
+
+            self.afterRender = function(options, item)
+            {
+                var locDesc;
+                for (var i = 0; i < self.locationDescriptions.length; i++) {
+                    if (self.locationDescriptions[i].LocationCode == item.Name) {
+                        locDesc = self.locationDescriptions[i].LocationName;
+                        break;
+                    }
+                }
+
+                $(options).attr('title', item.Name);
+                $(options).attr(
+                    'data-content',
+                    "<span class='text'><span style='width: 35px; display: inline-block;'>" + item.Name + "</span> - " + locDesc + "</span>"
+                );
+            }
+
+            // Generate excel
+            self.generateExcel = function (formElement) {
+                self.onLocationCodeChange();
+                $(formElement).find("input[name=locationCode]").val($('option:selected', $("#ddlLocationCodeFilter")).text());
+                return true;
+            }
+
+            //Init filter SelectList
+            self.LocationCodeSelectList = ko.observableArray([{ "Name": 'SKT' }]);
+            $.ajax({
+                url:  @Html.BaseUrl("MasterPlantEmployeeJobData/GetLocationCodeSelectList"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: '',
+                    dataType: 'json',
+                    success: function (data) {
+                        var locationCodeModel = [];
+                        $.each(data, function (index, value) {
+                            locationCodeModel.push({ "Name": value });
+                        });
+                        self.LocationCodeSelectList(locationCodeModel);
+                    }
+                });
+
+                // Load Data
+                self.search = function () {
+                    $('.empty-row-message').html('<div class="loader"></div>'); // Reset New and Edit row
+                    // Check whether New or Edit data is existing and not saved to database yet (on Ajax Action)
+                    if (SKTIS.Checker.modifiedDataExistsForAjax([self.gridView.listNewItems, self.gridView.listEditItems]) == true) {
+                        return;
+                    } else {
+                        self.gridView.listNewItems.removeAll();
+                        self.gridView.listEditItems.removeAll();
+                    }
+
+                    self.filterExcelLocationCode = self.filterLocationCode();
+                    self.gridView.search({}, function(response) {
+                        if (response.status == 'KO') {
+                            SKTIS.Helper.Notification(response.message, 'error');
+                            $('.empty-row-message').html(response.message);
+                        } else if (response.status == 'Empty') {
+
+                            self.RemoveNotification();
+
+                            //SKTIS.Helper.Notification(response.message, 'warning');
+                            $('.empty-row-message').html('@CommonLabel.lblDataEmpty');
+                        }
+                    });
+
+                    self.RemoveNotification = function() {
+                        if ($('#noty_top_layout_container').length > 0) {
+                            $('#noty_top_layout_container').remove();
+                        }
+                    };
+                };
+                self.onLocationCodeChange();
+                self.search();
+
+                // Check whether New or Edit data is existing and not saved to database yet (on Request action)
+                SKTIS.Checker.modifiedDataExists([self.gridView.listNewItems, self.gridView.listEditItems]);
+            }
+            ko.applyBindings(new app.EditGrid());
+        })(app = this.app || {});
+
+    </script>
+}

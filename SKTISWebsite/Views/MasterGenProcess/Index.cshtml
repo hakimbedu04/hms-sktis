@@ -1,0 +1,263 @@
+﻿@using SKTISWebsite.Helper
+@using HMS.SKTIS.Application.Resources
+@using HMS.SKTIS.Application.Resources.Views.MasterGenProcess
+
+@{ Html.SetPageTitle(@MasterGenProcess.PageTitle); }
+<div data-bind="with: gridView" class="col-lg-12">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="action-btn">
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.View.ToString())) {
+                    <button type="button" class="btn btn-primary" data-bind="click:$root.saveData">@CommonLabel.btnSave</button>
+                }
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.View.ToString())) {
+                    using (Html.BeginForm("GenerateExcel", "MasterGenProcess", FormMethod.Post))
+                    {
+                        <button type="submit" class="btn btn-primary">@CommonLabel.btnExcel</button>
+                    }
+                }
+                @Html.Partial("GridViewPageSizeSelector")
+            </div>
+        </div>
+    </div>
+    <div class="table-overflow">
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr class="head">
+                    <th data-bind="click:sortBy.bind($data,'ProcessGroup'), css:sortCss('ProcessGroup', $data.sortExpression(), $data.sortOrder())">@MasterGenProcess.lblProcessGroup</th>
+                    <th data-bind="click:sortBy.bind($data,'ProcessIdentifier'), css:sortCss('ProcessIdentifier', $data.sortExpression(), $data.sortOrder())" class="widthsmall">@MasterGenProcess.lblProcessIdentifier</th>
+                    <th data-bind="click:sortBy.bind($data,'ProcessOrder'), css:sortCss('ProcessOrder', $data.sortExpression(), $data.sortOrder())" class="widthsmall">@MasterGenProcess.lblProcessOrder</th>
+                    <th data-bind="click:sortBy.bind($data,'WIP'), css:sortCss('WIP', $data.sortExpression(), $data.sortOrder())">@MasterGenProcess.lblWIP</th>
+                    <th data-bind="click:sortBy.bind($data,'StatusActive'), css:sortCss('StatusActive', $data.sortExpression(), $data.sortOrder())">@MasterGenProcess.lblTitleStatusActive</th>
+                    <th data-bind="click:sortBy.bind($data,'Remark'), css:sortCss('Remark', $data.sortExpression(), $data.sortOrder())">@MasterGenProcess.lblRemark</th>
+                    <th>@MasterGenProcess.lblTitleUpdatedBy</th>
+                    <th>@MasterGenProcess.lblTitleUpdatedDate</th>
+                </tr>
+                <tr class="insertRow" data-bind="click: cancelInline.bind(),inlineAddProccess:[$data, $root.newData]">
+                    <th><input data-bind="value:$root.newData.ProcessGroup, valueUpdate:'afterkeydown'" class="form-control transparent" /></th>
+                    <th class="widthsmall"><input data-bind="value:$root.newData.ProcessIdentifier, valueUpdate:'afterkeydown'" class="form-control transparent dg1" maxlength="1" /></th>
+                    <th class="widthsmall"><input data-bind="value:$root.newData.ProcessOrder, valueUpdate:'afterkeydown', numeric:$root.newData.ProcessOrder" class="form-control transparent dg1" maxlength="1" /></th>
+                    <th class="center"><input type="checkbox" data-bind="checked:$root.newData.WIP" /></th>
+                    <th class="center"><input type="checkbox" data-bind="checked:$root.newData.StatusActive" /></th>
+                    <th><input data-bind="value:$root.newData.Remark, valueUpdate:'afterkeydown'" class="form-control transparent" /></th>
+                    <th><span data-bind="text:$root.newData.UpdatedBy"></span></th>
+                    <th><span data-bind="text:$root.newData.UpdatedDate"></span></th>
+                </tr>
+            </thead>
+            <tbody data-bind="foreach: listDataItems">
+            <tr data-bind="if: ($parent.editingRowIndex() !== $index()),
+                                   click: $parent.editInline3.bind($data,$index())">
+                <td><span data-bind="text:$data.ProcessGroup"></span></td>
+                <td><span data-bind="text:$data.ProcessIdentifier"></span></td>
+                <td><span data-bind="text:$data.ProcessOrder"></span></td>
+                <td class="current center"><input type="checkbox" data-bind="checked:$data.WIP, enable: false"/></td>
+                <td class="current center"><input type="checkbox" data-bind="checked:$data.StatusActive, enable: false"/></td>
+                <td class="current"><span data-bind="text:$data.Remark"></span></td>
+                <td><span data-bind="text:$data.UpdatedBy"></span></td>
+                <td><span data-bind="text:$data.UpdatedDate"></span></td>
+            </tr>
+            @*edit template*@
+            <tr data-bind="validationOptions: {insertMessages: false, showTooltip:true, decorateInputElement: true, errorElementClass: 'input-error'}, inlineProccess:[$parent,$data],
+                                   if:($parent.editingRowIndex() === $index()),
+                                   click: $parent.selectRow.bind($data, $index())">
+                <td><span data-bind="text:$data.ProcessGroup"></span></td>
+                <td><span data-bind="text:$data.ProcessIdentifier"></span></td>
+                <td><span data-bind="text:$data.ProcessOrder"></span></td>
+                <td class="current center"><input type="checkbox" data-bind="checked:$data.WIP"/></td>
+                <td class="current center"><input type="checkbox" data-bind="checked:$data.StatusActive"/></td>
+                <td class="current"><input data-bind="value:$data.Remark,tabToNext:[$parent,$data], valueUpdate:'afterkeydown'" class="form-control transparent" /></td>
+                <td><span data-bind="text:$data.UpdatedBy"></span></td>
+                <td><span data-bind="text:$data.UpdatedDate"></span></td>
+            </tr>
+            </tbody>
+            <tbody data-bind="visible: !listDataItems().length">
+                <tr>
+                    <td colspan="8" class="empty-row-message"><div class="loader"></div></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div data-bind="if: (listDataItems() != null && listDataItems().length !== 0)">
+        @Html.Partial("GridViewFooter")
+    </div>
+
+</div>
+@section Scripts
+{
+    <script src="~/Scripts/common/app.GridViewModel.js" type="text/javascript"></script>
+    <script type="text/javascript">
+    (function (app) {
+        app.EditGrid = function () {
+            var self = this;
+
+            // make user input uppercase on Process Group
+            ko.extenders.uppercase = function(target, option) {
+                //console.log('extend');
+                target.subscribe(function(newValue) {
+                    //console.log(newValue);
+                    target(newValue.toUpperCase());
+                    //console.log(target());
+                });
+                return target;
+            };
+            
+            ko.bindingHandlers.numeric = {
+                init: function (element, valueAccessor) {
+                    $(element).on("keydown", function (event) {
+                        // Allow: backspace, delete, tab, escape, and enter
+                        if (event.keyCode == 46 || event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 27 || event.keyCode == 13 ||
+                            // Allow: Ctrl+A
+                            (event.keyCode == 65 && event.ctrlKey === true) ||
+                            // Allow: . ,
+                            //(event.keyCode == 188 || event.keyCode == 190 || event.keyCode == 110) ||
+                            // Allow: home, end, left, right
+                            (event.keyCode >= 35 && event.keyCode <= 39)) {
+                            // let it happen, don't do anything
+                            return;
+                        }
+                        else {
+                            // Ensure that it is a number and stop the keypress
+                            if (event.shiftKey || (event.keyCode < 48 || event.keyCode > 57) && (event.keyCode < 96 || event.keyCode > 105)) {
+                                event.preventDefault();
+                            }
+                        }
+                    });
+                }
+            };
+
+            self.newData = {
+                ProcessGroup: ko.observable('').extend({ uppercase: true }),
+                ProcessIdentifier: ko.observable(''),
+                ProcessOrder: ko.observable(''),
+                WIP: ko.observable(false),
+                StatusActive: ko.observable(true),
+                Remark: ko.observable('')
+            };
+
+            //description: init gridView
+            self.gridView = new app.GridViewModel({
+                Criteria: { PageSize: 10, PageIndex: 1, SortExpression: "UpdatedDate", SortOrder: "DESC" },
+                DataSourceUrl:  @Html.BaseUrl("MasterGenProcess/GetListProcess"),
+                InlineEdit: true,
+                InsertRowFocusedControlIndex: 0
+            });
+
+            //description: validations
+            self.gridView.applyValidationRules = function (entity) {
+
+                self.RemoveNotification();
+
+                entity.ProcessGroup.extend({
+                    required: {
+                        message: "<strong>Process Group</strong> cannot be empty!"
+                    },
+                });
+                entity.ProcessIdentifier.extend({
+                    required: {
+                        message: "<strong>Process Identifier</strong> cannot be empty!"
+                    },
+                });
+                entity.ProcessOrder.extend({
+                    required: {
+                        message: "<strong>Process Order</strong> cannot be empty!"
+                    },
+                });
+                entity.Remark.extend({
+                    required: {
+                        message: "<strong>Remark</strong> cannot be empty!",
+                        onlyIf: function() {
+                            return entity.StatusActive() === false;
+                        }
+                    }
+                });
+            };
+
+            // Reset Fields for Insert Row
+            self.gridView.resetDefault = function (viewModel) {
+                viewModel.ProcessGroup('');
+                viewModel.ProcessIdentifier('');
+                viewModel.ProcessOrder('');
+                viewModel.WIP(false);
+                viewModel.StatusActive(true);
+                viewModel.Remark('');
+            };
+
+            //description: save bulk data
+            self.saveData = function () {
+                if (self.gridView.editingRowIndex() !== -1)
+                    return;
+
+                var datas = {
+                    "New": self.gridView.listNewItems(),
+                    "Edit": self.gridView.listEditItems()
+                };
+
+                datas = JSON.stringify(datas);
+                $.ajax({
+                    url:  @Html.BaseUrl("MasterGenProcess/SaveProcess"),
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: datas,
+                        dataType: 'json',
+                        success: function (data) {
+                            if (data.New) {
+                                $.each(data.New, function (k, value) {
+                                    if (value)
+                                        SKTIS.Helper.ResponseNotification(value, "Insert Process", value.ProcessGroup);
+                                });
+                            }
+
+                            if (data.Edit) {
+                                $.each(data.Edit, function (k, value) {
+                                    if (value)
+                                        SKTIS.Helper.ResponseNotification(value, "Edit Process", value.ProcessGroup);
+                                });
+                            }
+
+                            self.gridView.sort('UpdatedDate', 'DESC');
+                            self.gridView.listNewItems.removeAll();
+                            self.gridView.listEditItems.removeAll();
+                        }
+                    });
+                };
+
+                //description: load data
+                self.search = function () {
+
+                    $('.empty-row-message').html('<div class="loader"></div>'); // Reset New and Edit row
+                    // Check whether New or Edit data is existing and not saved to database yet (on Ajax Action)
+                    if (SKTIS.Checker.modifiedDataExistsForAjax([self.gridView.listNewItems, self.gridView.listEditItems]) == true) {
+                        return;
+                    }else{
+                        self.gridView.listNewItems.removeAll();
+                        self.gridView.listEditItems.removeAll();
+                    }
+
+                    self.gridView.search({}, function (response) {
+                        if (response.status == 'KO') {
+                            SKTIS.Helper.Notification(response.message,'error');
+                            $('.empty-row-message').html(response.message);
+                        }else if (response.status == 'Empty') {
+
+                            self.RemoveNotification();
+
+                            //SKTIS.Helper.Notification(response.message,'warning');
+                            $('.empty-row-message').html('@CommonLabel.lblDataEmpty');
+                        }
+                    });
+
+                    self.RemoveNotification = function() {
+                        if ($('#noty_top_layout_container').length > 0) {
+                            $('#noty_top_layout_container').remove();
+                        }
+                    };
+                };
+                self.search();
+
+                // Check whether New or Edit data is existing and not saved to database yet (on Request action)
+                SKTIS.Checker.modifiedDataExists([self.gridView.listNewItems, self.gridView.listEditItems]);
+            };
+            ko.applyBindings(new app.EditGrid());
+        })(app = this.app || {});
+    </script>
+}

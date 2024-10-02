@@ -1,0 +1,222 @@
+﻿@using HMS.SKTIS.Application.Resources
+@using HMS.SKTIS.Application.Resources.Views.WagesProductionCardApproval
+@model SKTISWebsite.Models.WagesProductionCardApproval.InitWagesProductionCardApprovalViewModel
+@using SKTISWebsite.Helper
+@{ Html.SetPageTitle(@WagesProductionCardApproval.PageTitle); }
+
+<div class="col-lg-12" data-bind="with: gridView">
+    <div class="col-lg-6">
+        <div class="row">
+            <label class="form-label col-lg-3">
+                @WagesProductionCardApproval.lblDate
+            </label>
+            <div class="col-lg-4">
+                <div id="dateStart" class='input-group date notime insidetable' data-bind="dateTimePicker: $root.dateStart,value: $root.dateStart, dateTimePickerOptions: {widgetPositioning: {vertical: 'bottom'}, showClear: true, ignoreReadonly: true}">
+                    <input id="dtpDateStart" type='text' class="form-control" readonly="readonly" />
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-12">
+        <div class="row">
+            <label class="form-label col-lg-2">
+                <input type="radio" name="status" value="completed" data-bind="checked: $root.transactionStatus, event: {change: $root.onCompleteClicked}"/>
+                @WagesProductionCardApproval.lblCompleted
+            </label>
+            <label class="form-label col-lg-2">
+                <input type="radio" name="status" value="inprogress" data-bind="checked: $root.transactionStatus, event: {change: $root.onInProgressClicked}" />
+                @WagesProductionCardApproval.lblInProgress
+            </label>
+            <label class="form-label col-lg-2">
+                <input type="checkbox" data-bind="checked: $root.isMyAction, enable: $root.myActionEnabled">
+                @WagesProductionCardApproval.lblMyAction
+            </label>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="action-btn">
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.View.ToString()))
+                {
+                    <button type="button" class="btn btn-primary" data-bind="click:$root.search,enable: !$root.isBusy()">@CommonLabel.btnView</button>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="table-overflow">
+        <table class="table table-striped clickable-table-row">
+            <thead>
+                <tr class="head">
+                    <th>Location</th>
+                    <th>Unit</th>
+                    <th>Shift</th>
+                    <th>Date</th>
+                    <th>Brand Group</th>
+                    <th>Status</th>
+                    <th>Current Approver</th>
+                </tr>
+            </thead>
+            <tbody data-bind="foreach: listDataItems">
+            <tr data-bind="event:{click:$root.onProductionCardApprovalClick}">
+                <td style="display: none" data-bind="text: $data.RevisionType"></td>
+                <td data-bind="text: $data.LocationCode"></td>
+                <td data-bind="text: $data.UnitCode"></td>
+                <td data-bind="text: $data.Shift"></td>
+                <td data-bind="text: $data.ProductionDate"></td>
+                <td data-bind="text: $data.BrandCode"></td>
+                <td data-bind="text: $data.Status"></td>
+                <td data-bind="text: $data.IDRole" hidden></td>
+                <td data-bind="text: $data.RolesName"></td>
+            </tr>                
+            </tbody>
+            <tbody data-bind="visible: !listDataItems().length">
+                <tr>
+                    <td colspan="7" class="empty-row-message"><div class="loader"></div></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script src="~/Scripts/common/app.GridViewModel.js" type="text/javascript"></script>
+    <script type="text/javascript">
+    function gup(name){
+        name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+        var regexS = "[\\?&]" + name + "=([^&]*)";
+        var regex = new RegExp(regexS);
+        var results = regex.exec(window.location.href);
+        if (results == null)
+            return "";
+        else {
+            for (i = 0; i < results[1].length; i++) {
+                results[1] = results[1].replace("%20", " ");
+                results[1] = results[1].replace("%27", "'");
+                results[1] = results[1].replace("%3f", "?");
+                results[1] = results[1].replace("%3", "=");
+            }
+            return results[1];
+        }
+    }
+
+    (function (app) {
+        app.EditGrid = function () {
+            var self = this;
+            self.isBusy = ko.observable(true);
+            //================ Busy button state =====================//
+            $(document).ajaxComplete(function() {
+                if ($.active <= 1) {
+                    self.isBusy(false);
+                }
+            });
+
+            $(document).ajaxStart(function() {
+                if (!self.isBusy()) self.isBusy(true);
+            });
+            //================ Busy button state =====================//
+
+            // Global filter
+            if((gup('Param3').length == 0)&& (gup('Param4').length == 0)&&(gup('Param5').length == 0)){
+                self.transactionStatus = ko.observable('inprogress');
+                self.isMyAction = ko.observable(false);
+                self.myActionEnabled = ko.observable(false);
+                self.dateStart = ko.observable('@Model.Date');
+            }else{
+                self.transactionStatus = ko.observable(gup('Param3'));
+                self.isMyAction = gup('Param4')=="1"? ko.observable(true) : ko.observable(false);
+                self.myActionEnabled = gup('Param3') == "completed"? ko.observable(false):ko.observable(true);
+                self.dateStart = ko.observable(gup('Param5'));
+            }
+
+            self.onProductionCardApprovalClick = function(e){
+                var P3 = self.transactionStatus();
+                var P4 = self.isMyAction()==true? "1":"0";
+                var P5 = e.RevisionType() == '1'? e.ProductionDate() : self.dateStart();
+                var P6 = e.Status();
+                var P7 = e.IDRole();
+                var P8 = e.BrandCode();
+                var P9 = self.dateStart();
+
+                window.document.location = @Html.BaseUrl("WagesProductionCardApprovalDetail") + "/index/" + e.LocationCode() + "/" + e.UnitCode() + "/" + e.RevisionType() +"?P3="+P3+"&P4="+P4+"&P5="+P5+"&P6="+P6+"&P7="+P7+"&P8="+P8+"&P9="+P9;//
+
+            };
+
+            self.onCompleteClicked = function() {
+                self.myActionEnabled(false);
+            }
+
+            self.onInProgressClicked = function() {
+                self.myActionEnabled(true);
+            }
+
+            // Gridview Initialization
+            self.gridView = new app.GridViewModel({
+                Criteria: {
+                    PageSize: 10,
+                    PageIndex: 1,
+                    SortExpression: "ProductionDate",
+                    SortOrder: "DESC",
+                    TransactionStatus: self.transactionStatus,
+                    IsMyAction: self.isMyAction,
+                    StartDate: self.dateStart
+                },
+                DataSourceUrl: @Html.BaseUrl("WagesProductionCardApproval/GetProductionCardApprovalList"),
+                InlineEdit: true,
+                InsertRowFocusedControlIndex: 1
+            });
+
+            // Load Data
+            self.search = function () {
+                self.gridView.listDataItems.removeAll();
+                $('.empty-row-message').html('<div class="loader"></div>'); // Reset New and Edit row
+                self.gridView.search({}, function (response) {
+                    if (response.status == 'KO') {
+                        //console.log('alert3');
+                        SKTIS.Helper.Notification(response.message, 'error');
+                        $('.empty-row-message').html(response.message);
+                    } else if (response.status == 'Empty') {
+                        //console.log('alert4');
+                        self.RemoveNotification();
+                        $('.empty-row-message').html('@CommonLabel.lblDataEmpty');
+                    }
+                });
+
+                self.RemoveNotification = function () {
+                    if ($('#noty_top_layout_container').length > 0) {
+                        $('#noty_top_layout_container').remove();
+                    }
+                };
+            };
+
+            self.setDateRange = function() {
+                $.ajax({
+                    url: @Html.BaseUrl("WagesProductionCardApproval/GetDate"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: { },
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#dateStart').data("DateTimePicker").options({
+                            maxDate: moment(data.EndDate),
+                            minDate: moment(data.StartDate).add(1, 'days')
+                        });
+
+                        if ((moment(self.dateStart(), "DD-MM-YYYY").diff(moment(data.StartDate), 'days') < 0) || (moment(self.dateStart(), "DD-MM-YYYY").diff(moment(data.EndDate), 'days') > 0)) {
+                            self.dateStart(moment(data.StartDate));
+                        }
+                    }
+                });
+            };
+
+            //self.setDateRange();
+            self.search();
+        };
+        ko.applyBindings(new app.EditGrid());
+    })(app = this.app || {});
+
+</script>
+}

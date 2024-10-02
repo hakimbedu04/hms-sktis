@@ -1,0 +1,1578 @@
+﻿@model SKTISWebsite.Models.ExePlantProductionEntryVerification.InitExePlantProductionEntryVerificationViewModel
+@using HMS.SKTIS.Application.Resources
+@using SKTISWebsite.Helper
+@{ Html.SetPageTitle(" Production Entry Verification"); }
+
+<div class="col-lg-12" data-bind="with: gridView">
+    <div class="col-lg-5">
+        <div class="row">
+            <label class="form-label col-lg-4">
+                Location
+            </label>
+            <div class="col-lg-2 offset-right">
+                @*@Html.DropDownList("ddlFilterLocationCode", new SelectList(Model.PLNTChildLocationLookupList, "LocationCode", "LocationCode"),
+                    new
+                    {
+                        @class = "selectpicker show-tick form-control",
+                        id = "ddlFilterLocationCode",
+                        data_live_search = "true",
+                        data_bind = "value:$root.filterLocationCode, event : { change : $root.onLocationCodeChange}"
+                    })*@
+                <select id="ddlFilterLocationCode"
+                        class="selectpicker show-tick form-control"
+                        data-live-search="true"
+                        data-bind="selectPicker:$root.filterLocationCode, optionsText: 'LocationCode', optionsValue : 'LocationCode', optionsAfterRender: locationDesc, selectPickerOptions: { optionsArray: $root.itemLocations }, event : { change : $root.onLocationCodeChange}"></select>
+            </div>
+            <div class="col-lg-4">
+                <input type="text" class="form-control" readonly="readonly" data-bind="value:$root.filterLocationName">
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-4">
+                Unit
+            </label>
+            <div class="col-lg-6">
+                <select class="selectpicker show-tick form-control" id="ddlUnitCodeFilter"
+                        data-live-search="true"
+                        data-bind="selectPicker: $root.filterUnitCode, optionsText: 'Text', optionsValue : 'Value', selectPickerOptions: { optionsArray: $root.unitCodeSelectList }, event : {change : $root.onUnitAndProcessSelectedChange}"></select>
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-4">
+                Shift
+            </label>
+            <div class="col-lg-6">
+                <select class="selectpicker show-tick form-control" id="ddlShiftFilter"
+                        data-live-search="true"
+                        data-bind="selectPicker: $root.filterShift, optionsText: 'Text', optionsValue : 'Value', selectPickerOptions: { optionsArray: $root.shiftSelectList }, event :{change : $root.onFilterShiftChange} "></select>
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-4">Brand</label>
+            <div class="col-lg-7">
+                <select id="ddlFilterBrandCode" class="show-tick form-control" data-live-search="true"
+                        data-bind="selectPicker: $root.filterBrandCode, optionsText: 'Text', optionsValue : 'Value',
+                        selectPickerOptions: { optionsArray: $root.BrandCodeSelectList }"></select>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="row">
+            <label class="form-label col-lg-3">
+                KPS Year
+            </label>
+            <div class="col-lg-5">
+                @Html.DropDownList("filterYear", Model.YearSelectList,
+                             new Dictionary<string, object> { { "data-bind", "value:$root.filterYear, event : { change : $root.onYearSelectedChange}" },
+                        { "class", "selectpicker show-tick form-controlt" },
+                        {"data-live-search","true"},{"id","filterYear"} })
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-3">
+                KPS Week
+            </label>
+            <div class="col-lg-5">
+                <select id="filterWeek" class="selectpicker show-tick form-control" data-live-search="true"
+                        data-bind="selectPicker: $root.filterWeek, optionsText: 'Value', optionsValue : 'Text', selectPickerOptions: { optionsArray: $root.WeekFromSelectList },  event : { change : $root.onWeekSelectedChange }"></select>
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-3">
+                Date
+            </label>
+            <div class="col-lg-5">
+                <select id="filterDate" class="selectpicker show-tick form-control" data-live-search="true"
+                        data-bind="selectPicker: $root.filterDate, optionsText: 'Value', optionsValue : 'Text', selectPickerOptions: { optionsArray: $root.DateFromSelectList }, event : {change : $root.onFilterDateChange}"></select>
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-3">
+                Closing Payroll
+            </label>
+            <div class="col-lg-5">
+                <input type="text" class="form-control" data-bind="value: $root.filterClosingPayroll" disabled>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="action-btn">
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.View.ToString()))
+                {
+                    <button type="button" class="btn btn-primary" data-bind="click:$root.search">View</button>
+                }
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.Save.ToString()))
+                {
+                    <button type="button" class="btn btn-primary" data-bind="click:$root.saveData, enable: $root.disableBtnSave() && !$root.isFilterChange()">Save</button>
+                }
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.Submit.ToString()))
+                {
+                    <button type="button" id="buttonSubmit" class="btn btn-primary" data-bind="click:$root.submit, enable: $root.disableBtnSubmit() && !$root.isFilterChange()">Submit</button>
+                }
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.Return.ToString()))
+                {
+                    <button type="button" id="buttonReturn" class="btn btn-primary" data-bind="click:$root.return, enable: $root.disableBtnReturn">Return</button>
+                }
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.Excel.ToString()))
+                {
+                    using (Html.BeginForm("GenerateExcel", "ExePlantProductionEntryVerification", FormMethod.Post, new { @data_bind = "submit: $root.generateExcel" }))
+                    { <input type="hidden" name="LocationCode">
+                        <input type="hidden" name="UnitCode">
+                        <input type="hidden" name="Shift">
+                        <input type="hidden" name="KpsYear">
+                        <input type="hidden" name="KpsWeek">
+                        <input type="hidden" name="ProductionDate">
+                        <input type="hidden" name="BrandCode">
+                        <button type="submit" class="btn btn-primary" data-bind="enable: !$root.isFilterChange()">Excel</button>
+                    }
+                }
+
+                @*@Html.Partial("GridViewPageSizeSelector")*@
+            </div>
+        </div>
+    </div>
+    <div class="table-overflow">
+        <table class="table table-striped-default">
+            <thead>
+                <tr class="head">
+                    <th rowspan="2"><input type="checkbox" data-bind="click: $root.selectAll, checked: $root.allSelected" /></th>
+                    <th rowspan="2">Process</th>
+                    <th rowspan="2">Group</th>
+                    <th colspan="8">Absence</th>
+                    <th rowspan="2">Plan</th>
+                    <th rowspan="2">Actual</th>
+                    <th colspan="2">Verify</th>
+                </tr>
+                <tr class="head">
+                    <th>A</th>
+                    <th>I</th>
+                    <th>S</th>
+                    <th>C</th>
+                    <th>CH</th>
+                    <th>CT</th>
+                    <th>SLS/SLP</th>
+                    <th>ETC</th>
+                    <th>System</th>
+                    <th>Manual</th>
+                </tr>
+                <tr class="insertRow" data-bind="click: cancelInline.bind(),inlineAddProccess:[$data, $root.newData]" style="display: none">
+                    <th colspan="49">
+                        <input type="text" />
+                    </th>
+                </tr>
+            </thead>
+            <tbody data-bind="foreach: listDataItems">
+                <tr data-bind="if: ($parent.editingRowIndex() !== $index() && $data.ProcessGroup() != 'Total')">
+                    <td><input type="checkbox" data-bind="checked:$data.Flag_Manual, click: $root.onChecked, enable: $root.checkRowEnableorDisable($data)"></td>
+                    <td><span data-bind="text:$data.ProcessGroup"></span></td>
+                    <td class="right"><span data-bind="text:$data.GroupCode"></span></td>
+                    <td class="right"><span data-bind="digit:$data.A"></span></td>
+                    <td class="right"><span data-bind="digit:$data.I"></span></td>
+                    <td class="right"><span data-bind="digit:$data.S"></span></td>
+                    <td class="right"><span data-bind="digit:$data.C"></span></td>
+                    <td class="right"><span data-bind="digit:$data.CH"></span></td>
+                    <td class="right"><span data-bind="digit:$data.CT"></span></td>
+                    <td class="right"><span data-bind="digit:$data.SLS_SLP"></span></td>
+                    <td class="right"><span data-bind="digit:$data.ETC"></span></td>
+                    <td class="right"><span data-bind="decimal:$data.Plant"></span></td>
+                    <td class="right"><span data-bind="decimal:$data.Actual"></span></td>
+                    <td><span data-bind="text:ko.utils.unwrapObservable($data.VerifySystem) == '0' ? 'N':'Y'"></span></td>
+                    <td class="current right">
+                        <select class="show-tick form-control sp-auto-width" id="ddlAbsentType"
+                                data-live-search="true"
+                                data-bind="value: $data.VerifyManual, options: $root.verifyManualSelectList, enable: $root.checkRowEnableorDisable($data),
+                                            optionsText: 'Text', optionsValue : 'Value', isSelectPicker:{}, event:{change:$root.onVerifyManualChange}"></select>
+                        @*<span data-bind="text:$data.AlreadySubmit"></span>*@
+                    </td>
+
+                </tr>
+                @*Total*@
+                <tr data-bind="if:($parent.editingRowIndex() !== $index() && $data.ProcessGroup() == 'Total')" class="total">
+                    <td></td>
+                    <td><span data-bind="text:$data.ProcessGroup"></span></td>
+                    <td class="right"><span data-bind="text:$data.GroupCode"></span></td>
+                    <td class="right"><span data-bind="digit:$data.A"></span></td>
+                    <td class="right"><span data-bind="digit:$data.I"></span></td>
+                    <td class="right"><span data-bind="digit:$data.S"></span></td>
+                    <td class="right"><span data-bind="digit:$data.C"></span></td>
+                    <td class="right"><span data-bind="digit:$data.CH"></span></td>
+                    <td class="right"><span data-bind="digit:$data.CT"></span></td>
+                    <td class="right"><span data-bind="digit:$data.SLS_SLP"></span></td>
+                    <td class="right"><span data-bind="digit:$data.ETC"></span></td>
+                    <td class="right"><span data-bind="decimal:$data.Plant"></span></td>
+                    <td class="right"><span data-bind="decimal:$data.Actual"></span></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </tbody>
+            <tbody data-bind="visible: !listDataItems().length">
+                <tr>
+                    <td colspan="49" class="empty-row-message"><div class="loader"></div></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div style="clear:both;"></div>
+    <div class="row">
+        <div class="col-lg-12">
+            <span><strong>Current Approver :</strong> </span>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            @Html.Partial("TransactionHistory")
+        </div>
+    </div>
+</div>
+
+
+@section Scripts
+{
+    <script src="~/Scripts/app/globalfunctions.js" type="text/javascript"></script>
+    <script src="~/Scripts/common/app.GridViewModel.js" type="text/javascript"></script>
+    <script src="~/Scripts/common/app.Extenders.js" type="text/javascript"></script>
+    <script type="text/javascript">
+
+    (function(app) {
+        app.EditGrid = function() {
+            var self = this;
+            self.itemLocations = ko.observableArray(@Html.Raw(Json.Encode(@Model.PLNTChildLocationLookupList)));
+            self.firstInitFromUrl = ko.observable(false);
+            self.filterLocationCode = ko.observable($("#ddlFilterLocationCode").val());
+            self.filterLocationName = ko.observable();
+            self.filterUnitCode = ko.observable('');
+            self.filterShift = ko.observable($("#ddlShiftFilter").val());
+            self.filterBrandCode = ko.observable('');
+            self.filterYear = ko.observable('@Model.DefaultYear');
+            self.filterWeek = ko.observable('@Model.DefaultWeek');
+            self.filterDate = ko.observable(moment().format("DD/MM/YYYY"));
+            self.filterClosingPayroll = ko.observable('');
+            self.BrandCodeSelectList = ko.observableArray([]);
+            self.firstLoad = true;
+            self.checkedList = ko.observableArray([]);
+            self.checkedListItem = ko.observableArray([]);
+            self.saved = ko.observable(true);
+            self.allSelected = ko.observable(false);
+            self.isLoading = ko.observable(false);
+            self.isFilterChange = ko.observable(true);
+
+            self.selectAll = function() {
+                var all = self.allSelected();
+                ko.utils.arrayForEach(self.gridView.listDataItems(), function(val) {
+                    var enabled = self.checkRowEnableorDisable(val);
+                    if(enabled()){
+                        val.Flag_Manual(!all);
+                    }
+                    self.onChecked(val);
+                });
+                return true;
+            }
+
+            self.onChecked = function(item) {
+                if ( item.Flag_Manual() ) {
+                    self.checkedList.push(item.ProcessGroup());
+                    //self.checkedListItem.push(item);
+                    //self.disableBtnReturn(checkButtonReturnOnCheckedList(self.checkedListItem())());
+                    //self.disableBtnReturn(true);
+                } else {
+                    self.checkedList.remove(item.ProcessGroup());
+                    //self.checkedListItem.remove(item);
+                    //self.disableBtnReturn(checkButtonReturnOnCheckedList(self.checkedListItem())());
+                    //self.disableBtnReturn(false);
+                }
+                return true;
+            }
+
+            self.checkRowEnableorDisable = function(item) {
+                return ko.computed({
+                    read: function() {
+                        var result = true;
+
+                        if(item.VerifySystem() === 0)
+                            result = false;
+
+                        if(item.ProductionCardSubmit())
+                            result = false;
+
+                        if(!result)
+                            item.Flag_Manual(true);
+
+                        return result;
+                    },
+                    write: function(value) {
+                        //alert(value);
+                    }
+                });
+            };
+
+            function checkButtonReturnOnCheckedList(listCheckedItem) {
+                return ko.computed({
+                    read: function() {
+                        var result = true;
+                        var anySubmitted = false;
+                        var anyProdCardSubmitted = false;
+                        var verSystem = false;
+                        var anyRelease = false;
+
+                        ko.utils.arrayForEach(listCheckedItem, function(item) {
+                            if(item["VerifySystem"]() === 1)
+                            {
+                                verSystem = true;
+                            }
+                            if (item["ProductionCardSubmit"]()){
+                                anyProdCardSubmitted = true;
+                            }
+                        });
+
+                        if(anyProdCardSubmitted){
+                            result = false;
+                        }
+                        if(!verSystem){
+                            result = false;
+                        }
+                        return result && listCheckedItem.length;
+                    },
+                    write: function(value) {
+                        //alert(value);
+                    }
+                });
+            };
+
+            //event on location dropdown change
+            self.onLocationCodeChange = function() {
+                if ((! self.firstLoad) && (! self.isLoading())) {
+                    self.isLoading(true);
+                    self.isFilterChange(true);
+
+                    async.series([
+                        function(cb) {
+                            self.getLocationNameFilter(cb);//location
+                        },
+                        function(cb) {
+                            self.getUnitCodeSelectListByLocation(cb);//unit
+                        },
+                        function(cb) {
+                            self.getShiftSelectList(cb);//shift
+                        },
+                        function(cb) {
+                            self.getBrandCodeList(cb);//brand
+                        }
+                    ], function() {
+                        self.isLoading(false);
+                    });
+                }
+            };
+
+            self.onFilterDateChange = function() {
+                if ((! self.firstLoad) && (! self.isLoading())) {
+                    self.isLoading(true);
+                    self.isFilterChange(true);
+
+                    async.series([
+                        function(cb) {
+                            self.getClosingPayroll(cb);
+                        },
+                        function(cb) {
+                            self.getBrandCodeList(cb);
+                        }
+                    ], function() {
+                        self.isLoading(false);
+                    });
+                }
+            };
+
+            self.onFilterShiftChange = function() {
+                if ((! self.firstLoad) && (! self.isLoading())) {
+                    self.isLoading(true);
+                    self.isFilterChange(true);
+
+                    async.series([
+                        function(cb) {
+                            self.getBrandCodeList(cb);
+                        }
+                    ], function() {
+                        self.isLoading(false);
+                    });
+                }
+            };
+            self.onUnitAndProcessSelectedChange = function() {
+                if ((! self.firstLoad) && (! self.isLoading())) {
+                    self.isLoading(true);
+                    self.isFilterChange(true);
+
+                    async.series([
+                        function(cb) {
+                            self.getBrandCodeList(cb);
+                        }
+                    ], function() {
+                        self.isLoading(false);
+                    });
+                }
+            };
+
+
+            //get location name by location code
+            self.getLocationNameFilter = function(cb) {
+                self.itemLocations().map(function(v) {
+                    if (typeof v.LocationCode !== 'undefined' && v.LocationCode == self.filterLocationCode()) {
+                        self.filterLocationName(v.LocationName);
+                    }
+                });
+                if (typeof cb == 'function') cb();
+            };
+
+            //prepare unitCode selectlist data
+            self.unitCodeSelectList = ko.observableArray();
+            self.getUnitCodeSelectListByLocation = function(cb) {
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantProductionEntryVerification/GetUnitCodeSelectListByLocationCode"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: { locationCode: self.filterLocationCode() },
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#ddlUnitCodeFilter').find('option').remove();
+                        $('#ddlUnitCodeFilter').selectpicker('refresh');
+                        self.unitCodeSelectList(data);
+
+                        if(self.firstInitFromUrl()){
+                            self.filterUnitCode('@Model.Param2UnitCode');
+                        }
+
+                        if (typeof cb == 'function') cb();
+                    }
+                });
+            };
+
+            //prepare Shoft selectlist data
+            self.shiftSelectList = ko.observableArray([]);
+            self.getShiftSelectList = function(cb) {
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantProductionEntryVerification/GetShiftByLocation"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: { locationCode: self.filterLocationCode() },
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#ddlShiftFilter').find('option').remove();
+                        $('#ddlShiftFilter').selectpicker('refresh');
+                        var kpsWeekModel = [];
+                        $.each(data, function(index, value) {
+                            kpsWeekModel.push({ "Text": value.Text, "Value": value.Text });
+                        });
+                        self.shiftSelectList(kpsWeekModel);
+                        //console.log(kpsWeekModel);
+                        self.filterShift(kpsWeekModel[0].Text);
+
+                        if(self.firstInitFromUrl()){
+                            self.filterShift('@Model.Param3Shift');
+                        }
+
+                        if (typeof cb == 'function') cb();
+                    }
+                });
+            };
+
+            //get brand group code by location
+            self.getBrandCodeList = function(cb) {
+                if(typeof self.filterDate() == 'undefined') {
+                    self.filterDate(moment().format("DD/MM/YYYY"));
+                }
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantProductionEntryVerification/GetBrandSelectList"),
+                    type: 'GET',
+                    cache: false,
+                    contentType: 'application/json',
+                    data: {
+                        locationCode: self.filterLocationCode(),
+                        Shift : self.filterShift(),
+                        KpsYear : self.filterYear(),
+                        KpsWeek : self.filterWeek(),
+                        UnitCode : self.filterUnitCode(),
+                        ProductionDate :self.filterDate()
+                    },
+                    dataType: 'json',
+                    success: function(data) {
+
+                        $('#ddlFilterBrandCode').find('option').remove();
+                        $('#ddlFilterBrandCode').selectpicker('refresh');
+                        var brandCodeModel = [];
+
+                        //console.log(self.filterLocationCode());
+                        //console.log(self.filterShift());
+                        //console.log(self.filterYear());
+                        //console.log(self.filterWeek());
+                        //console.log(self.filterUnitCode());
+                        //console.log(self.filterDate());
+
+                        $.each(data, function(index, value) {
+                            //console.log(value);
+                            brandCodeModel.push({ "Text": value['Value'], "Value": value['Value'] });
+                        });
+                        self.BrandCodeSelectList(brandCodeModel);
+                        self.filterBrandCode(self.BrandCodeSelectList()[0]);
+
+                        if(self.firstInitFromUrl()){
+                            self.filterBrandCode('@Model.Param4BrandCode');
+                        }
+                    },
+                    complete : function() {
+                        if (typeof cb == 'function') cb();
+                    }
+                });
+            };
+
+            //event on Year dropdown change
+            self.onYearSelectedChange = function() {
+                if ((! self.firstLoad) && (! self.isLoading())) {
+                    self.isLoading(true);
+                    self.isFilterChange(true);
+
+                    async.series([
+                        function(cb) {
+                            self.GetWeekFromSelectList(cb);
+                        },
+                        function(cb) {
+                            self.setDateRange(cb);
+                        },
+                        function(cb) {
+                            self.getClosingPayroll(cb);
+                        },
+                        function(cb) {
+                            self.getBrandCodeList(cb);
+                        }
+                    ], function() {
+                        self.isLoading(false);
+                    });
+                }
+            };
+
+            //event on Week dropdown change
+            self.onWeekSelectedChange = function() {
+                if ((! self.firstLoad) && (! self.isLoading())) {
+                    self.isLoading(true);
+                    self.isFilterChange(true);
+
+                    async.series([
+                        function(cb) {
+                            self.setDateRange(cb);
+                        },
+                        function(cb) {
+                            self.getClosingPayroll(cb);
+                        },
+                        function(cb) {
+                            self.getBrandCodeList(cb);
+                        }
+                    ], function() {
+                        self.isLoading(false);
+                    });
+                }
+            };
+
+            //prepare Week selectlist data
+            self.WeekFromSelectList = ko.observableArray([]);
+            self.GetWeekFromSelectList = function(cb) {
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantProductionEntryVerification/GetWeekByYear"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: { year: self.filterYear() },
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#filterWeek').find('option').remove();
+                        $('#filterWeek').selectpicker('refresh');
+                        var kpsWeekModel = [];
+                        $.each(data, function(index, value) {
+                            kpsWeekModel.push({ "Text": value, "Value": value });
+                        });
+                        self.WeekFromSelectList(kpsWeekModel);
+                        self.filterWeek('@Model.DefaultWeek');
+
+                        if(self.firstInitFromUrl()){
+                            self.filterWeek('@Model.Param6KPSWeek');
+                        }
+                    },
+                    complete : function() {
+                        if (typeof cb == 'function') cb();
+                    }
+                });
+            };
+
+            //prepare Date selectlist data
+            self.DateFromSelectList = ko.observableArray([]);
+            self.setDateRange = function(cb) {
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantProductionEntryVerification/GetDateByYearWeek"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: { year: self.filterYear(), week: self.filterWeek() },
+                    dataType: 'json',
+                    success: function(data) {
+                        self.DateFromSelectList([]);
+                        $('#filterDate').find('option').remove();
+                        $('#filterDate').selectpicker('refresh');
+                        var model = [];
+                        $.each(data, function(index, value) {
+                            model.push({ "Text": value.Text, "Value": value.Text });
+                        });
+                        self.DateFromSelectList(model);
+                        self.filterDate(moment().format("DD/MM/YYYY"));
+                        //self.getBrandCodeList();
+
+                        if(self.firstLoad){
+                            //self.getClosingPayroll();
+                            self.firstLoad = false;
+                        }
+
+                        if(self.firstInitFromUrl()){
+                            var dt = moment('@Model.Param7Date','DD/MM/YYYY').format('DD/MM/YYYY');
+                            self.filterDate(dt);
+                        }
+                    },
+                    complete : function() {
+                        if (typeof cb == 'function') cb();
+                    }
+                });
+            };
+
+            // not used due ajax issue
+            //self.filterDate.subscribe(function(newDate) {
+            //    //console.log("The person's new name is " + newDate);
+            //    if( ! self.firstLoad){
+            //        self.getClosingPayroll();
+            //    }
+            //});
+
+            // Get Clossing Payroll Value
+            self.getClosingPayroll = function(cb) {
+                self.filterClosingPayroll('');
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantProductionEntryVerification/GetClosingPayroll"),
+                    async: false,
+                    type: 'POST',
+                    data: ko.myToJSON({date: self.filterDate()}),
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    success: function(data) {
+                        self.filterClosingPayroll(data);
+                    },
+                    complete: function() {
+                        if (typeof cb == 'function') cb();
+                    }
+                });
+            };
+
+            self.gridView = new app.GridViewModel({
+                Criteria: {
+                    PageSize: 50,
+                    PageIndex: 1,
+                    SortExpression: "ProcessGroup",
+                    SortOrder: "ASC",
+                    LocationCode: self.filterLocationCode,
+                    UnitCode: self.filterUnitCode,
+                    KpsYear: self.filterYear,
+                    KpsWeek: self.filterWeek,
+                    ProductionDate: self.filterDate,
+                    Shift: self.filterShift,
+                    BrandCode: self.filterBrandCode
+                },
+                DataSourceUrl: @Html.BaseUrl("ExePlantProductionEntryVerification/GetExePlantProductionEntryVerification"),
+                InlineEdit: true,
+                InsertRowFocusedControlIndex: 1
+            });
+
+            //self.gridView.selectedPageSize(1000); //show all record
+
+            //prepare Verify Manual selectlist data
+            self.verifyManualSelectList = ko.observableArray([]);
+            self.setVerifyManual = function(cb) {
+                var model = [];
+                model.push({ "Text": "Y", "Value": 1 });
+                model.push({ "Text": "N", "Value": 0 });
+                self.verifyManualSelectList(model);
+                if (typeof cb == 'function') cb();
+            };
+
+            //description: save bulk data
+            self.saveData = function() {
+                if (self.gridView.editingRowIndex() !== -1)
+                    return;
+
+                var datas = {
+                    //"Edit": self.gridView.listDataItems()
+                    "Edit": ko.mapping.toJS(self.gridView.listDataItems())
+                };
+
+                datas = JSON.stringify(datas);
+                //console.log(datas);
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantProductionEntryVerification/SaveAllProductionEntryVerification"),
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: datas,
+                    dataType: 'json',
+                    beforeSend: function(){
+                        self.disableBtnSave(true);
+                    },
+                    success: function(data) {
+                        if (data.Edit) {
+                            //$.each(data.Edit, function(k, value) {
+                            //    if (value)
+                            //    {
+                            //        SKTIS.Helper.ResponseNotification(value, "Save Production Entry Verification", value.EmployeeName);
+                            //    }
+                            //});
+                            SKTIS.Helper.ResponseNotification("", "Save Production Entry Verification", "");
+                        }
+                        self.saved(true);
+                        self.disableBtnSave(false);
+                        self.gridView.reload();
+                        self.gridView.listNewItems.removeAll();
+                        self.gridView.listEditItems.removeAll();
+                    }
+                });
+            };
+
+            //description : submitDatas
+            self.submit = function() {
+                if (self.gridView.editingRowIndex() !== -1)
+                    return;
+
+                var datas = {
+                    "Edit": ko.mapping.toJS(self.gridView.listDataItems()).reverse(),
+                    "Parameters": {
+                        "LocationCode": self.filterLocationCode(),
+                        "UnitCode": self.filterUnitCode(),
+                        "BrandCode": self.filterBrandCode(),
+                        "ProductionDate": self.filterDate(),
+                        "Year": self.filterYear(),
+                        "Week": self.filterWeek(),
+                        "Date": self.filterDate(),
+                        "Shift": self.filterShift()
+                    }
+                };
+
+                datas = JSON.stringify(datas);
+                //console.log(datas);
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantProductionEntryVerification/SubmitEntryVerificationOnTuning"),
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: datas,
+                    dataType: 'json',
+                    beforeSend: function(){
+                        $('#buttonSubmit').prop('disabled',true);
+                        $('#buttonReturn').prop('disabled',true);
+                    },
+                    success: function(data) {
+                        SKTIS.Helper.Notification(data);
+                        self.allSelected(false);
+                        self.search();
+                    }
+                })
+            };
+
+            //function checkDataAlreadySubmited(fieldName) {
+            //    return ko.computed({
+            //        read: function() {
+            //            var result = false;
+            //            ko.utils.arrayForEach(self.gridView.listDataItems(), function(item) {
+            //                if (item["ProcessGroup"]() != "Total"){
+            //                    var field = ko.isObservable(item[fieldName]) ? item[fieldName]() : item[fieldName];
+            //                    if(!field) result = true;
+            //                }
+            //            });
+            //            return result;
+            //        },
+            //        write: function(value) {
+            //            //alert(value);
+            //        }
+            //    });
+            //};
+
+            function checkDataAlreadySaveINProdCard(fieldName) {
+                return ko.computed({
+                    read: function() {
+                        var result = true;
+                        var anyProdCardSubmitted = false;
+                        var anyEblekApproval = false;
+                        ko.utils.arrayForEach(self.gridView.listDataItems(), function(item) {
+                            if (item["ProcessGroup"]().toLowerCase().trim() !== "total"){
+                                if (item["AlreadySubmit"]() === true){
+                                    result = true;
+                                } else {
+                                    result = false;
+                                }
+                                if((item["ProductionCardSubmit"]() === true) && (item["ProductionEntryRelease"]() === false)){
+                                    anyProdCardSubmitted = true;
+                                }
+                            }
+
+                        });
+                        if(anyProdCardSubmitted === true){
+                            result = false;
+                        }
+                        return result;
+                    },
+                    write: function(value) {
+                        //alert(value);
+                    }
+                });
+            };
+
+            self.onVerifyManualChange = function(data)
+            {
+                self.disableBtnSave(true);
+                self.saved(false);
+            }
+            function getTotalActual(fieldName) {
+                return ko.computed({
+                    read: function() {
+
+                        // Initialization variable
+                        var totalActualCutting = 0;
+                        var totalActualRolling = 0;
+
+                        var anyCutting = false;
+                        var anyRolling = false;
+
+                        var isConditionRollingFixed = true;
+                        var isConditionCuttingFixed = true;
+                        var isConditionPackingFixed = true;
+                        var isConditionStampingFixed = true;
+                        var isConditionWrappingFixed = true;
+
+                        var isExistProcessCutting = false;
+                        var isExistProcessRolling = false;
+                        var isExistProcessPacking = false;
+
+                        var isAllRollingSubmitted = true;
+                        var isAllCuttingSubmitted = true;
+                        var isAllPackingSubmitted = true;
+
+                        var isAllRollingChecked = false;
+                        var isAllCuttingChecked = false;
+                        var isAllPackingChecked = true;
+
+                        var isPackingExist = false;
+                        var isStampingExist = false;
+                        var isWrappingExist = false;
+
+                        var isSubmitEnable = false;
+                        var isAnyCheckedList = false;
+                        var isAllRollingCuttingCheckedList = true;
+                        var isAllRollingCuttingPackingCheckedList = true;
+                        var isTotalActualRollingCuttingSame = false;
+                        var isAnyRelease = false;
+                        var result = false
+                        var isHadBeenReturned = false;
+                        var isHadBeenSubmitted = false;
+
+                        ko.utils.arrayForEach(self.gridView.listDataItems(), function(item) {
+                            // Count total actual CUTTING
+                            if (item["ProcessGroup"]().toLowerCase().trim() == "cutting"){
+                                var field = ko.isObservable(item[fieldName]) ? item[fieldName]() : item[fieldName];
+                                var value = parseFloat(field);
+                                if (!isNaN(value)) {
+                                    totalActualCutting += value;
+                                }
+                                if(!item["AlreadySubmit"]() || item["VerifySystem"]() === 0)
+                                    isAllCuttingSubmitted = false;
+                                anyCutting= true;
+                            }
+
+                            // Count total actual ROLLING
+                            if (item["ProcessGroup"]().toLowerCase().trim() == "rolling"){
+                                var field = ko.isObservable(item[fieldName]) ? item[fieldName]() : item[fieldName];
+                                var value = parseFloat(field);
+                                if (!isNaN(value)) {
+                                    totalActualRolling += value;
+                                }
+                                if(!item["AlreadySubmit"]() || item["VerifySystem"]() === 0)
+                                    isAllRollingSubmitted = false;
+                                anyRolling = true;
+                            }
+
+                            // Count total actual PACKING
+                            if (item["ProcessGroup"]().toLowerCase().trim() == "packing"){
+                                if(!item["AlreadySubmit"]() || item["VerifySystem"]() === 0)
+                                    isAllPackingSubmitted = false;
+                            }
+
+                            // Checking any process is checked
+                            if(item["Flag_Manual"]() && self.checkRowEnableorDisable(item)()){
+                                isAnyCheckedList = true;
+                            }
+
+                            if(item["ProcessGroup"]().toLowerCase().trim() != "total" && self.checkRowEnableorDisable(item)()){
+                                if (item["ProcessGroup"]().toLowerCase().trim() == "rolling"){
+                                    if(!item["Flag_Manual"]()) {
+                                        isAllRollingCuttingCheckedList = false;
+                                        isAllRollingCuttingPackingCheckedList = false;
+                                    }
+                                }
+                                if (item["ProcessGroup"]().toLowerCase().trim() == "cutting"){
+                                    if(!item["Flag_Manual"]()){
+                                        isAllRollingCuttingCheckedList = false;
+                                        isAllRollingCuttingPackingCheckedList = false;
+                                    }
+                                }
+                                if (item["ProcessGroup"]().toLowerCase().trim() == "packing"){
+                                    if(!item["Flag_Manual"]()){
+                                        isAllRollingCuttingPackingCheckedList = false;
+                                        isAllPackingChecked = false;
+                                    }
+                                }
+
+                            }
+                        });
+
+                        // === Check condition ROLLING and CUTTING must fixed ===
+                        // Checkedlist(Flag_Manual),
+                        // VerifySystem Y,
+                        // VerifyManual Y,
+                        // Actual Work Hour Completed
+                        // Prod card not submitted
+                        ko.utils.arrayForEach(self.gridView.listDataItems(), function(item) {
+                            if(item["Flag_Manual"]() && item["ProcessGroup"]().toLowerCase().trim() != "total" && self.checkRowEnableorDisable(item)()){
+                                if(item["ProcessGroup"]().toLowerCase().trim() == "rolling"){
+                                    if(!item["CompletedActualWorkHours"]() || !item["VerifyManual"]())
+                                    {
+                                        isConditionRollingFixed = false;
+                                    }
+                                    isExistProcessRolling = true;
+                                }
+
+                                if(item["ProcessGroup"]().toLowerCase().trim() == "cutting"){
+                                    if(!item["CompletedActualWorkHours"]() || !item["VerifyManual"]())
+                                    {
+                                        isConditionCuttingFixed = false;
+                                    }
+                                    isExistProcessCutting = true;
+                                }
+
+                                if(item["ProductionEntryRelease"]()){
+                                    isAnyRelease = true;
+                                }
+
+                                if(item["IsHadBeenReturned"]()){
+                                    isHadBeenReturned = true;
+                                }
+
+                                if(item["IsHadBeenSubmitted"]()){
+                                    isHadBeenSubmitted = true;
+                                }
+
+                                if(item["ProcessGroup"]().toLowerCase().trim() == "packing"){
+                                    isPackingExist = true;
+                                }
+
+                                if(item["ProcessGroup"]().toLowerCase().trim() == "stamping"){
+                                    isStampingExist = true;
+                                }
+
+                                if(item["ProcessGroup"]().toLowerCase().trim() == "wrapping"){
+                                    isWrappingExist = true;
+                                }
+
+                            }
+                        });
+
+
+                        // Is total actual ROLLING and CUTTING are equals
+                        if(parseToFloat(totalActualCutting).toFixed(3) == parseToFloat(totalActualRolling).toFixed(3))
+                            isTotalActualRollingCuttingSame = true;
+
+                        // Is all condition for ROLLING and CUTTING are fixed
+                        if(!isAnyRelease && !isHadBeenReturned){
+                            if (isHadBeenSubmitted){
+                                if(isExistProcessCutting && !isExistProcessRolling){
+                                    if(isConditionCuttingFixed)  isSubmitEnable = true;
+                                }
+                                else if(!isExistProcessCutting && isExistProcessRolling){
+                                    if(isConditionRollingFixed)  isSubmitEnable = true;
+                                }
+                                else if(!isExistProcessCutting && !isExistProcessRolling){
+                                    ko.utils.arrayForEach(self.gridView.listDataItems(), function(item) {
+                                        if(item["Flag_Manual"]() && item["ProcessGroup"]().toLowerCase().trim() != "total" && !self.checkRowEnableorDisable(item)()){
+                                            if (item["ProcessGroup"]().toLowerCase().trim() == "cutting"){
+                                                if(item["VerifyManual"]() && item["VerifySystem"]() === 1){
+                                                    isExistProcessCutting = true;
+                                                }
+                                            }
+                                            if (item["ProcessGroup"]().toLowerCase().trim() == "rolling"){
+                                                if(item["VerifyManual"]() && item["VerifySystem"]() === 1){
+                                                    isExistProcessRolling = true;
+                                                }
+                                            }
+                                            if (item["ProcessGroup"]().toLowerCase().trim() == "packing"){
+                                                if(item["VerifyManual"]() && item["VerifySystem"]() === 1){
+                                                    isPackingExist = true;
+                                                }
+                                            }
+                                        }
+                                    });
+                                    ko.utils.arrayForEach(self.gridView.listDataItems(), function(item) {
+                                        if(item["Flag_Manual"]() && item["ProcessGroup"]().toLowerCase().trim() != "total" && self.checkRowEnableorDisable(item)()){
+                                            if (item["ProcessGroup"]().toLowerCase().trim() == "packing"){
+                                                if(item["VerifyManual"]() && item["VerifySystem"]() === 1){
+                                                    isPackingExist = true;
+                                                }
+                                            }
+                                            if(item["ProcessGroup"]().toLowerCase().trim() == "stamping"){
+                                                isStampingExist = true;
+                                            }
+
+                                            if(item["ProcessGroup"]().toLowerCase().trim() == "wrapping"){
+                                                isWrappingExist = true;
+                                            }
+                                        }
+                                    });
+                                    if(isExistProcessCutting && isExistProcessRolling){
+                                        isSubmitEnable = true;
+                                    }else if (isPackingExist || isStampingExist || isWrappingExist){
+                                        isSubmitEnable = true;
+                                    }
+                                }
+                                else{
+                                    if(isConditionRollingFixed && isConditionCuttingFixed)
+                                        isSubmitEnable = true;
+                                }
+                            }else{
+                                if(isExistProcessRolling && isExistProcessCutting){
+                                    if(isConditionRollingFixed && isConditionCuttingFixed)
+                                        isSubmitEnable = true;
+                                }
+                                ko.utils.arrayForEach(self.gridView.listDataItems(), function(item) {
+                                    if(item["Flag_Manual"]() && item["ProcessGroup"]().toLowerCase().trim() != "total" && self.checkRowEnableorDisable(item)()){
+                                        if (item["ProcessGroup"]().toLowerCase().trim() == "packing"){
+                                            if(item["VerifyManual"]() && item["VerifySystem"]() === 1){
+                                                isPackingExist = true;
+                                            }
+                                        }
+                                        if(item["ProcessGroup"]().toLowerCase().trim() == "stamping"){
+                                            isStampingExist = true;
+                                        }
+
+                                        if(item["ProcessGroup"]().toLowerCase().trim() == "wrapping"){
+                                            isWrappingExist = true;
+                                        }
+                                    }
+                                });
+                                //console.log(isPackingExist + isStampingExist + isWrappingExist);
+                                if (isPackingExist || isStampingExist || isWrappingExist){
+                                    //isSubmitEnable = true;
+                                }
+
+                                if ((isExistProcessRolling && isExistProcessCutting)&&isStampingExist&& !isPackingExist){
+                                    isSubmitEnable = false;
+                                }
+                            }
+                        }else{
+                            if(isExistProcessCutting && !isExistProcessRolling){
+                                if(isConditionCuttingFixed)  isSubmitEnable = true;
+                            }
+                            else if(!isExistProcessCutting && isExistProcessRolling){
+                                if(isConditionRollingFixed)  isSubmitEnable = true;
+                            }
+                            else if(!isExistProcessCutting && !isExistProcessRolling){
+                                ko.utils.arrayForEach(self.gridView.listDataItems(), function(item) {
+                                    if(item["Flag_Manual"]() && item["ProcessGroup"]().toLowerCase().trim() != "total" && !self.checkRowEnableorDisable(item)()){
+                                        if (item["ProcessGroup"]().toLowerCase().trim() == "cutting"){
+                                            if(item["VerifyManual"]() && item["VerifySystem"]() === 1){
+                                                isExistProcessCutting = true;
+                                            }
+                                        }
+                                        if (item["ProcessGroup"]().toLowerCase().trim() == "rolling"){
+                                            if(item["VerifyManual"]() && item["VerifySystem"]() === 1){
+                                                isExistProcessRolling = true;
+                                            }
+                                        }
+                                        if (item["ProcessGroup"]().toLowerCase().trim() == "packing"){
+                                            if(item["VerifyManual"]() && item["VerifySystem"]() === 1){
+                                                isPackingExist = true;
+                                            }
+                                        }
+                                    }
+                                });
+                                ko.utils.arrayForEach(self.gridView.listDataItems(), function(item) {
+                                    if(item["Flag_Manual"]() && item["ProcessGroup"]().toLowerCase().trim() != "total" && self.checkRowEnableorDisable(item)()){
+                                        if (item["ProcessGroup"]().toLowerCase().trim() == "packing"){
+                                            if(item["VerifyManual"]() && item["VerifySystem"]() === 1){
+                                                isPackingExist = true;
+                                            }
+                                        }
+                                        if(item["ProcessGroup"]().toLowerCase().trim() == "stamping"){
+                                            isStampingExist = true;
+                                        }
+
+                                        if(item["ProcessGroup"]().toLowerCase().trim() == "wrapping"){
+                                            isWrappingExist = true;
+                                        }
+                                    }
+                                });
+                                if(isExistProcessCutting && isExistProcessRolling){
+                                    isSubmitEnable = true;
+                                }else if (isPackingExist || isStampingExist || isWrappingExist){
+                                    isSubmitEnable = true;
+                                }
+                            }
+                            else{
+                                if(isConditionRollingFixed && isConditionCuttingFixed)
+                                    isSubmitEnable = true;
+                            }
+                        }
+
+                        result = isTotalActualRollingCuttingSame && isSubmitEnable && isAnyCheckedList;
+
+
+                        if(result && isPackingExist){
+                            ko.utils.arrayForEach(self.gridView.listDataItems(), function(item) {
+                                if(item["Flag_Manual"]() && item["ProcessGroup"]().toLowerCase().trim() != "total" && self.checkRowEnableorDisable(item)()){
+                                    // Check PACKING
+                                    if (item["ProcessGroup"]().toLowerCase().trim() == "packing"){
+                                        if(!item["CompletedActualWorkHours"]() || !item["VerifyManual"]()){
+                                            isConditionPackingFixed = false;
+                                        }
+                                    }
+                                }
+                            });
+
+                            if(isConditionPackingFixed){
+                                if(!isAnyRelease && !isHadBeenReturned){
+                                    if(!isAllCuttingSubmitted && !isAllRollingSubmitted){
+                                        if(!isAllRollingCuttingCheckedList)
+                                            result = false;
+                                    }
+                                    else if(!isAllRollingSubmitted || !isAllCuttingSubmitted){
+                                        result = false;
+                                    }
+                                }
+                            }else{
+                                result = false;
+                            }
+                        }
+
+                        if(result && isWrappingExist){
+                            ko.utils.arrayForEach(self.gridView.listDataItems(), function(item) {
+                                if(item["Flag_Manual"]() && item["ProcessGroup"]().toLowerCase().trim() != "total" && self.checkRowEnableorDisable(item)()){
+                                    // Check PACKING
+                                    if (item["ProcessGroup"]().toLowerCase().trim() == "wrapping"){
+                                        if(!item["CompletedActualWorkHours"]() || !item["VerifyManual"]()){
+                                            isConditionWrappingFixed = false;
+                                        }
+                                    }
+                                }
+                            });
+
+                            if(isConditionWrappingFixed){
+                                if(!isAnyRelease && !isHadBeenReturned){
+                                    if(!isAllCuttingSubmitted && !isAllRollingSubmitted){
+                                        if(!isAllRollingCuttingCheckedList)
+                                            result = false;
+                                    }
+                                    else if(!isAllRollingSubmitted || !isAllCuttingSubmitted){
+                                        result = false;
+                                    }
+                                }
+                            }else{
+                                result = false;
+                            }
+                        }
+
+                        if(result && isStampingExist){
+                            if(!isPackingExist){
+                                if(!isAllPackingSubmitted)
+                                    result = false;
+                            }
+                            else{
+                                ko.utils.arrayForEach(self.gridView.listDataItems(), function(item) {
+                                    if(item["Flag_Manual"]() && item["ProcessGroup"]().toLowerCase().trim() != "total" && self.checkRowEnableorDisable(item)()){
+                                        // Check STAMPING
+                                        if (item["ProcessGroup"]().toLowerCase().trim() == "stamping"){
+                                            if(!item["CompletedActualWorkHours"]() || !item["VerifyManual"]()){
+                                                isConditionStampingFixed = false;
+                                            }
+                                        }
+                                    }
+                                });
+
+                                if(isConditionStampingFixed){
+                                    if(!isAnyRelease && !isHadBeenReturned){
+                                        if(!isAllCuttingSubmitted && !isAllRollingSubmitted && !isAllPackingSubmitted){
+                                            if(!isAllRollingCuttingPackingCheckedList)
+                                                result = false;
+                                        }
+                                        else if(!isAllRollingSubmitted || !isAllCuttingSubmitted || !isAllPackingSubmitted){
+                                            console.log(isPackingExist);
+                                            console.log(isAllPackingChecked);
+                                            if(isPackingExist && isAllPackingChecked == false){
+                                                result = false;
+                                            }
+                                        }
+                                    }
+                                }else{
+                                    result = false;
+                                }
+                            }
+                        }
+
+                        return result && self.saved() && (anyRolling && anyCutting);
+
+                    },
+                    write: function(value) {
+                        //alert(value);
+                    }
+                });
+            };
+
+            function checkDisableReturn(fieldName) {
+                return ko.computed({
+                    read: function() {
+                        var result = true;
+                        var anySubmitted = false;
+                        var anyProdCardSubmitted = false;
+                        var verSystem = false;
+                        var anyRelease = false;
+                        var anyCheckList = false;
+
+                        ko.utils.arrayForEach(self.gridView.listDataItems(), function(item) {
+                            if (item["Flag_Manual"]() && item["ProcessGroup"]().toLowerCase().trim() !== "total" && !item["ProductionCardSubmit"]()){
+
+                                if(item["VerifySystem"]() === 1)
+                                {
+                                    verSystem = true;
+                                }
+                                if (item["ProductionCardSubmit"]()){
+                                    anyProdCardSubmitted = true;
+                                }
+
+                            }
+
+                            if(item["ProcessGroup"]().toLowerCase().trim() !== "total" && !item["ProductionCardSubmit"]()){
+                                if(item["Flag_Manual"]()){
+                                    anyCheckList = true;
+                                }
+                            }
+
+
+                        });
+
+                        if(!anyCheckList){
+                            result = false;
+                        }
+
+                        if(anyProdCardSubmitted){
+                            result = false;
+                        }
+                        if(!verSystem){
+                            result = false;
+                        }
+                        return result;
+                    },
+                    write: function(value) {
+                        //alert(value);
+                    }
+                });
+            };
+
+            //description : After Submit, then Save button will be unclickable
+            self.disableBtnSave = ko.observable(false);
+
+            //description : Reutn button will be unclickable
+            //self.disableBtnReturn = ko.observable(false);
+            self.disableBtnReturn = checkDisableReturn('Return');
+
+            //description : Submit will be clickable if Total Actual ROLLING = CUTTING
+            //self.disableBtnSubmit = ko.observable(false);
+            self.disableBtnSubmit = getTotalActual('Actual');//(getTotalActual('Actual', 'cutting') === getTotalActual('Actual', 'rolling'));
+
+            //description : generateExcel
+            self.generateExcel = function(formElement) {
+                $(formElement).find("input[name=LocationCode]").val($('#ddlFilterLocationCode').val());
+                $(formElement).find("input[name=UnitCode]").val($('#ddlUnitCodeFilter').val());
+                $(formElement).find("input[name=Shift]").val($('#ddlShiftFilter').val());
+                $(formElement).find("input[name=KpsYear]").val($('#filterYear').val());
+                $(formElement).find("input[name=KpsWeek]").val($('#filterWeek').val());
+                $(formElement).find("input[name=ProductionDate]").val($('#filterDate').val());
+                $(formElement).find("input[name=BrandCode]").val($('#ddlFilterBrandCode').val());
+                return true;
+            };
+
+            // Load Data
+            self.search = function() {
+                $('.empty-row-message').html('<div class="loader"></div>'); // Reset New and Edit row
+                // Check whether New or Edit data is existing and not saved to database yet (on Ajax Action)
+                if (SKTIS.Checker.modifiedDataExistsForAjax([self.gridView.listNewItems, self.gridView.listEditItems]) == true) {
+                    return;
+                } else {
+                    self.gridView.listNewItems.removeAll();
+                    self.gridView.listEditItems.removeAll();
+                }
+
+                self.gridView.search({}, function(response) {
+                    if (response.status == 'KO') {
+                        SKTIS.Helper.Notification(response.message, 'error');
+                        $('.empty-row-message').html(response.message);
+                    } else if (response.status == 'Empty') {
+
+                        self.RemoveNotification();
+
+                        //SKTIS.Helper.Notification(response.message,'warning');
+                        $('.empty-row-message').html('@CommonLabel.lblDataEmpty');
+                    }
+                    self.isFilterChange(false);
+                    self.disableBtnSave(false);
+                    self.saved(true)
+                    self.checkedList.removeAll();
+                    self.checkedListItem.removeAll();
+                    if ( self.gridView.listDataItems().length )
+                    {
+                        self.saved(true);
+                        self.gridView.listDataItems().map(function(item)
+                        {
+                            if(item.Flag_Manual()){
+                                self.checkedList.push(item.ProcessGroup());
+                            }
+                        });
+                        //self.disableBtnReturn(checkButtonReturnOnView('Return')());
+                    }
+
+                    if (!self.firstLoad || !self.isLoading()){
+                        self.loadHistory();
+                        self.loadFlow();
+                    }
+
+                });
+
+            };
+
+            function checkButtonReturnOnView(fieldName) {
+                return ko.computed({
+                    read: function() {
+                        var result = true;
+                        var anyProdCardSubmitted = false;
+                        var anyCheckList = false;
+                        var verSystem = false;
+                        var anyRelease = false;
+                        ko.utils.arrayForEach(self.gridView.listDataItems(), function(item) {
+                            if (item["Flag_Manual"]() && item["ProcessGroup"]().toLowerCase().trim() !== "total" && !item["ProductionCardSubmit"]()){
+                                if(item["VerifySystem"]() === 1)
+                                {
+                                    verSystem = true;
+                                }
+
+                                if (item["ProductionCardSubmit"]() == true)
+                                {
+                                    anyProdCardSubmitted = true;
+                                }
+
+                                self.checkedListItem.push(item);
+
+                            }
+
+                            if(item["ProcessGroup"]().toLowerCase().trim() !== "total"){
+                                if(item["Flag_Manual"]()){
+                                    anyCheckList = true;
+                                }
+                            }
+                        });
+
+                        if(!anyCheckList){
+                            result = false;
+                        }
+
+                        if(!verSystem){
+                            result = false;
+                        }
+
+                        if(anyProdCardSubmitted){
+                            result = false;
+                        }
+
+                        return result;
+                    },
+                    write: function(value) {
+                        //alert(value);
+                    }
+                });
+            };
+
+            self.return = function(){
+                if (self.gridView.editingRowIndex() !== -1)
+                    return;
+                console.log(typeof self.filterBrandCode() == "undefined");
+                var datas = {
+                    "Parameters": {
+                        "LocationCode": self.filterLocationCode(),
+                        "UnitCode": self.filterUnitCode(),
+                        "Shift": self.filterShift(),
+                        "Brand": (typeof self.filterBrandCode() == "undefined") ? "" : self.filterBrandCode(),
+                        "Year": self.filterYear(),
+                        "Week": self.filterWeek(),
+                        "Date": self.filterDate()
+                    },
+                    "Edit": ko.mapping.toJS(self.gridView.listDataItems())
+                };
+
+                datas = JSON.stringify(datas);
+
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantProductionEntryVerification/ReturnDatas"),
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: datas,
+                    dataType: 'json',
+                    success: function(data) {
+                        if(data.length > 1){
+                            SKTIS.Helper.Notification(data[0]);
+                            SKTIS.Helper.Notification(data[1], 'error');
+                        }else{
+                            SKTIS.Helper.Notification(data[0]);
+                        }
+                        self.allSelected(false);
+                        self.search();
+                    }
+                })
+            };
+
+            // TRANSACTION HISTORY AND FLOW
+            self.historyGridView = new app.GridViewModel({
+                Criteria: {
+                    PageSize: 10,
+                    PageIndex: 1,
+                    SortExpression: "UpdatedDate",
+                    SortOrder: "DESC",
+                    code_1: 'EBL',
+                    code_2: self.filterLocationCode,
+                    code_3: self.filterShift,
+                    code_4: self.filterUnitCode,
+                    code_5: '%',
+                    code_6: self.filterBrandCode,
+                    code_7: self.filterYear,
+                    code_8: self.filterWeek,
+                    code_9: self.filterDate
+                },
+                DataSourceUrl: @Html.BaseUrl("ExePlantProductionEntryVerification/GetHistory"),
+                InlineEdit: true,
+                InsertRowFocusedControlIndex: 1
+            });
+            self.flowGridView = new app.GridViewModel({
+                Criteria: {
+                    PageSize: 10,
+                    PageIndex: 1,
+                    SortExpression: "IDFlow",
+                    SortOrder: "ASC",
+                    FunctionName: 'ProductionEntryVerification'
+                },
+                DataSourceUrl: @Html.BaseUrl("ExePlantProductionEntryVerification/GetFlow"),
+                InlineEdit: true,
+                InsertRowFocusedControlIndex: 1
+            });
+
+            self.loadHistory = function(cb){
+                self.historyGridView.search({}, function (response) {
+                    if (response.status == 'KO') {
+                        SKTIS.Helper.Notification(response.message,'error');
+                        $('.empty-row-message').html(response.message);
+                    }else if (response.status == 'Empty') {
+
+                        self.RemoveNotification();
+
+                        //SKTIS.Helper.Notification(response.message,'warning');
+                        $('.empty-row-message').html('@CommonLabel.lblDataEmpty');
+                    }
+
+                    if (typeof cb != 'undefined') cb();
+                });
+            };
+            self.loadFlow = function(cb){
+                self.flowGridView.search({}, function (response) {
+                    if (response.status == 'KO') {
+                        SKTIS.Helper.Notification(response.message,'error');
+                        $('.empty-row-message').html(response.message);
+                    }else if (response.status == 'Empty') {
+
+                        self.RemoveNotification();
+
+                        //SKTIS.Helper.Notification(response.message,'warning');
+                        $('.empty-row-message').html('@CommonLabel.lblDataEmpty');
+                    }
+
+                    if (typeof cb != 'undefined') cb();
+                });
+            };
+            // END OF TRANSACTION HISTORY AND FLOW
+
+            self.RemoveNotification = function() {
+                if ($('#noty_top_layout_container').length > 0) {
+                    $('#noty_top_layout_container').remove();
+                }
+            };
+
+            ko.extenders.numeric = function(target, precision) {
+                var result = ko.computed({
+                    read: function() {
+                        return target().toFixed(precision);
+                    },
+                    write: target
+                });
+
+                result.raw = target;
+                return result;
+            };
+
+            self.init = function() {
+                if (typeof '@Model.Param1LocationCode' != 'undefined' && '@Model.Param1LocationCode') {
+                    self.firstInitFromUrl(true);
+                };
+                if(self.firstInitFromUrl()){
+                    self.filterYear('@Model.Param5KPSYear');
+                    self.filterLocationCode('@Model.Param1LocationCode');
+                }else if (self.filterLocationCode() == null)
+                    self.filterLocationCode(self.itemLocations()[0].LocationCode);
+                //Asynch setting
+                self.isLoading(true);
+                async.series([
+                    function(callback) {
+                        self.GetWeekFromSelectList(callback);
+                    },
+                    function(callback) {
+                        self.setDateRange(callback);
+                    },
+                    function(callback) {
+                        self.getClosingPayroll(callback);
+                    },
+                    function(callback) {
+                        self.getLocationNameFilter(callback);
+                    },
+                    function(callback) {
+                        if(self.firstInitFromUrl()){
+                            self.filterLocationCode('@Model.Param1LocationCode');
+                        }
+                        self.getUnitCodeSelectListByLocation(callback);
+                    },
+                    function(callback) {
+                        self.getShiftSelectList(callback);
+                    },
+                    function(callback) {
+                        self.getBrandCodeList(callback);
+                    },
+                    function(callback) {
+                        self.setVerifyManual(callback);
+                    }
+                ], function() {
+                    self.search();
+                    self.firstLoad = false;
+                    self.isLoading(false);
+                    self.firstInitFromUrl(false);
+                });
+            };
+            self.init();
+        };
+        ko.applyBindings(new app.EditGrid());
+    })(app = this.app || {});
+
+</script>
+}

@@ -1,0 +1,346 @@
+﻿@using HMS.SKTIS.Application.Resources
+@using HMS.SKTIS.Application.Resources.Views.UtilSecurityFunctions
+@using SKTISWebsite.Helper
+
+@{ Html.SetPageTitle(@UtilSecurityFunctions.PageTitle); }
+<div data-bind="with: gridView" class="col-lg-12">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="action-btn">
+                <button type="button" class="btn btn-primary" data-bind="click:$root.search">@CommonLabel.btnView</button>
+                <button type="button" class="btn btn-primary" data-bind="click:$root.saveData">@CommonLabel.btnSave</button>
+                @using (Html.BeginForm("GenerateExcel", "UtilSecurityFunctions", FormMethod.Post, new { @data_bind = "submit: $root.generateExcel" }))
+                {
+                    <input type="hidden" name="locationCode" />
+                    <button type="submit" class="btn btn-primary">@CommonLabel.btnExcel</button>
+                }
+                @Html.Partial("GridViewPageSizeSelector")
+            </div>
+        </div>
+    </div>
+    <div id="master-unit">
+        <div class="table-overflow">
+            <table class="table table-striped">
+                <thead>
+                    <tr class="head">
+                        <th data-bind="click:sortBy.bind($data,'IDFunction'), css:sortCss('IDFunction', $data.sortExpression(), $data.sortOrder())" class="widthsmall">@UtilSecurityFunctions.lblIDFunction</th>
+                        <th data-bind="click:sortBy.bind($data,'FunctionType'), css:sortCss('FunctionName', $data.sortExpression(), $data.sortOrder())" class="widthsmall">@UtilSecurityFunctions.lblFunctionType</th>
+                        <th data-bind="click:sortBy.bind($data,'FunctionName'), css:sortCss('FunctionName', $data.sortExpression(), $data.sortOrder())" class="widthsmall">@UtilSecurityFunctions.lblFunctionName</th>
+                        <th data-bind="click:sortBy.bind($data,'ParentIDFunction'), css:sortCss('ParentIDFunction', $data.sortExpression(), $data.sortOrder())" class="widthsmall">@UtilSecurityFunctions.lblParentIDFunction</th>
+                        <th data-bind="click:sortBy.bind($data,'ParentNameFunction'), css:sortCss('ParentNameFunction', $data.sortExpression(), $data.sortOrder())" class="widthsmall">@UtilSecurityFunctions.lblParentNameFunction</th>
+                    </tr>
+                    <tr class="insertRow" data-bind="click:cancelInline.bind(),inlineAddProccess:[$data, $root.newData]">
+                        <th class="right widthsmall"></th>
+                        <th class="current right">
+                            <select id="spFunctionType" class="selectpicker show-tick form-control" data-live-search="true" data-bind="selectPicker: $root.newData.FunctionType, value: $root.newData.FunctionType, optionsText: 'ListDetail', optionsValue : 'ListDetail', optionsAfterRender : $root.afterRender,selectPickerOptions: { optionsArray: $root.functionTypeList, container: 'body' }, event : { change : $root.onFunctionTypeChange }"></select>
+                        </th>
+                        <th class="widthdg15"><input data-bind="value:$root.newData.FunctionName, valueUpdate: 'afterkeydown'" class="form-control transparent" maxlength="15" /></th>
+                        <th class="current right">
+                            <select id="spFunctionParent" class="selectpicker show-tick form-control" data-live-search="true" data-bind="selectPicker: $root.newData.ParentIDFunction, value: $root.newData.ParentIDFunction, optionsText: 'ParentNameFunction', optionsValue : 'IDFunction', optionsAfterRender : $root.afterRender,selectPickerOptions: { optionsArray: $root.functionParentList, container: 'body' }, event : { change : $root.onFunctionparentChange }"></select>
+                        </th>
+                        <th><span data-bind="text: $root.newData.ParentNameFunction"></span></th>
+                    </tr>
+                </thead>
+                <tbody data-bind="foreach: listDataItems">
+                    @*item template*@
+                    <tr data-bind="if: ($parent.editingRowIndex() !== $index()),
+                                   click: $parent.editInline3.bind($data,$index())">
+                        <td><span data-bind="text:$data.IDFunction"></span></td>
+                        <td><span data-bind="text:$data.FunctionType"></span></td>
+                        <td><span data-bind="text:$data.FunctionName"></span></td>
+                        <td><span data-bind="text:$data.ParentIDFunction"></span></td>
+                        <td><span data-bind="text:$data.ParentNameFunction"></span></td>
+                    </tr>
+                    @*edit template*@
+                    <tr data-bind="validationOptions: {insertMessages: false, showTooltip:true, decorateInputElement: true, errorElementClass: 'input-error'}, inlineProccess:[$parent,$data],
+                                   if:($parent.editingRowIndex() === $index()),
+                                   click: $parent.selectRow.bind($data, $index())">
+                        <td><span data-bind="text:$data.IDFunction"></span></td>
+                        <td class="current">
+                            <select class="selectpicker show-tick form-control" data-live-search="true" data-bind="selectPickerCustom: $data.FunctionType, value: $data.FunctionType, optionsText: 'ListDetail', optionsValue : 'ListDetail', selectPickerOptions: { optionsArray: $root.functionTypeList, container: 'body' }, isSelectPicker: true"></select>
+                        </td>
+                        <td class="current"><input data-bind="value:$data.FunctionName,tabToNext:[$parent,$data], valueUpdate: 'afterkeydown'" class="form-control transparent" /></td>
+                        <td class="current">
+                            <select class="selectpicker show-tick form-control" data-live-search="true" data-bind="selectPickerCustom: $data.ParentIDFunction, value: $data.ParentIDFunction, optionsText: 'ParentNameFunction', optionsValue : 'IDFunction', selectPickerOptions: { optionsArray: $root.functionParentList, container: 'body' }, isSelectPicker: true, event : { change : $root.onEditFunctionparentChange.bind($data) }"></select>
+                        </td>
+                        <td><span data-bind="text:$data.ParentNameFunction"></span></td>
+                    </tr>
+                </tbody>
+                <tbody data-bind="visible: !listDataItems().length">
+                    <tr>
+                        <td colspan="7" class="empty-row-message"><div class="loader"></div></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div data-bind="if: (listDataItems() != null && listDataItems().length !== 0)">
+            @Html.Partial("GridViewFooter")
+        </div>
+        </div>
+        <div id="functionTree" class="tree" style="margin-top:30px">
+            <ul>
+            </ul>
+        </div>
+</div>
+@section Scripts
+{
+    <script src="~/Scripts/common/app.GridViewModel.js" type="text/javascript"></script>
+    <script src="~/Scripts/jquery-ui.js"></script>
+    <script src="~/Scripts/jquery.tree.js"></script>
+    <script type="text/javascript">
+        $(function() {
+            $('#functionTree').tree({
+                collapseAll: true,
+                collapseUiIcon: 'ui-icon-plusthick',
+                expandUiIcon: 'ui-icon-minusthick',
+                onCheck: {
+                    ancestors: 'checkIfFull',
+                    descendants: 'check'
+                },
+                onUncheck: {
+                    ancestors: 'uncheck'
+                },
+                selectable: false
+            });
+        });
+        (function(app) {
+            app.EditGrid = function() {
+                var self = this;
+                // List Data Source Variables - Piece Rate
+                self.functionTypeList        = ko.observableArray();
+                self.functionParentList        = ko.observableArray();
+                self.functionParentDic        = ko.observableArray();
+                
+                // Filter
+                self.newData = {
+                    FunctionName: ko.observable(''),
+                    FunctionType: ko.observable(''),
+                    ParentIDFunction: ko.observable(''),
+                    ParentNameFunction: ko.observable('')
+                };
+                
+                self.onFunctionparentChange = function(){
+                    self.setFunctionName(self.newData);
+                }
+
+                self.onEditFunctionparentChange = function(contex){
+                    self.setFunctionName(contex);
+                }
+
+                self.setFunctionName = function(contex){
+                    contex.ParentNameFunction(self.functionParentDic()[contex.ParentIDFunction()]);
+                }
+
+                self.getFunctionType = function() {
+                    $.ajax({
+                        url: @Html.BaseUrl("UtilSecurityFunctions/GetFunctionType"),
+                        type: 'GET',
+                        contentType: 'application/json',
+                        dataType: 'json',
+                        success: function(data) {
+                            $("#spFunctionType").find('option').remove();
+                            $("#spFunctionType").selectpicker('refresh');
+
+                            var list = [];
+
+                            $.each(data, function(index, value) {
+                                list.push({
+                                    ListDetail: value.ListDetail,
+                                });
+                            });
+                            if (list.length == 0) {
+                                self.newData.FunctionType(null);
+                            }
+                            $("#spFunctionType").find('option').remove();
+                            $("#spFunctionType").selectpicker('refresh');
+                            self.functionTypeList(list);
+                            $('.on-edit-function-type').selectpicker('refresh');
+                        }
+                    });
+                };
+
+                self.getFunctionParent = function() {
+                    $.ajax({
+                        url: @Html.BaseUrl("UtilSecurityFunctions/GetFunctionsTree"),
+                        type: 'GET',
+                        contentType: 'application/json',
+                        dataType: 'json',
+                        success: function(data) {
+                            $("#spFunctionParent").find('option').remove();
+                            $("#spFunctionParent").selectpicker('refresh');
+
+                            var list = [];
+                            var dic = [];
+                            list.push({
+                                IDFunction: null,
+                                FunctionName: null,
+                                ParentNameFunction: ""
+                            });
+                            $.each(data, function(index, value) {
+                                list.push({
+                                    IDFunction: value.IDFunction,
+                                    FunctionName: value.FunctionName,
+                                    ParentNameFunction: value.IDFunction + " - " +value.FunctionName
+                                });
+                                dic[value.IDFunction] = value.FunctionName;
+
+                            });
+
+                            self.functionParentDic(dic);
+
+                            //self.gridView.listDataItems().map(function(gr)
+                            //{
+                            //    gr.ParentNameFunction(self.functionParentDic()[gr.ParentIDFunction()]);
+                            //});
+                            if (list.length == 0) {
+                                self.newData.ParentIDFunction(null);
+                                self.newData.ParentNameFunction(null);
+                            }
+                            $("#spFunctionParent").find('option').remove();
+                            $("#spFunctionParent").selectpicker('refresh');
+                            self.functionParentList(list);
+                            $('.on-edit-function-parent').selectpicker('refresh');
+                            self.setFunctionTree(data);
+                        }
+                    });
+                };
+
+                self.setFunctionTree = function(data){
+                    $('#functionTree').tree('removeNode',$('#functionTree.tree li'));
+                    for(var d in data){
+                        $('#functionTree').tree('addNode',
+                            {	
+                                "span": {
+                                    "html": data[d].FunctionName,
+                                    "class":"item-tree"
+                                },
+                                "li": {
+                                    "class": "collapsed",
+                                    "id":"idfunction_" + data[d].IDFunction 
+                                }
+                            },
+                            (data[d].ParentIDFunction == null ? null : $('li#' + "idfunction_" + data[d].ParentIDFunction))
+                        );   
+                    }
+                    $("span.item-tree").wrap('<div class="tree-contain"></div>');
+                    $('#functionTree').tree('collapseAll');
+                }
+
+                // Gridview Initialization
+                self.gridView = new app.GridViewModel({
+                    Criteria: { PageSize: 10, PageIndex: 1, SortExpression: "UpdatedDate", SortOrder: "DESC"},
+                    DataSourceUrl: @Html.BaseUrl("UtilSecurityFunctions/GetFunctions"),
+                    InlineEdit: true,
+                    InsertRowFocusedControlIndex: 1
+                });
+
+                // Field Validations
+                self.gridView.applyValidationRules = function(entity) {
+
+                    self.RemoveNotification();
+                    entity.FunctionName.extend({
+                        required: {
+                            message: "<strong>Unit Name</strong> cannot be empty!"
+                        }
+                    });
+                }
+
+                // Reset Fields for Insert Row
+                self.gridView.resetDefault = function(viewModel) {
+                    viewModel.FunctionName('');
+                };
+
+                // Generate Excel
+                self.generateExcel = function(formElement) {
+                    return true;
+                }
+
+                // Save Action
+                self.saveData = function() {
+                    if (self.gridView.editingRowIndex() !== -1)
+                        return;
+
+                    var datas = {
+                        "new": self.gridView.listNewItems(),
+                        "edit": self.gridView.listEditItems()
+                    }
+
+                    datas = JSON.stringify(datas);
+
+                    $.ajax({
+                        url: @Html.BaseUrl("UtilSecurityFunctions/SaveAllFunctions"),
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: datas,
+                        dataType: 'json',
+                        success: function(data) {
+                            if (data.New) {
+                                $.each(data.New, function(k, value) {
+                                    if (value) {
+                                        SKTIS.Helper.ResponseNotification(value, "Insert Function", value.FunctionName + " - " + value.IDFunction);
+                                    }
+                                });
+                            }
+                            if (data.Edit) {
+                                $.each(data.Edit, function(k, value) {
+                                    if (value) {
+                                        SKTIS.Helper.ResponseNotification(value, "Edit Function", value.FunctionName + " - " + value.IDFunction);
+                                    }
+                                });
+                            }
+
+                            self.gridView.sort('UpdatedDate', 'DESC');
+                            self.gridView.listNewItems.removeAll();
+                            self.gridView.listEditItems.removeAll();
+                            self.getFunctionParent();
+                        }
+                    });
+                }
+
+                // Load Data
+                self.search = function() {
+                    self.getFunctionType();
+                    self.getFunctionParent();
+                    $('.empty-row-message').html('<div class="loader"></div>'); // Reset New and Edit row
+                    // Check whether New or Edit data is existing and not saved to database yet (on Ajax Action)
+                    if (SKTIS.Checker.modifiedDataExistsForAjax([self.gridView.listNewItems, self.gridView.listEditItems]) == true) {
+                        return;
+                    } else {
+                        self.gridView.listNewItems.removeAll();
+                        self.gridView.listEditItems.removeAll();
+                    }
+
+                    self.gridView.search({}, function(response) {
+                        if (response.status == 'KO') {
+                            SKTIS.Helper.Notification(response.message, 'error');
+                            $('.empty-row-message').html(response.message);
+                        } else if (response.status == 'Empty') {
+
+                            self.RemoveNotification();
+
+                            //SKTIS.Helper.Notification(response.message, 'warning');
+                            $('.empty-row-message').html('@CommonLabel.lblDataEmpty');
+                        }
+                    });
+
+                    self.RemoveNotification = function() {
+                        if ($('#noty_top_layout_container').length > 0) {
+                            $('#noty_top_layout_container').remove();
+                        }
+                    };
+                };
+
+                self.search();
+
+                // Check whether New or Edit data is existing and not saved to database yet (on Request action)
+                SKTIS.Checker.modifiedDataExists([self.gridView.listNewItems, self.gridView.listEditItems]);
+
+
+            };
+
+            ko.applyBindings(new app.EditGrid());
+
+        })(app = this.app || {});
+
+    </script>
+}

@@ -1,0 +1,861 @@
+﻿@model SKTISWebsite.Models.WagesReportAbsents.InitWagesReportAbsentsViewModel
+@using HMS.SKTIS.Application.Resources
+@using SKTISWebsite.Helper
+@{ Html.SetPageTitle("Absents Report Group"); }
+
+<div class="col-lg-12" data-bind="with: gridView">
+    <div class="col-lg-6">
+        <div class="row">
+            <label class="form-label col-lg-3">
+                Location
+            </label>
+            <div class="col-lg-4">
+                @Html.DropDownList("filterLocationCode", Model.LocationSelectList, new
+                {
+                    @class = "selectpicker show-tick form-control",
+                    data_live_search = "true",
+                    data_bind = "selectPicker: $root.filterLocationCode, event: { change: $root.LocationCodeSelectListChange}",
+                })
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-3">
+                Unit
+            </label>
+            <div class="col-lg-4">
+                <select id="filterUnit" class="selectpicker show-tick form-control" data-live-search="true"
+                        data-bind="selectPicker: $root.filterUnit, event: { change: $root.UnitSelectListChange}, optionsText: 'Value', optionsValue : 'Text',
+                                   selectPickerOptions: { optionsArray: $root.filterUnitSelectList }"></select>
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-3">
+                Process
+            </label>
+            <div class="col-lg-4">
+                <select class="selectpicker show-tick form-control" id="filterProcess" data-live-search="true"
+                        data-bind="selectPicker: $root.filterProcess, event: { change: $root.ProcessSelectListChange}, optionsText: 'Text', optionsValue : 'Value',
+                                   selectPickerOptions: { optionsArray: $root.FilterProcessSelectList }"></select>
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-3">
+                Group
+            </label>
+            <div class="col-lg-4">
+                <select class="selectpicker show-tick form-control" id="filterGroup"
+                        data-live-search="true"
+                        data-bind="selectPicker: $root.filterGroup, optionsText: 'Text', optionsValue : 'Value',
+                                   selectPickerOptions: { optionsArray: $root.filterGroupSelectList }"></select>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="row">
+            <label class="form-label col-lg-3">
+                <input type="radio" name="period" value="Year" id="rdYear" data-bind="event : { change : $root.radioChange }" />
+                Year
+            </label>
+            <div class="col-lg-2 offset-right">
+                @Html.DropDownList("filterYear", Model.YearSelectList,
+                             new Dictionary<string, object> { { "data-bind", "value:$root.filterYear, event : { change : $root.onYearSelectedChange}" },
+                { "class", "selectpicker show-tick form-controlt" },
+                {"data-live-search","true"},{"id","filterYear"} })
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-3">
+                <input type="radio" name="period" value="YearMonth" id="rdYearMonth" data-bind="event : { change : $root.radioChange }" />
+                Year Month
+            </label>
+            <div class="col-lg-2 offset-right">
+                @Html.DropDownList("filterYearMonthFrom", Model.YearSelectList, new
+                {
+                    @class = "selectpicker show-tick form-control",
+                    data_live_search = "true",
+                    data_bind = "selectPicker: $root.filterYearMonthFrom, event: { change: $root.onYearMonthFromSelectedChange}",
+                })
+            </div>
+            <div class="col-lg-2">
+                @Html.DropDownList("filterMonthFrom", Model.MonthSelectList, new
+                {
+                    @class = "selectpicker show-tick form-control",
+                    data_live_search = "true",
+                    data_bind = "selectPicker: $root.filterMonthFrom",
+                })
+            </div>
+            <label class="form-label col-lg-1">
+                To
+            </label>
+            <div class="col-lg-2 offset-right">
+                @Html.DropDownList("filterYearMonthTo", Model.YearSelectList, new
+                {
+                    @class = "selectpicker show-tick form-control",
+                    data_live_search = "true",
+                    data_bind = "selectPicker: $root.filterYearMonthTo, event: { change: $root.onYearMonthToSelectedChange}",
+                })
+            </div>
+            <div class="col-lg-2">
+                @Html.DropDownList("filterMonthTo", Model.MonthSelectList, new
+                {
+                    @class = "selectpicker show-tick form-control",
+                    data_live_search = "true",
+                    data_bind = "selectPicker: $root.filterMonthTo",
+                })
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-3">
+                <input type="radio" name="period" value="YearWeek" id="rdYearWeek" data-bind="event : { change : $root.radioChange }" />
+                Year Week
+            </label>
+            <div class="col-lg-2 offset-right">
+                @Html.DropDownList("filterYearWeekFrom", Model.YearSelectList,
+                             new Dictionary<string, object> { { "data-bind", "value:$root.filterYearWeekFrom, event : { change : $root.onYearWeekFromSelectedChange}" },
+                {"class", "selectpicker show-tick form-controlt" },
+                {"data-live-search","true"},{"id","filterYearWeekFrom"} })
+            </div>
+            <div class="col-lg-2">
+                <select id="filterWeekFrom" class="selectpicker show-tick form-control" data-live-search="true"
+                        data-bind="selectPicker: $root.filterWeekFrom, optionsText: 'Value', optionsValue : 'Text',
+                                selectPickerOptions: { optionsArray: $root.filterWeekFromFromSelectList }"></select>
+            </div>
+            <label class="form-label col-lg-1">
+                To
+            </label>
+            <div class="col-lg-2 offset-right">
+                @Html.DropDownList("filterYearWeekTo", Model.YearSelectList,
+                             new Dictionary<string, object> { { "data-bind", "value:$root.filterYearWeekTo, event : { change : $root.onYearWeekToSelectedChange}" },
+                {"class", "selectpicker show-tick form-controlt" },
+                {"data-live-search","true"},{"id","filterYearWeekTo"} })
+            </div>
+            <div class="col-lg-2">
+                <select id="filterWeekTo" class="selectpicker show-tick form-control" data-live-search="true"
+                        data-bind="selectPicker: $root.filterWeekTo, optionsText: 'Value', optionsValue : 'Text',
+                                selectPickerOptions: { optionsArray: $root.filterWeekToFromSelectList }"></select>
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-3">
+                <input type="radio" name="period" value="Date" id="rdDate" data-bind="event : { change : $root.radioChange }" />
+                Date
+            </label>
+            <div class="col-lg-4">
+                <div id="filterDateFrom" class='input-group date time' data-bind="dateTimePicker: $root.filterDateFrom, value: $root.filterDateFrom, dateTimePickerOptions: {widgetPositioning: {vertical: 'bottom'}, ignoreReadonly: true}">
+                    <input id="dtFilterFrom" class="form-control" />
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+            </div>
+            <label class="form-label col-lg-1">
+                To
+            </label>
+            <div class="col-lg-4">
+                <div id="filterDateTo" class='input-group date time' data-bind="dateTimePicker: $root.filterDateTo, value: $root.filterDateTo, dateTimePickerOptions: {widgetPositioning: {vertical: 'bottom'}, ignoreReadonly: true}">
+                    <input id="dtFilterTo" class="form-control" />
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="action-btn">
+                <button type="button" class="btn btn-primary" data-bind="click:$root.search">@CommonLabel.btnView</button>
+                @using (Html.BeginForm("GenerateExcelAbsentsEmployee", "WagesReportAbsents", FormMethod.Post, new { @data_bind = "submit: $root.GenerateExcelAbsentsEmployee" })) {
+                    <input type="hidden" name="locationCode">
+                    <input type="hidden" name="unitCode">
+                    <input type="hidden" name="process">
+                    <input type="hidden" name="group">
+
+                    <input type="hidden" name="filterType">
+                    <input type="hidden" name="year">
+
+                    <input type="hidden" name="yearMonthFrom">
+                    <input type="hidden" name="monthFrom">
+                    <input type="hidden" name="yearMonthTo">
+                    <input type="hidden" name="monthTo">
+
+                    <input type="hidden" name="yearWeekFrom">
+                    <input type="hidden" name="weekFrom">
+                    <input type="hidden" name="yearWeekTo">
+                    <input type="hidden" name="weekTo">
+
+                    <input type="hidden" name="dateFrom">
+                    <input type="hidden" name="dateTo">
+
+                    <button type="submit" class="btn btn-primary">Excel</button>
+                }
+                @Html.ActionLink("Back To List", "Index", new { controller = "WagesReportAbsents" }, new { @class = "btn btn-primary" })
+                @*@Html.Partial("GridViewPageSizeSelector")*@
+            </div>
+        </div>
+    </div>
+    <div class="table-overflow">
+        <table class="table table-striped">
+            <thead>
+                <tr class="head">
+                    <th>Location</th>
+                    <th>Unit</th>
+                    <th>Emp ID</th>
+                    @*<th>Emp No</th>*@
+                    <th>Emp Name</th>
+                    <th>Alpa</th>
+                    <th>Ijin</th>
+                    <th>Sakit</th>
+                    <th>Cuti</th>
+                    <th>Cuti Hamil</th>
+                    <th>Cuti Tahunan</th>
+                    <th>Skorsing</th>
+                    <th>HKN Total</th>
+                    <th>Absent Total</th>
+                    <th>Production Total</th>
+                    <th>JK Total</th>
+                    <th>Productivity</th>
+                </tr>
+            </thead>
+            <tbody data-bind="foreach: listDataItems">
+                <tr>
+                    <td><span data-bind="text:$data.LocationCode"></span></td>
+                    <td class="right"><span data-bind="text:$data.ProdUnit"></span></td>
+                    <td class="right"><a data-bind="text: $data.EmployeeID, click: $root.EmployeeDetailClick.bind($data)"></a></td>
+                    <td><span data-bind="text:$data.EmployeeName"></span></td>
+                    <td class="right"><span data-bind="text:$data.Alpa"></span></td>
+                    <td class="right"><span data-bind="text:$data.Ijin"></span></td>
+                    <td class="right"><span data-bind="text:$data.Sakit"></span></td>
+                    <td class="right"><span data-bind="text:$data.Cuti"></span></td>
+                    <td class="right"><span data-bind="text:$data.CutiHamil"></span></td>
+                    <td class="right"><span data-bind="text:$data.CutiTahunan"></span></td>
+                    <td class="right"><span data-bind="text:$data.Skorsing"></span></td>
+                    <td class="right"><span data-bind="text:$data.HKNTotal"></span></td>
+                    <td class="right"><span data-bind="text:$data.AbsentTotal"></span></td>
+                    <td class="right"><span data-bind="decimal:$data.ProductionTotal"></span></td>
+                    <td class="right"><span data-bind="decimal:$data.JKTotal"></span></td>
+                    <td class="right"><span data-bind="decimal:$data.Productivity"></span></td>
+                </tr>
+            </tbody>
+            <tbody data-bind="visible: !listDataItems().length">
+                <tr>
+                    <td colspan="41" class="empty-row-message">
+                        <div class="loader"></div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div data-bind="if: (listDataItems() != null && listDataItems().length !== 0)">
+        @Html.Partial("GridViewFooter")
+    </div>
+    @*<div class="row">
+            <div class="col-lg-12">
+                <div class="tabs" role="tabpanel">
+                    <!-- Nav tabs -->
+                    <ul class="nav nav-tabs" role="tablist" id="absence">
+                        <li role="presentation" class="active"><a href="#history" aria-controls="	home" role="tab" data-toggle="tab">History</a></li>
+                        <li role="presentation"><a href="#flow" aria-controls="profile" role="tab" data-toggle="tab">Flow</a></li>
+                    </ul>
+                    <!-- End nav tabs -->
+                    <!-- Tab Panes -->
+                    <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane fade in active" id="history">
+                            <div class="table-overflow">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr class="head">
+                                            <th>Name</th>
+                                            <th>Role</th>
+                                            <th>Action</th>
+                                            <th>Date</th>
+                                            <th class="widthsmall">Note</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>PMI/Yastutik</td>
+                                            <td>Administrative Assistant</td>
+                                            <td>Send for Approval</td>
+                                            <td>12/06/2015 7:39</td>
+                                            <td>
+                                                <input type='text' class="form-control transparent" value="" />
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>PMI/Ybasiah</td>
+                                            <td>Production Planning</td>
+                                            <td>save as Draft</td>
+                                            <td>12/06/2015 7:39</td>
+                                            <td>
+                                                <input type='text' class="form-control transparent" value="" />
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>PMI/Yastutik</td>
+                                            <td>Administrative Assistant</td>
+                                            <td>Send for Approval</td>
+                                            <td>12/06/2015 7:39</td>
+                                            <td>
+                                                <input type='text' class="form-control transparent" value="" />
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>PMI/Ybasiah</td>
+                                            <td>Production Planning</td>
+                                            <td>save as Draft</td>
+                                            <td>12/06/2015 7:39</td>
+                                            <td>
+                                                <input type='text' class="form-control transparent" value="" />
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div role="tabpanel" class="tab-pane fade in" id="flow">
+                            <div class="table-overflow">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr class="head">
+                                            <th>Name</th>
+                                            <th>Role</th>
+                                            <th>Action</th>
+                                            <th>Date</th>
+                                            <th class="widthsmall">Note</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>PMI/Yastutik</td>
+                                            <td>Administrative Assistant</td>
+                                            <td>Send for Approval</td>
+                                            <td>12/06/2015 7:39</td>
+                                            <td>
+                                                <input type='text' class="form-control transparent" value="" />
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>PMI/Ybasiah</td>
+                                            <td>Production Planning</td>
+                                            <td>save as Draft</td>
+                                            <td>12/06/2015 7:39</td>
+                                            <td>
+                                                <input type='text' class="form-control transparent" value="" />
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>PMI/Yastutik</td>
+                                            <td>Administrative Assistant</td>
+                                            <td>Send for Approval</td>
+                                            <td>12/06/2015 7:39</td>
+                                            <td>
+                                                <input type='text' class="form-control transparent" value="" />
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>PMI/Ybasiah</td>
+                                            <td>Production Planning</td>
+                                            <td>save as Draft</td>
+                                            <td>12/06/2015 7:39</td>
+                                            <td>
+                                                <input type='text' class="form-control transparent" value="" />
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- End tab Panes -->
+                </div>
+            </div>
+        </div>*@
+</div>
+@section Scripts
+{
+    <script src="~/Scripts/app/globalfunctions.js" type="text/javascript"></script>
+    <script src="~/Scripts/common/app.GridViewModel.js" type="text/javascript"></script>
+    <script type="text/javascript">
+    var cfilterType = getCookie("filterType");
+    var startDate = getCookie("startDate");
+    var endDate = getCookie("endDate");
+    var cYear = getCookie("Year");
+    var cYearMonthStart = getCookie("YearMonthStart");
+    var cYearMonthEnd = getCookie("YearMonthEnd");
+    var cMonthStart = getCookie("MonthStart");
+    var cMonthEnd = getCookie("MonthEnd");
+    var cYearWeekStart = getCookie("YearWeekStart");
+    var cYearWeekEnd = getCookie("YearWeekEnd");
+    var cWeekStart = getCookie("WeekStart");
+    var cWeekEnd = getCookie("WeekEnd");
+    var cprocess = getCookie("ProcessGroup");
+    var cUnitCode = getCookie("UnitCode");
+    $(document).ready(function() {
+        if(cfilterType == 'Date') {
+            $('#rdDate').attr('checked', true);
+            $('#rdDate').change();
+        }
+        if(cfilterType == 'YearWeek') {
+            $('#rdYearWeek').attr('checked', true);
+            $('#rdYearWeek').change();
+        }
+        if(cfilterType == 'YearMonth') {
+            $('#rdYearMonth').attr('checked', true);
+            $('#rdYearMonth').change();
+        }
+        if(cfilterType == 'Year') {
+            $('#rdYear').attr('checked', true);
+            $('#rdYear').change();
+        }
+
+    });
+
+    (function(app) {
+        app.EditGrid = function() {
+            var self = this;
+            self.firstLoad = ko.observable(true);
+
+            self.filterLocationCode = ko.observable('@Model.DefaultLocation');
+            self.filterUnit = ko.observable(cUnitCode);
+            self.filterProcess = ko.observable('@Model.DefaultProcess');
+            self.filterGroup = ko.observable('@Model.DefaultGroup');
+
+            self.filterType = ko.observable(cfilterType);
+
+            self.filterYear = ko.observable(cYear);
+
+            self.filterYearMonthFrom = ko.observable(cYearMonthStart);
+            self.filterMonthFrom = ko.observable(cMonthStart);
+            self.filterYearMonthTo = ko.observable(cYearMonthEnd);
+            self.filterMonthTo = ko.observable(cMonthEnd);
+
+            self.filterYearWeekFrom = ko.observable(cYearWeekStart);
+            self.filterWeekFrom = ko.observable(cWeekStart);
+            self.filterYearWeekTo = ko.observable(cYearWeekEnd);
+            self.filterWeekTo = ko.observable(cWeekEnd);
+
+            self.filterDateFrom = ko.observable(startDate);
+            self.filterDateTo = ko.observable(endDate);
+
+            self.isLoading = ko.observable(false);
+
+            // chain dropdown event handler
+            self.LocationCodeSelectListChange = function() {
+                if ((! self.firstLoad) && (! self.isLoading())) {
+                    self.isLoading(true);
+
+                    async.series([
+                        function(cb) {
+                            self.getFilterUnitSelectList(cb);
+                        },
+                        function(cb) {
+                            self.getFilterProcessSelectList(cb);
+                        },
+                        function(cb) {
+                            self.getFilterGroupSelectList(cb);
+                        }
+                    ], function() {
+                        self.isLoading(false);
+                    });
+                }
+            };
+
+            self.UnitSelectListChange = function() {
+                if ((! self.firstLoad) && (! self.isLoading())) {
+                    self.isLoading(true);
+
+                    async.series([
+                        function(cb) {
+                            self.getFilterProcessSelectList(cb);
+                        },
+                        function(cb) {
+                            self.getFilterGroupSelectList(cb);
+                        }
+                    ], function() {
+                        self.isLoading(false);
+                    });
+                }
+            };
+
+            self.ProcessSelectListChange = function() {
+                if ((! self.firstLoad) && (! self.isLoading())) {
+                    self.isLoading(true);
+
+                    async.series([
+                        function(cb) {
+                            self.getFilterGroupSelectList(cb);
+                        },
+                    ], function() {
+                        self.isLoading(false);
+                    });
+                }
+                //self.getFilterGroupSelectList();
+            };
+
+            self.radioChange = function() {
+                self.filterType($('input[name=period]:checked').val());
+            };
+
+            // bind dropdown
+            self.filterUnitSelectList = ko.observableArray([]);
+            self.getFilterUnitSelectList = function(cb) {
+                $('#filterUnit').find('option').remove();
+                $('#filterUnit').selectpicker('refresh');
+                $.ajax({
+                    url: @Html.BaseUrl("WagesReportAbsents/GetUnitCodeSelectList"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: { locationCode : self.filterLocationCode() },
+                    dataType: 'json',
+                    cache: false,
+                    success: function(data) {
+
+                        var selectList = [];
+
+                        for (var i=0; i<data.length; i++) {
+                            if (data[i].Value != 'MTNC')
+                                selectList.push(data[i]);
+                        }
+
+                        self.filterUnitSelectList(selectList);
+                        self.filterUnit('@Model.DefaultUnit');
+                    },
+                    complete : function() {
+                        if (typeof cb == 'function') cb();
+                    }
+                });
+            };
+
+            //Method Get Process By Location
+            self.FilterProcessSelectList = ko.observableArray([]);
+            self.getFilterProcessSelectList = function(cb) {
+                $('#filterFilterProcess').find('option').remove();
+                $('#filterFilterProcess').selectpicker('refresh');
+                $.ajax({
+                    url: @Html.BaseUrl("WagesReportAbsents/GetProcessFromProdcard"),
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: ko.toJSON({
+                        locationCode: self.filterLocationCode(),
+                        UnitCode: self.filterUnit(),
+                        FilterType: self.filterType(),
+                        Year: self.filterYear(),
+                        YearMonthFrom: self.filterYearMonthFrom(),
+                        YearMonthTo: self.filterYearMonthTo(),
+                        YearWeekFrom: self.filterYearWeekFrom(),
+                        YearWeekTo: self.filterYearWeekTo(),
+                        MonthFrom: self.filterMonthFrom(),
+                        MonthTo: self.filterMonthTo(),
+                        WeekFrom: self.filterWeekFrom(),
+                        WeekTo: self.filterWeekTo(),
+                        DateFrom: self.filterDateFrom(),
+                        DateTo: self.filterDateTo()
+                    }),
+                    dataType: 'json',
+                    success: function(data) {
+                        var selectList = [];
+
+                        if(data.length > 0) {
+                            selectList.push({
+                                Disabled: false,
+                                Group: null,
+                                Selected: false,
+                                Text: "All",
+                                Value: ""
+                            });
+                        }
+                        for (var i=0; i<data.length; i++) {
+                            selectList.push(data[i]);
+                        }
+                        self.FilterProcessSelectList(selectList);
+                        //console.log('@Model.DefaultProcess');
+                        self.filterProcess('@Model.DefaultProcess');
+                    },
+                    complete : function() {
+                        if (typeof cb == 'function') cb();
+                    }
+                });
+            };
+
+            //Method Get Process By Location
+            self.filterGroupSelectList = ko.observableArray([]);
+            self.getFilterGroupSelectList = function(cb) {
+                $.ajax({
+                    url: @Html.BaseUrl("WagesReportAbsents/GetGroupCodeByLocationCode"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: { locationCode: self.filterLocationCode(), unit : self.filterUnit(), process : self.filterProcess() },
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#filterGroup').find('option').remove();
+                        $('#filterGroup').selectpicker('refresh');
+                        var selectList = [];
+
+                        if(data.length > 0) {
+                            selectList.push({
+                                Disabled: false,
+                                Group: null,
+                                Selected: false,
+                                Text: "All",
+                                Value: ""
+                            });
+                        }
+
+                        @*selectList.push({
+                            Disabled: false,
+                            Group: null,
+                            Selected: false,
+                            Text: '@Model.DefaultGroup',
+                            Value: '@Model.DefaultGroup'
+                        });*@
+
+                        for (var i=0; i<data.length; i++) {
+                            selectList.push(data[i]);
+                        }
+                        self.filterGroupSelectList(selectList);
+                        self.filterGroup('@Model.DefaultGroup');
+                    },
+                    complete : function() {
+                        if (typeof cb == 'function') cb();
+                    }
+                });
+            };
+
+            // chain dropdown event handler
+            self.onYearWeekFromSelectedChange = function() {
+                if ((! self.firstLoad) && (! self.isLoading())) {
+                    self.isLoading(true);
+
+                    async.series([
+                        function(cb) {
+                            self.GetfilterWeekFromFromSelectList(cb);
+                        },
+                        function(cb) {
+                            self.getFilterUnitSelectList(cb);
+                        },
+                    ], function() {
+                        self.isLoading(false);
+                    });
+                }
+                //self.GetfilterWeekFromFromSelectList();
+            };
+
+            self.filterWeekFromFromSelectList = ko.observableArray([]);
+            self.GetfilterWeekFromFromSelectList = function(cb) {
+                $.ajax({
+                    url: @Html.BaseUrl("WagesReportAbsents/GetWeekByYear"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: { year: self.filterYearWeekFrom() },
+                    dataType: 'json',
+                    success: function(data) {
+                        var WeekModel = [];
+                        $.each(data, function(index, value) {
+                            WeekModel.push({ "Text": value, "Value": value });
+                        });
+                        self.filterWeekFromFromSelectList(WeekModel);
+                        self.filterWeekFrom(cWeekStart);
+
+                        //self.getFilterUnitSelectList();
+                    },
+                    complete : function() {
+                        if (typeof cb == 'function') cb();
+                    }
+                });
+            };
+
+            // chain dropdown event handler
+            self.onYearWeekToSelectedChange = function() {
+                if ((! self.firstLoad) && (! self.isLoading())) {
+                    self.isLoading(true);
+
+                    async.series([
+                        function(cb) {
+                            self.GetfilterWeekToFromSelectList(cb);
+                        }
+                    ], function() {
+                        self.isLoading(false);
+                    });
+                }
+                //self.GetfilterWeekToFromSelectList();
+            };
+
+            self.filterWeekToFromSelectList = ko.observableArray([]);
+            self.GetfilterWeekToFromSelectList = function(cb) {
+                $.ajax({
+                    url: @Html.BaseUrl("WagesReportAbsents/GetWeekByYear"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: { year: self.filterYearWeekTo() },
+                    dataType: 'json',
+                    success: function(data) {
+                        var WeekModel = [];
+                        $.each(data, function(index, value) {
+                            WeekModel.push({ "Text": value, "Value": value });
+                        });
+                        self.filterWeekToFromSelectList(WeekModel);
+                        self.filterWeekTo(cWeekEnd);
+                    },
+                    complete : function() {
+                        if (typeof cb == 'function') cb();
+                    }
+                });
+            };
+
+            //self.GetfilterWeekFromFromSelectList();
+            //self.GetfilterWeekToFromSelectList();
+
+            // gridView Initialization
+            self.gridView = new app.GridViewModel({
+                Criteria: {
+                    PageSize: 10,
+                    PageIndex: 1,
+                    SortExpression: "TransactionDate",
+                    SortOrder: "DESC",
+                    LocationCode: self.filterLocationCode,
+                    UnitCode: self.filterUnit,
+                    Process: self.filterProcess,
+                    FilterType: self.filterType,
+                    ProdGroup: self.filterGroup,
+                    Year: self.filterYear,
+                    YearMonthFrom: self.filterYearMonthFrom,
+                    YearMonthTo: self.filterYearMonthTo,
+                    YearWeekFrom: self.filterYearWeekFrom,
+                    YearWeekTo: self.filterYearWeekTo,
+                    MonthFrom: self.filterMonthFrom,
+                    MonthTo: self.filterMonthTo,
+                    WeekFrom: self.filterWeekFrom,
+                    WeekTo: self.filterWeekTo,
+                    DateFrom: self.filterDateFrom,
+                    DateTo: self.filterDateTo
+
+                },
+                DataSourceUrl: @Html.BaseUrl("WagesReportAbsents/GetWagesReportAbsentsGroup"),
+                InlineEdit: true,
+            });
+
+            self.search = function() {
+                $('.empty-row-message').html('<div class="loader"></div>'); // Reset New and Edit row
+
+                if (SKTIS.Checker.modifiedDataExistsForAjax([self.gridView.listNewItems, self.gridView.listEditItems]) == true) {
+                    return;
+                } else {
+                    self.gridView.listNewItems.removeAll();
+                    self.gridView.listEditItems.removeAll();
+                }
+
+                self.gridView.search({}, function(response) {
+                    if (response.status == 'KO') {
+                        SKTIS.Helper.Notification(response.message, 'error');
+                        $('.empty-row-message').html(response.message);
+                    } else if (response.status == 'Empty') {
+                        self.RemoveNotification();
+                        //SKTIS.Helper.Notification(response.message,'warning');
+                        $('.empty-row-message').html('@CommonLabel.lblDataEmpty');
+                    }
+                });
+
+                self.RemoveNotification = function() {
+                    if ($('#noty_top_layout_container').length > 0) {
+                        $('#noty_top_layout_container').remove();
+                    }
+                };
+            };
+
+            self.EmployeeDetailClick = function(data) {
+                var startDate = self.filterDateFrom();
+                var endDate = self.filterDateTo();
+                var ProcessGroup = self.filterProcess();
+                var Group = self.filterGroup();
+                setCookie("LocationCode",self.filterLocationCode(),0.5);
+                setCookie("UnitCode",self.filterUnit(),0.5);
+                setCookie("ProcessGroup",self.filterProcess(),0.5);
+                setCookie("filterType",self.filterType(),0.5);
+                setCookie("startDate",startDate,0.5);
+                setCookie("endDate",endDate,0.5);
+                setCookie("YearWeekStart",self.filterYearWeekFrom(),0.5);
+                setCookie("YearWeekEnd",self.filterYearWeekTo(),0.5);
+                setCookie("WeekStart",self.filterWeekFrom(),0.5);
+                setCookie("WeekEnd",self.filterWeekTo(),0.5);
+                setCookie("YearMonthStart",self.filterYearMonthFrom(),0.5);
+                setCookie("YearMonthEnd",self.filterYearMonthTo(),0.5);
+                setCookie("MonthStart",self.filterMonthFrom(),0.5);
+                setCookie("MonthEnd",self.filterMonthTo(),0.5);
+                setCookie("Year",self.filterYear(),0.5);
+                window.location = @Html.BaseUrl("WagesReportAbsents/WagesReportAbsentsDetail") + "/" +data.EmployeeID();
+                //location/unit/shift/process/group/id/year/yearmonth/yearweek/date
+            };
+
+            //Method Generate Excel function - Piece Rate
+            self.GenerateExcelAbsentsEmployee = function(formElement) {
+                $(formElement).find("input[name=locationCode]").val($('#filterLocationCode').val());
+                $(formElement).find("input[name=unitCode]").val($('#filterUnit').val());
+                $(formElement).find("input[name=process]").val($('#filterProcess').val());
+                $(formElement).find("input[name=group]").val($('#filterGroup').val());
+
+                $(formElement).find("input[name=filterType]").val(self.filterType());
+
+                $(formElement).find("input[name=year]").val($('#filterYear').val());
+
+                $(formElement).find("input[name=yearMonthFrom]").val($('#filterYearMonthFrom').val());
+                $(formElement).find("input[name=monthFrom]").val($('#filterMonthFrom').val());
+                $(formElement).find("input[name=yearMonthTo]").val($('#filterYearMonthTo').val());
+                $(formElement).find("input[name=monthTo]").val($('#filterMonthTo').val());
+
+                $(formElement).find("input[name=yearWeekFrom]").val($('#filterYearWeekFrom').val());
+                $(formElement).find("input[name=weekFrom]").val($('#filterWeekFrom').val());
+                $(formElement).find("input[name=yearWeekTo]").val($('#filterYearWeekTo').val());
+                $(formElement).find("input[name=weekTo]").val($('#filterWeekTo').val());
+
+                $(formElement).find("input[name=dateFrom]").val($('#filterDateFrom').val());
+                $(formElement).find("input[name=dateTo]").val($('#filterDateTo').val());
+                return true;
+            };
+
+            //self.search();
+
+            self.init = (function() {
+                //Asynch setting
+                self.isLoading(true);
+                async.series([
+                    function(callback) {
+                        self.GetfilterWeekFromFromSelectList(callback);
+                    },
+                    function(callback) {
+                        self.GetfilterWeekToFromSelectList(callback);
+                    },
+                    function(callback) {
+                        self.getFilterUnitSelectList(callback);
+                    },
+                    function(callback) {
+                        self.getFilterProcessSelectList(callback);
+                    },
+                    function(callback) {
+                        self.getFilterGroupSelectList(callback);
+                    }
+                ], function() {
+                    self.search();
+                    self.firstLoad = false;
+                    self.isLoading(false);
+                });
+
+            }());
+
+        };
+        ko.applyBindings(new app.EditGrid());
+        ko.extenders.numeric = function(target, precision) {
+            var result = ko.dependentObservable({
+                read: function() {
+                    return target().toFixed(precision);
+                },
+                write: target
+            });
+
+            result.raw = target;
+            return result;
+        };
+    })(app = this.app || {});
+
+</script>
+}</div></div></div>

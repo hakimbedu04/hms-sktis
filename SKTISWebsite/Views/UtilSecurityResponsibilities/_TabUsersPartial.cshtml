@@ -1,0 +1,39 @@
+﻿@model SKTISWebsite.Models.UtilSecurityResponsibilities.InitUtilSecurityResponsibilities
+<div class="col-xs-5">
+    <label>List Responsibility</label>
+    <select name="from" id="multiselectResponsibilities" class="form-control" size="8" multiple="multiple">
+                        @foreach (var data in Model.ListAllResponsibilities)
+{
+    <option value="@data.IDResponsibility" data-idresponsibility="@data.IDResponsibility" data-responsibilityname="@data.ResponsibilityName" data-effective-date="@data.EffectiveDate" data-expired-date="@data.ExpiredDate">@data.ResponsibilityName</option>
+}
+    </select>
+</div>
+<div class="col-xs-2 group-shift-action">
+    <label>&nbsp;</label>
+    @*<button type="button" id="multiselectResponsibilities_rightAll" class="btn btn-block"><i class="glyphicon glyphicon-forward"></i></button>*@
+    <button type="button" id="multiselectResponsibilities_rightSelected" class="btn btn-block" data-bind="enable: !$root.isEmptyUsers()"><i class="glyphicon glyphicon-chevron-right"></i></button>
+    <button type="button" id="multiselectResponsibilities_leftSelected" class="btn btn-block" data-bind="enable: !$root.isEmptyUsers()"><i class="glyphicon glyphicon-chevron-left"></i></button>
+    @*<button type="button" id="multiselectResponsibilities_leftAll" class="btn btn-block"><i class="glyphicon glyphicon-backward"></i></button>*@
+    @*<button type="button" id="multiselectResponsibilities_swap" class="btn btn-block"><i class="glyphicon glyphicon-transfer"></i></button>*@
+</div>
+<div class="col-xs-5">
+    <label>Active Responsibility</label>
+    <select name="to" id="multiselectResponsibilities_to" class="form-control" size="8" multiple="multiple">
+            @foreach (var data in Model.ListActiveResponsibilities)
+            {
+                <option value="@data.IDResponsibility" data-responsibilityname="@data.ResponsibilityName" data-idresponsibility="@data.IDResponsibility" data-effective-date="@data.EffectiveDate" data-expired-date="@data.ExpiredDate">@data.ResponsibilityName</option>
+            }
+    </select>
+</div>
+<script>
+    effectiveDate = "@ViewBag.ExpiredDate";
+    expiredDate = "@ViewBag.ExpiredDate";
+    $(document).ready(function () {
+        $('#multiselectResponsibilities').multiselect({
+            search: {
+                left: '<input type="text" name="q" class="form-control" placeholder="Search..." />',
+                right: '<input type="text" name="q" class="form-control" placeholder="Search..." />',
+            }
+        });
+    });
+</script>

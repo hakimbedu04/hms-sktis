@@ -1,0 +1,420 @@
+﻿@model SKTISWebsite.Models.TPOFeeReportsProduction.InitTPOFeeReportsProductionViewModel
+@using SKTISWebsite.Helper
+@{ Html.SetPageTitle(" TPO Production and Fee Report"); }
+@using HMS.SKTIS.Application.Resources
+
+<div class="col-lg-12" data-bind="with: gridView">
+    <div class="row">
+        <label class="form-label col-lg-2">
+            Location
+        </label>
+        <div class="col-lg-2">
+            @*@Html.DropDownList("ddlFilterLocationCode", new SelectList(Model.LocationLookupList, "LocationCode", "LocationCode"),
+                new
+                {
+                    @class = "selectpicker show-tick form-control",
+                    id = "ddlFilterLocationCode",
+                    data_live_search = "true",
+                    data_bind = "value:$root.filterLocationCode, event : { change : $root.onLocationCodeChange}"
+                })*@
+            <select id="ddlFilterLocationCode"
+                    class="selectpicker show-tick form-control"
+                    data-live-search="true"
+                    data-bind="selectPicker:$root.filterLocationCode, optionsText: 'LocationCode', optionsValue : 'LocationCode', optionsAfterRender: locationDesc, selectPickerOptions: { optionsArray: $root.itemLocations }, event : { change : $root.onLocationCodeChange}"></select>
+        </div>
+    </div>
+    <div class="row">
+        <label class="form-label col-lg-5">
+            @*<input type="radio" name="period" id="rdAll" data-bind="checked: $root.filterType, event : { change : $root.radioChange}" value="All">*@
+            <input type="radio" name="period" data-bind="checked: $root.filterType" value="All" checked>
+            ALL
+        </label>
+
+    </div>
+    <div class="row">
+        <label class="form-label col-lg-2">
+            @*<input type="radio" name="period" id="rdWeekYear" data-bind="checked: $root.filterType, event : { change : $root.radioChange}" value="YearWeek">*@
+            <input type="radio" name="period" data-bind="checked: $root.filterType" value="YearWeek">
+            Effective Week/Year
+        </label>
+
+        <label class="form-label col-lg-1">
+            From
+        </label>
+        <label class="form-label col-lg-1">
+            Year
+        </label>
+        <div class="col-lg-2">
+            @Html.DropDownList("weeklyYearFromFilter", Model.YearSelectList,
+                new Dictionary<string, object> { { "data-bind", "value:$root.weeklyYearFromFilter, event : { change : $root.onYearSelectedChange($root.weeklyYearFromFilter, 'weeklyWeekFromFilter')}" },
+                    { "class", "selectpicker show-tick form-control" },
+                    {"data-live-search","true"},{"id","weeklyYearFromFilter"} })
+        </div>
+        <label class="form-label col-lg-1">
+            Week
+        </label>
+        <div class="col-lg-2">
+            <select id="weeklyWeekFromFilter" class="selectpicker show-tick form-control" data-live-search="true"
+                    data-bind="selectPicker: $root.weeklyWeekFromFilter, optionsText: 'Value', optionsValue : 'Text', selectPickerOptions: { optionsArray: $root.WeeklyWeekFromSelectList }"></select>
+        </div>
+    </div>
+    <div class="row">
+        <label class="form-label col-lg-1 col-lg-offset-2">
+            To
+        </label>
+        <label class="form-label col-lg-1">
+            Year
+        </label>
+        <div class="col-lg-2">
+            @Html.DropDownList("weeklyYearToFilter", Model.YearSelectList,
+                         new Dictionary<string, object> { { "data-bind", "value:$root.weeklyYearToFilter, event : { change : $root.onYearSelectedChange($root.weeklyYearToFilter, 'weeklyWeekToFilter')}" },
+                            { "class", "selectpicker show-tick form-control" },
+                            {"data-live-search","true"},{"id","weeklyYearToFilter"} })
+        </div>
+        <label class="form-label col-lg-1">
+            Week
+        </label>
+        <div class="col-lg-2">
+            <select id="weeklyWeekToFilter" class="selectpicker show-tick form-control" data-live-search="true"
+                    data-bind="selectPicker: $root.weeklyWeekToFilter, optionsText: 'Value', optionsValue : 'Text', selectPickerOptions: { optionsArray: $root.WeeklyWeekToSelectList }"></select>
+        </div>
+    </div>
+    <div class="row">
+        <label class="form-label col-lg-3">
+            @*<input type="radio" name="period" id="rdMonthYear" data-bind="checked: $root.filterType,event : { change : $root.radioChange, onload : $root.radioLoad }" value="YearMonth">*@
+            <input type="radio" name="period" data-bind="checked: $root.filterType" value="YearMonth">
+            Monthly
+        </label>
+        <label class="form-label col-lg-1">
+            Year
+        </label>
+        <div class="col-lg-2">
+            @Html.DropDownList("monthlyYearFilter", Model.YearSelectList,
+                new Dictionary<string, object> { { "data-bind", "value:$root.monthlyYearFilter" },
+                    { "class", "selectpicker show-tick form-control" },
+                    {"data-live-search","true"},{"id","monthlyYearFilter"} })
+        </div>
+        <label class="form-label col-lg-1">
+            Month
+        </label>
+        <div class="col-lg-2">
+            <select id="basic" data-bind="value:$root.monthlyMonthFilter" class="selectpicker show-tick form-control" data-live-search="true">
+                <option value="1">January</option>
+                <option value="2">February</option>
+                <option value="3">March</option>
+                <option value="4">April</option>
+                <option value="5">May</option>
+                <option value="6">June</option>
+                <option value="7">July</option>
+                <option value="8">August</option>
+                <option value="9">September</option>
+                <option value="10">Oktober</option>
+                <option value="11">November</option>
+                <option value="12">December</option>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <label class="form-label col-lg-1">
+            @*<input type="radio" name="period" id="rdDaily" data-bind="checked: $root.filterType ,event : { change : $root.radioChange}" value="Daily" checked>*@
+            <input type="radio" name="period" data-bind="checked: $root.filterType" value="Daily" >
+            Daily
+        </label>
+        
+        <label class="form-label col-lg-2">
+            @*<input type="radio" name="period" id="rdPeriod" data-bind="checked: $root.filterType, event : { change : $root.radioChange}" value="Period" checked>*@
+            <input type="radio" name="period" data-bind="checked: $root.filterType" value="Period">
+            Period
+        </label>
+
+        <label class="form-label col-lg-1">
+            From
+        </label>
+        <div class="col-lg-2">
+            <div id="filterDateFrom" class='input-group date time' data-bind="dateTimePicker: $root.filterDateFrom, value: $root.filterDateFrom, dateTimePickerOptions: {widgetPositioning: {vertical: 'bottom'}, showClear: true, ignoreReadonly: true}, dateChange: $root.onDateChange">
+                <input id="filterDateFrom" class="form-control" readonly="readonly" />
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
+        </div>
+        <label class="form-label col-lg-1">
+            To
+        </label>
+        <div class="col-lg-2">
+            <div id="filterDateTo" class='input-group date time' data-bind="dateTimePicker: $root.filterDateTo, value: $root.filterDateTo, dateTimePickerOptions: {widgetPositioning: {vertical: 'bottom'}, showClear: true, ignoreReadonly: true}, dateChange: $root.onDateChange">
+                <input id="filterDateTo" class="form-control" readonly="readonly" />
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <p class="bg-primary"> 
+                Location:
+                <span data-bind="text:$root.filterLocationCode"></span>
+                 (Effective). Period: From 
+                <span data-bind="text:$root.yearWeekFrom"></span>
+                To 
+                <span data-bind="text:$root.yearWeekTo"></span>
+                .
+            </p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="action-btn">
+                @*<button type="button" class="btn btn-primary">Refresh</button>
+                    <button type="button" class="btn btn-primary">Excel</button>*@
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.View.ToString()))
+                {
+                    <button type="button" class="btn btn-primary" data-bind="click:$root.search">View</button>
+                }
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.Excel.ToString()))
+                {
+                    using (Html.BeginForm("GenerateExcel", "TPOFeeReportsProduction", FormMethod.Post, new { @data_bind = "submit: $root.generateExcel" }))
+                    {
+                    <input type="hidden" name="LocationCode" />
+                    <input type="hidden" name="YearFrom" />
+                    <input type="hidden" name="YearTo" />
+                    <input type="hidden" name="WeekFrom" />
+                    <input type="hidden" name="WeekTo" />
+                    <input type="hidden" name="Month" />
+                    <input type="hidden" name="Year" />
+                    <input type="hidden" name="DateFrom" />
+                    <input type="hidden" name="DateTo" />
+                    <input type="hidden" name="FilterType" />
+                    <button type="submit" class="btn btn-primary">@CommonLabel.btnExcel</button>
+                }
+                }
+            </div>
+        </div>
+    </div>
+    <div class="table-overflow">
+        <table class="table table-striped">
+            <thead>
+                <tr class="head">
+                    <th rowspan="2">Regional</th>
+                    <th rowspan="2">Location</th>
+                    <th rowspan="2">Location Code</th>
+                    <th rowspan="2">Location Name</th>
+                    <th rowspan="2">UMK</th>
+                    <th rowspan="2">Brand</th>
+                    <th rowspan="2">Package</th>
+                    <th colspan="5">Production Fee (IDR)</th>
+                    <th rowspan="2">Management Fee</th>
+                    <th rowspan="2">Productivity Incentives</th>
+                    <th rowspan="2">Year</th>
+                    <th colspan="2">Effectives Date</th>
+                    <th rowspan="2">Week From</th>
+                    <th rowspan="2">Week To</th>
+                    <th rowspan="2">No Memo Reference</th>
+                    <th colspan="5">Production Volume (Box)</th>
+                </tr>
+                <tr class="head">
+                    <th>JKN</th>
+                    <th>JL1</th>
+                    <th>JL2</th>
+                    <th>JL3</th>
+                    <th>JL4</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>JKN</th>
+                    <th>JL1</th>
+                    <th>JL2</th>
+                    <th>JL3</th>
+                    <th>JL4</th>
+                </tr>
+            </thead>
+            <tbody data-bind="foreach: listDataItems, visible: listDataItems().length">
+
+                <tr>
+                    <td data-bind="text: $data.Regional"></td>
+                    <td data-bind="text: $data.LocationCode"></td>
+                    <td data-bind="text: $data.LocationAbbr"></td>
+                    <td data-bind="text: $data.LocationName"></td>
+
+                    <td class="right"><span data-bind="decimal: $data.Umk" /></td>
+                    <td data-bind="text: $data.Brand"></td>
+                    <td class="right" data-bind="decimal: $data.Package"></td>
+                    <td class="right" data-bind="decimal: $data.JKNProductionFee"></td>
+                    <td class="right" data-bind="decimal: $data.JL1ProductionFee"></td>
+                    <td class="right" data-bind="decimal: $data.JL2ProductionFee"></td>
+                    <td class="right" data-bind="decimal: $data.JL3ProductionFee"></td>
+                    <td class="right" data-bind="decimal: $data.JL4ProductionFee"></td>
+
+                    <td class="right" data-bind="decimal: $data.ManagementFee"></td>
+                    <td class="right" data-bind="decimal: $data.ProductivityIncentives"></td>
+
+                    <td data-bind="text: $data.Year"></td>
+                    <td data-bind="text: $data.StartDate"></td>
+                    <td data-bind="text: $data.EndDate"></td>
+                    <td data-bind="text: $data.WeekFrom"></td>
+                    <td data-bind="text: $data.WeekTo"></td>
+                    <td data-bind="text: $data.NoMemo"></td>
+
+                    <td class="right" data-bind="decimal: $data.JKNProductionVolume"></td>
+                    <td class="right" data-bind="decimal: $data.JL1ProductionVolume"></td>
+                    <td class="right" data-bind="decimal: $data.JL2ProductionVolume"></td>
+                    <td class="right" data-bind="decimal: $data.JL3ProductionVolume"></td>
+                    <td class="right" data-bind="decimal: $data.JL4ProductionVolume"></td>
+                </tr>
+
+            </tbody>
+            <tbody data-bind="visible: !listDataItems().length">
+                <tr>
+                    <td colspan="25" class="empty-row-message">Data Not Found</td>
+                </tr>
+            </tbody>
+
+
+        </table>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script src="~/Scripts/app/globalfunctions.js" type="text/javascript"></script>
+    <script src="~/Scripts/common/app.GridViewModel.js" type="text/javascript"></script>
+    <script src="~/Scripts/common/app.Extenders.js" type="text/javascript"></script>
+    <script type="text/javascript">
+
+        (function(app) {
+
+            app.EditGrid = function() {
+                var self = this;
+
+                self.itemLocations = ko.observableArray(@Html.Raw(Json.Encode(@Model.LocationLookupList)));
+                self.filterLocationCode = ko.observable($("#ddlFilterLocationCode").val());
+                self.weeklyYearFromFilter = ko.observable('@Model.DefaultYear');
+                self.weeklyWeekFromFilter = ko.observable('@Model.DefaultWeek');
+                self.weeklyYearToFilter = ko.observable('@Model.DefaultYear');
+                self.weeklyWeekToFilter = ko.observable('@Model.DefaultWeek');
+                self.monthlyYearFilter = ko.observable('@Model.DefaultYear');
+                //self.monthlyMonthFilter = ko.observable(1);
+                self.monthlyMonthFilter = ko.observable('@Model.DefaultMonth');
+                
+                self.WeeklyWeekFromSelectList = ko.observableArray([]);
+                self.WeeklyWeekToSelectList = ko.observableArray([]);
+
+                self.filterDateFrom = ko.observable(moment().toDate());
+                self.filterDateTo = ko.observable(moment().toDate());
+                
+                self.filterType = ko.observable('Period');
+                
+                //self.radioChange = function() {
+                //    self.filterType($('input[name=period]:checked').val());
+                //};
+                
+                self.onYearSelectedChange = function(param, target) {
+                    $.ajax({
+                        url: @Html.BaseUrl("TPOFeeReportsProduction/GetWeekByYear"),
+                        type: 'GET',
+                        contentType: 'application/json',
+                        data: { year: param },
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#' + target).find('option').remove();
+                            $('#' + target).selectpicker('refresh');
+                            var kpsWeekModel = [];
+                            $.each(data, function(index, value) {
+                                kpsWeekModel.push({ "Text": value, "Value": value });
+                            });
+                            if (target == 'weeklyWeekFromFilter') {
+                                self.WeeklyWeekFromSelectList(kpsWeekModel);
+                                self.weeklyWeekFromFilter('@Model.DefaultWeek');
+                            }
+
+                            if (target == 'weeklyWeekToFilter') {
+                                self.WeeklyWeekToSelectList(kpsWeekModel);
+                                self.weeklyWeekToFilter('@Model.DefaultWeek');
+                            }
+                        }
+                    });
+                };
+
+                self.gridView = new app.GridViewModel({
+                    Criteria: {
+                        PageSize: 150,
+                        PageIndex: 1,
+                        LocationCode : self.filterLocationCode,
+                        YearFrom: self.weeklyYearFromFilter,
+                        YearTo: self.weeklyYearToFilter,
+                        WeekFrom: self.weeklyWeekFromFilter,
+                        WeekTo: self.weeklyWeekToFilter,
+                        Month: self.monthlyMonthFilter,
+                        Year: self.monthlyYearFilter,
+                        DateFrom: self.filterDateFrom,
+                        DateTo: self.filterDateTo,
+                        FilterType: self.filterType
+                    },
+                    DataSourceUrl: @Html.BaseUrl("TPOFeeReportsProduction/GeTpoFeeReportProduction"),
+                    InlineEdit: true,
+                    InsertRowFocusedControlIndex: 1
+                });
+
+                self.yearWeekFrom =  ko.computed(function(){
+                    return self.weeklyYearFromFilter() + " - " + self.weeklyWeekFromFilter();
+                });
+
+                self.yearWeekTo =  ko.computed(function(){
+                    return self.weeklyYearToFilter() + " - " + self.weeklyWeekToFilter();
+                });
+
+                // Load Data
+                self.search = function() {
+                    $('.empty-row-message').html('<div class="loader"></div>'); // Reset New and Edit row
+
+                    // Check whether New or Edit data is existing and not saved to database yet (on Ajax Action)
+                    if (SKTIS.Checker.modifiedDataExistsForAjax([self.gridView.listNewItems, self.gridView.listEditItems]) == true) {
+                        return;
+                    } else {
+                        self.gridView.listNewItems.removeAll();
+                        self.gridView.listEditItems.removeAll();
+                    }
+
+                    self.gridView.search({}, function(response) {
+
+                        if (response.status == 'KO') {
+                            SKTIS.Helper.Notification(response.message, 'error');
+                            $('.empty-row-message').html(response.message);
+                        } else if (response.status == 'Empty') {
+
+                            self.RemoveNotification();
+
+                            //SKTIS.Helper.Notification(response.message,'warning');
+                            $('.empty-row-message').html('@CommonLabel.lblDataEmpty');
+                        }
+
+                    });
+
+                    self.RemoveNotification = function() {
+                        if ($('#noty_top_layout_container').length > 0) {
+                            $('#noty_top_layout_container').remove();
+                        }
+                    };
+                };
+                
+                self.generateExcel = function(formElement) {
+                    $(formElement).find("input[name=LocationCode]").val(self.filterLocationCode());
+                    $(formElement).find("input[name=YearFrom]").val(self.weeklyYearFromFilter());
+                    $(formElement).find("input[name=YearTo]").val(self.weeklyYearToFilter());
+                    $(formElement).find("input[name=WeekFrom]").val(self.weeklyWeekFromFilter());
+                    $(formElement).find("input[name=WeekTo]").val(self.weeklyWeekToFilter());
+                    $(formElement).find("input[name=Month]").val(self.monthlyMonthFilter());
+                    $(formElement).find("input[name=Year]").val(self.monthlyYearFilter());
+                    $(formElement).find("input[name=DateFrom]").val(self.filterDateFrom());
+                    $(formElement).find("input[name=DateTo]").val(self.filterDateTo());
+                    $(formElement).find("input[name=FilterType]").val(self.filterType());
+                    return true;
+                };
+
+
+            };
+            ko.applyBindings(new app.EditGrid());
+        })(app = this.app || {});
+
+</script>
+}

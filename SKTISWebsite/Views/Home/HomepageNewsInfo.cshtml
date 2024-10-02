@@ -1,0 +1,38 @@
+﻿@using HMS.SKTIS.Core
+@model IEnumerable<SKTISWebsite.Models.News.NewsInfoCompositeViewModel>
+
+@if (@Model.Any())
+{
+    <div class="row">
+        <div class="col-lg-12">
+            <!-- news -->
+            <div class="news-contain">
+                <h3>
+                    <i class="fa fa-bullhorn"></i> SKT News Info
+                </h3>
+                @foreach (var m in Model)
+                {
+                    <div class="col-md-6">
+                        <div class="news">
+                            <div class="image">
+                                <img src="@Url.Content(Constants.UploadPathNews + m.Image)">
+                            </div>
+                            <div class="news-title">
+                                @m.Title
+                            </div>
+                            <p>
+                                @m.ShortDescription
+                            </p>
+                            <p class="text-date">@m.UpdatedDate - @m.UpdateBy</p>
+                            <a class="readmore" href="@Url.Action("Details", "News", new { id = m.NewsId })">
+                                Selengkapnya <i class="fa fa-long-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                }
+
+            </div>
+            <!-- end news -->
+        </div>
+    </div>
+}

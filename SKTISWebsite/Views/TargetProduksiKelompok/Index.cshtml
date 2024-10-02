@@ -1,0 +1,370 @@
+﻿<div class="container-fluid">
+    <div class="row">
+        <ul class="breadcrumb">
+            <li><a href="#">Homepage</a></li>
+            <li><a class="active">Planning TPK</a></li>
+        </ul>
+        <div class="col-lg-12">
+            <div class="row">
+                <label class="form-label col-lg-2">
+                    Location
+                </label>
+                <div class="col-lg-1">
+                    <select class="form-control">
+                        <option>ALL</option>
+                        <option>ID21</option>
+                        <option>ID22</option>
+                        <option>ID23</option>
+                        <option>ID24</option>
+                    </select>
+                </div>
+                <div class="col-lg-2">
+                    <input type="text" class="form-control">
+                </div>
+            </div>
+            <div class="row">
+                <label class="form-label col-lg-2">
+                    Unit
+                </label>
+                <div class="col-lg-2">
+                    <select class="form-control">
+                        <option>2021</option>
+                        <option>2022</option>
+                        <option>2023</option>
+                        <option>2024</option>
+                        <option>GD 1</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <label class="form-label col-lg-2">
+                    Brand
+                </label>
+                <div class="col-lg-2">
+                    <select class="form-control">
+                        <option>FA010783.14</option>
+                        <option>FA010783.16</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <label class="form-label col-lg-2">
+                    TPK No
+                </label>
+                <div class="col-lg-2">
+                    <input type="text" class="form-control">
+                </div>
+            </div>
+            <div class="row">
+                <label class="form-label col-lg-2">
+                    Year
+                </label>
+                <div class="col-lg-2">
+                    <select class="form-control">
+                        <option>2015</option>
+                        <option>2014</option>
+                        <option>2013</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <label class="form-label col-lg-2">
+                    Week
+                </label>
+                <div class="col-lg-2">
+                    <select class="form-control">
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                        <option>4</option>
+                        <option>5</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <label class="form-label col-lg-2">
+                    Date
+                </label>
+                <div class="col-lg-2">
+                    <div class='input-group date' id='datetimepicker1'>
+                        <input type='text' class="form-control" />
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-primary">View</button>
+                    </div>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-primary">Save</button>
+                    </div>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-primary">Print</button>
+                    </div>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-primary">Excel</button>
+                    </div>
+                </div>
+            </div>
+            <div class="table-overflow">
+                <table class="table table-bordered table-hover">
+                    <thead>
+                        <tr class="head">
+                            <th colspan="5">Hari</th>
+                            <th>Senin</th>
+                            <th>Selasa</th>
+                            <th>Rabu</th>
+                            <th>Kamis</th>
+                            <th>Jumat</th>
+                            <th>Sabtu</th>
+                            <th>Minggu</th>
+                            <th>Total</th>
+                        </tr>
+                        <tr class="head">
+                            <th colspan="5">Tanggal</th>
+                            <th>09/03/2015</th>
+                            <th>10/03/2015</th>
+                            <th>11/03/2015</th>
+                            <th>12/03/2015</th>
+                            <th>13/03/2015</th>
+                            <th>14/03/2015</th>
+                            <th>15/03/2015</th>
+                            <th>16/03/2015</th>
+                        </tr>
+                        <tr class="head">
+                            <th colspan="5">Jam Kerja</th>
+                            <th>7</th>
+                            <th>7</th>
+                            <th>7</th>
+                            <th>7</th>
+                            <th>7</th>
+                            <th>5</th>
+                            <th>0</th>
+                            <th>40</th>
+                        </tr>
+                        <tr class="head">
+                            <th>Proses</th>
+                            <th>Kelompok</th>
+                            <th>Alokasi</th>
+                            <th>Terdaftar</th>
+                            <th>Tersedia</th>
+                            <th colspan="8">&nbsp;</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Giling</td>
+                            <td id="ModalShow">1161</td>
+                            <td class="current">48</td>
+                            <td>335</td>
+                            <td>335</td>
+                            <td>987</td>
+                            <td>1022</td>
+                            <td>1048</td>
+                            <td>1041</td>
+                            <td>970</td>
+                            <td>616</td>
+                            <td>0</td>
+                            <td>5684</td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td id="ModalShow">1161</td>
+                            <td class="current">48</td>
+                            <td>335</td>
+                            <td>335</td>
+                            <td>987</td>
+                            <td>1022</td>
+                            <td>1048</td>
+                            <td>1041</td>
+                            <td>970</td>
+                            <td>616</td>
+                            <td>0</td>
+                            <td>5684</td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td id="ModalShow">1161</td>
+                            <td class="current">48</td>
+                            <td>335</td>
+                            <td>335</td>
+                            <td>987</td>
+                            <td>1022</td>
+                            <td>1048</td>
+                            <td>1041</td>
+                            <td>970</td>
+                            <td>616</td>
+                            <td>0</td>
+                            <td>5684</td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td id="ModalShow">1161</td>
+                            <td class="current">48</td>
+                            <td>335</td>
+                            <td>335</td>
+                            <td>987</td>
+                            <td>1022</td>
+                            <td>1048</td>
+                            <td>1041</td>
+                            <td>970</td>
+                            <td>616</td>
+                            <td>0</td>
+                            <td>5684</td>
+                        </tr>
+                        <tr class="total">
+                            <td></td>
+                            <td>Total</td>
+                            <td>398</td>
+                            <td>398</td>
+                            <td>398</td>
+                            <td>6840</td>
+                            <td>7032</td>
+                            <td>7152</td>
+                            <td>7080</td>
+                            <td>7080</td>
+                            <td>4200</td>
+                            <td>0</td>
+                            <td>39384</td>
+                        </tr>
+                        <tr>
+                            <td>Gunting</td>
+                            <td id="ModalShow">1161</td>
+                            <td class="current">48</td>
+                            <td>335</td>
+                            <td>335</td>
+                            <td>987</td>
+                            <td>1022</td>
+                            <td>1048</td>
+                            <td>1041</td>
+                            <td>970</td>
+                            <td>616</td>
+                            <td>0</td>
+                            <td>5684</td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td id="ModalShow">1161</td>
+                            <td class="current">48</td>
+                            <td>335</td>
+                            <td>335</td>
+                            <td>987</td>
+                            <td>1022</td>
+                            <td>1048</td>
+                            <td>1041</td>
+                            <td>970</td>
+                            <td>616</td>
+                            <td>0</td>
+                            <td>5684</td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td id="ModalShow">1161</td>
+                            <td class="current">48</td>
+                            <td>335</td>
+                            <td>335</td>
+                            <td>987</td>
+                            <td>1022</td>
+                            <td>1048</td>
+                            <td>1041</td>
+                            <td>970</td>
+                            <td>616</td>
+                            <td>0</td>
+                            <td>5684</td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td id="ModalShow">1161</td>
+                            <td class="current">48</td>
+                            <td>335</td>
+                            <td>335</td>
+                            <td>987</td>
+                            <td>1022</td>
+                            <td>1048</td>
+                            <td>1041</td>
+                            <td>970</td>
+                            <td>616</td>
+                            <td>0</td>
+                            <td>5684</td>
+                        </tr>
+                        <tr class="total">
+                            <td></td>
+                            <td>Total</td>
+                            <td>398</td>
+                            <td>398</td>
+                            <td>398</td>
+                            <td>6840</td>
+                            <td>7032</td>
+                            <td>7152</td>
+                            <td>7080</td>
+                            <td>7080</td>
+                            <td>4200</td>
+                            <td>0</td>
+                            <td>39384</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!-- Modal -->
+            <div class="modal fade" id="WorkerBrand" role="dialog">
+                <div class="modal-dialog">
+                    <!-- Modal content-->
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Worker Brand Assignment</h4>
+                        </div>
+                        <div class="modal-body">
+                            <table class="table table-bordered table-hover">
+                                <thead>
+                                    <tr class="head">
+                                        <th><input type="checkbox"></th>
+                                        <th>ID</th>
+                                        <th>Name</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><input type="checkbox"></td>
+                                        <td>326746</td>
+                                        <td>Kotimah</td>
+                                    </tr>
+                                    <tr>
+                                        <td><input type="checkbox"></td>
+                                        <td>324361</td>
+                                        <td>Siti Rohmah</td>
+                                    </tr>
+                                    <tr>
+                                        <td><input type="checkbox"></td>
+                                        <td>305778</td>
+                                        <td>Sulastri</td>
+                                    </tr>
+                                    <tr>
+                                        <td><input type="checkbox"></td>
+                                        <td>306422</td>
+                                        <td>Kiswaroh</td>
+                                    </tr>
+                                    <tr>
+                                        <td><input type="checkbox"></td>
+                                        <td>326746</td>
+                                        <td>Kotimah</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Check All</button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Save</button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- End Modal -->
+        </div>
+    </div>
+</div>

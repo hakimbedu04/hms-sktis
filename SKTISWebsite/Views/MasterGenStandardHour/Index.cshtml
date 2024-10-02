@@ -1,0 +1,285 @@
+﻿@using HMS.SKTIS.Application.Resources
+@using SKTISWebsite.Helper
+@using HMS.SKTIS.Application.Resources.Views.MasterGenStandardHour
+@model SKTISWebsite.Models.MasterGenStandardHour.IndexMasterStandardHourViewModel
+
+@{Html.SetPageTitle(@MasterGenStandardHour.PageTitle);}
+<div data-bind="with: gridView" class="col-lg-12">
+    <div class="tpo-conversion">
+        <div id="master-standard-hour">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="action-btn">
+                        @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.View.ToString())) {
+                            <button type="button" class="btn btn-primary" data-bind="click: $root.saveData">@CommonLabel.btnSave</button>
+                        }
+                        @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.View.ToString())) {
+                            using (Html.BeginForm("GenerateExcel", "MasterGenStandardHour", FormMethod.Post))
+                            {
+                                <button type="submit" class="btn btn-primary">@CommonLabel.btnExcel</button>
+                            }
+                        }
+                        @Html.Partial("GridViewPageSizeSelector")
+                    </div>
+                </div>
+            </div>
+            <div class="table-overflow">
+                <table class="table table-striped">
+                    <thead>
+                        <tr class="head">
+                            <th data-bind="click:sortBy.bind($data, 'DayType'), css:sortCss('DayType', $data.sortExpression(), $data.sortOrder())">@MasterGenStandardHour.lblTitleDayType</th>
+                            <th data-bind="click:sortBy.bind($data, 'DayName'), css:sortCss('DayName', $data.sortExpression(), $data.sortOrder())">@MasterGenStandardHour.lblTitleDay</th>
+                            <th data-bind="click:sortBy.bind($data, 'JknHour'), css:sortCss('JknHour', $data.sortExpression(), $data.sortOrder())">@MasterGenStandardHour.lblTitleJKN</th>
+                            <th data-bind="click:sortBy.bind($data, 'Jl1Hour'), css:sortCss('Jl1Hour', $data.sortExpression(), $data.sortOrder())">@MasterGenStandardHour.lblTitleJL1</th>
+                            <th data-bind="click:sortBy.bind($data, 'Jl2Hour'), css:sortCss('Jl2Hour', $data.sortExpression(), $data.sortOrder())">@MasterGenStandardHour.lblTitleJL2</th>
+                            <th data-bind="click:sortBy.bind($data, 'Jl3Hour'), css:sortCss('Jl3Hour', $data.sortExpression(), $data.sortOrder())">@MasterGenStandardHour.lblTitleJL3</th>
+                            <th data-bind="click:sortBy.bind($data, 'Jl4Hour'), css:sortCss('Jl4Hour', $data.sortExpression(), $data.sortOrder())">@MasterGenStandardHour.lblTitleJL4</th>
+                            <th>@MasterGenStandardHour.lblTitleUpdatedBy</th>
+                            <th>@MasterGenStandardHour.lblTitleUpdatedDate</th>
+                        </tr>
+                        <tr class="insertRow" data-bind="inlineAddProccess:[$data, $root.newData]">
+                            <th>
+                                @Html.DropDownListFor(m => m.DayType, Model.DayType, new Dictionary<string, object>
+                                {
+                                    { "data-bind", "value:$root.newData.DayType" },
+                                    { "class", "selectpicker show-tick form-controlt" },
+                                    { "data-live-search","true" }
+                                })
+                            </th>
+                            <th>
+                                @Html.DropDownListFor(m => m.Day, Model.Day, new Dictionary<string, object>
+                                {
+                                    { "data-bind", "value:$root.newData.DayName" },
+                                    { "class", "selectpicker show-tick form-controlt" },
+                                    { "data-live-search","true" }
+                                })
+                            </th>
+                            <th><input data-bind="value:$root.newData.JknHour, valueUpdate: 'afterkeydown'" class="form-control transparent" type="number" data-sktis-validation="digit" min="1" /></th>
+                            <th><input data-bind="value:$root.newData.Jl1Hour, valueUpdate: 'afterkeydown'" class="form-control transparent" type="number" data-sktis-validation="digit" min="1" /></th>
+                            <th><input data-bind="value:$root.newData.Jl2Hour, valueUpdate: 'afterkeydown'" class="form-control transparent" type="number" data-sktis-validation="digit" min="1" /></th>
+                            <th><input data-bind="value:$root.newData.Jl3Hour, valueUpdate: 'afterkeydown'" class="form-control transparent" type="number" data-sktis-validation="digit" min="1" /></th>
+                            <th><input data-bind="value:$root.newData.Jl4Hour, valueUpdate: 'afterkeydown'" class="form-control transparent" type="number" data-sktis-validation="digit" min="1" /></th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody data-bind="foreach: listDataItems">
+                        @*item template*@
+                        <tr data-bind="if: ($parent.editingRowIndex() !== $index()),
+                                   click: $parent.editInline3.bind($data,$index())">
+                            <td><span data-bind="text: $data.DayType"></span></td>
+                            <td><span data-bind="text: $data.DayName"></span></td>
+                            <td class="current"><span data-bind="text: $data.JknHour"></span></td>
+                            <td class="current"><span data-bind="text: $data.Jl1Hour"></span></td>
+                            <td class="current"><span data-bind="text: $data.Jl2Hour"></span></td>
+                            <td class="current"><span data-bind="text: $data.Jl3Hour"></span></td>
+                            <td class="current"><span data-bind="text: $data.Jl4Hour"></span></td>
+                            <td><span data-bind="text: $data.UpdatedBy"></span></td>
+                            <td><span data-bind="text: $data.UpdatedDate"></span></td>
+                        </tr>
+                        @*edit template*@
+                        <tr data-bind="validationOptions: {insertMessages: false, showTooltip:true, decorateInputElement: true, errorElementClass: 'input-error'}, inlineProccess:[$parent,$data],
+                                   if:($parent.editingRowIndex() === $index()),
+                                   click: $parent.selectRow.bind($data, $index())">
+                            <td><span data-bind="text: $data.DayType"></span></td>
+                            <td><span data-bind="text: $data.DayName"></span></td>
+                            <td class="current"><input data-bind="value: $data.JknHour, valueUpdate: 'afterkeydown'" class="form-control transparent" type="number" data-sktis-validation="digit" min="1" /></td>
+                            <td class="current"><input data-bind="value: $data.Jl1Hour, valueUpdate: 'afterkeydown'" class="form-control transparent" type="number" data-sktis-validation="digit" min="1" /></td>
+                            <td class="current"><input data-bind="value: $data.Jl2Hour, valueUpdate: 'afterkeydown'" class="form-control transparent" type="number" data-sktis-validation="digit" min="1" /></td>
+                            <td class="current"><input data-bind="value: $data.Jl3Hour, valueUpdate: 'afterkeydown'" class="form-control transparent" type="number" data-sktis-validation="digit" min="1" /></td>
+                            <td class="current"><input data-bind="value: $data.Jl4Hour, tabToNext:[$parent,$data], valueUpdate: 'afterkeydown'" class="form-control transparent" type="number" data-sktis-validation="digit" min="1" /></td>
+                            <td><span data-bind="text: $data.UpdatedBy"></span></td>
+                            <td><span data-bind="text: $data.UpdatedDate"></span></td>
+                        </tr>
+                    </tbody>
+                    <tbody data-bind="visible: !listDataItems().length">
+                        <tr>
+                            <td colspan="9" class="empty-row-message"><div class="loader"></div></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div data-bind="if: (listDataItems() != null && listDataItems().length !== 0)">
+                @Html.Partial("GridViewFooter")
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script src="~/Scripts/common/app.GridViewModel.js" type="text/javascript"></script>
+    <script type="text/javascript">
+
+        (function (app) {
+            app.EditGrid = function () {
+                var self = this;
+
+                // object new data
+                self.newData =
+                {
+                    DayType: ko.observableArray([]),
+                    DayName: ko.observableArray([]),
+                    JknHour: ko.observable(''),
+                    Jl1Hour: ko.observable(''),
+                    Jl2Hour: ko.observable(''),
+                    Jl3Hour: ko.observable(''),
+                    Jl4Hour: ko.observable(''),
+                };
+
+                //description: init gridView
+                self.gridView = new app.GridViewModel({
+                    Criteria: { PageSize: 10, PageIndex: 1, SortExpression: "UpdatedDate", SortOrder: "DESC" },
+                    DataSourceUrl: @Html.BaseUrl("MasterGenStandardHour/Get"),
+                    InlineEdit: true,
+                    InsertRowFocusedControlIndex: 2
+                });
+
+                // description: validations
+                self.gridView.applyValidationRules = function (entity) {
+
+                    self.RemoveNotification();
+
+                    entity.JknHour.extend({
+                        required: {
+                            message: "<strong>JknHour</strong> must be filled with numbers!"
+                        },
+                        min: {
+                            params: 0,
+                            message: "<strong>JknHour</strong> value must be greater than or equal to 1!"
+                        }
+                    });
+                    entity.Jl1Hour.extend({
+                        required: {
+                            message: "<strong>Jl1Hour</strong> must be filled with numbers!"
+                        },
+                        min: {
+                            params: 0,
+                            message: "<strong>Jl1Hour</strong> value must be greater than or equal to 1!"
+                        }
+                    });
+                    entity.Jl2Hour.extend({
+                        required: {
+                            message: "<strong>Jl2Hour</strong> must be filled with numbers!"
+                        },
+                        min: {
+                            params: 0,
+                            message: "<strong>Jl2Hour</strong> value must be greater than or equal to 1!"
+                        }
+                    });
+                    entity.Jl3Hour.extend({
+                        required: {
+                            message: "<strong>Jl3Hour</strong> must be filled with numbers!"
+                        },
+                        min: {
+                            params: 0,
+                            message: "<strong>Jl3Hour</strong> value must be greater than or equal to 1!"
+                        }
+                    });
+                    entity.Jl4Hour.extend({
+                        required: {
+                            message: "<strong>Jl4Hour</strong> must be filled with numbers!"
+                        },
+                        min: {
+                            params: 0,
+                            message: "<strong>Jl4Hour</strong> value must be greater than or equal to 1!"
+                        }
+                    });
+
+                    console.log(entity.JknHour.extend.message);
+                };
+
+                // Reset Fields for Insert Row
+                self.gridView.resetDefault = function (viewModel) {
+                    viewModel.DayType([]);
+                    viewModel.DayName([]);
+                    viewModel.JknHour('');
+                    viewModel.Jl1Hour('');
+                    viewModel.Jl2Hour('');
+                    viewModel.Jl3Hour('');
+                    viewModel.Jl4Hour('');
+                };
+
+                // description: save bulk data
+                self.saveData = function () {
+                    if (self.gridView.editingRowIndex() !== -1)
+                        return;
+
+                    var datas =
+                    {
+                        "New": self.gridView.listNewItems(),
+                        "Edit": self.gridView.listEditItems()
+                    };
+
+                    datas = JSON.stringify(datas);
+
+                    $.ajax({
+                        url: @Html.BaseUrl("MasterGenStandardHour/Save"),
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: datas,
+                        dataType: 'json',
+                        success: function (data) {
+                            if (data.New) {
+                                $.each(data.New, function (k, value) {
+                                    if (value)
+                                        SKTIS.Helper.ResponseNotification(value, "Insert Standard Hour", value.DayType + " - " + value.DayName);
+                                });
+                            }
+
+                            if (data.Edit) {
+                                $.each(data.Edit, function (k, value) {
+                                    if (value)
+                                        SKTIS.Helper.ResponseNotification(value, "Edit Standard Hour", value.DayType + " - " + value.DayName);
+                                });
+                            }
+
+                            //self.gridView.reload();
+                            self.gridView.sort('UpdatedDate', 'DESC');
+                            self.gridView.listNewItems.removeAll();
+                            self.gridView.listEditItems.removeAll();
+                        }
+                    });
+                };
+
+                // description: load data
+                self.search = function () {
+                    $('.empty-row-message').html('<div class="loader"></div>'); // Reset New and Edit row
+                    // Check whether New or Edit data is existing and not saved to database yet (on Ajax Action)
+                    if (SKTIS.Checker.modifiedDataExistsForAjax([self.gridView.listNewItems, self.gridView.listEditItems]) == true) {
+                        return;
+                    }else{
+                        self.gridView.listNewItems.removeAll();
+                        self.gridView.listEditItems.removeAll();
+                    }
+
+                    self.gridView.search({}, function (response) {
+                        if (response.status == 'KO') {
+                            SKTIS.Helper.Notification(response.message,'error');
+                            $('.empty-row-message').html(response.message);
+                        }else if (response.status == 'Empty') {
+
+                            self.RemoveNotification();
+
+                            //SKTIS.Helper.Notification(response.message,'warning');
+                            $('.empty-row-message').html('@CommonLabel.lblDataEmpty');
+                        }
+                        $('.btn-primary').get(0).focus();
+                    });
+                    
+                    self.RemoveNotification = function() {
+                        if ($('#noty_top_layout_container').length > 0) {
+                            $('#noty_top_layout_container').remove();
+                        }
+                    };
+                };
+
+                self.search();
+                // Check whether New or Edit data is existing and not saved to database yet (on Request action)
+                SKTIS.Checker.modifiedDataExists([self.gridView.listNewItems, self.gridView.listEditItems]);
+
+            };
+            ko.applyBindings(new app.EditGrid());
+        })(app = this.app || {});
+    </script>
+}

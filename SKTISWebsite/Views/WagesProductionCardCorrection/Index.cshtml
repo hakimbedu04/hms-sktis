@@ -1,0 +1,1163 @@
+﻿@model SKTISWebsite.Models.ProductionCard.InitProductionCardViewModel
+@using HMS.SKTIS.Application.Resources
+@using SKTISWebsite.Helper
+@{ Html.SetPageTitle(" Production Card Correction "); }
+
+<div class="col-lg-12" data-bind="with: gridView">
+    <div class="col-lg-6">
+        <div class="row">
+            <label class="form-label col-lg-4">
+                Location
+            </label>
+            <div class="col-lg-2 offset-right">
+                @*@Html.DropDownList("ddlFilterLocationCode", new SelectList(Model.PLNTChildLocationLookupList, "LocationCode", "LocationCode"),
+                    new
+                    {
+                        @class = "selectpicker show-tick form-control",
+                        id = "ddlFilterLocationCode",
+                        data_live_search = "true",
+                        data_bind = "value:$root.filterLocationCode, event : { change : $root.onLocationCodeChange}"
+                    })*@
+                <select id="ddlFilterLocationCode"
+                        class="selectpicker show-tick form-control"
+                        data-live-search="true"
+                        data-bind="selectPicker:$root.filterLocationCode, optionsText: 'LocationCode', optionsValue : 'LocationCode', optionsAfterRender: locationDesc, selectPickerOptions: { optionsArray: $root.itemLocations }, event : { change : $root.onLocationCodeChange}"></select>
+            </div>
+            <div class="col-lg-4">
+                <input type="text" class="form-control" readonly="readonly" data-bind="value:$root.filterLocationName">
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-4">
+                Unit
+            </label>
+            <div class="col-lg-5">
+                <select class="selectpicker show-tick form-control" id="ddlUnitCodeFilter"
+                        data-live-search="true"
+                        data-bind="selectPicker: $root.filterUnitCode, optionsText: 'Text', optionsValue : 'Value', selectPickerOptions: { optionsArray: $root.unitCodeSelectList }"></select>
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-4">
+                Shift
+            </label>
+            <div class="col-lg-5">
+                <select class="selectpicker show-tick form-control" id="ddlShiftFilter"
+                        data-live-search="true"
+                        data-bind="selectPicker: $root.filterShift, optionsText: 'Text', optionsValue : 'Value', selectPickerOptions: { optionsArray: $root.shiftSelectList }"></select>
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-4">
+                Process
+            </label>
+            <div class="col-lg-5">
+                <select class="selectpicker show-tick form-control" id="ddlProcessFilter"
+                        data-live-search="true"
+                        data-bind="selectPicker: $root.filterProcess, optionsText: 'Text', optionsValue : 'Value', selectPickerOptions: { optionsArray: $root.processSelectList }, event: { change: $root.onUnitProcessOnSelection }"></select>
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-4">
+                Group
+            </label>
+            <div class="col-lg-5">
+                <select class="selectpicker show-tick form-control" id="ddlGroupFilter"
+                        data-live-search="true"
+                        data-bind="selectPicker: $root.filterGroup, optionsText: 'Text', optionsValue : 'Value', selectPickerOptions: { optionsArray: $root.groupSelectList }"></select>
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-4">
+                Brand
+            </label>
+            <div class="col-lg-5">
+                <select class="selectpicker show-tick form-control" id="ddlBrandFilter"
+                        data-live-search="true"
+                        data-bind="selectPicker: $root.filterBrand, optionsText: 'Text', optionsValue : 'Value', selectPickerOptions: { optionsArray: $root.brandSelectList }"></select>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="row">
+            <label class="form-label col-lg-3">
+                KPS Year
+            </label>
+            <div class="col-lg-6">
+                @Html.DropDownList("filterYear", Model.YearSelectList,
+                             new Dictionary<string, object> { { "data-bind", "value:$root.filterYear, event : { change : $root.onYearSelectedChange}" },
+                        { "class", "selectpicker show-tick form-controlt" },
+                        {"data-live-search","true"},{"id","filterYear"} })
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-3">
+                KPS Week
+            </label>
+            <div class="col-lg-6">
+                <select id="filterWeek" class="selectpicker show-tick form-control" data-live-search="true"
+                        data-bind="selectPicker: $root.filterWeek, optionsText: 'Value', optionsValue : 'Text', selectPickerOptions: { optionsArray: $root.WeekFromSelectList },  event : { change : $root.setDateRange }"></select>
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-3">
+                Date
+            </label>
+            <div class="col-lg-6">
+                <select id="filterDate" class="selectpicker show-tick form-control" data-live-search="true"
+                        data-bind="selectPicker: $root.filterDate, optionsText: 'Value', optionsValue : 'Text', selectPickerOptions: { optionsArray: $root.DateFromSelectList }"></select>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="action-btn">
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.View.ToString()))
+                {
+                    <button type="button" class="btn btn-primary" data-bind="click:$root.search, enable:!$root.isBusy()">View</button>
+                }
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.Save.ToString()))
+                {
+                    <button type="button" class="btn btn-primary" data-bind="click:$root.save, enable:$root.enableSaveBtn() && $root.RoleSave() && !$root.isBusy() ">Save</button>
+                }
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.Submit.ToString()))
+                {
+                    <button type="button" class="btn btn-primary" data-bind="click:$root.submitDatas, enable:$root.enableSubmitBtn() && $root.RoleSubmit() && !$root.isBusy()">Submit</button>
+                }
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.CancelSubmit.ToString()))
+                {
+                    <button type="button" class="btn btn-primary" data-bind="click:$root.cancelSubmit, enable:$root.enableCancelSubmitBtn() && $root.RoleCancelSubmit() && !$root.isBusy()">Cancel Submit</button>
+                }
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.Excel.ToString()))
+                {
+                    using (Html.BeginForm("GenerateExcel", "WagesProductionCardCorrection", FormMethod.Post, new { @data_bind = "submit: $root.generateExcel" }))
+                    {
+                        <input type="hidden" name="LocationCode">
+                        <input type="hidden" name="Unit">
+                        <input type="hidden" name="Shift">
+                        <input type="hidden" name="Process">
+                        <input type="hidden" name="Group">
+                        <input type="hidden" name="Brand">
+                        <input type="hidden" name="KPSYear">
+                        <input type="hidden" name="KPSWeek">
+                        <input type="hidden" name="Date">
+    <button type="submit" class="btn btn-primary" data-bind="enable:!$root.isBusy()">Excel</button>
+                    }
+                }
+                
+                @Html.Partial("GridViewPageSizeSelector")
+            </div>
+        </div>
+    </div>
+    <div class="table-overflow">
+        <table class="table table-striped">
+            <thead>
+                <tr class="head">
+                    <th colspan="2">Employee</th>
+                    <th colspan="3">Wages</th>
+                    <th rowspan="2">Remark</th>
+                    <th rowspan="2">Comment</th>
+                </tr>
+                <tr class="head">
+                    <th>Employee ID</th>
+                    <th>Name</th>
+                    <th>Production</th>
+                    <th>Absent</th>
+                    <th>Paid Other</th>
+                </tr>
+            </thead>
+            <tbody data-bind="foreach: listDataItems">
+                @*Insert template non disable*@
+                <tr data-bind="if: ($parent.editingRowIndex() !== $index() && $root.latestCondition() != 'Locked'), click: $parent.editInline3.bind($data,$index())">
+                    <td><span data-bind="text:$data.EmployeeID"></span></td>
+                    <td><span data-bind="text:$data.EmployeeName"></span></td>
+                    <td><span data-bind="decimal:$data.Production"></span></td>
+                    <td><span data-bind="text:$data.Absent"></span></td>
+                    <td class="current"><span data-bind="decimal:$data.UpahLain"></span></td>
+                    @*<td class="current" data-toggle="modal" data-target="#suratperiode" data-bind="click:$root.showSuratPeriode.bind($parent,$data,$index())">*@
+                    <td><span data-bind="text:$data.Remark"></span></td>
+                    <td class="current"><span data-bind="text:$data.Comments"></span></td>
+                </tr>
+                @*Insert template disable*@
+                <tr data-bind="if: ($parent.editingRowIndex() !== $index() && $root.latestCondition() == 'Locked'), click: $parent.editInline3.bind($data,$index())">
+                    <td><span data-bind="text:$data.EmployeeID"></span></td>
+                    <td><span data-bind="text:$data.EmployeeName"></span></td>
+                    <td><span data-bind="decimal:$data.Production"></span></td>
+                    <td><span data-bind="text:$data.Absent"></span></td>
+                    <td><span data-bind="decimal:$data.UpahLain"></span></td>
+                    <td><span data-bind="text:$data.Remark"></span></td>
+                    <td><span data-bind="text:$data.Comments"></span></td>
+                </tr>
+                @*Edit template non disable*@
+                <tr data-bind="validationOptions: {insertMessages: false, showTooltip:true, decorateInputElement: true, errorElementClass: 'input-error'}, inlineProccess:[$parent,$data],
+                                   if:($parent.editingRowIndex() === $index() && $root.latestCondition() != 'Locked'),
+                                   click: $parent.selectRow.bind($data, $index()),
+                                    event: {keydown:$parent.keydown}">
+                    <td><span data-bind="text:$data.EmployeeID"></span></td>
+                    <td><span data-bind="text:$data.EmployeeName"></span></td>
+                    <td><span data-bind="decimal:$data.Production"></span></td>
+                    <td><span data-bind="text:$data.Absent"></span></td>
+                    <td class="current"><input data-bind="value:$data.UpahLain, valueUpdate:'afterkeydown'" class="form-control transparent" type="number" data-sktis-validation="digit" min="0" /></td>
+                    @*<td class="current" data-toggle="modal" data-target="#suratperiode" data-bind="click:$root.showSuratPeriode.bind($parent,$data,$index())">*@
+                    <td><span data-bind="text:$data.Remark"></span></td>
+                    <td class="current"><input data-bind="value:$data.Comments,tabToNext:[$parent,$data], valueUpdate:'afterkeydown'" class="form-control transparent" /></td>
+                </tr>
+                @*Edit template disable*@
+                <tr data-bind="validationOptions: {insertMessages: false, showTooltip:true, decorateInputElement: true, errorElementClass: 'input-error'}, inlineProccess:[$parent,$data],
+                                   if:($parent.editingRowIndex() === $index() && $root.latestCondition() == 'Locked'),
+                                   click: $parent.selectRow.bind($data, $index()),
+                                    event: {keydown:$parent.keydown}">
+                    <td><span data-bind="text:$data.EmployeeID"></span></td>
+                    <td><span data-bind="text:$data.EmployeeName"></span></td>
+                    <td><span data-bind="decimal:$data.Production"></span></td>
+                    <td><span data-bind="text:$data.Absent"></span></td>
+                    <td><span data-bind="decimal:$data.UpahLain"></span></td>
+                    <td><span data-bind="text:$data.Remark"></span></td>
+                    <td><span data-bind="text:$data.Comments"></span></td>
+                </tr>
+            </tbody>
+            <tbody data-bind="visible: !listDataItems().length">
+                <tr>
+                    <td colspan="9" class="empty-row-message"><div class="loader"></div></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div data-bind="if: (listDataItems() != null && listDataItems().length !== 0)">
+        @Html.Partial("GridViewFooter")
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12">
+            <p class="bg-primary withmargin">Current Approval: </p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12">
+            @Html.Partial("TransactionHistory")
+        </div>
+    </div>
+
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="suratperiode" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Surat Periode Lalu</h4>
+            </div>
+            <div class="modal-body">
+                <div class="col-lg-12">
+                    <div class="row">
+                        <label class="form-label col-lg-3">
+                            ID
+                        </label>
+                        <div class="col-lg-5">
+                            <input type="text" class="form-control" readonly="readonly" data-bind="value: ko.utils.unwrapObservable(employeeIdSuratPeriode)">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label class="form-label col-lg-3">
+                            Absent Type
+                        </label>
+                        <div class="col-lg-5">
+                            @Html.DropDownList("ddlAbsentTypeSuratPeriode", new SelectList(Model.AbsentTypeLookupLists, "AbsentType", "AbsentType"),
+                                new
+                                {
+                                    @class = "selectpicker show-tick form-control",
+                                    id = "ddlAbsentTypeSuratPeriode",
+                                    data_live_search = "true",
+                                    data_bind = "value: $root.absentTypeSuratPeriode, event : { change : $root.getMaxDaySuratPeriode}"
+
+                                })
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label class="form-label col-lg-3">
+                            Max Day
+                        </label>
+                        <div class="col-lg-5">
+                            <input type="text" class="form-control" readonly="readonly" data-bind="value: maxDaySuratPeriode">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="action-btn">
+                                <button type="button" class="btn btn-primary" data-dismiss="modal" data-bind="click: saveSuratPeriode">Save</button>
+                                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="table-overflow">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr class="head">
+                                            <th class="column-check">
+                                                <input type="checkbox" data-bind="checked: SelectAll">
+                                            </th>
+                                            <th>Alpha Date</th>
+                                            <th>Abset Type</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody data-bind='foreach: listSuratPeriode'>
+                                        <tr>
+                                            <td><input type="checkbox" data-bind="checked: Status"></td>
+                                            <td><span data-bind="text: AlphaDate"></span></td>
+                                            <td><span data-bind="text: AbsentType"></span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal End -->
+@section Scripts
+{
+    <script src="~/Scripts/app/globalfunctions.js" type="text/javascript"></script>
+    <script src="~/Scripts/common/app.GridViewModel.js" type="text/javascript"></script>
+    <script src="~/Scripts/common/app.Extenders.js" type="text/javascript"></script>
+    <script type="text/javascript">
+
+        (function(app) {
+            app.EditGrid = function() {
+                var self = this;
+
+                self.itemLocations = ko.observableArray(@Html.Raw(Json.Encode(@Model.PLNTChildLocationLookupList)));
+                self.itemAbsentTypes = @Html.Raw(Json.Encode(@Model.AbsentTypeLookupLists));
+
+                self.filterLocationCode = ko.observable($("#ddlFilterLocationCode").val());
+                self.filterLocationName = ko.observable();
+                self.filterUnitCode = ko.observable('');
+                self.filterShift = ko.observable($("#ddlShiftFilter").val());
+                self.filterYear = ko.observable('@Model.DefaultYear');
+                self.filterWeek = ko.observable('@Model.DefaultWeek');
+                self.filterDate = ko.observable(moment().toDate());
+                self.filterProcess = ko.observable('');
+                self.filterGroup = ko.observable('');
+                self.filterBrand = ko.observable('');
+                self.editIndexRow = ko.observable(0);
+                self.revisionType = ko.observable(0);
+
+                self.enableSaveBtn = ko.observable(true);
+                self.enableSubmitBtn = ko.observable(true);
+                self.enableCancelSubmitBtn = ko.observable(false);
+
+                self.RoleSave = ko.observable(false);
+                self.RoleSubmit = ko.observable(false);
+                self.RoleCancelSubmit = ko.observable(false);
+                self.isBusy = ko.observable(true);
+
+                self.isLoading = ko.observable(true);
+                self.firstLoad = ko.observable(true);
+
+                //================= busy button state ================//
+                $(document).ajaxComplete(function () {
+                    if ($.active <= 1) {
+                        self.isBusy(false);
+                    }
+                });
+
+                $(document).ajaxStart(function () {
+                    if (!self.isBusy()) self.isBusy(true);
+                });
+                //================= busy button state ================//
+
+                //================= Role button state ================//
+                self.RoleButton = function(callback){
+                    $.ajax({
+                        url: @Html.BaseUrl("WagesProductionCardCorrection/RoleButton"),
+                        type: 'POST',
+                        async: false,
+                        contentType: 'application/json',
+                        data: ko.toJSON({
+                            LocationCode: self.filterLocationCode,
+                            Unit: self.filterUnitCode,
+                            Shift: self.filterShift,
+                            Process: self.filterProcess,
+                            Group: self.filterGroup,
+                            Brand: self.filterBrand,
+                            KPSYear: self.filterYear,
+                            KPSWeek: self.filterWeek,
+                            Date: self.filterDate,
+                            RevisionType: self.revisionType
+                            //WPC/ID22/1/2029/1193/FA010783.18/2016/32/3/0
+                        }),
+                        dataType: 'json',
+                        success: function(data) {
+                            self.RoleSave(data.Save);
+                            self.RoleSubmit(data.Submit);
+                            self.RoleCancelSubmit(data.CancelSubmit);
+                        },
+                        complete: function() {
+                            if (typeof callback != 'undefined') callback();
+                        }
+                    });
+                };
+                //================= Role button state ================//
+
+                self.newData = {
+                    Upahlain: ko.observable(''),
+                    Remark: ko.observable(''),
+                    Comments: ko.observable('')
+                };
+
+                //event on location dropdown change
+                self.onLocationCodeChange = function(callback) {
+                    //self.getLocationNameFilter();
+                    //self.getUnitCodeSelectListByLocation();
+                    //self.getShiftSelectList();
+                    //self.getProcessSelectList();
+                    //self.onUnitProcessOnSelection();
+                    
+                    if (!self.isLoading() && !self.firstLoad()) {
+                        self.isLoading(true);
+
+                        async.series([
+                        function(cb) {
+                            self.getLocationNameFilter(cb);
+                        },
+                        function(cb) {
+                            self.onYearSelectedChange(cb);
+                        },
+                        function(cb) {
+                            self.getUnitCodeSelectListByLocation(cb);
+                        },
+                        function(cb) {
+                            self.getShiftSelectList(cb);
+                        },
+                        function(cb) {
+                            self.getProcessSelectList(cb);
+                        },
+                        function(cb) {
+                            self.onUnitProcessOnSelection(cb);
+                        },
+                        function(cb) {
+                            self.getGroupSelectList(cb);
+                        },
+                        function(cb) {
+                            self.getBrandSelectList(cb);
+                        }
+                        
+                        ], function() {
+                            self.isLoading(false);
+                        });
+                    }
+                    if (typeof cb == 'function') cb();
+                                        
+                };
+
+                //get location name by location code
+                self.getLocationNameFilter = function(cb) {
+                    self.itemLocations().map(function(v) {
+                        if (typeof v.LocationCode !== 'undefined' && v.LocationCode == self.filterLocationCode()) {
+                            self.filterLocationName(v.LocationName);
+                        }
+                    });
+
+                    if (typeof cb == 'function') cb();
+                };
+
+                //prepare unitCode selectlist data
+                self.unitCodeSelectList = ko.observableArray();
+                self.getUnitCodeSelectListByLocation = function(cb) {
+                    $.ajax({
+                        url: @Html.BaseUrl("WagesProductionCardCorrection/GetUnitCodeSelectListByLocationCode"),
+                        type: 'GET',
+                        contentType: 'application/json',
+                        data: { locationCode: self.filterLocationCode() },
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#ddlUnitCodeFilter').find('option').remove();
+                            $('#ddlUnitCodeFilter').selectpicker('refresh');
+                            self.unitCodeSelectList(data);
+                        }
+                    }).done(function() {
+                        if (typeof cb != 'undefined') cb();
+                    });
+                };
+
+                //prepare Shift selectlist data
+                self.shiftSelectList = ko.observableArray([]);
+                self.getShiftSelectList = function(cb) {
+                    //console.log(self.filterLocationCode());
+                    $.ajax({
+                        url: @Html.BaseUrl("WagesProductionCardCorrection/GetShiftByLocation"),
+                        type: 'GET',
+                        contentType: 'application/json',
+                        data: { locationCode: self.filterLocationCode() },
+                        dataType: 'json',
+                        success: function(data) {
+                           
+                            $('#ddlShiftFilter').find('option').remove();
+                            $('#ddlShiftFilter').selectpicker('refresh');
+                            var kpsWeekModel = [];
+                            $.each(data, function(index, value) {
+                                kpsWeekModel.push({ "Text": value.Text, "Value": value.Text });
+                            });
+                            self.shiftSelectList(kpsWeekModel);
+                            self.filterShift(kpsWeekModel[0].Text);
+                        }
+                    }).done(function() {
+                        if (typeof cb != 'undefined') cb();
+                    });
+                };
+
+                //prepare Process selectlist data
+                self.processSelectList = ko.observableArray([]);
+                self.getProcessSelectList = function(cb) {
+                    $.ajax({
+                        url: @Html.BaseUrl("WagesProductionCardCorrection/GetProcessByLocationCode"),
+                        type: 'GET',
+                        contentType: 'application/json',
+                        data: { locationCode: self.filterLocationCode(), unit: self.filterUnitCode(), shift: self.filterShift(), productionDate: self.filterDate() },
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#ddlProcessFilter').find('option').remove();
+                            $('#ddlProcessFilter').selectpicker('refresh');
+                            var processModel = [];
+                            $.each(data, function(index, value) {
+                                processModel.push({ "Text": value.Text, "Value": value.Text });
+                            });
+                            self.processSelectList(processModel);
+                        }
+                    }).done(function() {
+                        if (typeof cb != 'undefined') cb();
+                    });
+                };
+
+                self.onUnitProcessOnSelection = function(cb) {
+                    
+                    if (ko.utils.unwrapObservable(self.filterLocationCode) == "" ||
+                        ko.utils.unwrapObservable(self.filterUnitCode) == "" ||
+                        ko.utils.unwrapObservable(self.filterProcess) == "") return;
+
+                    if (!self.isLoading() && !self.firstLoad()) {
+                        self.isLoading(true);
+                        console.log('on proces');
+
+                        async.series([
+                            function(callback) {
+                                self.getGroupSelectList(callback);
+                            },
+                            function(callback) {
+                                self.getBrandSelectList(callback);
+                            }
+                        ], function() {
+                            self.isLoading(false);
+                            if (typeof cb == 'function') cb();
+                        });
+                    }else{
+                        if (typeof cb == 'function') cb();
+                    }
+                };
+
+                //prepare Process selectlist data
+                self.groupSelectList = ko.observableArray([]);
+                self.getGroupSelectList = function(cb) {
+                    $.ajax({
+                        url: @Html.BaseUrl("WagesProductionCardCorrection/GetGroupCodeByLocationCode"),
+                        type: 'GET',
+                        contentType: 'application/json',
+                        data: { locationCode: self.filterLocationCode(), unit: self.filterUnitCode, shift: self.filterShift, process: self.filterProcess, productionDate: self.filterDate(), KpsYear: self.filterYear, KpsWeek: self.filterWeek },
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#ddlGroupFilter').find('option').remove();
+                            $('#ddlGroupFilter').selectpicker('refresh');
+                            var groupModel = [];
+                            $.each(data, function(index, value) {
+                                groupModel.push({ "Text": value.Text, "Value": value.Text });
+                            });
+                            self.groupSelectList(groupModel);
+                        }
+                    }).done(function() {
+                        if (typeof cb != 'undefined') cb();
+                    });
+                };
+
+                //prepare Brand selectlist data
+                self.brandSelectList = ko.observableArray([]);
+                self.getBrandSelectList = function(cb) {
+                    $.ajax({
+                        url: @Html.BaseUrl("WagesProductionCardCorrection/GetBrandCodeByLocationCode"),
+                        type: 'GET',
+                        contentType: 'application/json',
+                        data: { locationCode: self.filterLocationCode(), unit: self.filterUnitCode, shift: self.filterShift, process: self.filterProcess, productionDate: self.filterDate(), KpsYear: self.filterYear, KpsWeek: self.filterWeek },
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#ddlBrandFilter').find('option').remove();
+                            $('#ddlBrandFilter').selectpicker('refresh');
+                            var brandModel = [];
+                            $.each(data, function(index, value) {
+                                brandModel.push({ "Text": value.Text, "Value": value.Text });
+                            });
+                            self.brandSelectList(brandModel);
+                        }
+                    }).done(function() {
+                        if (typeof cb != 'undefined') cb();
+                    });
+                };
+
+                //event on Year dropdown change
+                self.onYearSelectedChange = function(cb) {
+                    //self.GetWeekFromSelectList();
+                    if (!self.isLoading() && !self.firstLoad()) {
+                        self.isLoading(true);
+
+                        async.series([
+                            function(callback) {
+                                self.GetWeekFromSelectList(callback);
+                            },
+                        ], function() {
+                            self.isLoading(false);
+                            if (typeof cb == 'function') cb();
+                        });
+                    }
+                    if (typeof cb == 'function') cb();
+                };
+
+                //prepare Week selectlist data
+                self.WeekFromSelectList = ko.observableArray([]);
+                self.GetWeekFromSelectList = function(cb) {
+                    $.ajax({
+                        url: @Html.BaseUrl("WagesProductionCardCorrection/GetWeekByYear"),
+                        type: 'GET',
+                        contentType: 'application/json',
+                        data: { year: self.filterYear() },
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#filterWeek').find('option').remove();
+                            $('#filterWeek').selectpicker('refresh');
+                            var kpsWeekModel = [];
+                            $.each(data, function(index, value) {
+                                kpsWeekModel.push({ "Text": value, "Value": value });
+                            });
+                            self.WeekFromSelectList(kpsWeekModel);
+                            self.filterWeek('@Model.DefaultWeek');
+                        }
+                    }).done(function() {
+                        if (typeof cb != 'undefined') cb();
+                    });
+                };
+
+                //prepare Date selectlist data
+                self.DateFromSelectList = ko.observableArray([]);
+                self.setDateRange = function(cb) {
+                    $.ajax({
+                        url: @Html.BaseUrl("WagesProductionCardCorrection/GetDateByYearWeek"),
+                        type: 'GET',
+                        contentType: 'application/json',
+                        data: { year: self.filterYear(), week: self.filterWeek() },
+                        dataType: 'json',
+                        success: function(data) {
+                            self.DateFromSelectList([]);
+                            $('#filterDate').find('option').remove();
+                            $('#filterDate').selectpicker('refresh');
+                            var model = [];
+                            $.each(data, function(index, value) {
+                                model.push({ "Text": value.Text, "Value": value.Text });
+                            });
+                            self.DateFromSelectList(model);
+                            self.filterDate(self.DateFromSelectList()[0]);
+                        },
+                        complete : function() {
+                            if (typeof cb == 'function') cb();
+                        }
+                    });
+                };
+
+                self.gridView = new app.GridViewModel({
+                    Criteria: {
+                        PageSize: 10,
+                        PageIndex: 1,
+                        SortExpression: "EmployeeID",
+                        SortOrder: "ASC",
+                        LocationCode: self.filterLocationCode,
+                        Unit: self.filterUnitCode,
+                        Shift: self.filterShift,
+                        Process: self.filterProcess,
+                        Group: self.filterGroup,
+                        Brand: self.filterBrand,
+                        KPSYear: self.filterYear,
+                        KPSWeek: self.filterWeek,
+                        Date: self.filterDate
+                    },
+                    DataSourceUrl: @Html.BaseUrl("WagesProductionCardCorrection/GetProductionCards"),
+                    InlineEdit: true,
+                    InsertRowFocusedControlIndex: 1
+                });
+
+                self.gridView.mapping = {
+                    create: function(options) {
+                        return new prodCard(options.data);
+                    }
+                };
+
+                // Field Validations
+                self.gridView.applyValidationRules = function(entity) {
+                };
+
+                self.listSuratPeriode = ko.observableArray([]);
+                self.employeeIdSuratPeriode = ko.observable('');
+                self.absentTypeSuratPeriode = ko.observable('');
+                self.maxDaySuratPeriode = ko.observable(0);
+
+                function prodCard(data) {
+                    ko.mapping.fromJS(data, {}, this);
+
+                    //data
+                    var production = ko.isObservable(data.Production) ? data.Production() : data.Production;
+                    var upahLain = ko.isObservable(data.UpahLain) ? data.UpahLain() : data.UpahLain;
+                
+                    //rounded value
+                    this.Production = ko.observable(production).extend({ numeric: 2 });
+                    this.UpahLain = ko.observable(upahLain).extend({ numeric: 2 });
+                };
+
+                // Get List Data on Popup Surat Periode lalu
+                self.showSuratPeriode = function(event, index){
+                    self.editIndexRow(index);
+                    self.employeeIdSuratPeriode(event.EmployeeID);
+
+                    self.getMaxDaySuratPeriode();
+
+                    $.ajax({
+                        url: @Html.BaseUrl("WagesProductionCardCorrection/GetSuratPeriode"),
+                        type: "GET",
+                        data: { 
+                            employeeId: event.EmployeeID,
+                            productionDate: event.ProductionDate,
+                            locationCode: event.LocationCode,
+                            unitCode: event.UnitCode,
+                            shift: event.Shift,
+                            groupCode: event.GroupCode,
+                            processGroup: event.ProcessGroup,
+                            brandCode: event.BrandCode,
+                            remark: event.Remark
+                        },
+                        dataType: "json",
+                        traditional: true,
+                        contentType: "application/json; charset=utf-8",
+                        success: function(data) {
+                            var list = [];
+                            $.each(data, function(index, value) {
+                                list.push({
+                                    "Status": ko.observable(value.Status),
+                                    "AlphaDate": value.AlphaDate,
+                                    "AbsentType": value.AbsentType,
+                                    "RevisionType": value.RevisionType,
+                                    "LocationCode": value.LocationCode,
+                                    "UnitCode": value.UnitCode,
+                                    "BrandCode": value.BrandCode,
+                                    "ProcessGroup": value.ProcessGroup,
+                                    "GroupCode": value.GroupCode,
+                                    "EmployeeID": value.EmployeeID,
+                                    "ProductionDate": value.ProductionDate});
+                            });
+                            self.listSuratPeriode(list);
+                        }
+                    });
+                };
+
+                // Get Max Day based EmployeeID and AbsentType
+                self.getMaxDaySuratPeriode = function(){
+                    $.ajax({
+                        url: @Html.BaseUrl("WagesProductionCardCorrection/GetMaxDaySuratPeriodeLalu"),
+                        type: "GET",
+                        data: { employeeId: ko.utils.unwrapObservable(self.employeeIdSuratPeriode()), absentType: $("#ddlAbsentTypeSuratPeriode").val(), year: self.filterYear },
+                        dataType: "json",
+                        traditional: true,
+                        contentType: "application/json; charset=utf-8",
+                        success: function(data) {
+                            self.maxDaySuratPeriode(data);
+                        }
+                    });
+                };
+
+                self.SelectAll = ko.computed({
+                    read: function() {
+                        var item = ko.utils.arrayFirst(self.listSuratPeriode(), function(item) {
+                            return !item.Status();
+                        });
+                        return item == null;
+                    },
+                    write: function(value) {
+                        ko.utils.arrayForEach(self.listSuratPeriode(), function (item) {
+                            item.Status(value);
+                        });
+                    }
+                });
+
+                self.saveSuratPeriode = function(){
+                    var count = 0;
+                    var alphaReplace = "";
+                    var remark = "";
+                    var dates = "";
+                    var result = "";
+                    $.each(self.listSuratPeriode(), function(index, value) {
+                        if(ko.utils.unwrapObservable(value.Status)){
+                            dates += value.AlphaDate + ";";
+                            count++;
+                        }
+                    });
+
+                    for (var i = 0; i < self.itemAbsentTypes.length; i++) {
+                        if (self.itemAbsentTypes[i].AbsentType == $("#ddlAbsentTypeSuratPeriode").val()) {
+                            alphaReplace = self.itemAbsentTypes[i].AlphaReplace;
+                            break;
+                        }
+                    }
+                    //console.log(alphaReplace.indexOf("##") > -1);
+                    if(alphaReplace != ""){
+                        result = (alphaReplace.replace('##', Array(Math.max(2 - String(2).length + 1, 0)).join(0) + count)) + ";" + dates;
+                        result = result.substring(0, result.length -1)
+                    }
+                    //console.log(result);
+                    self.gridView.listDataItems()[self.editIndexRow()].Remark(result);
+
+                    var datas = {
+                        "Parameters": {
+                            "saveButton": false
+                        },
+                        "edit": self.gridView.listEditItems()[self.editIndexRow()]
+                    };
+                    datas = JSON.stringify(datas);
+                    self.saveProcess(datas, false);
+                };
+
+                self.save = function() {
+                    if (self.gridView.editingRowIndex() !== -1)
+                        return;
+
+                    var datas = {
+                        "Parameters": {
+                            "saveButton": true
+                        },
+                        "edit": ko.mapping.toJS(self.gridView.listDataItems())
+                    };
+
+                    datas = JSON.stringify(datas);
+                    self.historyGridView.search({});
+                    self.saveProcess(datas, true);
+                    self.enableSubmitBtn(true);
+                };
+
+                self.saveProcess = function(datas, fromPopup){
+                    $.ajax({
+                        url: @Html.BaseUrl("WagesProductionCardCorrection/SaveProductionCards"),
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: datas,
+                        dataType: 'json',
+                        success: function(data) {
+
+                            if(fromPopup)
+                                SKTIS.Helper.ResponseNotification("", "Save Production Card", "");
+
+                            self.gridView.sort('EmployeeID', 'ASC');
+                            self.gridView.listNewItems.removeAll();
+                            self.gridView.listEditItems.removeAll();
+                        }
+                    });
+                };
+
+                self.submitDatas = function(){
+                    if (self.gridView.editingRowIndex() !== -1)
+                        return;
+
+                    var datas = {
+                        "Parameters": {
+                            "submitButton": true
+                        },
+                        "edit": ko.mapping.toJS(self.gridView.listDataItems())
+                    };
+                    datas = JSON.stringify(datas);
+                    self.generateTransactionLog(datas);
+                    //self.enableSubmitBtn(false);
+                    //self.enableCancelSubmitBtn(true);
+                };
+
+                self.cancelSubmit = function(){
+                    if (self.gridView.editingRowIndex() !== -1)
+                        return;
+
+                    var datas = {
+                        "Parameters": {
+                            "submitButton": false
+                        },
+                        "edit": ko.mapping.toJS(self.gridView.listDataItems())
+                    };
+                    datas = JSON.stringify(datas);
+                    self.generateTransactionLog(datas);
+                    //self.enableSubmitBtn(true);
+                    //self.enableCancelSubmitBtn(false);
+                };
+
+                self.generateTransactionLog = function(datas){
+                    $.ajax({
+                        url: @Html.BaseUrl("WagesProductionCardCorrection/SubmitProductionCards"),
+                        type: 'POST',
+                        async: false,
+                        contentType: 'application/json',
+                        data: datas,
+                        dataType: 'json',
+                        success: function(data) {
+                            SKTIS.Helper.Notification(data);
+                            self.gridView.sort('EmployeeID', 'ASC');
+                        }
+                    });
+                    checkButtonCondition();
+                };
+
+                // Load Data
+                self.search = function() {
+
+                    self.enableSaveBtn(true);
+
+                    $('.empty-row-message').html('<div class="loader"></div>'); // Reset New and Edit row
+                    // Check whether New or Edit data is existing and not saved to database yet (on Ajax Action)
+                    if (SKTIS.Checker.modifiedDataExistsForAjax([self.gridView.listNewItems, self.gridView.listEditItems]) == true) {
+                        return;
+                    } else {
+                        self.gridView.listNewItems.removeAll();
+                        self.gridView.listEditItems.removeAll();
+                    }
+
+                    self.gridView.search({}, function(response) {
+                        if (response.status == 'KO') {
+                            SKTIS.Helper.Notification(response.message, 'error');
+                            $('.empty-row-message').html(response.message);
+                        } else if (response.status == 'Empty') {
+
+                            self.enableSaveBtn(false);
+                            self.enableSubmitBtn(false);
+
+                            self.RemoveNotification();
+
+                            //SKTIS.Helper.Notification(response.message,'warning');
+                            $('.empty-row-message').html('@CommonLabel.lblDataEmpty');
+                        }
+
+                        if ( self.gridView.listDataItems().length )
+                        {
+                            self.gridView.listDataItems().map(function(item)
+                            {
+                                self.revisionType(item.RevisionType());
+                            });
+                    
+                        }
+
+                        checkButtonCondition();
+                        self.RoleButton();
+                        if (!self.firstLoad() || !self.isLoading()){
+                            self.loadHistory();
+                            self.loadFlow();
+                        }
+
+                    });
+                };
+
+                self.latestCondition = ko.observable("");
+                function checkButtonCondition() {
+                    $.ajax({
+                        url: @Html.BaseUrl("WagesProductionCardCorrection/GetLastConditionTranslogProdCardCorrection"),
+                        type: 'POST',
+                        async: false,
+                        contentType: 'application/json',
+                        data: ko.toJSON({
+                            LocationCode: self.filterLocationCode,
+                            Unit: self.filterUnitCode,
+                            Shift: self.filterShift,
+                            Process: self.filterProcess,
+                            Group: self.filterGroup,
+                            Brand: self.filterBrand,
+                            KPSYear: self.filterYear,
+                            KPSWeek: self.filterWeek,
+                            Date: self.filterDate,
+                            RevisionType: self.revisionType
+                        }),
+                        dataType: 'json',
+                        success: function(data) {
+                            if ( self.gridView.listDataItems().length === 0)
+                            {
+                                self.enableSaveBtn(false);
+                                self.enableSubmitBtn(false);
+                                return;
+                            }
+
+                            if (data == "Open") {
+                                self.latestCondition(data);
+                                self.enableSaveBtn(true);
+                                self.enableSubmitBtn(false);
+                                self.enableCancelSubmitBtn(false);
+                                return;
+                            }
+
+                            if(data == "Submitted"){
+                                self.enableSaveBtn(false);
+                                self.enableSubmitBtn(false);
+                                self.enableCancelSubmitBtn(true);
+                                self.latestCondition(data);
+                                return;
+                            }
+
+                            if(data == "Locked"){
+                                self.enableSaveBtn(false);
+                                self.enableSubmitBtn(false);
+                                self.enableCancelSubmitBtn(false);
+                                self.latestCondition(data);
+                                return;
+                            }
+                            
+                        }
+                    });
+                };
+
+                //description : generateExcel
+                self.generateExcel = function(formElement) {
+                    $(formElement).find("input[name=LocationCode]").val($('#ddlFilterLocationCode').val());
+                    $(formElement).find("input[name=Unit]").val($('#ddlUnitCodeFilter').val());
+                    $(formElement).find("input[name=Shift]").val($('#ddlShiftFilter').val());
+                    $(formElement).find("input[name=Process]").val($('#ddlProcessFilter').val());
+                    $(formElement).find("input[name=Group]").val($('#ddlGroupFilter').val());
+                    $(formElement).find("input[name=Brand]").val($('#ddlBrandFilter').val());
+                    $(formElement).find("input[name=KPSYear]").val($('#filterYear').val());
+                    $(formElement).find("input[name=KPSWeek]").val($('#filterWeek').val());
+                    $(formElement).find("input[name=Date]").val($('#filterDate').val());
+                    return true;
+                };
+
+                // TRANSACTION HISTORY AND FLOW
+                //wahyuedit
+                self.historyGridView = new app.GridViewModel({
+                    Criteria: { 
+                        PageSize: 10, 
+                        PageIndex: 1, 
+                        SortExpression: "UpdatedDate", 
+                        SortOrder: "DESC", 
+                        code_1: 'WPC',
+                        code_2: self.filterLocationCode,
+                        code_3: self.filterShift,
+                        code_4: self.filterUnitCode,                    
+                        code_5: self.filterGroup,
+                        code_6: self.filterBrand,
+                        code_7: self.filterYear,
+                        code_8: self.filterWeek,
+                        code_9: self.filterDate
+                    },
+                    DataSourceUrl: @Html.BaseUrl("WagesProductionCardCorrection/GetHistory"),
+                    InlineEdit: true,
+                    InsertRowFocusedControlIndex: 1
+                });
+                self.flowGridView = new app.GridViewModel({
+                    Criteria: { 
+                        PageSize: 10, 
+                        PageIndex: 1, 
+                        SortExpression: "IDFlow", 
+                        SortOrder: "ASC", 
+                        FunctionName: 'ProductionCard'
+                    },
+                    DataSourceUrl: @Html.BaseUrl("WagesProductionCardCorrection/GetFlow"),
+                    InlineEdit: true,
+                    InsertRowFocusedControlIndex: 1
+                });
+
+                self.loadHistory = function(cb){
+                    self.historyGridView.search({}, function (response) {
+                        if (response.status == 'KO') {
+                            SKTIS.Helper.Notification(response.message,'error');
+                            $('.empty-row-message').html(response.message);
+                        }else if (response.status == 'Empty') {
+
+                            self.RemoveNotification();
+                            
+                            //SKTIS.Helper.Notification(response.message,'warning');
+                            $('.empty-row-message').html('@CommonLabel.lblDataEmpty');
+                        }
+                    
+                        if (typeof cb != 'undefined') cb();
+                    });
+                };
+                self.loadFlow = function(cb){
+                    self.flowGridView.search({}, function (response) {
+                        if (response.status == 'KO') {
+                            SKTIS.Helper.Notification(response.message,'error');
+                            $('.empty-row-message').html(response.message);
+                        }else if (response.status == 'Empty') {
+
+                            self.RemoveNotification();
+                            
+                            //SKTIS.Helper.Notification(response.message,'warning');
+                            $('.empty-row-message').html('@CommonLabel.lblDataEmpty');
+                        }
+                    
+                        if (typeof cb != 'undefined') cb();
+                    });
+                };
+                // END OF TRANSACTION HISTORY AND FLOW
+
+                self.RemoveNotification = function() {
+                    if ($('#noty_top_layout_container').length > 0) {
+                        $('#noty_top_layout_container').remove();
+                    }
+                };
+
+
+                //================= Init Call ================//
+                $(document).ready(function(){
+                    self.init();
+                });
+
+                self.init = function() {
+                    self.isLoading(true);
+
+                    //Asynch setting
+                    async.series([
+                    function(cb) {
+                        self.getLocationNameFilter(cb);
+                    },
+                    function(cb) {
+                        self.GetWeekFromSelectList(cb);
+                    },
+                    function(cb) {
+                        self.getUnitCodeSelectListByLocation(cb);
+                    },
+                    function(cb) {
+                        self.getShiftSelectList(cb);
+                    },
+                    function(cb) {
+                        self.getProcessSelectList(cb);
+                    },
+                    function(cb) {
+                        self.onUnitProcessOnSelection(cb);
+                    },
+                    function(cb) {
+                        self.getGroupSelectList(cb);
+                    },
+                    function(cb) {
+                        self.getBrandSelectList(cb);
+                    }
+                        
+                    ], function() {
+                        self.search();
+                        self.firstLoad(false);
+                        self.isLoading(false);
+                    });
+
+                };
+            };
+            ko.applyBindings(new app.EditGrid());
+        })(app = this.app || {});
+
+    </script>
+}

@@ -1,0 +1,36 @@
+﻿@model SKTISWebsite.Models.PlantGroupShift.InitPlantGroupShift
+
+<div class="col-xs-5">
+    <label>Shift 1</label>
+    <select name="from" id="multiselect" class="form-control" size="8" multiple="multiple">
+        @foreach (var data in Model.ListPlantGroupShift1)
+        {
+            <option value="@data.GroupCode" data-unitcode="@data.UnitCode" data-locationcode="@data.LocationCode" data-processgroup="@data.ProcessGroup">@data.GroupCode</option>
+        }        
+    </select>
+</div>
+<div class="col-xs-2 group-shift-action">
+    <label>&nbsp;</label>
+    <button type="button" id="multiselect_rightAll" class="btn btn-block"><i class="glyphicon glyphicon-forward"></i></button>
+    <button type="button" id="multiselect_rightSelected" class="btn btn-block"><i class="glyphicon glyphicon-chevron-right"></i></button>
+    <button type="button" id="multiselect_leftSelected" class="btn btn-block"><i class="glyphicon glyphicon-chevron-left"></i></button>
+    <button type="button" id="multiselect_leftAll" class="btn btn-block"><i class="glyphicon glyphicon-backward"></i></button>
+    <button type="button" id="multiselect_swap" class="btn btn-block"><i class="glyphicon glyphicon-transfer"></i></button>
+</div>
+<div class="col-xs-5">
+    <label>Shift 2</label>
+    <select name="to" id="multiselect_to" class="form-control" size="8" multiple="multiple">
+        @foreach (var data in Model.ListPlantGroupShift2)
+        {
+            <option value="@data.GroupCode" data-unitcode="@data.UnitCode" data-locationcode="@data.LocationCode" data-processgroup="@data.ProcessGroup">@data.GroupCode</option>
+        }   
+    </select>
+</div>
+<span></span>
+<script>
+    $(document).ready(function () {
+        $('#dtpStartDate').data('DateTimePicker').date('@Model.StartDate');
+        $('#dtpEndDate').data('DateTimePicker').date('@Model.EndDate');
+        $('#multiselect').multiselect();
+    });    
+</script>

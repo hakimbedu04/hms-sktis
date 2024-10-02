@@ -1,0 +1,265 @@
+﻿@model SKTISWebsite.Models.ExeReportDailyProductionAchievement.InitExeReportDailyProductionAchievementViewModel
+@using System.Web.UI.WebControls
+@using HMS.SKTIS.Application.Resources
+@using SKTISWebsite.Helper
+@{ Html.SetPageTitle("Daily Production Achievement"); }
+
+<div class="col-lg-12">
+    <div class="col-lg-6">
+        <div class="row">
+            <label class="form-label col-lg-3">
+                Location
+            </label>
+            <div class="col-lg-3 offset-right">
+                @*@Html.DropDownList("ddlFilterLocationCode", new SelectList(Model.LocationSelectList, "LocationCode", "LocationCode"),
+                    new
+                    {
+                        @class = "selectpicker show-tick form-control",
+                        id = "ddlFilterLocationCode",
+                        data_live_search = "true",
+                        data_bind = "value:$root.filterLocationCode, event : { change : $root.onLocationCodeChange}"
+                    })*@
+                <select id="ddlFilterLocationCode"
+                        class="selectpicker show-tick form-control"
+                        data-live-search="true"
+                        data-bind="selectPicker:$root.filterLocationCode, optionsText: 'LocationCode', optionsValue : 'LocationCode', optionsAfterRender: locationDesc, selectPickerOptions: { optionsArray: $root.itemLocations }, event : { change : $root.onLocationCodeChange}"></select>
+            </div>
+
+            <div class="col-lg-4">
+                <input type="text" class="form-control" readonly="readonly" data-bind="value:$root.filterLocationName" />
+            </div>
+
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-3">
+                Year
+            </label>
+            <div class="col-lg-3 offset-right">
+                @Html.DropDownList("filterYearFrom", Model.YearSelectList,
+                                      new Dictionary<string, object> { { "data-bind", "value:$root.filterYearFrom, event : { change : $root.onYearSelectedChangeFrom}" },
+                        { "class", "selectpicker show-tick form-controlt" },
+                        {"data-live-search","true"},{"id","filterYearFrom"} })
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-3">
+                Week
+            </label>
+            <div class="col-lg-3 offset-right">
+                <select id="filterWeekFrom" class="selectpicker show-tick form-control" data-live-search="true"
+                        data-bind="selectPicker: $root.filterWeekFrom, optionsText: 'Value', optionsValue : 'Text', selectPickerOptions: { optionsArray: $root.WeekFromSelectList }"></select>
+            </div>
+        </div>
+    </div>
+
+    
+    <div class="row">
+        <div class="col-lg-12" >
+            <div class="action-btn">
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.View.ToString()))
+                {
+                    <button type="button" class="btn btn-primary" data-bind="click:$root.viewDataDailyReport">@CommonLabel.btnView</button>
+                }
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.Excel.ToString()))
+                {
+                    using (Html.BeginForm("GenerateExcel", "ExeReportDailyProduction", FormMethod.Post, new { @data_bind = "submit: $root.generateExcel" }))
+                    {
+                        <input type="hidden" name="LocationCode">
+                        <input type="hidden" name="FilterLocationName">
+                        <input type="hidden" name="YearFrom" />
+                        <input type="hidden" name="WeekFrom" />
+                        <button type="submit" class="btn btn-primary">@CommonLabel.btnExcel</button>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="">
+                @*<div id="labelPeriod">Period: Week -, -</div>*@
+                <div id="labelLocation"> Info :
+                    <span style="color:black">PLNT</span> 
+                    <span style="color:blue">REG1</span> 
+                    <span style="color:green">REG2</span> 
+                    <span style="color:magenta">REG3</span> 
+                    <span style="color:red">REG4</span> 
+                </div>
+            </div>
+        </div>
+    </div>
+    <br />
+    <div id="GridIndexReportDaily" class="table-container"></div>
+
+</div>
+@section scripts
+{
+    <script src="~/Scripts/app/globalfunctions.js" type="text/javascript"></script>
+    <script src="~/Scripts/common/app.GridViewModel.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        (function(app) {
+            app.EditGrid = function() {
+                var self = this;
+                self.firstInitFromUrl = ko.observable(false);
+                self.itemLocations = ko.observableArray(@Html.Raw(Json.Encode(@Model.LocationSelectList)));
+                self.WeekFromSelectList = ko.observableArray([]);
+                self.WeekToSelectList = ko.observableArray([]);
+
+                self.filterLocationCode = ko.observable($("#ddlFilterLocationCode").val());
+                self.filterLocationName = ko.observable();
+                self.filterYearFrom = ko.observable('@Model.DefaultYear');
+                self.filterWeekFrom = ko.observable('@Model.DefaultWeek');
+
+                // Events
+                self.onLocationCodeChange = function(cb) {
+                    self.getLocationNameFilter();
+                    if (typeof cb == 'function') cb();
+                };
+
+                self.onYearSelectedChangeFrom = function() {
+                    self.GetWeekFromSelectListFrom();
+                };
+
+                //get location name by location code
+                self.getLocationNameFilter = function() {
+                    //for (var i = 0; i < self.itemLocations.length; i++) {
+                    //    if (self.itemLocations[i].LocationCode == self.filterLocationCode()) {
+                    //        self.filterLocationName(self.itemLocations[i].LocationName);
+                    //        break;
+                    //    }
+                    //}
+                    self.itemLocations().map(function(v) {
+                        if (typeof v.LocationCode !== 'undefined' && v.LocationCode == self.filterLocationCode()) {
+                            self.filterLocationName(v.LocationName);
+                            //self.onLocationChange();
+                        }
+                    });
+
+                    if (typeof cb == 'function') cb();
+                };
+
+                self.onWeekChange = function() {
+                    $("#labelPeriod").html("Period: Week " + self.filterWeekFrom() + ", " + self.filterYearFrom());
+                    self.GetDateList();
+
+                };
+
+                self.onLocationChange = function() {
+                    $("#labelLocation").html("Location: "+ self.filterLocationCode());
+                    self.GetDateList();
+
+                };
+
+                //get date list
+                self.GetDateList = function() {
+                    $.ajax({
+                        url: @Html.BaseUrl("ExeReportDailyProduction/GetDateList"),
+                        type: 'GET',
+                        contentType: 'application/json',
+                        data: { year: self.filterYearFrom(), week: self.filterWeekFrom() },
+                        dataType: 'json',
+                        success: function(data) {
+                            $.each(data, function(index, value) {
+                                $("#dt" + (index + 1)).html(value);
+                            });
+                        }
+                    });
+                };
+                
+
+                self.WeekFromSelectList = ko.observableArray([]);
+                self.GetWeekFromSelectListFrom = function(cb) {
+                    $.ajax({
+                        url: @Html.BaseUrl("ExeReportDailyProduction/GetWeekByYear"),
+                        type: 'GET',
+                        asyc: false,
+                        contentType: 'application/json',
+                        data: { year: self.filterYearFrom() },
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#filterWeekFrom').find('option').remove();
+                            $('#filterWeekFrom').selectpicker('refresh');
+                            var proDateWeekModel = [];
+                            $.each(data, function(index, value) {
+                                proDateWeekModel.push({ "Text": value, "Value": value });
+                            });
+                            self.WeekFromSelectList(proDateWeekModel);
+                            self.filterWeekFrom('@Model.DefaultWeek');
+
+                            if(self.firstInitFromUrl()){
+                                self.filterWeekFrom('@Model.Param3Week');
+                            }
+
+                            self.onWeekChange();
+                        },
+                        complete : function() {
+                            if (typeof cb == 'function') cb();
+                        }
+                    });
+                };
+
+                self.viewDataDailyReport = function() {
+                    var input = {
+                        PageSize: 10,
+                        PageIndex: 1,
+                        LocationCode: self.filterLocationCode(),
+                        YearFrom: self.filterYearFrom(),
+                        WeekFrom: self.filterWeekFrom(),
+                    };
+                    $.ajax({
+                        url: @Html.BaseUrl("ExeReportDailyProduction/GetExeReportsDailyProduction"),
+                        type: 'GET',
+                        contentType: 'application/json',
+                        data: input,
+                        success: function(data) {
+                            $("#GridIndexReportDaily").html('');
+                            $("#GridIndexReportDaily").html(data);
+                            self.GetDateList();
+                            self.onWeekChange();
+                        }
+                    });
+                };
+
+                // Function generate excel
+                self.generateExcel = function(formElement) {
+                    $(formElement).find("input[name=LocationCode]").val($('#ddlFilterLocationCode').val());
+                    $(formElement).find("input[name=FilterLocationName]").val($('#filterLocationName').val());
+                    $(formElement).find("input[name=YearFrom]").val($('#filterYearFrom').val());
+                    $(formElement).find("input[name=WeekFrom]").val($('#filterWeekFrom').val());
+                    console.log($('#filterLocationName').val());
+                    return true;
+                };
+
+                $(document).ready(function(){
+
+                    if (typeof '@Model.Param1LocationCode' != 'undefined' && '@Model.Param1LocationCode') {
+                        self.firstInitFromUrl(true);
+                    };
+
+                    if(self.firstInitFromUrl()){
+                        self.filterLocationCode('@Model.Param1LocationCode');
+                        self.filterYearFrom('@Model.Param2Year');
+                    }
+
+                    async.series([
+                        function(callback) {
+                            self.onLocationCodeChange(callback);
+                        },
+                        function(callback) {
+                            self.GetWeekFromSelectListFrom(callback);
+                        }
+                    ], function() {
+                        self.firstInitFromUrl(false);
+                    });
+
+                });
+                self.GetDateList();
+                self.viewDataDailyReport();
+            };
+            ko.applyBindings(new app.EditGrid());
+        }
+        )(app = this.app || {});
+    </script>
+}
+
+    </div>

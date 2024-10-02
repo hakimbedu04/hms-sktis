@@ -1,0 +1,397 @@
+﻿@model SKTISWebsite.Models.PlanningReportProductionTarget.InitPlanningReportProductionTargetViewModel
+@using HMS.SKTIS.Application.Resources
+@using SKTISWebsite.Helper
+@{ Html.SetPageTitle("Summary Daily Production Targets"); }
+<div class="col-lg-12" data-bind="with: gridView">
+    <div class="col-lg-6">
+        <div class="row">
+            <label class="form-label col-lg-3">
+                Year
+            </label>
+            <div class="col-lg-4">
+                @Html.DropDownList("filterYear", Model.YearSelectList,
+                    new Dictionary<string, object> { { "data-bind", "value:$root.filterYear, event : { change : $root.onYearSelectedChange}" },
+                        { "class", "selectpicker show-tick form-controlt" },
+                        {"data-live-search","true"},{"id","filterYear"} })
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-3">
+                Location
+            </label>
+            <div class="col-lg-4">
+                @Html.DropDownList("filterLocation", Model.LocationSelectList,
+                                               new Dictionary<string, object> { { "data-bind", "value:$root.filterLocation, event : { change : $root.onLocationCodeChange}" },
+                { "class", "selectpicker show-tick form-controlt" },
+                {"data-live-search","true"},{"id","filterLocation"} })
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-3">
+                Decimal
+            </label>
+            <div class="col-lg-4">
+                <select id="filterDecimal" class="selectpicker show-tick form-control" data-live-search="true"
+                        data-bind="selectPicker: $root.filterDecimal">
+                    <option>2</option>
+                    <option>3</option>
+                    <option>4</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="row">
+            <label class="form-label col-lg-3">
+                Week
+            </label>
+            <div class="col-lg-4">
+                <select id="filterWeekFrom" class="selectpicker show-tick form-control" data-live-search="true"
+                        data-bind="selectPicker: $root.filterWeekFrom, optionsText: 'Value', optionsValue : 'Text', selectPickerOptions: { optionsArray: $root.WeekFromSelectList } "></select>
+            </div>
+            @*<label class="form-label col-lg-1">
+                    To
+                </label>
+                <div class="col-lg-4">
+                    <select id="filterWeekTo" class="selectpicker show-tick form-control" data-live-search="true"
+                            data-bind="selectPicker: $root.filterWeekTo, optionsText: 'Value', optionsValue : 'Text', selectPickerOptions: { optionsArray: $root.WeekToSelectList }"></select>
+                </div>*@
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <p id="labelPeriod" class="bg-primary">Period: Week 25, 2015</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="action-btn">
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.View.ToString()))
+                {
+                    <button type="button" class="btn btn-primary" data-bind="click:$root.search">@CommonLabel.btnView</button>
+                }
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.Excel.ToString()))
+                {
+                    using (Html.BeginForm("GenerateExcel", "PlanningReportProductionTarget", FormMethod.Post, new { @data_bind = "submit: $root.generateExcel" }))
+                    {
+                        <input type="hidden" name="Year">
+                        <input type="hidden" name="Decimal">
+                        <input type="hidden" name="Week">
+                        <input type="hidden" name="Date">
+                        <input type="hidden" name="Location">
+                        <button type="submit" class="btn btn-primary">@CommonLabel.btnExcel</button>
+                    }
+                }
+                
+                @Html.Partial("GridViewPageSizeSelector")
+            </div>
+        </div>
+    </div>
+    <div class="table-overflow">
+        <table class="table table-striped">
+            <thead>
+                <tr class="head">
+                    <th rowspan="2" data-bind="click:sortBy.bind($data,'BrandCode'), css:sortCss('BrandCode', $data.sortExpression(), $data.sortOrder())">Brand</th>
+                    <th rowspan="2" data-bind="click:sortBy.bind($data,'LocationCode'), css:sortCss('LocationCode', $data.sortExpression(), $data.sortOrder())">Location</th>
+                    <th>Monday</th>
+                    <th>Tuesday</th>
+                    <th>Wednesday</th>
+                    <th>Thursday</th>
+                    <th>Friday</th>
+                    <th>Saturday</th>
+                    <th>Sunday</th>
+                    <th rowspan="2">Total</th>
+                </tr>
+                <tr class="head">
+                    <th data-bind="click:sortBy.bind($data,'TargetManual1'), css:sortCss('TargetManual1', $data.sortExpression(), $data.sortOrder())"><span id="dt1"></span></th>
+                    <th data-bind="click:sortBy.bind($data,'TargetManual2'), css:sortCss('TargetManual2', $data.sortExpression(), $data.sortOrder())"><span id="dt2"></span></th>
+                    <th data-bind="click:sortBy.bind($data,'TargetManual3'), css:sortCss('TargetManual3', $data.sortExpression(), $data.sortOrder())"><span id="dt3"></span></th>
+                    <th data-bind="click:sortBy.bind($data,'TargetManual4'), css:sortCss('TargetManual4', $data.sortExpression(), $data.sortOrder())"><span id="dt4"></span></th>
+                    <th data-bind="click:sortBy.bind($data,'TargetManual5'), css:sortCss('TargetManual5', $data.sortExpression(), $data.sortOrder())"><span id="dt5"></span></th>
+                    <th data-bind="click:sortBy.bind($data,'TargetManual6'), css:sortCss('TargetManual6', $data.sortExpression(), $data.sortOrder())"><span id="dt6"></span></th>
+                    <th data-bind="click:sortBy.bind($data,'TargetManual7'), css:sortCss('TargetManual7', $data.sortExpression(), $data.sortOrder())"><span id="dt7"></span></th>
+                </tr>
+            </thead>
+            <tbody data-bind="foreach: listDataItems">
+                <tr>
+                    <td><span data-bind="text:$data.BrandCode"></span></td>
+                    <td><span data-bind="text:$data.LocationCode"></span></td>
+                    <td class="right"><span data-bind="decimal:$data.TargetManual1"></span></td>
+                    <td class="right"><span data-bind="decimal:$data.TargetManual2"></span></td>
+                    <td class="right"><span data-bind="decimal:$data.TargetManual3"></span></td>
+                    <td class="right"><span data-bind="decimal:$data.TargetManual4"></span></td>
+                    <td class="right"><span data-bind="decimal:$data.TargetManual5"></span></td>
+                    <td class="right"><span data-bind="decimal:$data.TargetManual6"></span></td>
+                    <td class="right"><span data-bind="decimal:$data.TargetManual7"></span></td>
+                    <td class="right"><span data-bind="decimal:$data.Total"></span></td>
+                </tr>
+            </tbody>
+            <tbody data-bind="visible: !listDataItems().length">
+                <tr>
+                    <td colspan="41" class="empty-row-message">
+                        <div class="loader"></div>
+                    </td>
+                </tr>
+            </tbody>
+            <tfoot data-bind="visible: listDataItems().length">
+                <tr class="total">
+                    <td colspan="2" class="right">Total</td>
+                    <td class="right"><span data-bind="decimal: $root.totalTargetManual1"></span></td>
+                    <td class="right"><span data-bind="decimal: $root.totalTargetManual2"></span></td>
+                    <td class="right"><span data-bind="decimal: $root.totalTargetManual3"></span></td>
+                    <td class="right"><span data-bind="decimal: $root.totalTargetManual4"></span></td>
+                    <td class="right"><span data-bind="decimal: $root.totalTargetManual5"></span></td>
+                    <td class="right"><span data-bind="decimal: $root.totalTargetManual6"></span></td>
+                    <td class="right"><span data-bind="decimal: $root.totalTargetManual7"></span></td>
+                    <td class="right"><span data-bind="decimal: $root.totalTarget"></span></td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+    <div data-bind="if: (listDataItems() != null && listDataItems().length !== 0)">
+        @Html.Partial("GridViewFooter")
+    </div>
+</div>
+
+@section Scripts
+{
+    <script src="~/Scripts/app/globalfunctions.js" type="text/javascript"></script>
+    <script src="~/Scripts/common/app.GridViewModel.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('#rdWeek').attr('checked', true);
+            $('#rdWeek').change();
+
+            $('#filterLocation').selectpicker('refresh');
+            $('#filterLocation').change();
+
+        });
+
+        (function(app) {
+            app.EditGrid = function() {
+                var self = this;
+
+                self.filterYear = ko.observable('@Model.DefaultYear');
+                self.filterWeekFrom = ko.observable('@Model.DefaultWeek');
+                //self.filterWeekTo = ko.observable('@Model.DefaultWeek');
+                self.filterDateFrom = ko.observable('@Model.TodayDate');
+                //self.filterDateTo = ko.observable($("#dtFilterTo").val());
+                self.filterLocation = ko.observable('SKT');
+                self.filterDecimal = ko.observable($('#filterDecimal').val());
+                self.onYearSelectedChange = function() {
+                    self.GetWeekFromSelectList();
+                    ///self.GetWeekToSelectList();
+                };
+
+                self.WeekFromSelectList = ko.observableArray([]);
+                self.GetWeekFromSelectList = function() {
+                    $.ajax({
+                        url: @Html.BaseUrl("PlanningReportProductionTarget/GetWeekByYear"),
+                        type: 'GET',
+                        contentType: 'application/json',
+                        data: { year: self.filterYear() },
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#filterWeekFrom').find('option').remove();
+                            $('#filterWeekFrom').selectpicker('refresh');
+                            var kpsWeekModel = [];
+                            $.each(data, function(index, value) {
+                                kpsWeekModel.push({ "Text": value, "Value": value });
+                            });
+                            self.WeekFromSelectList(kpsWeekModel);
+                            self.filterWeekFrom('@Model.DefaultWeek');
+
+                            //self.setDateRange();
+                        }
+                    });
+                };
+
+                //Function Set Date Range Filter
+                self.setDateRange = function() {
+                    if (self.initDate) {
+                        if (self.filterWeekFrom()) {
+                            $.ajax({
+                                url: @Html.BaseUrl("PlanningReportProductionTarget/GetDate"),
+                                type: 'GET',
+                                contentType: 'application/json',
+                                data: { year: self.filterYear(), week: self.filterWeekFrom() },
+                                dataType: 'json',
+                                success: function(data) {
+                                    $('#filterDateFrom').data("DateTimePicker").options({
+                                        maxDate: moment(data.EndDate),
+                                        minDate: moment(data.StartDate).subtract(1, 'days')
+                                    });
+
+                                    if ((moment(self.filterDateFrom(), "DD-MM-YYYY").diff(moment(data.StartDate), 'days') < 0) || (moment(self.filterDateFrom(), "DD-MM-YYYY").diff(moment(data.EndDate), 'days') > 0)) {
+                                        self.filterDateFrom(moment(data.StartDate));
+                                    }
+                                }
+                            });
+                        }
+                    } else {
+                        self.initDate = true;
+                    }
+                };
+
+                @*self.WeekToSelectList = ko.observableArray([]);
+                self.GetWeekToSelectList = function() {
+                    $.ajax({
+                        url: @Html.BaseUrl("PlanningReportProductionTarget/GetWeekByYear"),
+                        type: 'GET',
+                        contentType: 'application/json',
+                        data: { year: self.filterYear() },
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#filterWeekTo').find('option').remove();
+                            $('#filterWeekTo').selectpicker('refresh');
+                            var kpsWeekModel = [];
+                            $.each(data, function(index, value) {
+                                kpsWeekModel.push({ "Text": value, "Value": value });
+                            });
+                            self.WeekToSelectList(kpsWeekModel);
+                            self.filterWeekTo('@Model.DefaultWeek');
+                        }
+                    });
+                };*@
+
+                // Gridview Initialization
+                self.gridView = new app.GridViewModel({
+                    Criteria: {
+                        PageSize: 10,
+                        PageIndex: 1,
+                        SortExpression: "BrandCode",
+                        SortOrder: "DESC",
+                        Year: self.filterYear,
+                        Decimal: self.filterDecimal,
+                        Week: self.filterWeekFrom,
+                        Date: self.filterDateFrom,
+                        Location: self.filterLocation
+                    },
+                    DataSourceUrl: @Html.BaseUrl("PlanningReportProductionTarget/GetPlanningReportProductionTargets"),
+                    InlineEdit: true,
+                });
+
+                function reportProductionTarget(data) {
+                    ko.mapping.fromJS(data, {}, this);
+                    this.Total = ko.computed(function() {
+                        var result = parseToFloat(data.TargetManual1) + parseToFloat(data.TargetManual2)
+                            + parseToFloat(data.TargetManual3) + parseToFloat(data.TargetManual4)
+                            + parseToFloat(data.TargetManual5) + parseToFloat(data.TargetManual6)
+                            + parseToFloat(data.TargetManual7);
+                        return result % 1 === 0 ? result : result.toFixed($('#filterDecimal').val());
+                    }, this);
+                }
+
+                self.gridView.mapping = {
+                    create: function(options) {
+                        return new reportProductionTarget(options.data);
+                    }
+                };
+
+                //get location name by location code
+                self.onLocationCodeChange = function() {
+                    $('option:selected', $("#filterLocation")).text(self.filterLocation());
+                };
+
+                function getComputedTargetValue(fieldName) {
+                    return ko.computed(function() {
+                        var total = 0;
+                        ko.utils.arrayForEach(self.gridView.listDataItems(), function(item) {
+                            var field = ko.isObservable(item[fieldName]) ? item[fieldName]() : item[fieldName];
+                            var value = parseFloat(field);
+                            if (!isNaN(value)) {
+                                total += value;
+                            }
+                        });
+                        return total % 1 === 0 ? total : total.toFixed($('#filterDecimal').val());
+                    });
+                }
+
+                self.totalTargetManual1 = getComputedTargetValue('TargetManual1');
+                self.totalTargetManual2 = getComputedTargetValue('TargetManual2');
+                self.totalTargetManual3 = getComputedTargetValue('TargetManual3');
+                self.totalTargetManual4 = getComputedTargetValue('TargetManual4');
+                self.totalTargetManual5 = getComputedTargetValue('TargetManual5');
+                self.totalTargetManual6 = getComputedTargetValue('TargetManual6');
+                self.totalTargetManual7 = getComputedTargetValue('TargetManual7');
+                self.totalTarget = getComputedTargetValue('Total');
+
+                self.onWeekChange = function() {
+                    $("#labelPeriod").html("Period: Week " + self.filterWeekFrom() + ", " + self.filterYear());
+                    self.GetDateList();
+                };
+
+                self.GetDateList = function() {
+                    $.ajax({
+                        url: @Html.BaseUrl("PlanningReportProductionTarget/GetDateList"),
+                        type: 'GET',
+                        contentType: 'application/json',
+                        data: { year: self.filterYear(), week: self.filterWeekFrom(), date: self.filterDateFrom() },
+                        dataType: 'json',
+                        success: function(data) {
+                            $.each(data, function(index, value) {
+                                $("#dt" + (index + 1)).html(value);
+                            });
+                        }
+                    });
+                };
+
+                self.generateExcel = function(formElement) {
+                    $(formElement).find("input[name=Year]").val($('#filterYear').val());
+                    $(formElement).find("input[name=Decimal]").val($('#filterDecimal').val());
+                    $(formElement).find("input[name=Week]").val($('#filterWeekFrom').val());
+                    $(formElement).find("input[name=Location]").val($("#filterLocation").val());
+                    return true;
+                };
+
+                // Load Data
+                self.search = function() {
+                    self.onWeekChange();
+                    $('.empty-row-message').html('<div class="loader"></div>'); // Reset New and Edit row
+                    // Check whether New or Edit data is existing and not saved to database yet (on Ajax Action)
+                    if (SKTIS.Checker.modifiedDataExistsForAjax([self.gridView.listNewItems, self.gridView.listEditItems]) == true) {
+                        return;
+                    } else {
+                        self.gridView.listNewItems.removeAll();
+                        self.gridView.listEditItems.removeAll();
+                    }
+
+                    //self.filterExcelListGroup = self.filterListGroup();
+                    self.gridView.search({}, function(response) {
+                        if (response.status == 'KO') {
+                            SKTIS.Helper.Notification(response.message, 'error');
+                            $('.empty-row-message').html(response.message);
+                        } else if (response.status == 'Empty') {
+
+                            self.RemoveNotification();
+
+                            //SKTIS.Helper.Notification(response.message,'warning');
+                            $('.empty-row-message').html('@CommonLabel.lblDataEmpty');
+                        }
+                    });
+
+                    self.RemoveNotification = function() {
+                        if ($('#noty_top_layout_container').length > 0) {
+                            $('#noty_top_layout_container').remove();
+                        }
+                    };
+                };
+                self.search();
+
+                self.onYearSelectedChange();
+
+                // Check whether New or Edit data is existing and not saved to database yet (on Request action)
+                SKTIS.Checker.modifiedDataExists([self.gridView.listNewItems, self.gridView.listEditItems]);
+
+                $('#filterDateFrom').on('dp.change', function(e) {
+                    self.filterDateFrom('');
+                });
+
+                $('.col-lg-4 .input-group.date input').val('');
+
+            };
+            ko.applyBindings(new app.EditGrid());
+        })(app = this.app || {});
+
+    </script>
+}

@@ -1,0 +1,52 @@
+﻿<div style="height:10px;"></div>
+<div class="tabs" role="tabpanel">
+    <!-- Nav tabs -->
+    <ul class="nav nav-tabs" role="tablist" id="historyflow">
+        <li role="presentation" class="active"><a href="#history" aria-controls="home" role="tab" data-toggle="tab">History</a></li>
+        <li role="presentation"><a href="#flow" aria-controls="profile" role="tab" data-toggle="tab">Flow</a></li>
+    </ul>
+
+    <!-- Tab panes -->
+    <div class="tab-content">
+        <div role="tabpanel" class="tab-pane fade in active" id="history" data-bind="with: $root.historyGridView">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Role</th>
+                        <th>Action</th>
+                        <th>Date</th>
+                        <th>Note</th>
+                    </tr>
+                </thead>
+                <tbody data-bind="foreach: listDataItems">
+                    <tr>
+                        <td><span data-bind="text: $data.name"></span></td>
+                        <td><span data-bind="text: $data.role"></span></td>
+                        <td><span data-bind="text: $data.action"></span></td>
+                        <td><span data-bind="text: $data.date"></span></td>
+                        <td><span data-bind="text: $data.note"></span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div role="tabpanel" class="tab-pane fade" id="flow" data-bind="with: $root.flowGridView">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Role</th>
+                        <th>Note</th>
+                    </tr>
+                </thead>
+                <tbody data-bind="foreach: listDataItems">
+                    <tr>
+                        <td><span data-bind="text: $index()+1"></span></td>
+                        <td><span data-bind="text: $data.RolesName"></span></td>
+                        <td><span data-bind="text: $data.MessageText"></span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

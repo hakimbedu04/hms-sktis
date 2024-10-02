@@ -1,0 +1,727 @@
+﻿@model SKTISWebsite.Models.MasterGenProccessSetting.InitMasterGenProccessSetting
+@using HMS.SKTIS.Application.Resources
+@using HMS.SKTIS.Application.Resources.Views.MasterGenProcessSetting
+@using SKTISWebsite.Helper
+@{ Html.SetPageTitle(@MasterGenProcessSetting.PageTitle); }
+
+<div class="col-lg-12">
+    <div class="tabs" role="tabpanel">
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs" role="tablist" id="process-setting">
+            <li role="presentation" class="active"><a href="#process" aria-controls="profile" role="tab" data-toggle="tab">Process</a></li>
+            <li role="presentation"><a href="#location" aria-controls="home" role="tab" data-toggle="tab">Location</a></li>
+        </ul>
+
+        <!-- Tab panes -->
+        <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade in active" id="process" data-bind="with: gridViewProcess">
+                <div class="col-lg-6">
+                    <div class="row">
+                        <label class="form-label col-lg-4">
+                            @MasterGenProcessSetting.lblFilterBrandCode
+                        </label>
+                        <div class="col-lg-5">
+                            @Html.DropDownList("dllFilterBrandCode", Model.BrandGroupCodeSelectList, @CommonLabel.ddlSelectAll, new Dictionary<string, object>
+                            {
+                                {"data-bind", "selectPicker: $root.filterProcessTabBrandCode"},
+                                {"class", "selectpicker show-tick form-controlt"}, {"data-live-search", "true"}
+                            })
+                            @*<select class="selectpicker show-tick form-control" data-live-search="true" data-bind="selectPicker: $root.filterProcessTabIDProcess, optionsText: 'Name', optionsCaption: '@CommonLabel.ddlSelectAll',optionsValue : 'Name', selectPickerOptions: { optionsArray: $root.IDProcessSelectList }"></select>*@
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label class="form-label col-lg-4">
+                            Process ID
+                        </label>
+                        <div class="col-lg-5">
+                            <select class="selectpicker show-tick form-control" data-live-search="true" data-bind="selectPicker: $root.filterLocationTabIDProcess, optionsText: 'Name', optionsCaption: '@CommonLabel.ddlSelectAll',optionsValue : 'Name', selectPickerOptions: { optionsArray: $root.IDProcessSelectListLocation }"></select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="action-btn">
+                            @if (ViewBag.ButtonAccess.Contains(String.Format("{0}/{1}", HMS.SKTIS.Core.Enums.TabName.Process, HMS.SKTIS.Core.Enums.ButtonName.View)))
+                            {
+                                <button type="button" class="btn btn-primary" data-bind="click:$root.search">@CommonLabel.btnView</button>
+                            }
+                            @if (ViewBag.ButtonAccess.Contains(String.Format("{0}/{1}", HMS.SKTIS.Core.Enums.TabName.Process, HMS.SKTIS.Core.Enums.ButtonName.Save)))
+{
+                                <button type="button" class="btn btn-primary" data-bind="click:$root.saveDataProcess">@CommonLabel.btnSave</button>
+                            }
+                            @if (ViewBag.ButtonAccess.Contains(String.Format("{0}/{1}", HMS.SKTIS.Core.Enums.TabName.Process, HMS.SKTIS.Core.Enums.ButtonName.Excel)))
+                            {
+                                using (Html.BeginForm("GenerateExcelProcess", "MasterGenProcessSetting", FormMethod.Post, new { @data_bind = "submit: $root.generateExcelProcess" }))
+                                {
+                                    <input type="hidden" name="brandCode" />
+                                    <input type="hidden" name="process" />
+                                    <button type="submit" class="btn btn-primary">@CommonLabel.btnExcel</button>
+                                }
+                            }
+                            @Html.Partial("GridViewPageSizeSelector")
+                        </div>
+                    </div>
+                </div>
+                <div id="master-process-setting-proccess">
+                    <div class="table-overflow">
+                        <table class="table table-striped">
+                            <thead>
+                                @*<tr class="head">*@
+                                <tr class="head">
+                                    <th data-bind="click:sortBy.bind($data,'IDProcess'), css:sortCss('IDProcess', $data.sortExpression(), $data.sortOrder())">@MasterGenProcessSetting.lblTitleIDProcess</th>
+                                    <th data-bind="click:sortBy.bind($data,'BrandGroupCode'), css:sortCss('BrandGroupCode', $data.sortExpression(), $data.sortOrder())">@MasterGenProcessSetting.lblTitleBrandCode</th>
+                                    <th data-bind="click:sortBy.bind($data,'ProcessGroup'), css:sortCss('ProcessGroup', $data.sortExpression(), $data.sortOrder())">@MasterGenProcessSetting.lblTitleProcess</th>
+                                    <th data-bind="click:sortBy.bind($data,'ProcessOrder'), css:sortCss('ProcessOrder', $data.sortExpression(), $data.sortOrder())">@MasterGenProcessSetting.lblTitleProcessOrder</th>
+                                    <th data-bind="click:sortBy.bind($data,'StdStickPerHour'), css:sortCss('StdStickPerHour', $data.sortExpression(), $data.sortOrder())">@MasterGenProcessSetting.lblTitleStdStkHour</th>
+                                    <th data-bind="click:sortBy.bind($data,'MinStickPerHour'), css:sortCss('MinStickPerHour', $data.sortExpression(), $data.sortOrder())">@MasterGenProcessSetting.lblTitleMinStkHour</th>
+                                    <th data-bind="click:sortBy.bind($data,'UOMEblek'), css:sortCss('UOMEblek', $data.sortExpression(), $data.sortOrder())">@MasterGenProcessSetting.lblTitleUOMEblek</th>
+                                    <th data-bind="click:sortBy.bind($data,'MaxWorker'), css:sortCss('MaxWorker', $data.sortExpression(), $data.sortOrder())">@MasterGenProcessSetting.lblTitleMaxWorker</th>
+                                    <th data-bind="click:sortBy.bind($data,'Remark'), css:sortCss('Remark', $data.sortExpression(), $data.sortOrder())">@CommonLabel.lblTitleRemark</th>
+                                    <th>@CommonLabel.lblTitleUpdatedBy</th>
+                                    <th>@CommonLabel.lblTitleUpdatedDate</th>
+                                </tr>
+                                <tr class="insertRow" data-bind="click: cancelInline.bind(),inlineAddProccess:[$data, $root.newDataProcessTab]">
+                                    <th>
+                                        <select id="dllProceesID" class="selectpicker show-tick form-control" data-live-search="true" data-bind="selectPicker: $root.newDataProcessTab.IDProcess, optionsText: 'Name',optionsValue : 'Name', selectPickerOptions: { optionsArray: $root.IDProcessSelectListProcess }" data-size="auto"></select>
+                                    </th>
+                                    <th>
+                                        @Html.DropDownList("dllBrandCode", Model.BrandGroupCodeSelectList, new Dictionary<string, object>
+                                        {
+                                            {"data-bind", "value:$root.newDataProcessTab.BrandGroupCode"},
+                                            {"class", "selectpicker show-tick form-controlt"}, {"data-live-search", "true"}
+                                        })
+                                    </th>
+                                    <th>
+                                        @Html.DropDownList("dllProcessGroup", Model.ProcessGroupSelectList, new Dictionary<string, object>
+                                        {
+                                            {"data-bind", "value:$root.newDataProcessTab.ProcessGroup, event : { change : $root.newProcessChange}"},
+                                            {"class", "selectpicker show-tick form-controlt"}, {"data-live-search", "true"}, {"id", "dllProcessGroup"}
+                                        })
+                                    </th>
+                                    <th><span id="spProcessIdentifier" data-bind="text:$root.newDataProcessTab.ProcessOrder"></span></th>
+                                    <th><input data-bind="value:$root.newDataProcessTab.StdStickPerHour, valueUpdate: 'afterkeydown'" class="form-control transparent" type="number" data-sktis-validation="number" min="1" /></th>
+                                    <th><input data-bind="value:$root.newDataProcessTab.MinStickPerHour, valueUpdate: 'afterkeydown'" class="form-control transparent" type="number" data-sktis-validation="number" min="1" /></th>
+                                    <th><input data-bind="value:$root.newDataProcessTab.UOMEblek, valueUpdate: 'afterkeydown'" class="form-control transparent" type="number" data-sktis-validation="number" min="1"/></th>
+                                    <th><input data-bind="value:$root.newDataProcessTab.MaxWorker, valueUpdate: 'afterkeydown'" class="form-control transparent" /></th>
+                                    <th><input data-bind="value:$root.newDataProcessTab.Remark, valueUpdate: 'afterkeydown'" class="form-control transparent" /></th>
+                                    <th><span data-bind="text:$root.newDataProcessTab.UpdatedBy"></span></th>
+                                    <th><span data-bind="text:$root.newDataProcessTab.UpdatedDate"></span></th>
+                                </tr>
+                            </thead>
+                            <tbody data-bind="foreach: listDataItems">
+                                @*item template*@
+                                <tr data-bind="if: ($parent.editingRowIndex() !== $index()),
+                                   click: $parent.editInline3.bind($data,$index())">
+                                    <td><span data-bind="text:$data.IDProcess"></span></td>
+                                    <td><span data-bind="text:$data.BrandGroupCode"></span></td>
+                                    <td><span data-bind="text:$data.ProcessGroup"></span></td>
+                                    <td><span data-bind="text:$data.ProcessOrder"></span></td>
+                                    <td class="current"><span data-bind="text:$data.StdStickPerHour"></span></td>
+                                    <td class="current"><span data-bind="text:$data.MinStickPerHour"></span></td>
+                                    <td class="current"><span data-bind="text:$data.UOMEblek"></span></td>
+                                    <td class="current"><span data-bind="text:$data.MaxWorker"></span></td>
+                                    <td class="current"><span data-bind="text:$data.Remark"></span></td>
+                                    <td><span data-bind="text:$data.UpdatedBy"></span></td>
+                                    <td><span data-bind="text:$data.UpdatedDate"></span></td>
+                                </tr>
+                                @*edit template*@
+                                <tr data-bind="validationOptions: {insertMessages: false, showTooltip:true, decorateInputElement: true, errorElementClass: 'input-error'}, inlineProccess:[$parent,$data],
+                                   if:($parent.editingRowIndex() === $index()),
+                                   click: $parent.selectRow.bind($data, $index()),
+                                    event: {keydown:$parent.keydown}">
+                                    <td><span data-bind="text:$data.IDProcess"></span></td>
+                                    <td><span data-bind="text:$data.BrandGroupCode"></span></td>
+                                    <td><span data-bind="text:$data.ProcessGroup"></span></td>
+                                    <td><span data-bind="text:$data.ProcessOrder"></span></td>
+                                    <td class="current"><input data-bind="value:$data.StdStickPerHour, valueUpdate: 'afterkeydown'" class="form-control transparent" type="number" data-sktis-validation="number" min="1" /></td>
+                                    <td class="current"><input data-bind="value:$data.MinStickPerHour, valueUpdate: 'afterkeydown'" class="form-control transparent" type="number" data-sktis-validation="number" min="1" /></td>
+                                    <td class="current"><input data-bind="value:$data.UOMEblek, valueUpdate: 'afterkeydown'" class="form-control transparent" type="number" data-sktis-validation="number" min="1" /></td>
+                                    <td class="current"><input data-bind="value:$data.MaxWorker, valueUpdate: 'afterkeydown'" class="form-control transparent" type="number" data-sktis-validation="number" min="1" /></td>
+                                    <td class="current"><input data-bind="value:$data.Remark,tabToNext:[$parent,$data], valueUpdate:'afterkeydown'" class="form-control transparent" /></td>
+                                    <td><span data-bind="text:$data.UpdatedBy"></span></td>
+                                    <td><span data-bind="text:$data.UpdatedDate"></span></td>
+                                </tr>
+                            </tbody>
+                            <tbody data-bind="visible: !listDataItems().length">
+                                <tr>
+                                    <td colspan="9" class="empty-row-message"><div class="loader"></div></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div data-bind="if: (listDataItems() != null && listDataItems().length !== 0)">
+                        @Html.Partial("GridViewFooter")
+                    </div>
+                </div>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="location" data-bind="with: gridViewLocation">
+                <div class="col-lg-6">
+                    <div class="row">
+                        <label class="form-label col-lg-4">
+                            Location
+                        </label>
+                        <div class="col-lg-3">
+                            @*@Html.DropDownList("ddlLocationFilter", Model.LocationCodeSelectList,
+                                new Dictionary<string, object>
+                                {
+                                    {"data-bind", "value:$root.filterLocationTabLocationCode, event : { change : $root.onLocationCodeChange}"},
+                                    {"class", "selectpicker show-tick form-control"},
+                                    {"data-live-search", "true"}, {"id", "ddlLocationFilter"}
+                                })*@
+
+                            <select id="ddlLocationFilter"
+                                    class="selectpicker show-tick form-control"
+                                    data-live-search="true"
+                                    data-bind="selectPicker:$root.filterLocationTabLocationCode, optionsText: 'LocationCode', optionsValue : 'LocationCode', optionsAfterRender: locationDesc, selectPickerOptions: { optionsArray: $root.menuItemLocations}, event : { change : $root.onLocationCodeChange}"></select>
+
+                        </div>
+                        <div class="col-lg-5">
+                            <input data-bind="value: $root.filterLocationName" type="text" class="form-control" readonly="readonly">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label class="form-label col-lg-4">
+                            Brand Group Codes
+                        </label>
+                        <div class="col-lg-5">
+                            @Html.DropDownList("ddlBrandGroupFilter", Model.BrandGroupCodeSelectList, @CommonLabel.ddlSelectAll,
+                                new Dictionary<string, object>
+                                {
+                                    {"data-bind", "value:$root.filterLocationTabBrandGroupCode"},
+                                    {"class", "selectpicker show-tick form-control"},
+                                    {"data-live-search", "true"}, {"id", "ddlBrandGroupFilter"}
+                                })
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label class="form-label col-lg-4">
+                            Process ID
+                        </label>
+                        <div class="col-lg-5">
+                            <select class="selectpicker show-tick form-control" data-live-search="true" data-bind="selectPicker: $root.filterLocationTabIDProcess, optionsText: 'Name', optionsCaption: '@CommonLabel.ddlSelectAll',optionsValue : 'Name', selectPickerOptions: { optionsArray: $root.IDProcessSelectListLocation }"></select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="action-btn">
+                            @if (ViewBag.ButtonAccess.Contains(String.Format("{0}/{1}", HMS.SKTIS.Core.Enums.TabName.Location, HMS.SKTIS.Core.Enums.ButtonName.View)))
+                            {
+                                <button type="button" class="btn btn-primary" data-bind="click:$root.searchLocation">@CommonLabel.btnView</button>
+                            }
+                            @if (ViewBag.ButtonAccess.Contains(String.Format("{0}/{1}", HMS.SKTIS.Core.Enums.TabName.Location, HMS.SKTIS.Core.Enums.ButtonName.Save)))
+                            {
+                                <button type="button" class="btn btn-primary" data-bind="click:$root.saveDataLocation">@CommonLabel.btnSave</button>
+                            }
+                            @if (ViewBag.ButtonAccess.Contains(String.Format("{0}/{1}", HMS.SKTIS.Core.Enums.TabName.Location, HMS.SKTIS.Core.Enums.ButtonName.Excel)))
+                            {
+                                using (Html.BeginForm("GenerateExcelLocation", "MasterGenProcessSetting", FormMethod.Post, new {@data_bind = "submit: $root.generateExcelLocation"}))
+                                 {
+                                     <input type="hidden" name="locationCode" />
+                                     <input type="hidden" name="brandGroupCode" />
+                                     <input type="hidden" name="idProcess" />
+                                     <button type="submit" class="btn btn-primary">@CommonLabel.btnExcel</button>
+                                 }
+                            }
+                            @Html.Partial("GridViewPageSizeSelector")
+                        </div>
+                    </div>
+                </div>
+                <div class="table-overflow">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr class="head">
+                                <th data-bind="click:sortBy.bind($data,'IDProcess'), css:sortCss('IDProcess', $data.sortExpression(), $data.sortOrder())">@MasterGenProcessSetting.lblTitleProcessID</th>
+                                <th data-bind="click:sortBy.bind($data,'LocationCode'), css:sortCss('LocationCode', $data.sortExpression(), $data.sortOrder())">@MasterGenProcessSetting.lblTitleLocation</th>
+                                <th data-bind="click:sortBy.bind($data,'MstGenLocations.LocationName'), css:sortCss('MstGenLocations.LocationName', $data.sortExpression(), $data.sortOrder())">@MasterGenProcessSetting.lblTitleLocationName</th>
+                                @*<th data-bind="click:sortBy.bind($data,'MaxWorker'), css:sortCss('MaxWorker', $data.sortExpression(), $data.sortOrder())" class="widthsmall">@MasterGenProcessSetting.lblTitleMaxWorker</th>*@
+                                <th></th>
+                            </tr>
+                            <tr class="insertRow" data-bind="click: cancelInline.bind(),inlineAddProccess:[$data, $root.newDataLocationTab]">
+                                <th>
+                                    <select class="selectpicker show-tick form-control" data-live-search="true" data-bind="selectPicker: $root.newDataLocationTab.IDProcess, optionsText: 'Name' ,optionsValue : 'Name', selectPickerOptions: { optionsArray: $root.IDProcessSelectListLocation }" data-size="auto"></select>
+                                </th>
+                                <th>
+                                    @Html.DropDownList("ddlLocationCode", Model.LocationCodeSelectList,
+                                        new Dictionary<string, object>
+                                        {
+                                            {"data-bind", "value:$root.newDataLocationTab.LocationCode, event : { change : $root.newLocationCodeChange}"},
+                                            {"class", "selectpicker show-tick form-control"},
+                                            {"data-live-search", "true"}, {"id", "ddlLocationCode"},{ "data-size", "10"}
+                                        })
+                                </th>
+                                <th><span id="spLocationName" data-bind="text:$root.newDataLocationTab.LocationName"></span></th>
+                                @*<th class="widthsmall"><input data-bind="value:$root.newDataLocationTab.MaxWorker, valueUpdate: 'afterkeydown'" class="form-control transparent" type="number" data-sktis-validation="number" min="1" /></th>*@
+                                <th class="widthsmall"></th>
+                            </tr>
+                        </thead>
+                        <tbody data-bind="foreach: listDataItems">
+                            @*item template*@
+                            <tr data-bind="if: ($parent.editingRowIndex() !== $index()),
+                                   click: $parent.editInline3.bind($data,$index())">
+                                <td class="current"><span data-bind="text:$data.IDProcess"></span></td>
+                                <td><span data-bind="text:$data.LocationCode"></span></td>
+                                <td><span data-bind="text:$data.LocationName"></span></td>
+                                @*<td class="current"><span data-bind="text:$data.MaxWorker"></span></td>*@
+                                <td>
+                                    <button type="button" class="btn btn-danger" disabled="disabled">Delete</button>
+                                </td>
+                            </tr>
+                            @*edit template*@
+                            <tr data-bind="validationOptions: {insertMessages: false, showTooltip:true, decorateInputElement: true, errorElementClass: 'input-error'}, inlineProccess:[$parent,$data],
+                                   if:($parent.editingRowIndex() === $index()),
+                                   click: $parent.selectRow.bind($data, $index()),
+                                    event: {keydown:$parent.keydown}">
+                                <td class="current">
+                                    <select class="selectpicker show-tick form-control"
+                                            data-live-search="true"
+                                            data-bind="selectPicker: $data.IDProcess,
+                                            optionsText: 'Name', optionsValue : 'Name', selectPickerOptions: { optionsArray: $root.IDProcessSelectListLocation }"></select>
+                                    @*<input data-bind="value:$data.IDProcess, valueupdate: 'afterkeydown' " class=" form-control transparent" type="number" data-sktis-validation="number" min="1" />*@
+                                </td>
+                                <td><span data-bind="text:$data.LocationCode"></span></td>
+                                <td><span data-bind="text:$data.LocationName"></span></td>
+                                @*<td class="current"><input data-bind="value:$data.MaxWorker, valueUpdate: 'afterkeydown'" class="form-control transparent" type="number" data-sktis-validation="number" min="1" /></td>*@
+                                <td>
+                                    <button data-bind="attr:{'data-IDProcess':$data.IDProcess,'data-LocationCode':$data.LocationCode}" type="button" class="btn btn-danger row-delete">Delete</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tbody data-bind="visible: !listDataItems().length">
+                            <tr>
+                                <td colspan="4" class="empty-row-message"><div class="loader"></div></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div data-bind="if: (listDataItems() != null && listDataItems().length !== 0)">
+                    @Html.Partial("GridViewFooter")
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts
+{
+    <script src="~/Scripts/app/globalfunctions.js" type="text/javascript"></script>
+    <script src="~/Scripts/common/app.GridViewModel.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        $(function() {
+            $('#process-setting a').click(function(e) {
+                e.preventDefault();
+                $(this).tab('show');
+            });
+        });
+        (function(app) {
+            app.EditGrid = function() {
+                var self = this;
+                self.processList = @Html.Raw(Json.Encode(@Model.ProcessList));
+                self.locationNameList = @Html.Raw(Json.Encode(@Model.LocationNameLookupList));
+                self.menuItemLocations = ko.observableArray(@Html.Raw(Json.Encode(@Model.LocationNameLookupList)));
+
+                //filter: process tab
+                //self.filterProcessTabIDProcess = ko.observableArray([]);
+                //self.filterProcessTabExcelIDProcess = self.filterProcessTabIDProcess();
+
+                self.filterProcessTabBrandCode = ko.observable('');
+                self.filterProcessTabProcess = ko.observable('');
+
+                //filter: location tab
+                self.filterLocationTabLocationCode = ko.observableArray([]);
+                self.filterLocationTabBrandGroupCode = ko.observableArray([]);
+                self.filterLocationTabIDProcess = ko.observableArray([]);
+                self.filterLocationTabExcelLocationCode = self.filterLocationTabLocationCode();
+                self.filterLocationTabExcelBrandGroupCode = self.filterLocationTabBrandGroupCode();
+                self.filterLocationTabExcelIDProcess = self.filterLocationTabIDProcess();
+                self.filterLocationName = ko.observable();
+
+                //get location name by location code
+                self.onLocationCodeChange = function() {
+                    for (var i = 0; i < self.locationNameList.length; i++) {
+                        if (self.locationNameList[i].LocationCode == self.filterLocationTabLocationCode()) {
+                            self.filterLocationName(self.locationNameList[i].LocationName);
+                            break;
+                        }
+                    }
+                };
+
+                self.newProcessChange = function() {
+                    for (var i = 0; i < self.processList.length; i++) {
+                        if (self.processList[i].ProcessGroup === self.newDataProcessTab.ProcessGroup()) {
+                            self.newDataProcessTab.ProcessOrder(self.processList[i].ProcessOrder);
+                            break;
+                        }
+                    }
+                }.bind(this);
+
+                self.newLocationCodeChange = function() {
+                    for (var i = 0; i < self.locationNameList.length; i++) {
+                        if (self.locationNameList[i].LocationCode === self.newDataLocationTab.LocationCode()) {
+                            self.newDataLocationTab.LocationName(self.locationNameList[i].LocationName);
+                            break;
+                        }
+                    }
+                }.bind(this);
+
+                self.getDefaultProcessIdentifier = function() {
+                    var result = "";
+                    for (var i = 0; i < self.processList.length; i++) {
+                        if (self.processList[i].ProcessGroup === $("#dllProcessGroup").val()) {
+                            result = self.processList[i].ProcessOrder;
+                            break;
+                        }
+                    }
+                    return result;
+                };
+
+                self.getDefaultLocationName = function() {
+                    var result = "";
+                    for (var i = 0; i < self.locationNameList.length; i++) {
+                        if (self.locationNameList[i].LocationCode === $("#ddlLocationCode").val()) {
+                            result = self.locationNameList[i].LocationName;
+                            break;
+                        }
+                    }
+                    return result;
+                };
+
+                //newdata: process tab
+                self.newDataProcessTab = {
+                    BrandGroupCode: ko.observableArray([]),
+                    IDProcess: ko.observableArray([]),
+                    ProcessGroup: ko.observableArray([]),
+                    ProcessOrder: ko.observable(self.getDefaultProcessIdentifier()),
+                    StdStickPerHour: ko.observable(''),
+                    MinStickPerHour: ko.observable(''),
+                    UOMEblek: ko.observable(''),
+                    Remark: ko.observable(''),
+                    MaxWorker: ko.observable('')
+                };
+
+                //newdata: location tab
+                self.newDataLocationTab = {
+                    IDProcess: ko.observableArray([]),
+                    LocationCode: ko.observableArray([]),
+                    LocationName: ko.observable(self.getDefaultLocationName())
+                };
+
+                //description: init gridView process tab
+                self.gridViewProcess = new app.GridViewModel({
+                    Criteria: { PageSize: 10, PageIndex: 1, SortExpression: "IDProcess", SortOrder: "ASC", BrandCode: self.filterProcessTabBrandCode, IDProcess: self.filterLocationTabIDProcess },
+                    DataSourceUrl: @Html.BaseUrl("MasterGenProcessSetting/GetProcessSettings"),
+                    InlineEdit: true,
+                    InsertRowFocusedControlIndex: 1
+                });
+
+                //description: init gridView location tab
+                self.gridViewLocation = new app.GridViewModel({
+                    Criteria: { PageSize: 10, PageIndex: 1, SortExpression: "LocationCode", SortOrder: "ASC", LocationCode: self.filterLocationTabLocationCode, BrandGroupCode: self.filterLocationTabBrandGroupCode, IDProcess: self.filterLocationTabIDProcess },
+                    DataSourceUrl: @Html.BaseUrl("MasterGenProcessSetting/GetProcessSettingsLocations"),
+                    InlineEdit: true,
+                    InsertRowFocusedControlIndex: 1
+                });
+
+                //validations: process tab
+                self.gridViewProcess.applyValidationRules = function(entity) {
+
+                    self.RemoveNotification();
+
+                    entity.StdStickPerHour.extend({
+                        required: {
+                            message: "<strong>Std Stk/Hour</strong> cannot be empty!"
+                        }
+                    });
+
+                    entity.BrandGroupCode.extend({
+                        required: {
+                            message: "<strong>Brand Code</strong> cannot be empty!"
+                        }
+                    });
+                    entity.ProcessGroup.extend({
+                        required: {
+                            message: "<strong>Process</strong> cannot be empty!"
+                        }
+                    });
+                    entity.StdStickPerHour.extend({
+                        number: {
+                            message: "<strong>Std Stk/Hour</strong> must be number!"
+                        }
+                    });
+                    entity.MinStickPerHour.extend({
+                        number: {
+                            message: "<strong>Min Stk/Hour</strong> must be number!"
+                        }
+                    });
+                    //entity.Remark.extend({
+                    //    required: {
+                    //        message: "<strong>Remark</strong> cannot be empty!"
+                    //    }
+                    //});
+                    entity.MaxWorker.extend({
+                        required: {
+                            message: "<strong>Qty Worker</strong> cannot be empty!"
+                        }
+                    }).extend({
+                        number: {
+                            message: "<strong>Qty Worker</strong> must be number!"
+                        }
+                    });
+                };
+
+                //validations: location tab
+                self.gridViewLocation.applyValidationRules = function(entity) {
+                    console.log(entity);
+
+                    self.RemoveNotification();
+
+                    entity.IDProcess.extend({
+                        required: {
+                            message: "<strong>Process ID</strong> cannot be empty!"
+                        }
+                    });
+                    entity.LocationCode.extend({
+                        required: {
+                            message: "<strong>Location</strong> cannot be empty!"
+                        }
+                    });
+                };
+
+                // Reset Fields for Insert Row
+                self.gridViewProcess.resetDefault = function(viewModel) {
+                    viewModel.BrandGroupCode('');
+                    viewModel.ProcessGroup('');
+                    viewModel.ProcessOrder(self.getDefaultProcessIdentifier());
+                    viewModel.StdStickPerHour('');
+                    viewModel.MinStickPerHour('');
+                    viewModel.UOMEblek('');
+                    viewModel.Remark('');
+                };
+
+                self.gridViewLocation.resetDefault = function(viewModel) {
+                    viewModel.IDProcess('');
+                    viewModel.LocationCode('');
+                    viewModel.LocationName(self.getDefaultLocationName());
+                    viewModel.MaxWorker('');
+                };
+
+                //description: save bulk data process tab
+                self.saveDataProcess = function() {
+                    if (self.gridViewProcess.editingRowIndex() !== -1)
+                        return;
+
+                    var datas = {
+                        "New": self.gridViewProcess.listNewItems(),
+                        "Edit": self.gridViewProcess.listEditItems()
+                    };
+
+                    datas = JSON.stringify(datas);
+                    $.ajax({
+                        url:  @Html.BaseUrl("MasterGenProcessSetting/SaveAllProcessSettings"),
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: datas,
+                        dataType: 'json',
+                        success: function(data) {
+                            console.log(data);
+                            if (data.New) {
+                                $.each(data.New, function(k, value) {
+                                    if (value)
+                                        SKTIS.Helper.ResponseNotification(value, "Insert Proccess Setting Info", value.BrandGroupCode + " - " + value.ProcessGroup);
+                                });
+                            }
+
+                            if (data.Edit) {
+                                $.each(data.Edit, function(k, value) {
+                                    if (value)
+                                        SKTIS.Helper.ResponseNotification(value, "Edit Proccess Setting Info", value.BrandGroupCode + " - " + value.ProcessGroup);
+                                });
+                            }
+
+                            self.initFilterProcess('process');
+                            self.initFilterProcess('location');
+                            self.gridViewProcess.sort('IDProcess', 'ASC');
+                            self.gridViewProcess.listNewItems.removeAll();
+                            self.gridViewProcess.listEditItems.removeAll();
+                        }
+                    });
+                };
+
+                //description: save bulk data location tab
+                self.saveDataLocation = function() {
+                    if (self.gridViewLocation.editingRowIndex() !== -1)
+                        return;
+
+                    var datas = {
+                        "New": self.gridViewLocation.listNewItems(),
+                        "Edit": self.gridViewLocation.listEditItems()
+                    };
+
+                    datas = JSON.stringify(datas);
+                    $.ajax({
+                        url:  @Html.BaseUrl("MasterGenProcessSetting/SaveAllProcessSettingLocations"),
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: datas,
+                        dataType: 'json',
+                        success: function(data) {
+                            console.log(data);
+                            if (data.New) {
+                                $.each(data.New, function(k, value) {
+                                    if (value)
+                                        SKTIS.Helper.ResponseNotification(value, "Insert Proccess Setting Location", value.IDProcess + " - " + value.LocationCode);
+                                });
+                            }
+
+                            if (data.Edit) {
+                                $.each(data.Edit, function(k, value) {
+                                    if (value)
+                                        SKTIS.Helper.ResponseNotification(value, "Edit Proccess Setting Location", value.IDProcess + " - " + value.LocationCode);
+                                });
+                            }
+                            self.gridViewLocation.sort('LocationCode', 'ASC');
+                            self.gridViewLocation.listNewItems.removeAll();
+                            self.gridViewLocation.listEditItems.removeAll();
+                        }
+                    });
+                };
+
+                self.generateExcelProcess = function(formElement) {
+                    console.log(self.filterProcessTabBrandCode());
+                    $(formElement).find("input[name=brandCode]").val(self.filterProcessTabBrandCode());
+                    $(formElement).find("input[name=process]").val(self.filterProcessTabProcess());
+                    return true;
+                };
+
+                self.generateExcelLocation = function(formElement) {
+                    $(formElement).find("input[name=locationCode]").val(self.filterLocationTabExcelLocationCode);
+                    $(formElement).find("input[name=brandGroupCode]").val(self.filterLocationTabExcelBrandGroupCode);
+                    $(formElement).find("input[name=idProcess]").val(self.filterLocationTabExcelIDProcess);
+                    return true;
+                };
+
+                self.IDProcessSelectListProcess = ko.observableArray();
+                self.IDProcessSelectListLocation = ko.observableArray();
+                self.initFilterProcess = function(tab) {
+                    $.ajax({
+                        url:  @Html.BaseUrl("MasterGenProcessSetting/GetIDProcessSelectList"),
+                        type: 'GET',
+                        contentType: 'application/json',
+                        data: {'increment' : (tab == 'process') ? true : false },
+                        dataType: 'json',
+                        cache:false,
+                        success: function(data) {
+                            var idProcessModel = [];
+                            $.each(data, function(index, value) {
+                                idProcessModel.push({ "Name": value });
+                            });
+                            if(tab == 'process')
+                                self.IDProcessSelectListProcess(idProcessModel);
+                            else if(tab == 'location')
+                                self.IDProcessSelectListLocation(idProcessModel);
+                        }
+                    });
+                };
+
+                //load data: process
+                self.search = function() {
+
+                    $('.empty-row-message').html('<div class="loader"></div>'); // Reset New and Edit row
+                    // Check whether New or Edit data is existing and not saved to database yet (on Ajax Action)
+                    if (SKTIS.Checker.modifiedDataExistsForAjax([self.gridViewProcess.listNewItems, self.gridViewProcess.listEditItems]) == true) {
+                        return;
+                    }else{
+                        self.gridViewProcess.listNewItems.removeAll();
+                        self.gridViewProcess.listEditItems.removeAll();
+                    }
+
+                    self.gridViewProcess.search({}, function (response) {
+                        if (response.status == 'KO') {
+                            SKTIS.Helper.Notification(response.message,'error');
+                            $('.empty-row-message').html(response.message);
+                        }else if (response.status == 'Empty') {
+
+                            self.RemoveNotification();
+
+                            //SKTIS.Helper.Notification(response.message,'warning');
+                            $('.empty-row-message').html('@CommonLabel.lblDataEmpty');
+                        }
+                    });
+                };
+
+                self.RemoveNotification = function() {
+                    if ($('#noty_top_layout_container').length > 0) {
+                        $('#noty_top_layout_container').remove();
+                    }
+                };
+
+                //load data: location
+                self.searchLocation = function() {
+
+                    $('.empty-row-message').html('<div class="loader"></div>'); // Reset New and Edit row
+                    // Check whether New or Edit data is existing and not saved to database yet (on Ajax Action)
+                    if (SKTIS.Checker.modifiedDataExistsForAjax([self.gridViewLocation.listNewItems, self.gridViewLocation.listEditItems]) == true) {
+                        return;
+                    }else{
+                        self.gridViewLocation.listNewItems.removeAll();
+                        self.gridViewLocation.listEditItems.removeAll();
+                    }
+
+                    self.filterLocationTabExcelLocationCode = self.filterLocationTabLocationCode();
+                    self.filterLocationTabExcelBrandGroupCode = self.filterLocationTabBrandGroupCode();
+                    self.filterLocationTabExcelIDProcess = self.filterLocationTabIDProcess();
+
+                    self.gridViewLocation.search({}, function (response) {
+                        if (response.status == 'KO') {
+                            SKTIS.Helper.Notification(response.message,'error');
+                            $('.empty-row-message').html(response.message);
+                        }else if (response.status == 'Empty') {
+
+                            self.RemoveNotification();
+
+                            //SKTIS.Helper.Notification(response.message,'warning');
+                            $('.empty-row-message').html('@CommonLabel.lblDataEmpty');
+                        }
+                    });
+                };
+
+                // Check whether New or Edit data is existing and not saved to database yet (on Request action)
+                SKTIS.Checker.modifiedDataExists([self.gridViewProcess.listNewItems, self.gridViewProcess.listEditItems,self.gridViewLocation.listNewItems, self.gridViewLocation.listEditItems]);
+                
+               $(document).ready(function(){
+                    self.search();
+                    self.searchLocation();
+                    self.initFilterProcess('process');
+                    self.initFilterProcess('location');
+                    self.onLocationCodeChange();
+                    
+                    $(document).off('click','.row-delete');
+                    $(document).on('click','.row-delete',function(e){
+                        e.preventDefault();
+                        var IDProcess = $(this).attr('data-IDProcess');
+                        var locationCode = $(this).attr('data-locationcode');
+                        var ID = $(this).attr('data-ID');
+                        
+                        $.ajax({
+                            url:  @Html.BaseUrl("MasterGenProcessSetting/DeleteProsesLocation"),
+                            type: 'POST',
+                            contentType: 'application/json',
+                            data: JSON.stringify({IDProcess:IDProcess, LocationCode: locationCode, ID:ID}),
+                            dataType: 'json',
+                            success: function(data) {
+                                console.log(data);
+                                //self.gridView.reload();
+                                self.searchLocation();
+                                self.gridViewLocation.editingRowIndex(-1);
+                            }
+                        });
+                    });
+
+                });
+                
+                
+              
+            };
+            ko.applyBindings(new app.EditGrid());
+        })(app = this.app || {});
+    </script>
+}

@@ -1,0 +1,278 @@
+﻿@model SKTISWebsite.Models.TPOFeeExePlanDetail.InitTPOFeeExePlanDetailViewModel
+@using HMS.SKTIS.Core
+@using SKTISWebsite.Helper
+@{ Html.SetPageTitle(" TPO Fee GL Accrued Detail"); }
+@using HMS.SKTIS.Application.Resources
+
+<div class="col-lg-12">
+    <div class="col-lg-6">
+        <div class="row">
+            <label class="form-label col-lg-3">
+                Regional
+            </label>
+            <div class="col-lg-2 offset-right">
+                <input type="text" class="form-control" value="@Model.Regional" disabled>
+            </div>
+            <div class="col-lg-4">
+                <input type="text" class="form-control" value="@Model.RegionalName" disabled>
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-3">
+                Location
+            </label>
+            <div class="col-lg-2 offset-right">
+                <input type="text" class="form-control" value="@Model.Location" disabled>
+            </div>
+            <div class="col-lg-4">
+                <input type="text" class="form-control" value="@Model.LocationName" disabled>
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-3">
+                Cost Center
+            </label>
+            <div class="col-lg-6">
+                <input type="text" class="form-control" value="@Model.CostCenter" disabled>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="row">
+            <label class="form-label col-lg-3">
+                KPS Year
+            </label>
+            <div class="col-lg-4">
+                <input type="text" class="form-control" value="@Model.KpsYear" disabled>
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-3">
+                KPS Week
+            </label>
+            <div class="col-lg-4">
+                <input type="text" class="form-control" value="@Model.KpsWeek" disabled>
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-3">
+                Closing Date
+            </label>
+            <div class="col-lg-4">
+                <input type="text" class="form-control" value="@Model.ClosingDate.Date.ToShortDateString()" disabled>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-12 break-filter-button">
+        <div class="row">
+            <div class="col-lg-3">
+                <div class="row">
+                    <label class="form-label col-lg-3">
+                        Brand
+                    </label>
+                    <div class="col-lg-5">
+                        <input type="text" class="form-control" value="@Model.Brand" disabled>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3">
+                <div class="row">
+                    <label class="form-label col-lg-4">
+                        Stick/ Box
+                    </label>
+                    <div class="col-lg-5">
+                        <input type="text" class="form-control" value="@String.Format(new System.Globalization.CultureInfo(Culture), "{0:N}", Model.StickPerBox)" disabled>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3">
+                <div class="row">
+                    <label class="form-label col-lg-3">
+                        Paket
+                    </label>
+                    <div class="col-lg-5">
+                        <input type="text" class="form-control" value="@Model.Paket" disabled>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="action-btn">
+                @{ string controllerName = "";}
+                @{
+                    switch (@Model.PageFrom)
+                    {
+                        case "accrued":
+                            controllerName = "TPOFeeExeGLAccrued";
+                            break;
+                    }
+                }
+                @Html.ActionLink("Back to List", "Index", new { controller = controllerName }, new { @class = "btn btn-primary" })
+                @*<button type="button" class="btn btn-primary" onclick="location.href='@Url.Action("Index", "TPOFeeExeGLAccrued")';return false;">Back To List</button>*@
+                @using (Html.BeginForm("GenerateExcelDetail", "TPOFeeExeGLAccruedDetail", FormMethod.Post))
+                {
+                    <input type="hidden" name="Regional" data-bind="value: $root.Regional" />
+                    <input type="hidden" name="Location" data-bind="value: $root.Location"  />
+                    <input type="hidden" name="Brand" data-bind="value: $root.Brand"  />
+                    <input type="hidden" name="KpsYear" data-bind="value: $root.KpsYear" />
+                    <input type="hidden" name="KpsWeek" data-bind="value: $root.KpsWeek" />
+                    <input type="hidden" name="ClosingDate" data-bind="value: $root.ClosingDate" />
+                    <input type="hidden" name="param1" data-bind="value: $root.param1" />
+                    <button type="submit" class="btn btn-primary">Excel</button>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="table-overflow">
+        <table class="table table-striped">
+            <thead>
+                <tr class="head">
+                    <th rowspan="2">Hari</th>
+                    <th rowspan="2">Tanggal</th>
+                    <th colspan="2">Output per Hari</th>
+                    <th colspan="3">Klasifikasi berdasarkan Kategori Aktif</th>
+                </tr>
+                <tr class="head">
+                    <th>Stick</th>
+                    <th>Box</th>
+                    <th>JKN</th>
+                    <th>JL1</th>
+                    <th>JL2</th>
+                    @*<th>JL3</th>
+                    <th>JL4</th>*@
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var data in Model.TpoFeeProductionDailyPlanModels)
+                {
+                    <tr>
+                        <td>@data.Hari</td>
+                        <td class="right">@data.FeeDate.Date</td>
+                        @*<td class="right">@data.OuputSticks</td>*@
+                        <td class="right">@String.Format(new System.Globalization.CultureInfo(Culture), "{0:N}", data.OuputSticks)</td>
+                        <td class="right">@String.Format(new System.Globalization.CultureInfo(Culture), "{0:N}", data.OutputBox)</td>
+                        @*<td class="right">@data.OutputBox</td>*@
+                        <td class="right">@String.Format(new System.Globalization.CultureInfo(Culture), "{0:N}", data.JKN)</td>
+                        <td class="right">@String.Format(new System.Globalization.CultureInfo(Culture), "{0:N}", data.JL1)</td>
+                        <td class="right">@String.Format(new System.Globalization.CultureInfo(Culture), "{0:N}", data.Jl2)</td>
+                        @*<td class="right">@data.Jl3</td>
+                        <td class="right">@data.Jl4</td>*@
+                    </tr>
+                }
+                <tr class="total">
+                    <td colspan="2">Total Produksi</td>
+                    <td class="right">@String.Format(new System.Globalization.CultureInfo(Culture), "{0:N}", Model.TotalProductionStick)</td>
+                    <td class="right">@String.Format(new System.Globalization.CultureInfo(Culture), "{0:N}", Model.TotalProductionBox)</td>
+                    <td class="right">@String.Format(new System.Globalization.CultureInfo(Culture), "{0:N}", Model.TotalProductionJkn)</td>
+                    <td class="right">@String.Format(new System.Globalization.CultureInfo(Culture), "{0:N}", Model.TotalProductionJl1)</td>
+                    <td class="right">@String.Format(new System.Globalization.CultureInfo(Culture), "{0:N}", Model.TotalProductionJl2)</td>
+                    @*<td class="right">@Model.TotalProductionJl3</td>
+                    <td class="right">@Model.TotalProductionJl4</td>*@
+                </tr>
+                <tr class="total">
+                    <td colspan="2">Total Dibayar</td>
+                    <td class="right"></td>
+                    <td class="right"></td>
+                    <td class="right">@String.Format(new System.Globalization.CultureInfo(Culture), "{0:N}", Model.TotalDibayarJKN)</td>
+                    <td class="right">@String.Format(new System.Globalization.CultureInfo(Culture), "{0:N}", Model.TotalDibayarJL1)</td>
+                    <td class="right">@String.Format(new System.Globalization.CultureInfo(Culture), "{0:N}", Model.TotalDibayarJL2)</td>
+                    @*<td class="right">0</td>
+                    <td class="right">0</td>*@
+                </tr>
+                <tr class="total">
+                    <td colspan="5"></td>
+                    <td class="right">JL3 (Box)</td>
+                    <td class="right">@String.Format(new System.Globalization.CultureInfo(Culture), "{0:N}", Model.TotalDibayarJL3)</td>
+                </tr>
+                <tr class="total">
+                    <td colspan="5"></td>
+                    <td class="right">JL4 (Box)</td>
+                    <td class="right">@String.Format(new System.Globalization.CultureInfo(Culture), "{0:N}", Model.TotalDibayarJL4)</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <table class="table table-striped">
+            <thead>
+                <tr class="head" style="background-color: #1f4e78; border-right: 1px solid #fff; color: #fff">
+                    <td colspan="1">Perhitungan Biaya Produksi</td>
+                    <td colspan="2">Output Produksi yg Dibayar</td>
+                    <td colspan="2">Biaya Produksi per Box (rupiah)</td>
+                    <td colspan="2">Total Biaya Produksi per Box (rupiah)</td>
+                </tr>
+            </thead>
+            <tbody data-bind="foreach: $root.calculation">
+                <tr data-bind="css: (ko.utils.unwrapObservable($data.ProductionFeeType) == 'Total Bayar') ? 'total' : (ko.utils.unwrapObservable($data.ProductionFeeType).indexOf('Pajak') >= 0 ? 'draft' : 'submit') ">
+                    <td colspan="1"><span data-bind="text: $data.ProductionFeeType"></span></td>
+                    <td colspan="2" class="right"><span data-bind="decimal: $data.OutputProduction"></span></td>
+                    <td colspan="2" class="right">
+                        <!-- ko if: ($data.OrderFeeType != 6) -->
+                        <span data-bind="money: $data.OutputBiaya"></span>
+                        <!-- /ko -->
+                    </td>
+                    <td colspan="2" class="right"><span data-bind="money: $data.Calculate"></span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="row">
+        <div class="col-md-3">
+            <input type="text" class="form-control" data-bind="value: $root.submit_message" maxlength="16">
+        </div>
+        <div class="col-md-2">
+            <button class="btn btn-primary" data-bind="click: $root.submit">Submit</button>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script src="~/Scripts/app/globalfunctions.js" type="text/javascript"></script>
+    <script src="~/Scripts/common/app.GridViewModel.js" type="text/javascript"></script>
+    <script src="~/Scripts/common/app.Extenders.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        (function (app) {
+            app.EditGrid = function () {
+                var self = this;
+                self.calculation = @Html.Raw(Json.Encode(@Model.Calculations));
+                self.submit_message = ko.observable('');
+
+                self.param1 = ko.observable('@Model.id');
+                self.Regional = ko.observable('@Model.Regional');
+                self.Location = ko.observable('@Model.Location');
+                self.Brand = ko.observable('@Model.Brand');
+                self.KpsYear = ko.observable('@Model.KpsYear');
+                self.KpsWeek = ko.observable('@Model.KpsWeek');
+                self.ClosingDate = ko.observable('@Model.ClosingDate');
+
+                self.submit = function () {
+                    var data = {
+                        Regional        : self.Regional(),
+                        Location        : self.Location(),
+                        Brand           : self.Brand(),
+                        KpsYear         : self.KpsYear(),
+                        KpsWeek         : self.KpsWeek(),
+                        ClosingDate     : self.ClosingDate(),
+                        SubmitMessage   : self.submit_message()
+                    };
+
+                    $.ajax({
+                        url: @Html.BaseUrl("TPOFeeExeGLAccruedDetail/Submit"),
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify(data),
+                        dataType: 'json',
+                        success: function (data) {
+                            SKTIS.Helper.Notification(data);
+                        }
+                    });
+                }
+            };
+
+            ko.applyBindings(new app.EditGrid());
+        })(app = this.app || {});
+</script>
+}

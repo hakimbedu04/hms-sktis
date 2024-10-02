@@ -1,0 +1,433 @@
+﻿@using HMS.SKTIS.Application.Resources
+@using HMS.SKTIS.Application.Resources.Views.MaintenanceEquipmentReceive
+@using SKTISWebsite.Helper
+@model SKTISWebsite.Models.EquipmentReceive.InitEquipmentReceiveViewModel
+
+@{ Html.SetPageTitle(@MaintenanceEquipmentReceive.PageTitle); }
+<div class="col-lg-12" data-bind="with: gridView">
+    <div class="col-lg-6">
+        <div class="row">
+            <label class="form-label col-lg-4">
+                @MaintenanceEquipmentReceive.lblFilterSourceLocation
+            </label>
+            <div class="col-lg-2">
+                @*@Html.DropDownList("ddlFilterSourceLocation", new SelectList(Model.LocationLookupList, "LocationCode", "LocationCode"),
+                    new
+                    {
+                        @class = "selectpicker show-tick form-control",
+                        id = "ddlFilterSourceLocation",
+                        data_live_search = "true",
+                        data_bind = "value:$root.filterSourceLocation, event : { change : $root.onSourceLocationChange }",
+                        data_size = "15"
+                    })*@
+
+                <select id="ddlFilterSourceLocation"
+                        class="selectpicker show-tick form-control"
+                        data-live-search="true"
+                        data-bind="enable: !$root.isBusy(), selectPicker:$root.filterSourceLocation, optionsText: 'LocationCode', optionsValue : 'LocationCode', optionsAfterRender: locationDesc, selectPickerOptions: { optionsArray: $root.menuItemLocationsSource }, event : { change : $root.onSourceLocationChange}"></select>
+            </div>
+            <div class="col-lg-4">
+                <input type="text" class="form-control" readonly="readonly" data-bind="value:$root.filterSourceLocationName">
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-4">
+                @MaintenanceEquipmentReceive.lblFilterDestinationLocation
+            </label>
+            <div class="col-lg-2">
+                @*@Html.DropDownList("ddlFilterDestinationLocation", new SelectList(Model.LocationLookupList, "LocationCode", "LocationCode"),
+                    new
+                    {
+                        @class = "selectpicker show-tick form-control",
+                        id = "ddlFilterDestinationLocation",
+                        data_live_search = "true",
+                        data_bind = "value:$root.filterDestinationLocation, event : { change : $root.onDestinationLocationChange }",
+                        data_size = "15"
+                    })*@
+
+                <select id="ddlFilterDestinationLocation"
+                        class="selectpicker show-tick form-control"
+                        data-live-search="true"
+                        data-bind="enable: !$root.isBusy(), selectPicker:$root.filterDestinationLocation, optionsText: 'LocationCode', optionsValue : 'LocationCode', optionsAfterRender: locationDesc, selectPickerOptions: { optionsArray: $root.menuItemLocationsDestination }, event : { change : $root.onDestinationLocationChange}"></select>
+
+            </div>
+            <div class="col-lg-4">
+                <input type="text" class="form-control" readonly="readonly" data-bind="value:$root.filterDestinationLocationName">
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-4">
+                @MaintenanceEquipmentReceive.lblFilterTransferDate
+            </label>
+            <div class="col-lg-6">
+                <div id="dtpTransferDate" class="input-group date notime">
+                    @Html.TextBoxFor(model => model.DefaultTransferDate, new { @class = "form-control" })
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-4">
+                @MaintenanceEquipmentReceive.lblFilterReceiveDate
+            </label>
+            <div class="col-lg-6">
+                <div id="dtpReceiveDate" class="input-group date notime">
+                    <input type="text" class="form-control" />
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="action-btn">
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.View.ToString()))
+                {
+                    <button type="button" class="btn btn-primary" data-bind="enable: !$root.isBusy(), click:$root.search">@CommonLabel.btnView</button>
+                }
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.Save.ToString()))
+                {
+                    <button type="button" class="btn btn-primary" data-bind="enable: !$root.isBusy(), click:$root.saveData">@CommonLabel.btnSave</button>
+                }
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.Excel.ToString())) {
+                    using (Html.BeginForm("GenerateExcel", "MaintenanceEquipmentReceive", FormMethod.Post, new { @data_bind = "submit: $root.generateExcel" }))
+                    {
+                        <input type="hidden" name="sourceLocationCode">
+                        <input type="hidden" name="destinationLocationCode">
+                        <input type="hidden" name="transferDate">
+                        <input type="hidden" name="receiveDate">
+                        <button type="submit" class="btn btn-primary" data-bind="enable: !$root.isBusy()">@CommonLabel.btnExcel</button>
+                    }
+                }
+                @Html.Partial("GridViewPageSizeSelector")
+            </div>
+        </div>
+    </div>
+    <div class="table-overflow">
+        <table class="table table-striped">
+            <thead>
+                <tr class="head">
+                    <th rowspan="2" data-bind="click:sortBy.bind($data,'ItemCode'), css:sortCss('ItemCode', $data.sortExpression(), $data.sortOrder())">@MaintenanceEquipmentReceive.lblTitleItemCode</th>
+                    <th rowspan="2" data-bind="click:sortBy.bind($data,'MstMntcItem.ItemDescription'), css:sortCss('MstMntcItem.ItemDescription', $data.sortExpression(), $data.sortOrder())">@MaintenanceEquipmentReceive.lblTitleItemDescription</th>
+                    <th rowspan="2" data-bind="click:sortBy.bind($data,'MstMntcItem.UOM'), css:sortCss('MstMntcItem.UOM', $data.sortExpression(), $data.sortOrder())">@MaintenanceEquipmentReceive.lblTitleUOM</th>
+                    <th colspan="2">@MaintenanceEquipmentReceive.lblTitleQuantity</th>
+                    <th rowspan="2" data-bind="click:sortBy.bind($data,'TransferNote'), css:sortCss('TransferNote', $data.sortExpression(), $data.sortOrder())">@MaintenanceEquipmentReceive.lblTitleDeliveryNote</th>
+                    <th rowspan="2" data-bind="click:sortBy.bind($data,'ReceiveNote'), css:sortCss('ReceiveNote', $data.sortExpression(), $data.sortOrder())">@MaintenanceEquipmentReceive.lblTitleReceiveNote</th>
+                </tr>
+                <tr class="head">
+                    <th data-bind="click:sortBy.bind($data,'QtyTransfer'), css:sortCss('QtyTransfer', $data.sortExpression(), $data.sortOrder())">@MaintenanceEquipmentReceive.lblTitleQtyTransfer</th>
+                    <th class="widthsmall" data-bind="click:sortBy.bind($data,'QtyReceive'), css:sortCss('QtyReceive', $data.sortExpression(), $data.sortOrder())">@MaintenanceEquipmentReceive.lblTItleQtyReceive</th>
+                </tr>
+                <tr class="insertRow" style="display: none">
+                    <th colspan="7">
+                        <input type="text" />
+                    </th>
+                </tr>
+            </thead>
+            <tbody data-bind="visible: listDataItems().length, foreach: listDataItems">
+                @*item template*@
+                <tr data-bind="if: ($parent.editingRowIndex() !== $index() && !$root.ValidateDateIsPast($data.UpdatedDate)),
+                                   click: $parent.editInline3.bind($data,$index())">
+                    <td><span data-bind="text:$data.ItemCode"></span></td>
+                    <td><span data-bind="text:$data.ItemDescription"></span></td>
+                    <td><span data-bind="text:$data.UOM"></span></td>
+                    <td class="right"><span data-bind="decimal:$data.QtyTransfer"></span></td>
+                    <td class="current right"><span data-bind="decimal:$data.QtyReceive"></span></td>
+                    <td><span data-bind="text:$data.DeliveryNote"></span></td>
+                    <td class="current"><span data-bind="text:$data.ReceiveNote"></span></td>
+                </tr>
+                <tr data-bind="if: ($parent.editingRowIndex() !== $index() && $root.ValidateDateIsPast($data.UpdatedDate)),
+                                   click: $parent.editInline3.bind($data,$index())">
+                    <td><span data-bind="text:$data.ItemCode"></span></td>
+                    <td><span data-bind="text:$data.ItemDescription"></span></td>
+                    <td><span data-bind="text:$data.UOM"></span></td>
+                    <td class="right"><span data-bind="decimal:$data.QtyTransfer"></span></td>
+                    <td class="right"><span data-bind="decimal:$data.QtyReceive"></span></td>
+                    <td><span data-bind="text:$data.DeliveryNote"></span></td>
+                    <td><span data-bind="text:$data.ReceiveNote"></span></td>
+                </tr>
+                @*edit template*@
+                <tr data-bind="validationOptions: {insertMessages: false, showTooltip:true, decorateInputElement: true, errorElementClass: 'input-error'}, inlineProccess:[$parent,$data],
+                                   if:($parent.editingRowIndex() === $index() && !$root.ValidateDateIsPast($data.UpdatedDate)),
+                                   click: $parent.selectRow.bind($data, $index()),
+                                    event: {keydown:$parent.keydown}">
+                    <td><span data-bind="text:$data.ItemCode"></span></td>
+                    <td><span data-bind="text:$data.ItemDescription"></span></td>
+                    <td><span data-bind="text:$data.UOM"></span></td>
+                    <td class="right"><span data-bind="decimal:$data.QtyTransfer"></span></td>
+                    <td class="current right"><input class="form-control transparent" type="number" min="1" data-sktis-validation="number" data-bind="value:$data.QtyReceive, valueUpdate:'afterkeydown'" /></td>
+                    <td><span data-bind="text:$data.DeliveryNote"></span></td>
+                    <td class="current"><input class="form-control transparent" data-bind="value:$data.ReceiveNote,tabToNext:[$parent,$data], valueUpdate:'afterkeydown'" /></td>
+                </tr>
+                <tr data-bind="validationOptions: {insertMessages: false, showTooltip:true, decorateInputElement: true, errorElementClass: 'input-error'}, inlineProccess:[$parent,$data],
+                                   if:($parent.editingRowIndex() === $index() && $root.ValidateDateIsPast($data.UpdatedDate)),
+                                   click: $parent.selectRow.bind($data, $index()),
+                                    event: {keydown:$parent.keydown}">
+                    <td><span data-bind="text:$data.ItemCode"></span></td>
+                    <td><span data-bind="text:$data.ItemDescription"></span></td>
+                    <td><span data-bind="text:$data.UOM"></span></td>
+                    <td class="right"><span data-bind="decimal:$data.QtyTransfer"></span></td>
+                    <td class="right"><span data-bind="decimal:$data.QtyReceive"></span></td>
+                    <td><span data-bind="text:$data.DeliveryNote"></span></td>
+                    <td><span data-bind="text:$data.ReceiveNote"></span></td>
+                </tr>
+            </tbody>
+            <tbody data-bind="visible: !listDataItems().length">
+                <tr>
+                    <td colspan="7" class="empty-row-message">
+                        <div class="loader"></div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div data-bind="if: (listDataItems() != null && listDataItems().length !== 0)">
+        @Html.Partial("GridViewFooter")
+    </div>
+</div>
+@section Scripts
+{
+    <script src="~/Scripts/app/globalfunctions.js" type="text/javascript"></script>
+    <script src="~/Scripts/common/app.GridViewModel.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        (function(app) {
+            app.EditGrid = function() {
+                var self = this;
+
+                // Filter
+                self.menuItemLocationsSource = ko.observableArray(@Html.Raw(Json.Encode(@Model.SourceLocationLookupList)));
+                self.menuItemLocationsDestination = ko.observableArray(@Html.Raw(Json.Encode(@Model.LocationLookupList)));
+                self.itemLocations = @Html.Raw(Json.Encode(Model.SourceLocationLookupList));
+                self.filterSourceLocation = ko.observable('@Model.DefaultLocationSource');
+                self.filterDestinationLocation = ko.observable('@Model.DefaultLocation');
+                self.filterTransferDate = ko.observable($('#dtpTransferDate input').val());
+                self.filterReceiveDate = ko.observable($('#dtpReceiveDate input').val());
+                self.filterSourceLocationName = ko.observable();
+                self.filterDestinationLocationName = ko.observable();
+                self.filterExcelSourceLocation = self.filterSourceLocation();
+                self.filterExcelDestinationLocation = self.filterDestinationLocation();
+                self.filterExcelTransferDate = self.filterTransferDate();
+                self.filterExcelReceiveDate = self.filterReceiveDate();
+
+                //================= busy button state ================//
+                self.isBusy = ko.observable(true);
+
+                $(document).ajaxComplete(function () {
+                    if ($.active <= 1) {
+                        self.isBusy(false);
+                    }
+                });
+
+                $(document).ajaxStart(function () {
+                    if (!self.isBusy()) self.isBusy(true);
+                });
+                //================= busy button state ================//
+
+                //get location name by location code
+                function getLocationNameFilter(locationCode) {
+                    for (var i = 0; i < self.itemLocations.length; i++) {
+                        if (self.itemLocations[i].LocationCode == locationCode) {
+                            return self.itemLocations[i].LocationName;
+                        }
+                    }
+                    return '';
+                };
+
+                self.onSourceLocationChange = function() {
+                    self.filterSourceLocationName(getLocationNameFilter(self.filterSourceLocation()));
+                };
+
+                self.onDestinationLocationChange = function() {
+                    self.filterDestinationLocationName(getLocationNameFilter(self.filterDestinationLocation()));
+                };
+
+                $('#dtpTransferDate').on('dp.change', function(e) {
+                    self.filterTransferDate($('#dtpTransferDate input').val());
+                });
+
+                $('#dtpReceiveDate').on('dp.change', function(e) {
+                    self.filterReceiveDate($('#dtpReceiveDate input').val());
+                });
+
+                // Gridview Initialization
+                self.gridView = new app.GridViewModel({
+                    Criteria: {
+                        PageSize: 10,
+                        PageIndex: 1,
+                        SortExpression: "UpdatedDate",
+                        SortOrder: "DESC",
+                        SourceLocationCode: self.filterSourceLocation,
+                        DestinationLocationCode: self.filterDestinationLocation,
+                        TransferDate: self.filterTransferDate,
+                        ReceiveDate: self.filterReceiveDate
+                    },
+                    DataSourceUrl: @Html.BaseUrl("MaintenanceEquipmentReceive/GetEquipmentReceives"),
+                    InlineEdit: true,
+                    InsertRowFocusedControlIndex: 0
+                });
+
+                // Field Validations
+                self.gridView.applyValidationRules = function(entity) {
+                    self.RemoveNotification();
+
+                    entity.QtyReceive.extend({
+                        required: {
+                            message: "<strong>Receive Quantity</strong> cannot be empty!"
+                        },
+                        number: {
+                            message: "<strong>Receive Quantity</strong> must be a number!"
+                        },
+                        max: {
+                            params:entity.QtyTransfer(),
+                            message: "<strong>Receive Quantity</strong> cannot larger than Transfer Quantity (" + entity.QtyTransfer() + ")!"
+                        }
+                    });
+                };
+
+                // Reset Fields for Insert Row
+                self.gridView.resetDefault = function(viewModel) {
+                    //viewModel.ItemCode('');
+                    //viewModel.ItemDescription('');
+                    //viewModel.UOM('');
+                    viewModel.QtyReceive('');
+                    viewModel.ReceiveNote('');
+                };
+
+                self.ValidateDateIsPast= function(date) {
+                    return false;
+                    /*
+                    if(ko.utils.unwrapObservable(date) === '' || typeof ko.utils.unwrapObservable(date) === 'undefined') return false;
+                    console.log("validate is past " + ko.utils.unwrapObservable(date));
+                    return moment(moment(ko.utils.unwrapObservable(date), 'DD/MM/YYYY').format('YYYY-MM-DD')).isBefore(moment().format('YYYY-MM-DD'));
+                    */
+                };
+
+                self.generateExcel = function(formElement) {
+                    $(formElement).find("input[name=sourceLocationCode]").val(self.filterExcelSourceLocation);
+                    $(formElement).find("input[name=destinationLocationCode]").val(self.filterExcelDestinationLocation);
+                    $(formElement).find("input[name=transferDate]").val(self.filterExcelTransferDate);
+                    $(formElement).find("input[name=receiveDate]").val(self.filterExcelReceiveDate);
+                    return true;
+                };
+
+                // Save Action
+                self.saveData = function() {
+                    if (self.gridView.editingRowIndex() !== -1)
+                        return;
+
+                    if (self.filterReceiveDate() == '') {
+                        SKTIS.Helper.Notification('<strong>Receive Date</strong> cannot be empty!', 'warning');
+                        return;
+                    }
+                    // Prevent Edited new Row data for triggering Edited message
+                    // Primary Key : ListGroup, ListDetail (need to compare both of arrays using unique key[s])
+                    //var newItemLength = self.gridView.listNewItems().length;
+                    //$.each(self.gridView.listNewItems(),function(k,v){
+                    //    var shouldBeAsNew = ko.utils.arrayFirst(self.gridView.listEditItems(),function(editItem){
+                    //        if(editItem){
+                    //            return editItem['ItemCode'] == v['ItemCode'];
+                    //        }
+                    //    });
+                    //    if(shouldBeAsNew){
+                    //        self.gridView.listNewItems()[k] = shouldBeAsNew;
+                    //    }
+                    //    self.gridView.listEditItems.remove(function(data) {
+                    //        if(data){
+                    //            return data['ItemCode'] == v['ItemCode'];
+                    //        }
+                    //    });
+                    //});
+
+                    var datas = {
+                        "Parameters": { "ReceiveDate": self.filterReceiveDate()
+                        },
+                        "new": self.gridView.listNewItems(),
+                        "edit": self.gridView.listEditItems()
+                    };
+
+                    datas = JSON.stringify(datas);
+
+                    $.ajax({
+                        url: @Html.BaseUrl("MaintenanceEquipmentReceive/SaveAllEquipmentReceive"),
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: datas,
+                        dataType: 'json',
+                        success: function (data) {
+                            console.log(data);
+                            if (data.New) {
+                                $.each(data.New, function (k, value) {
+                                    if (value)
+                                        SKTIS.Helper.ResponseNotification(value, "Insert Equipment Receive",
+                                            self.filterSourceLocation() + " - " + self.filterTransferDate() + " - " + value.ItemCode);
+                                });
+                            }
+
+                            if (data.Edit) {
+                                $.each(data.Edit, function (k, value) {
+                                    if (value)
+                                        SKTIS.Helper.ResponseNotification(value, "Edit Equipment Receive",
+                                            value.LocationCodeSource + " - " + value.TransferDate + " - " + value.ItemCode);
+                                });
+                            }
+
+                            self.gridView.sort('UpdatedDate', 'DESC');
+                            self.gridView.listNewItems.removeAll();
+                            self.gridView.listEditItems.removeAll();
+
+                        }
+                    });
+                };
+
+                // Load Data
+                self.search = function() {
+                    $('.empty-row-message').html('<div class="loader"></div>'); // Reset New and Edit row
+                    // Check whether New or Edit data is existing and not saved to database yet (on Ajax Action)
+                    if (SKTIS.Checker.modifiedDataExistsForAjax([self.gridView.listNewItems, self.gridView.listEditItems]) == true) {
+                        return;
+                    } else {
+                        self.gridView.listNewItems.removeAll();
+                        self.gridView.listEditItems.removeAll();
+                    }
+
+                    self.filterExcelSourceLocation = self.filterSourceLocation();
+                    self.filterExcelDestinationLocation = self.filterDestinationLocation();
+                    self.filterExcelTransferDate = self.filterTransferDate();
+                    self.filterExcelReceiveDate = self.filterReceiveDate();
+
+                    self.gridView.search({}, function(response) {
+                        if (response.status == 'KO') {
+                            SKTIS.Helper.Notification(response.message, 'error');
+                            $('.empty-row-message').html(response.message);
+                        } else if (response.status == 'Empty') {
+
+                            self.RemoveNotification();
+
+                            //SKTIS.Helper.Notification(response.message,'warning');
+                            $('.empty-row-message').html('@CommonLabel.lblDataEmpty');
+                        }
+                    });
+
+                    self.RemoveNotification = function() {
+                        if ($('#noty_top_layout_container').length > 0) {
+                            $('#noty_top_layout_container').remove();
+                        }
+                    };
+                };
+                self.onSourceLocationChange();
+                self.onDestinationLocationChange();
+                self.search();
+
+                // Check whether New or Edit data is existing and not saved to database yet (on Request action)
+                SKTIS.Checker.modifiedDataExists([self.gridView.listNewItems, self.gridView.listEditItems]);
+
+            };
+            ko.applyBindings(new app.EditGrid());
+        })(app = this.app || {});
+
+    </script>
+}

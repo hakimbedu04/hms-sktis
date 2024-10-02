@@ -1,0 +1,394 @@
+﻿@model SKTISWebsite.Models.MasterBrand.IndexMasterBrandViewModel
+@using HMS.SKTIS.Application.Resources
+@using HMS.SKTIS.Application.Resources.Views.MasterGenBrand
+@using SKTISWebsite.Helper
+
+@{ Html.SetPageTitle(@MasterGenBrand.PageTitle); }
+<div class="col-lg-12" data-bind="with: gridView">
+    <div class="col-lg-6">
+        <div class="row">
+            <label class="form-label col-lg-4">
+                @MasterGenBrand.filterBrandGroupCode
+            </label>
+            <div class="col-lg-5">
+                @Html.DropDownListFor(m => Model.BrandGroupCode, Model.BrandGroupCode, @CommonLabel.ddlSelectAll, new Dictionary<string, object>
+                {
+                    { "data-bind", "value:$root.FilterBrandGroupCode" },
+                    { "class", "selectpicker show-tick form-control" },
+                    { "data-live-search", "true"}
+                })
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-4">
+                @MasterGenBrand.filterBrandCode
+            </label>
+            <div class="col-lg-5">
+                <select class="selectpicker show-tick form-control" data-live-search="true" data-bind="selectPicker: $root.FilterBrandCode, optionsText: 'Name', optionsCaption: '@CommonLabel.ddlSelectAll',optionsValue : 'Name', selectPickerOptions: { optionsArray: $root.ListBrandCode }"></select>
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-4">
+                @MasterGenBrand.filterEffectiveDate
+            </label>
+            <div class="col-lg-5">
+                <div id="filterEffectiveDate" class='input-group date time insidetable' data-bind="dateTimePicker: $root.FilterEffectiveDate, value:$root.FilterEffectiveDate, dateTimePickerOptions: {widgetPositioning: {vertical: 'bottom'}, showClear: true, ignoreReadonly: true}">
+                    <input type='text' class="form-control" readonly="readonly" />
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-4">
+                @MasterGenBrand.filterExpiredDate
+            </label>
+            <div class="col-lg-5">
+                <div id="filterExpiredData" class='input-group date time insidetable' data-bind="dateTimePicker: $root.FilterExpiredDate, value:$root.FilterExpiredDate, dateTimePickerOptions: {widgetPositioning: {vertical: 'bottom'}, showClear: true, ignoreReadonly: true}">
+                    <input type='text' class="form-control" readonly="readonly" />
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="action-btn">
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.View.ToString())) { 
+                <button type="button" class="btn btn-primary" data-bind="click:$root.search">@CommonLabel.btnView</button>
+                }
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.Save.ToString())) { 
+                <button type="button" class="btn btn-primary" data-bind="click:$root.saveData">@CommonLabel.btnSave</button>
+                }
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.Excel.ToString())) { 
+                    using (Html.BeginForm("GenerateExcel", "MasterGenBrand", FormMethod.Post, new { @data_bind = "submit: $root.generateExcel" }))
+                    {
+                        <input type="hidden" name="BrandGroupCode" />
+                        <input type="hidden" name="BrandCode" />
+                        <input type="hidden" name="EffectiveDate" />
+                        <input type="hidden" name="ExpiredDate" />
+                        <button type="submit" class="btn btn-primary">@CommonLabel.btnExcel</button>
+                    }
+                }
+                @Html.Partial("GridViewPageSizeSelector")
+            </div>
+        </div>
+    </div>
+    <div class="table-overflow">
+        <table class="table table-striped">
+            <thead>
+                <tr class="head">
+                    <th data-bind="click:sortBy.bind($data,'BrandGroupCode'), css:sortCss('BrandGroupCode', $data.sortExpression, $data.sortOrder())">@MasterGenBrand.titleBrandGroupCode</th>
+                    <th data-bind="click:sortBy.bind($data, 'BrandCode'), css:sortCss('BrandCode', $data.sortExpression, $data.sortOrder())">@MasterGenBrand.titleBrandCode</th>
+                    <th data-bind="click:sortBy.bind($data, 'Description'), css:sortCss('Description', $data.sortExpression, $data.sortOrder())">@MasterGenBrand.titleDescription</th>
+                    <th data-bind="click:sortBy.bind($data, 'EffectiveDate'), css:sortCss('EffectiveDate', $data.sortExpression, $data.sortOrder())" class="widthdate">@MasterGenBrand.titleEffectiveDate</th>
+                    <th data-bind="click:sortBy.bind($data, 'ExpiredDate'), css:sortCss('ExpiredDate', $data.sortExpression, $data.sortOrder())" class="widthdate">@MasterGenBrand.titleExpiredDate</th>
+                    <th data-bind="click:sortBy.bind($data, 'Remark'), css:sortCss('Remark', $data.sortExpression, $data.sortOrder())">@MasterGenBrand.titleRemark</th>
+                    <th data-bind="click:sortBy.bind($data, 'UpdatedBy'), css:sortCss('UpdatedBy', $data.sortExpression, $data.sortOrder())">@MasterGenBrand.lblTitleUpdatedBy</th>
+                    <th data-bind="click:sortBy.bind($data, 'UpdatedDate'), css:sortCss('UpdatedDate', $data.sortExpression, $data.sortOrder())" class="widthdate">@MasterGenBrand.lblTitleUpdatedDate</th>
+                </tr>
+                <tr class="insertRow" data-bind="click: cancelInline.bind(),inlineAddProccess:[$data, $root.newData]">
+                    <th>
+                        @*@Html.DropDownListFor(m => Model.BrandGroupCode, Model.BrandGroupCode, new Dictionary<string, object>
+                        {
+                            { "data-bind", "value:$root.newData.BrandGroupCode" },
+                            { "class", "selectpicker show-tick form-control" },
+                            { "data-live-search", "true"}
+                        })*@
+
+                        <select class="selectpicker show-tick form-control" data-live-search="true"
+                                data-bind="selectPicker: $root.newData.BrandGroupCode, optionsText: 'Text', optionsValue :'Value',
+                                selectPickerOptions: { optionsArray: $root.BrandGroupCodeSelectList, container: 'body'  }"></select>
+
+                    </th>
+                    <th><input data-bind="value:$root.newData.BrandCode, valueUpdate:'afterkeydown'" class="form-control transparent" /></th>
+                    <th><input data-bind="value:$root.newData.Description, valueUpdate:'afterkeydown'" class="form-control transparent" /></th>
+                    <th>
+                        <div id="insertExpiredData" class='input-group date time insidetable' data-bind="dateTimePicker: $root.newData.EffectiveDate, value:$root.newData.EffectiveDate, dateTimePickerOptions: {widgetPositioning: {vertical: 'bottom'}, showClear: true, ignoreReadonly: true, appendToBody: true}">
+                            <input type='text' class="form-control" readonly="readonly" />
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                        </div>
+                    </th>
+                    <th>
+                        <div id="insertExpiredDate" class='input-group date time insidetable' data-bind="dateTimePicker: $root.newData.ExpiredDate, value:$root.newData.ExpiredDate, dateTimePickerOptions: {widgetPositioning: {vertical: 'bottom'}, showClear: true, ignoreReadonly: true, appendToBody: true}">
+                            <input type='text' class="form-control" readonly="readonly" />
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                        </div>
+                    </th>
+                    <th><input data-bind="value:$root.newData.Remark, valueUpdate:'afterkeydown'" class="form-control transparent" /></th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody data-bind="foreach: listDataItems">
+                @*item template*@
+                <tr data-bind="if: ($parent.editingRowIndex() !== $index()),
+                                   click: $parent.editInline3.bind($data,$index())">
+                    <td><span data-bind="text: $data.BrandGroupCode"></span></td>
+                    <td><span data-bind="text: $data.BrandCode"></span></td>
+                    <td class="current"><span data-bind="text: $data.Description"></span></td>
+                    <td class="current"><span data-bind="text:$data.EffectiveDate"></span></td>
+                    <td class="current"><span data-bind="text:$data.ExpiredDate"></span></td>
+                    <td class="current"><span data-bind="text: $data.Remark"></span></td>
+                    <td><span data-bind="text: $data.UpdatedBy"></span></td>
+                    <td><span data-bind="text: $data.UpdatedDate"></span></td>
+                </tr>
+                @*edit template*@
+                <tr data-bind="validationOptions: {insertMessages: false, showTooltip:true, decorateInputElement: true, errorElementClass: 'input-error'}, inlineProccess:[$parent,$data],
+                                   if:($parent.editingRowIndex() === $index()),
+                                   click: $parent.selectRow.bind($data, $index())">
+                    <td>
+                        @*<select data-bind="options: $root.ListBrandGroupCodeSelectList, value:$data.BrandGroupCode" class="form-control"></select>*@
+                        @*@Html.DropDownListFor(m => Model.BrandGroupCode, Model.BrandGroupCode, new Dictionary<string, object>
+                            {
+                                { "data-bind", "value:$data.BrandGroupCode" },
+                                { "class", "selectpicker" },
+                                { "data-live-search", "true"}
+                            })*@
+                        <span data-bind="text: $data.BrandGroupCode"></span>
+                    </td>
+                    <td><span data-bind="text: $data.BrandCode"></span></td>
+                    <td class="current"><input data-bind="value: $data.Description, valueUpdate:'afterkeydown'" class="form-control transparent" /></td>
+                    <td class="current">
+                        <div class='input-group date time insidetable' data-bind="dateTimePicker: $data.EffectiveDate, value:$data.EffectiveDate, dateTimePickerOptions: {widgetPositioning: {vertical: 'bottom'}, ignoreReadonly: true, appendToBody: true}">
+                            <input type='text' class="form-control" readonly="readonly" />
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                        </div>
+                    </td>
+                    <td class="current">
+                        <div class='input-group date time insidetable' data-bind="dateTimePicker: $data.ExpiredDate, value:$data.ExpiredDate, dateTimePickerOptions: {widgetPositioning: {vertical: 'bottom'}, ignoreReadonly: true, appendToBody: true}">
+                            <input type='text' class="form-control" readonly="readonly" />
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                        </div>
+                    </td>
+                    <td class="current"><input data-bind="value: $data.Remark, tabToNext:[$parent,$data], valueUpdate:'afterkeydown'" class="form-control transparent" /></td>
+                    <td><span data-bind="text: $data.UpdatedBy"></span></td>
+                    <td><span data-bind="text: $data.UpdatedDate"></span></td>
+                </tr>
+            </tbody>
+            <tbody data-bind="visible: !listDataItems().length">
+                <tr>
+                    <td colspan="8" class="empty-row-message"><div class="loader"></div></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div data-bind="if: (listDataItems() != null && listDataItems().length !== 0)">
+        @Html.Partial("GridViewFooter")
+    </div>
+</div>
+
+
+@section Scripts
+{
+    <script src="~/Scripts/common/app.GridViewModel.js" type="text/javascript"></script>
+    <script type="text/javascript">
+    (function (app) {
+        app.EditGrid = function () {
+            var self = this;
+
+            // description: filter
+            self.FilterBrandGroupCode = ko.observableArray([]);
+            self.BrandGroupCodeSelectList = ko.observableArray(@Html.Raw(Json.Encode(@Model.BrandGroupCode)));
+            self.FilterExcelBrandGroupCode = self.FilterBrandGroupCode();
+            self.FilterBrandCode = ko.observableArray([]);;
+            self.FilterExcelBrandCode = self.FilterBrandCode();
+            self.FilterEffectiveDate = ko.observable('');
+            self.FilterExpiredDate = ko.observable('');
+
+            self.ListBrandCode = ko.observableArray();
+            self.GetBrandCode = function () {
+                $.ajax({
+                    url: @Html.BaseUrl("MasterGenBrand/GetAllBrandCode"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: '',
+                    dataType: 'json',
+                    success: function (data) {
+                        var listGroupModel = [];
+                        console.log(listGroupModel);
+                        $.each(data, function (index, value) {
+                            listGroupModel.push({ "Name": value });
+                        });
+                        self.ListBrandCode(listGroupModel);
+                        self.gridView.reload();
+                    }
+                });
+            };
+
+            // object new data
+            self.newData =
+            {
+                BrandGroupCode: ko.observableArray([]),
+                BrandCode: ko.observable(''),
+                Description: ko.observable(''),
+                EffectiveDate: ko.observable(''),
+                ExpiredDate: ko.observable(''),
+                Remark: ko.observable(''),
+                ListBrandCode: self.GetBrandCode()
+            };
+
+            // description: init grid
+            self.gridView = new app.GridViewModel({
+                Criteria:
+                {
+                    PageSize: 10,
+                    PageIndex: 1,
+                    SortExpression: "UpdatedDate",
+                    SortOrder: "DESC",
+                    BrandGroupCode: self.FilterBrandGroupCode,
+                    BrandCode: self.FilterBrandCode,
+                    EffectiveDate: self.FilterEffectiveDate,
+                    ExpiredDate: self.FilterExpiredDate
+                },
+                DataSourceUrl: @Html.BaseUrl("MasterGenBrand/Get"),
+                InlineEdit: true
+            });
+
+            // Reset Fields for Insert Row
+            //self.gridView.resetDefault = function (viewModel) {
+            //    viewModel.BrandGroupCode('');
+            //    viewModel.BrandCode('');
+            //    viewModel.Description('');
+            //    viewModel.EffectiveDate('');
+            //    viewModel.ExpiredDate('');
+            //    viewModel.Remark('');
+            //    $('.insertRow .input-group.date input').val('');
+            //};
+
+            // Field Validations
+            self.gridView.applyValidationRules = function (entity) {
+
+                //Remove notification that existing before
+                self.RemoveNotification();
+
+                entity.BrandCode.extend({
+                    required: {
+                        message: "<strong>Brand Code</strong> cannot be empty!"
+                    }
+                });
+            };
+
+            // description: save bulk data
+            self.saveData = function () {
+                if (self.gridView.editingRowIndex() !== -1)
+                    return;
+
+                var datas =
+                {
+                    "New": self.gridView.listNewItems(),
+                    "Edit": self.gridView.listEditItems()
+                };
+
+                datas = JSON.stringify(datas);
+                console.log(datas);
+
+                $.ajax({
+                    url: @Html.BaseUrl("MasterGenBrand/Save"),
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: datas,
+                        dataType: 'json',
+                        success: function (data) {
+                            console.log(data);
+                            if (data.New) {
+                                $.each(data.New, function (k, value) {
+                                    if (value)
+                                        SKTIS.Helper.ResponseNotification(value, "Insert General Brand", value.BrandGroupCode + " - " + value.BrandCode);
+                                });
+                            }
+
+                            if (data.Edit) {
+                                $.each(data.Edit, function (k, value) {
+                                    if (value)
+                                        SKTIS.Helper.ResponseNotification(value, "Edit General Brand", value.BrandGroupCode + " - " + value.BrandCode);
+                                });
+                            }
+                            self.GetBrandCode();
+                            self.gridView.sort('UpdatedDate', 'DESC');
+                            self.gridView.listNewItems.removeAll();
+                            self.gridView.listEditItems.removeAll();
+                        }
+                    });
+                };
+
+
+                self.generateExcel = function (formElement) {
+                    $(formElement).find("input[name=BrandGroupCode]").val(self.FilterExcelBrandGroupCode);
+                    $(formElement).find("input[name=BrandCode]").val(self.FilterExcelBrandCode);
+                    $(formElement).find("input[name=EffectiveDate]").val(self.FilterExcelEffectiveDate);
+                    $(formElement).find("input[name=ExpiredDate]").val(self.FilterExcelExpiredDate);
+                    return true;
+                };
+
+                // description: load data
+                self.search = function () {
+
+                    $('.empty-row-message').html('<div class="loader"></div>'); // Reset New and Edit row
+                    // Check whether New or Edit data is existing and not saved to database yet (on Ajax Action)
+                    if (SKTIS.Checker.modifiedDataExistsForAjax([self.gridView.listNewItems, self.gridView.listEditItems]) == true) {
+                        return;
+                    }else{
+                        self.gridView.listNewItems.removeAll();
+                        self.gridView.listEditItems.removeAll();
+                    }
+
+                    self.FilterExcelBrandGroupCode = self.FilterBrandGroupCode();
+                    self.FilterExcelBrandCode = self.FilterBrandCode();
+                    self.FilterExcelEffectiveDate = self.FilterEffectiveDate();
+                    self.FilterExcelExpiredDate = self.FilterExpiredDate();
+                    
+                    self.gridView.search({}, function (response) {
+                        if (response.status == 'KO') {
+                            SKTIS.Helper.Notification(response.message,'error');
+                            $('.empty-row-message').html(response.message);
+                        }else if (response.status == 'Empty') {
+
+                            self.RemoveNotification();
+
+                            //SKTIS.Helper.Notification(response.message,'warning');
+                            $('.empty-row-message').html('@CommonLabel.lblDataEmpty');
+                        }
+                    });
+
+                    self.RemoveNotification = function() {
+                        if ($('#noty_top_layout_container').length > 0) {
+                            $('#noty_top_layout_container').remove();
+                        }
+                    };
+                };
+                self.search();
+
+                // Check whether New or Edit data is existing and not saved to database yet (on Request action)
+                SKTIS.Checker.modifiedDataExists([self.gridView.listNewItems, self.gridView.listEditItems]);
+
+                // Reset observable variable also when picker clear event
+                $('#filterEffectiveDate').on('dp.change', function (e) {
+                    self.FilterEffectiveDate('');
+                });
+                $('#filterExpiredData').on('dp.change', function (e) {
+                    self.FilterExpiredDate('');
+                });
+                $('#insertEffectiveDate').on('dp.change', function (e) {
+                    self.newData.EffectiveDate('');
+                });
+                $('#insertExpiredData').on('dp.change', function (e) {
+                    self.newData.ExpiredDate('');
+                });
+            };
+            ko.applyBindings(new app.EditGrid());
+        })(app = this.app || {});
+
+    </script>
+}

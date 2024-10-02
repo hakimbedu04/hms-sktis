@@ -1,0 +1,311 @@
+﻿@model SKTISWebsite.Models.Home.InitHomeViewModel
+@using HMS.SKTIS.Application.Resources.Views.Home
+@using SKTISWebsite.Helper
+
+@{ Html.SetPageTitle(@Home.PageTitle); }
+
+<div class="col-lg-8">
+
+    @Html.Action("HomepageSlider", "Home")
+
+    @*<div id="myCarousel" class="carousel slide" data-ride="carousel">
+        <ol class="carousel-indicators">
+            <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+            <li data-target="#myCarousel" data-slide-to="1"></li>
+            <li data-target="#myCarousel" data-slide-to="2"></li>
+            <li data-target="#myCarousel" data-slide-to="3"></li>
+            <li data-target="#myCarousel" data-slide-to="4"></li>
+            <li data-target="#myCarousel" data-slide-to="5"></li>
+            <li data-target="#myCarousel" data-slide-to="6"></li>
+        </ol>
+
+
+        <div class="carousel-inner" role="listbox">
+
+            <div class="item active">
+                <a href="detail-page.html">
+                    <img src="~/content/assets/images/slider/rungkut-1.png" alt="Rungkut 1">
+                    <div class="description">
+                        <p>Estimasi volume industrI (dalam milyar batang) berdasarkan penghitungan ekstrapolasi pangsa pasar dan volume penjualan Sampoerna, berdasarkan laporan Nielsen.</p>
+                    </div>
+                </a>
+            </div>
+
+            <div class="item">
+                <a href="detail-page.html">
+                    <img src="~/content/assets/images/slider/plant-kraksaan.png" alt="Kraksaan">
+                    <div class="description">
+                        <p>Estimasi volume industrI (dalam milyar batang) berdasarkan penghitungan ekstrapolasi pangsa pasar dan volume penjualan Sampoerna, berdasarkan laporan Nielsen.</p>
+                    </div>
+                </a>
+            </div>
+
+            <div class="item">
+                <a href="detail-page.html">
+                    <img src="~/content/assets/images/slider/unit-produksi.png" alt="Unit Produksi">
+                    <div class="description">
+                        <p>Estimasi volume industrI (dalam milyar batang) berdasarkan penghitungan ekstrapolasi pangsa pasar dan volume penjualan Sampoerna, berdasarkan laporan Nielsen.</p>
+                    </div>
+                </a>
+            </div>
+
+            <div class="item">
+                <a href="detail-page.html">
+                    <img src="~/content/assets/images/slider/giling-gunting.png" alt="Giling Gunting">
+                    <div class="description">
+                        <p>Estimasi volume industrI (dalam milyar batang) berdasarkan penghitungan ekstrapolasi pangsa pasar dan volume penjualan Sampoerna, berdasarkan laporan Nielsen.</p>
+                    </div>
+                </a>
+            </div>
+
+            <div class="item">
+                <a href="detail-page.html">
+                    <img src="~/content/assets/images/slider/pack.png" alt="Packing">
+                    <div class="description">
+                        <p>Estimasi volume industrI (dalam milyar batang) berdasarkan penghitungan ekstrapolasi pangsa pasar dan volume penjualan Sampoerna, berdasarkan laporan Nielsen.</p>
+                    </div>
+                </a>
+            </div>
+
+            <div class="item">
+                <a href="detail-page.html">
+                    <img src="~/content/assets/images/slider/stamp.png" alt="Stamp">
+                    <div class="description">
+                        <p>Estimasi volume industrI (dalam milyar batang) berdasarkan penghitungan ekstrapolasi pangsa pasar dan volume penjualan Sampoerna, berdasarkan laporan Nielsen.</p>
+                    </div>
+                </a>
+            </div>
+
+            <div class="item">
+                <a href="detail-page.html">
+                    <img src="~/content/assets/images/slider/old-giling.png" alt="Giling">
+                    <div class="description">
+                        <p>Estimasi volume industrI (dalam milyar batang) berdasarkan penghitungan ekstrapolasi pangsa pasar dan volume penjualan Sampoerna, berdasarkan laporan Nielsen.</p>
+                    </div>
+                </a>
+            </div>
+
+        </div>
+
+
+        <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
+            <span class="fa fa-angle-left" aria-hidden="true"></span>
+            <span class="sr-only">Previous</span>
+        </a>
+        <a class="right carousel-control" href="#myCarousel" role="button" data-slide="next">
+            <span class="fa fa-angle-right" aria-hidden="true"></span>
+            <span class="sr-only">Next</span>
+        </a>
+    </div>*@
+
+    @Html.Action("HomepageNewsInfo", "Home")
+
+    @*<div class="row">
+        <div class="col-lg-12">
+            <!-- news -->
+            <div class="news-contain">
+                <h3>
+                    <i class="fa fa-bullhorn"></i> SKT News Info
+                </h3>
+                <div class="col-md-6">
+                    <div class="news">
+                        <div class="image">
+                            <img src="~/content/assets/images/news/giling-past.png">
+                        </div>
+                        <div class="news-title">
+                            Sampoerna Pertahankan Posisi sebagai Pemimpin Pasar
+                        </div>
+                        <p>
+                            PT HM Sampoerna Tbk. (Sampoerna) hari ini mengumumkan pencapaian dan kinerja bisnisnya selama tahun 2014 dalam Rapat Umum Pemegang Saham Tahunan (RUPS) dan Paparan Publik Tahunan, menyoroti kinerja perusahaan serta komitmennya terhadap Indonesia.
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                        </p>
+                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit.</p>
+                        <p class="text-date">30/12/2013 - Luthfi Munadzar</p>
+                        <a class="readmore" href="detail-page.html">
+                            Selengkapnya <i class="fa fa-long-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="news">
+                        <div class="image">
+                            <img src="~/content/assets/images/news/house.png">
+                        </div>
+                        <div class="news-title">
+                            Sampoerna Pertahankan Posisi sebagai Pemimpin Pasar
+                        </div>
+                        <p>
+                            PT HM Sampoerna Tbk. (Sampoerna) hari ini mengumumkan pencapaian dan kinerja bisnisnya selama tahun 2014 dalam Rapat Umum Pemegang Saham Tahunan (RUPS) dan Paparan Publik Tahunan, menyoroti kinerja perusahaan serta komitmennya terhadap Indonesia.
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                        </p>
+                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit.</p>
+                        <p class="text-date">30/12/2013 - Luthfi Munadzar</p>
+                        <a class="readmore" href="detail-page.html">
+                            Selengkapnya <i class="fa fa-long-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <!-- end news -->
+        </div>
+    </div>*@
+
+</div>
+<div class="col-lg-4">
+
+    @Html.Action("HomepageInformatips", "Home")
+
+
+    @*<div class="informatips">
+        <div class="banner-title"><i class="fa fa-info-circle"></i> Informatips</div>
+        <div class="informatips-img">
+            <img src="~/content/assets/images/informatips-img.png">
+        </div>
+        <div class="informatips-decription">
+            <p class="title">
+                Bagaimana Cara untuk mengeefektifkan waktu dalam bekerja, seimbang dengan kualitas yang dihasilkan produksi :)
+            </p>
+            <p class="text-date">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+            </p>
+            <a class="readmore" href="detail-page.html">
+                Selengkapnya <i class="fa fa-long-arrow-right"></i>
+            </a>
+        </div>
+    </div>*@
+
+    <!-- infobox -->
+    <div class="info-box troubleshoot">
+        <a href="#">
+            <div class="info-box-icon">
+                <i class="fa fa-lightbulb-o"></i>
+            </div>
+            <div class="info-box-descript">
+                <h3>Troubleshoting</h3>
+                <p>Your Guideline Solutions</p>
+            </div>
+        </a>
+    </div>
+    <div class="info-box mailto">
+        <a href="mailto:SKT.OpsServicesCenter@sampoerna.com">
+            <div class="info-box-icon">
+                <i class="fa fa-envelope-o"></i>
+            </div>
+            <div class="info-box-descript">
+                <h3>e-mail to HOSC</h3>
+                <p>SKT.OpsServicesCenter@sampoerna.com</p>
+            </div>
+        </a>
+    </div>
+    <div class="info-box call">
+        <div class="info-box-icon">
+            <i class="fa fa-phone"></i>
+        </div>
+        <div class="info-box-descript">
+            <h3>999 HOSC</h3>
+            <p>Hand-Rolled Ops Services Center</p>
+        </div>
+    </div>
+    <!-- end infobox -->
+
+    <div class="agenda">
+        <h3><i class="fa fa-calendar"></i> Agenda</h3>
+        <ul data-bind="foreach: Holiday">
+            <li>
+                <a href="#">
+                    <p class="text-date"><span data-bind="text: moment(HolidayDate).format('D MMMM YYYY')"> </span></p>
+                    <h4><span data-bind="text: Description"> </span></h4>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+</div>
+
+@if ((ViewBag.ResponName == null) || (@Model.IsExpired) || (@Model.IsRuleEmpty))
+{ 
+    <!-- Login Modal -->
+    <div class="modal fade" id="roleModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">User Responsibility</h4>
+                </div>
+                <div class="modal-body">
+                        @if (@Model.IsExpired)
+                        {
+                            <div class="alert alert-danger" style="display: block;">The selected responsibilities has expired!</div>
+                        }
+                        @if (@Model.IsRuleEmpty)
+                        {
+                            <div class="alert alert-danger" style="display: block;">The selected responsibilities has empty Rule!</div>
+                        }
+                        @using (Html.BeginForm("SettingResponsibility", "Home", null, FormMethod.Post, new { @class = "form-responsibility", role = "form" }))
+                        {
+                            <div class="form-group">
+                                <label for="username" class="col-sm-3 control-label">Username</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" id="username" placeholder="@Html.Name()" disabled>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="responsibility" class="col-sm-3 control-label">Responsibility</label>
+                                <div class="col-sm-9">
+
+                                        @Html.AntiForgeryToken()
+                                        @Html.ValidationSummary(false)
+                                        @Html.DropDownList("IDResponsibility", new SelectList(ViewBag.listResponsibility, "IDResponsibility", "ResponsibilityName"),
+                                        new
+                                        {
+                                            @class = "selectpicker show-tick form-control",
+                                            id = "ddlResponsibility",
+                                            data_live_search = "true"
+                                        })
+                                </div>
+                            </div>
+                        }
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="setResponsibility">OK</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+    <!-- /Login Modal-->
+}
+
+@section Scripts
+{
+    <script type="text/javascript">
+        $.ajax({
+            url: @Html.BaseUrl("Home/GetHolidayInformation"),
+            type: 'GET',
+            contentType: 'application/json',
+            dataType: 'json',
+            success: function (data) {
+                function viewModel() {
+                    var self = this;
+                    self.Holiday = data;
+                }
+                ko.applyBindings(new viewModel());
+            }
+        });
+    </script>
+
+        @if ((ViewBag.ResponName == null) || (@Model.IsExpired) || (@Model.IsRuleEmpty))
+        {
+    <script type="text/javascript">
+        +(function($, window, undefined) {
+            $("#setResponsibility").click(function(){
+                $(".form-responsibility").submit();
+            });
+            $('#roleModal').modal({
+                backdrop: 'static',
+                keyboard: false
+            });
+        })($);
+    </script>
+        }
+}

@@ -1,0 +1,682 @@
+﻿@model SKTISWebsite.Models.EblekReleaseApproval.InitEblekRelaseApproval
+@using HMS.SKTIS.Application.Resources
+@using SKTISWebsite.Helper
+@{ Html.SetPageTitle("Eblek Release Approval"); }
+
+<div class="container-fluid" data-bind="with: gridView">
+    <div class="col-lg-12">
+        <div class="col-lg-6">
+            <div class="row">
+                <label class="form-label col-lg-4">Location</label>
+                <div class="col-lg-2 offset-right">
+                    @*@Html.DropDownList("ddlFilterLocationCode", Model.LocationCodeSelectList, new Dictionary<string, object> {
+                            { "data-bind", "value:$root.locationCode, event : { change : $root.onLocationCodeChange }" },
+                            { "class", "selectpicker show-tick form-control" },
+                            { "data-live-search", "true"},
+                            { "id", "ddlFilterLocationCode"}
+                })*@
+                    <select id="ddlFilterLocationCode"
+                            class="selectpicker show-tick form-control"
+                            data-live-search="true"
+                            data-bind="selectPicker:$root.locationCode, optionsText: 'LocationCode', optionsValue : 'LocationCode', optionsAfterRender: locationDesc, selectPickerOptions: { optionsArray: $root.itemLocations }, event : { change : $root.onLocationCodeChange}"></select>
+                </div>
+                <div class="col-lg-4">
+                    <input type="text" class="form-control" readonly="readonly" data-bind="value:$root.locationName">
+                </div>
+            </div>
+            <div class="row">
+                <label class="form-label col-lg-4">Unit</label>
+                <div class="col-lg-6">
+                    <select class="selectpicker show-tick form-control" id="ddlUnitCode"
+                            data-live-search="true"
+                            data-bind="selectPicker: $root.unitCode, optionsText: 'Text', optionsValue : 'Value', selectPickerOptions: { optionsArray: $root.unitCodeSelectList }, event : { change : $root.onUnitCodeChange }"></select>
+                </div>
+            </div>
+            <div class="row">
+                <label class="form-label col-lg-4">Shift</label>
+                <div class="col-lg-6">
+                    <select class="selectpicker show-tick form-control" id="ddlShift"
+                            data-live-search="true"
+                            data-bind="selectPicker: $root.shift, optionsText: 'Text', optionsValue : 'Value', selectPickerOptions: { optionsArray: $root.shiftSelectList }, event : { change : $root.onShiftChange }"></select>
+                </div>
+            </div>
+            <div class="row">
+                <label class="form-label col-lg-4">Process</label>
+                <div class="col-lg-6">
+                    <select class="selectpicker show-tick form-control" id="ddlProcessGroup"
+                            data-live-search="true"
+                            data-bind="selectPicker: $root.processGroup, optionsText: 'Text', optionsValue : 'Value', selectPickerOptions: { optionsArray: $root.processGroupSelectList }, event : { change : $root.onProcessGroupChange }"></select>
+                </div>
+            </div>
+        </div>
+<div class="col-lg-6">
+    <div class="row">
+        <label class="form-label col-lg-3">
+            Year
+        </label>
+        <div class="col-lg-4">
+            @Html.DropDownList("filterYear", Model.YearSelectList,
+                             new Dictionary<string, object> { { "data-bind", "value:$root.filterYear, event : { change : $root.onYearSelectedChange}" },
+                        { "class", "selectpicker show-tick form-controlt" },
+                        {"data-live-search","true"},{"id","filterYear"} })
+        </div>
+    </div>
+    <div class="row">
+        <label class="form-label col-lg-3">
+            Week
+        </label>
+        <div class="col-lg-4">
+            <select id="filterWeek" class="selectpicker show-tick form-control" data-live-search="true"
+                    data-bind="selectPicker: $root.filterWeek, optionsText: 'Value', optionsValue : 'Text', selectPickerOptions: { optionsArray: $root.WeekFromSelectList },  event : { change : $root.setDateRange }"></select>
+        </div>
+    </div>
+    <div class="row">
+        <label class="form-label col-lg-3">
+            Date
+        </label>
+        <div class="col-lg-6">
+            <select id="filterDate" class="selectpicker show-tick form-control" data-live-search="true"
+                    data-bind="selectPicker: $root.filterDate, optionsText: 'Value', optionsValue : 'Text', selectPickerOptions: { optionsArray: $root.DateSelectList } "></select>
+        </div>
+    </div>
+</div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="action-btn">
+                    @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.View.ToString()))
+                    {
+                        <button type="button" class="btn btn-primary" data-bind="click:$root.search,enable: !$root.isBusy()">View</button>
+                    }
+                    @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.Approve.ToString()))
+                    {
+                        <button type="button" class="btn btn-primary" data-bind="click:$root.approve,enable: !$root.isBusy() && $root.RoleApprove">Approve</button>
+                    }
+                    @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.Return.ToString()))
+                    {
+                        <button type="button" class="btn btn-primary" data-bind="click:$root.return,enable: !$root.isBusy() && $root.RoleReturn()">Return</button>
+                    }
+                    @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.Excel.ToString()))
+                    {
+                        using (Html.BeginForm("GenerateExcelEblekReleaseApproval", "EblekReleaseApproval", FormMethod.Post, new { @data_bind = "submit: $root.generateExcelEblekReleaseApproval" }))
+                        {
+                            <input type="hidden" name="LocationCode">
+                            <input type="hidden" name="UnitCode">
+                            <input type="hidden" name="Date">
+                            <input type="hidden" name="Shift">
+                            <input type="hidden" name="KpsYear">
+                            <input type="hidden" name="KpsWeek">
+                            <input type="hidden" name="Process">
+                            <button type="submit" class="btn btn-primary" data-bind="enable: !$root.isBusy()">Excel</button>
+                        }
+                    }
+                    
+                </div>
+            </div>
+        </div>
+        <div class="table-overflow">
+            <table id="tblEblekReleaseApproval" class="table table-striped table-hover">
+                <thead>
+                    <tr class="head">
+                        <th></th>
+                        <th>Eblek Date</th>
+                        <th>Brand</th>
+                        <th>Group</th>
+                        <th>Remark</th>
+                    </tr>
+                </thead>
+                <tbody data-bind="foreach: listDataItems">
+                    @*insert template*@
+                    <tr data-bind="if: ($parent.editingRowIndex() !== $index()), click: $parent.editInline3.bind($data,$index())">
+                        <td style="text-align: center">
+                            <input type="checkbox" data-bind="checked:$data.Flag, click: $root.onChecked">
+                        </td>
+                        <td>
+                            <span data-bind="text: $data.EblekDate"></span>
+                            <span style="display:none" data-bind="text: $data.ProductionEntryCode"></span>
+                            <span style="display:none" data-bind="text: $data.OldValueRemark"></span>
+                        </td>
+                        <td>
+                            <span data-bind="text:$data.BrandCode"></span>
+                        </td>
+                        <td>
+                            <span data-bind="text: $data.GroupCode"></span>
+                        </td>
+                        <td style="width: 400px" class="current">
+                            <span data-bind="text:$data.Remark"></span>
+                        </td>
+                    </tr>
+                    @*edit template*@
+                    <tr data-bind="validationOptions: {insertMessages: false, showTooltip:true, decorateInputElement: true, errorElementClass: 'input-error'}, 
+                                    inlineProccess:[$parent,$data], if:($parent.editingRowIndex() === $index()), click: $parent.selectRow.bind($data, $index())">
+                        <td style="text-align: center">
+                            <input type="checkbox" data-bind="checked:$data.Flag, click: $root.onChecked">
+                        </td>
+                        <td>
+                            <span data-bind="text: $data.EblekDate"></span>
+                            <span style="display:none" data-bind="text: $data.ProductionEntryCode"></span>
+                            <span style="display:none" data-bind="text: $data.OldValueRemark"></span>
+                        </td>
+                        <td><span data-bind="text: $data.BrandCode"></span></td>
+                        <td><span data-bind="text: $data.GroupCode"></span></td>
+                        <td style="width: 400px"><input data-bind="value: $data.Remark" class="form-control" /></td>
+                    </tr>
+                </tbody>
+                <tbody data-bind="visible: !listDataItems().length">
+                    <tr>
+                        <td colspan="13" class="empty-row-message"><div class="loader"></div></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div data-bind="if: (listDataItems() != null && listDataItems().length !== 0)">
+            @Html.Partial("GridViewFooter")
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script src="~/Scripts/app/globalfunctions.js" type="text/javascript"></script>
+    <script src="~/Scripts/common/app.GridViewModel.js" type="text/javascript"></script>
+    <script src="~/Scripts/common/app.Extenders.js" type="text/javascript"></script>
+    <script type="text/javascript">
+    (function(app) {
+        app.EditGrid = function() {
+            var self = this;
+
+            //================= Filter Variable ================//
+            self.firstInitFromUrl = ko.observable(false);
+            self.itemLocations = ko.observableArray(@Html.Raw(Json.Encode(@Model.PlntChildLocationLookupList)));
+            self.locationCode = ko.observable($("#ddlFilterLocationCode").val());
+            self.locationName = ko.observable();
+            self.unitCode = ko.observable();
+            self.InitDateValue = ko.observable(true);
+            self.dateValue = ko.observable('@Model.TodayDate');
+            self.filterDate = ko.observable('@Model.TodayDate');
+            self.dateValue = ko.observable('@Model.TodayDate');
+            self.InitDateValue = ko.observable(true);
+            self.shift = ko.observable();
+            self.processGroup = ko.observable();
+            self.filterYear = ko.observable('@Model.DefaultYear');
+            self.filterWeek = ko.observable('@Model.DefaultWeek');
+            self.isBusy = ko.observable(true);
+            self.RoleApprove = ko.observable(false);
+            self.RoleReturn = ko.observable(false);
+
+            //================= busy button state ================//
+            $(document).ajaxComplete(function () {
+                if ($.active <= 1) {
+                    self.isBusy(false);
+                }
+            });
+
+            $(document).ajaxStart(function () {
+                if (!self.isBusy()) self.isBusy(true);
+            });
+            //================= busy button state ================//
+
+            //================= Role button state ================//
+            //self.onChecked = function(data){
+            //    console.log(data);
+            //    self.RoleButton();
+            //}
+            var counterCheck = 0;
+            self.onChecked = function (item) {
+                //console.log(ko.utils.unwrapObservable(item.Flag));
+                if (ko.utils.unwrapObservable(item.Flag) == true){
+                    counterCheck = counterCheck + 1;
+                    self.RoleButton();
+                } else {
+                    counterCheck = counterCheck - 1;
+                    if (counterCheck === 0){
+                        self.RoleApprove(false);
+                        self.RoleReturn(false);
+                    } else {
+                        self.RoleButton();
+                    }
+                }
+                //self.RoleButton();
+                return true;
+            };
+
+
+            self.RoleButton = function(){
+                if (self.gridView.editingRowIndex() !== -1)
+                    return;
+
+                var datas = {
+                    "Parameters": {
+                        "LocationCode": self.locationCode(),
+                        'UnitCode': self.unitCode(),
+                        'Shift': self.shift(),
+                        'Date': self.filterDate()
+                    },
+                    "Edit": ko.mapping.toJS(self.gridView.listDataItems())
+                };
+
+                datas = JSON.stringify(datas);
+
+                $.ajax({
+                    url: @Html.BaseUrl("EblekReleaseApproval/RoleButton"),
+                    type: 'POST',
+                    async: false,
+                    contentType: 'application/json',
+                    data: datas,
+                    dataType: 'json',
+                    success: function(data) {
+                        self.RoleApprove(data.Approve);
+                        self.RoleReturn(data.Return);
+                    }
+                });
+            };
+            //================= Role button state ================//
+
+            //================= Select List ================//
+            self.unitCodeSelectList = ko.observableArray();
+            self.shiftSelectList = ko.observableArray();
+            self.processGroupSelectList = ko.observableArray();
+            self.DateSelectList = ko.observableArray();
+
+            ////================= Data Eblek ================//
+            //self.eblekReleaseApproval = {
+            //    ProductionEntryCode :   ko.observable(''),
+            //    BrandCode           :   ko.observable(''),
+            //    GroupCode           :   ko.observable(''),
+            //    Remark              :   ko.observable(''),
+            //    EblekDate           :   ko.observable('')
+            //};
+
+            //================= Event Handler ================//
+            self.onLocationCodeChange = function() {
+                self.getLocationName();
+                self.getUnitCode(self.locationCode);
+                self.getShift(self.locationCode);
+                self.getProcessGroup(self.locationCode);
+            };
+
+            self.onKPSYearChange = function() {
+                self.getKPSWeek();
+            };
+
+            self.onKPSWeekChange = function() {
+                self.setDateRange();
+            };
+            
+            
+            //================= Function ================//
+            self.getLocationName = function() {
+                //for (var i = 0; i < self.itemLocations.length; i++) {
+                //    if (self.itemLocations[i].LocationCode == self.locationCode()) {
+                //        self.locationName(self.itemLocations[i].LocationName);
+                //        break;
+                //    }
+                //}
+                self.itemLocations().map(function(v) {
+                    if (typeof v.LocationCode !== 'undefined' && v.LocationCode == self.locationCode()) {
+                        self.locationName(v.LocationName);
+                    }
+                });
+
+                if (typeof cb == 'function') cb();
+            };
+
+            self.getUnitCode = function(locationcode) {
+                $.ajax({
+                    url: @Html.BaseUrl("EblekReleaseApproval/GetUnitCode"),
+                    type: 'GET',
+                    async: false,
+                    contentType: 'application/json',
+                    data: { locationCode: locationcode() },
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#ddlUnitCode').find('option').remove();
+                        //self.unitCodeSelectList(data);
+                        //self.unitCode(data[0].Value);
+                        $('#ddlUnitCode').selectpicker('refresh');
+
+                        var unitCodeModel = [];
+                        $.each(data, function(index, value) {
+                            unitCodeModel.push({ "Text": value.Text, "Value": value.Value });
+                        });
+                        self.unitCodeSelectList(unitCodeModel);
+
+                        //set default
+                        self.unitCode(self.unitCodeSelectList()[0].Value);
+                        if(self.firstInitFromUrl()){
+                            self.unitCode('@Model.Param2UnitCode');
+                        }
+
+                    }
+                });
+            };
+
+            self.getShift = function(locationcode) {
+                $.ajax({
+                    url: @Html.BaseUrl("EblekReleaseApproval/GetShift"),
+                    type: 'GET',
+                    async: false,
+                    contentType: 'application/json',
+                    data: { locationCode: locationcode() },
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#ddlShift').find('option').remove();
+                        //self.shiftSelectList(data);
+                        //self.shift(data[0].Value);
+                        $('#ddlShift').selectpicker('refresh');
+
+                        var shiftModel = [];
+                        $.each(data, function(index, value) {
+                            shiftModel.push({ "Text": value.Text, "Value": value.Value });
+                        });
+                        self.shiftSelectList(shiftModel);
+
+                        //set default
+                        self.shift(self.shiftSelectList()[0].Value);
+                        if(self.firstInitFromUrl()){
+                            self.shift('@Model.Param3Shift');
+                        }
+                    }
+                });
+            };
+
+            self.getProcessGroup = function(locationcode) {
+                $.ajax({
+                    url: @Html.BaseUrl("EblekReleaseApproval/GetProcessGroup"),
+                    type: 'GET',
+                    async: false,
+                    contentType: 'application/json',
+                    data: { locationCode: locationcode() },
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#ddlProcessGroup').find('option').remove();
+                        self.processGroupSelectList(data);
+                        $('#ddlProcessGroup').selectpicker('refresh');
+                        
+                        var processModel = [];
+                        $.each(data, function(index, value) {
+                            processModel.push({ "Text": value.Text, "Value": value.Value });
+                        });
+                        self.processGroupSelectList(processModel);
+
+                        if(data.length > 0)  self.processGroup(data[0].Value);
+                        else self.processGroup('');
+
+                        if(self.firstInitFromUrl()){
+                            self.processGroup('@Model.Param4Process');
+                        }
+
+                    }
+                });
+            };
+
+            self.WeekFromSelectList = ko.observableArray([]);
+            self.GetWeekFromSelectList = function() {
+                $.ajax({
+                    url: @Html.BaseUrl("EblekReleaseApproval/GetWeekByYear"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: { year: self.filterYear() },
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#filterWeek').find('option').remove();
+                        $('#filterWeek').selectpicker('refresh');
+                        var kpsWeekModel = [];
+                        $.each(data, function(index, value) {
+                            kpsWeekModel.push({ "Text": value, "Value": value });
+                        });
+                        self.WeekFromSelectList(kpsWeekModel);
+                        self.filterWeek('@Model.DefaultWeek');
+                        self.filterDate('@Model.TodayDate');
+                        self.setDateRange();
+
+                        if(self.firstInitFromUrl()){
+                            self.filterYear('@Model.yearFromUrl');
+                            self.filterWeek('@Model.weekFromUrl');
+                            self.filterDate('@Model.dateFromUrl');
+                        }
+
+                    }
+                });
+                //self.setDateRange();
+            };
+
+            self.setDateRange = function() {
+                if (!self.initDateValue) {
+                    //    if (self.filterWeek()) {
+                    $.ajax({
+                        url: @Html.BaseUrl("EblekReleaseApproval/GetDateByYearWeek"),
+                        type: 'GET',
+                        async: false,
+                        contentType: 'application/json',
+                        data: { year: self.filterYear(), week: self.filterWeek() },
+                        dataType: 'json',
+                        success: function(data) {
+                            //console.log(data);
+                            $('#filterDate').find('option').remove();
+                            $('#filterDate').selectpicker('refresh');
+                            var model = [];
+                            $.each(data, function(index, value) {
+                                model.push({ "Text": value.Text, "Value": value.Text });
+                            });
+                            self.DateSelectList(model);
+                            self.filterDate(moment().format("L"));
+                            //console.log(moment().format("L"));
+
+                            self.filterDate('@Model.TodayDate');
+                        }
+                    });
+                    //}
+                } else {
+                    self.initDate = true;
+                }
+            };
+
+
+
+            //============================ Grid Eblek Release Approval ===============================
+
+            //gridView Piece Rate Initialization
+            self.gridView = new app.GridViewModel({
+                Criteria: {
+                    PageSize: 10,
+                    PageIndex: 1,
+                    SortExpression: "UpdatedDate",
+                    SortOrder: "DESC",
+                    LocationCode: self.locationCode,
+                    UnitCode: self.unitCode,
+                    Shift: self.shift,
+                    Process: self.processGroup,
+                    Date: self.filterDate
+                },
+                DataSourceUrl: @Html.BaseUrl("EblekReleaseApproval/GetEblekReleaseApproval"),
+                InlineEdit: true,
+                InsertRowFocusedControlIndex: 1
+            });
+
+            // Load Data
+            self.search = function() {
+                $('.empty-row-message').html('<div class="loader"></div>'); // Reset New and Edit row
+                // Check whether New or Edit data is existing and not saved to database yet (on Ajax Action)
+                if (SKTIS.Checker.modifiedDataExistsForAjax([self.gridView.listNewItems, self.gridView.listEditItems]) == true) {
+                    return;
+                } else {
+                    self.gridView.listNewItems.removeAll();
+                    self.gridView.listEditItems.removeAll();
+                }
+
+                self.gridView.search({}, function(response) {
+                    if (response.status == 'KO') {
+                        SKTIS.Helper.Notification(response.message, 'error');
+                        $('.empty-row-message').html(response.message);
+                    } else if (response.status == 'Empty') {
+                        self.RemoveNotification();
+
+                        //SKTIS.Helper.Notification(response.message,'warning');
+                        $('.empty-row-message').html('@CommonLabel.lblDataEmpty');
+                    }
+                    $('#tblEblekReleaseApproval tr input[type=checkbox]').click(function(e) {
+                        e.stopPropagation();
+                    });
+                });
+                //self.RoleButton();
+            };
+
+            // Approve action 
+            self.approve = function() {
+                if (self.gridView.editingRowIndex() !== -1)
+                    return;
+
+                var datas = {
+                    "Parameters": {
+                        "LocationCode": self.locationCode(),
+                        'UnitCode': self.unitCode(),
+                        'Shift': self.shift(),
+                        'Date': self.filterDate()
+                    },
+                    "Edit": ko.mapping.toJS(self.gridView.listDataItems())
+                };
+
+                datas = JSON.stringify(datas);
+
+                $.ajax({
+                    url: @Html.BaseUrl("EblekReleaseApproval/ApproveAllEblekReleaseApproval"),
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: datas,
+                    dataType: 'json',
+                    success: function(data) {
+                        if (data.Edit) {
+                            $.each(data.Edit, function(k, value) {
+                                if (value) {
+                                    SKTIS.Helper.ResponseNotification(value, "Approve Eblek Release", value.ProductionEntryCode);
+                                }
+
+
+                            });
+                        }
+
+                        self.gridView.sort('UpdatedDate', 'ASC');
+                        self.gridView.listNewItems.removeAll();
+                        self.gridView.listEditItems.removeAll();
+
+                    } 
+                });
+            };
+
+            // Approve action
+            self.return = function() {
+                if (self.gridView.editingRowIndex() !== -1)
+                    return;
+                var datas = {
+                    "Parameters": {
+                        "LocationCode": self.locationCode(),
+                        'UnitCode': self.unitCode(),
+                        'Shift': self.shift(),
+                        'Date': self.filterDate()
+                    },
+                    "Edit": ko.mapping.toJS(self.gridView.listDataItems())
+                };
+
+                datas = JSON.stringify(datas);
+
+                $.ajax({
+                    url: @Html.BaseUrl("EblekReleaseApproval/ReturnAllEblekReleaseApproval"),
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: datas,
+                    dataType: 'json',
+                    success: function(data) {
+                        if (data.Edit) {
+                            $.each(data.Edit, function(k, value) {
+                                if (value) {
+                                    SKTIS.Helper.ResponseNotification(value, "Return Eblek Release", value.ProductionEntryCode);
+                                }
+
+
+                            });
+                        }
+
+                        self.gridView.sort('UpdatedDate', 'ASC');
+                        self.gridView.listNewItems.removeAll();
+                        self.gridView.listEditItems.removeAll();
+                        self.search();
+                    }
+                });
+            };
+
+            //Method Generate Excel function - Piece Rate
+            self.generateExcelEblekReleaseApproval = function(formElement) {
+                $(formElement).find("input[name=LocationCode]").val($("#ddlFilterLocationCode").val());
+                $(formElement).find("input[name=UnitCode]").val($('#ddlUnitCode').val());
+                $(formElement).find("input[name=Date]").val($('#filterDate').val());
+                $(formElement).find("input[name=Shift]").val($('#ddlShift').val());
+                $(formElement).find("input[name=KpsYear]").val($('#filterYear').val());
+                $(formElement).find("input[name=KpsWeek]").val($('#filterWeek').val());
+                $(formElement).find("input[name=Process]").val($('#ddlProcessGroup').val());
+                return true;
+            };
+
+            self.RemoveNotification = function() {
+                if ($('#noty_top_layout_container').length > 0) {
+                    $('#noty_top_layout_container').remove();
+                }
+            };
+
+            self.gridView.applyValidationRules = function(entity) {
+                self.RemoveNotification();
+            };
+
+            //================= Init Call ================//
+            self.onLocationCodeChange();
+            self.getUnitCode(self.locationCode);
+            self.getShift(self.locationCode);
+            self.getProcessGroup(self.locationCode);
+            self.GetWeekFromSelectList();
+            self.search();
+
+            //================= Init Call ================//
+            $(document).ready(function(){
+
+                self.init();
+
+            });
+
+            self.init = function() {
+
+                if (typeof '@Model.Param1LocationCode' != 'undefined' && '@Model.Param1LocationCode') {
+                    self.firstInitFromUrl(true);
+                    self.locationCode('@Model.Param1LocationCode');
+                    self.unitCode('@Model.Param2UnitCode');
+                };
+                //Asynch setting
+                async.series([
+                    function(callback) {
+                        self.onLocationCodeChange(callback);
+                    },
+                    function(callback) {
+                        self.getUnitCode(self.locationCode);
+                    },
+                    function(callback) {
+                        self.getShift(self.locationCode);
+                    },
+                    function(callback) {
+                        self.getProcessGroup(self.locationCode);
+                    },
+                    //function(callback) {
+                    //    self.RoleButton(callback);
+                    //},
+                    function(callback) {
+                        self.GetWeekFromSelectList(callback);
+                        self.firstInitFromUrl(false);
+                    }
+                ]);
+
+                self.firstLoad = false;
+            };
+
+        };
+        ko.applyBindings(new app.EditGrid());
+    })(app = this.app || {});
+</script>
+}
+

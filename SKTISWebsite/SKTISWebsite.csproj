@@ -1,0 +1,1503 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{9981A8AD-7688-4301-8A1F-6DE74F7F94F2}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SKTISWebsite</RootNamespace>
+    <AssemblyName>SKTISWebsite</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+    <UseIISExpress>false</UseIISExpress>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <FilesToIncludeForPublish>OnlyFilesToRunTheApp</FilesToIncludeForPublish>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Antlr3.Runtime, Version=3.5.0.2, Culture=neutral, PublicKeyToken=eb42632606e9261f, processorArchitecture=MSIL">
+      <HintPath>..\packages\Antlr.3.5.0.2\lib\Antlr3.Runtime.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="AutoMapper, Version=3.3.1.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
+      <HintPath>..\packages\AutoMapper.3.3.1\lib\net40\AutoMapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="AutoMapper.Net4, Version=3.3.1.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
+      <HintPath>..\packages\AutoMapper.3.3.1\lib\net40\AutoMapper.Net4.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="DocumentFormat.OpenXml, Version=2.5.5631.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\DocumentFormat.OpenXml.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EntityFramework">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="Excel, Version=2.1.2.3, Culture=neutral, PublicKeyToken=93517dbe6a4012fa, processorArchitecture=MSIL">
+      <HintPath>..\packages\ExcelDataReader.2.1.2.3\lib\net45\Excel.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="MvcSiteMapProvider, Version=4.6.18.0, Culture=neutral, PublicKeyToken=1923abe4657913cc, processorArchitecture=MSIL">
+      <HintPath>..\packages\MvcSiteMapProvider.MVC5.Core.4.6.18\lib\net45\MvcSiteMapProvider.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="MvcSiteMapProvider.WebActivator, Version=4.6.18.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MvcSiteMapProvider.MVC5.4.6.18\lib\net45\MvcSiteMapProvider.WebActivator.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLog.4.0.1\lib\net45\NLog.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="PagedList, Version=1.17.0.0, Culture=neutral, PublicKeyToken=abbb863e9397c5e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\PagedList.1.17.0.0\lib\net40\PagedList.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="PagedList.Mvc, Version=4.5.0.0, Culture=neutral, PublicKeyToken=abbb863e9397c5e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\PagedList.Mvc.4.5.0.0\lib\net40\PagedList.Mvc.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="SimpleInjector, Version=2.8.0.0, Culture=neutral, PublicKeyToken=984cb50dea722e99, processorArchitecture=MSIL">
+      <HintPath>..\packages\SimpleInjector.2.8.0\lib\net45\SimpleInjector.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="SimpleInjector.Extensions.LifetimeScoping, Version=2.8.0.0, Culture=neutral, PublicKeyToken=984cb50dea722e99, processorArchitecture=MSIL">
+      <HintPath>..\packages\SimpleInjector.Extensions.LifetimeScoping.2.8.0\lib\net40-client\SimpleInjector.Extensions.LifetimeScoping.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="SimpleInjector.Integration.Web, Version=2.8.0.0, Culture=neutral, PublicKeyToken=984cb50dea722e99, processorArchitecture=MSIL">
+      <HintPath>..\packages\SimpleInjector.Integration.Web.2.8.0\lib\net40\SimpleInjector.Integration.Web.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="SimpleInjector.Integration.Web.Mvc, Version=2.8.0.0, Culture=neutral, PublicKeyToken=984cb50dea722e99, processorArchitecture=MSIL">
+      <HintPath>..\packages\SimpleInjector.Integration.Web.Mvc.2.8.0\lib\net40\SimpleInjector.Integration.Web.Mvc.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="SpreadsheetLight, Version=3.4.4.0, Culture=neutral, PublicKeyToken=32fbb46dc1730c57, processorArchitecture=MSIL">
+      <HintPath>..\packages\SpreadsheetLight.3.4.4\lib\SpreadsheetLight.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Activities" />
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.Helpers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.5.2.3\lib\net45\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Optimization, Version=1.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.Web.Optimization.1.1.3\lib\net40\System.Web.Optimization.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.Razor.3.2.3\lib\net45\System.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Deployment.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="WebActivatorEx, Version=2.0.0.0, Culture=neutral, PublicKeyToken=7b26dc2a43f6a0d4, processorArchitecture=MSIL">
+      <HintPath>..\packages\WebActivatorEx.2.0.1\lib\net40\WebActivatorEx.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="WebGrease, Version=1.6.5135.21930, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\WebGrease.1.6.0\lib\WebGrease.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Content\assets\fonts\bootstrap\glyphicons-halflings-regular.svg" />
+    <Content Include="Content\assets\fonts\FontAwesome\fontawesome-webfont.svg" />
+    <Content Include="Content\assets\fonts\Montserrat-Bold.svg" />
+    <Content Include="Content\assets\fonts\Montserrat-Regular.svg" />
+    <Content Include="Content\assets\fonts\OpenSans.svg" />
+    <Content Include="Content\assets\images\ajax-loader.gif" />
+    <Content Include="Content\assets\images\ajax-process-loader.gif" />
+    <Content Include="Content\assets\images\banner-hosc-mailto.png" />
+    <Content Include="Content\assets\images\banner-workpoint.png" />
+    <Content Include="Content\assets\images\bg-login.jpg" />
+    <Content Include="Content\assets\images\blur.png" />
+    <Content Include="Content\assets\images\fav-ico.png" />
+    <Content Include="Content\assets\images\icon-hosc.png" />
+    <Content Include="Content\assets\images\icon\ui-icons_222222_256x240.png" />
+    <Content Include="Content\assets\images\informatips-img.png" />
+    <Content Include="Content\assets\images\karawang.jpg" />
+    <Content Include="Content\assets\images\logo-color.png" />
+    <Content Include="Content\assets\images\logo-login.png" />
+    <Content Include="Content\assets\images\logo-skt.png" />
+    <Content Include="Content\assets\images\news-info.png" />
+    <Content Include="Content\assets\images\news\giling-past.png" />
+    <Content Include="Content\assets\images\news\house.png" />
+    <Content Include="Content\assets\images\profil.png" />
+    <Content Include="Content\assets\images\rokok-kretek.jpg" />
+    <Content Include="Content\assets\images\slider\giling-gunting.png" />
+    <Content Include="Content\assets\images\slider\old-giling.png" />
+    <Content Include="Content\assets\images\slider\pack.png" />
+    <Content Include="Content\assets\images\slider\plant-kraksaan.png" />
+    <Content Include="Content\assets\images\slider\rungkut-1.png" />
+    <Content Include="Content\assets\images\slider\stamp.png" />
+    <Content Include="Content\assets\images\slider\unit-produksi.png" />
+    <Content Include="Content\assets\images\sort\sort_asc.png" />
+    <Content Include="Content\assets\images\sort\sort_asc_disabled.png" />
+    <Content Include="Content\assets\images\sort\sort_both.png" />
+    <Content Include="Content\assets\images\sort\sort_desc.png" />
+    <Content Include="Content\assets\images\sort\sort_desc_disabled.png" />
+    <Content Include="Content\assets\images\Taman_Sampoerna.jpg" />
+    <Content Include="Content\css\main.css" />
+    <Content Include="Content\css\main.min.css" />
+    <Content Include="Content\css\print.css" />
+    <Content Include="Content\css\vendors\animate.css" />
+    <Content Include="Content\css\vendors\bootstrap-datetimepicker.css" />
+    <Content Include="Content\css\vendors\bootstrap-select.css" />
+    <Content Include="Content\css\vendors\bootstrap-timepicker.min.css" />
+    <Content Include="Content\css\vendors\font-awesome.css" />
+    <Content Include="Content\css\vendors\jquery-ui.css" />
+    <Content Include="Content\css\vendors\jquery.tree.css" />
+    <Content Include="Content\css\vendors\jsgrid-theme.css" />
+    <Content Include="Content\css\vendors\jsgrid.css" />
+    <Content Include="Content\PagedList.css" />
+    <Content Include="Global.asax" />
+    <Content Include="Content\assets\fonts\bootstrap\glyphicons-halflings-regular.eot" />
+    <Content Include="Content\assets\fonts\bootstrap\glyphicons-halflings-regular.ttf" />
+    <Content Include="Content\assets\fonts\bootstrap\glyphicons-halflings-regular.woff" />
+    <Content Include="Content\assets\fonts\FontAwesome\fontawesome-webfont.eot" />
+    <Content Include="Content\assets\fonts\FontAwesome\fontawesome-webfont.ttf" />
+    <Content Include="Content\assets\fonts\FontAwesome\fontawesome-webfont.woff" />
+    <Content Include="Content\assets\fonts\FontAwesome\fontawesome-webfont.woff2" />
+    <Content Include="Content\assets\fonts\FontAwesome\FontAwesome.otf" />
+    <Content Include="Content\assets\fonts\Montserrat-Bold.eot" />
+    <Content Include="Content\assets\fonts\Montserrat-Bold.ttf" />
+    <Content Include="Content\assets\fonts\Montserrat-Bold.woff" />
+    <Content Include="Content\assets\fonts\Montserrat-Regular.eot" />
+    <Content Include="Content\assets\fonts\Montserrat-Regular.ttf" />
+    <Content Include="Content\assets\fonts\Montserrat-Regular.woff" />
+    <Content Include="Content\assets\fonts\OpenSans.eot" />
+    <Content Include="Content\assets\fonts\OpenSans.ttf" />
+    <Content Include="Content\assets\fonts\OpenSans.woff" />
+    <Content Include="Content\css\main.min.css.map" />
+    <Content Include="Mvc.sitemap" />
+    <Content Include="Content\ExcelTemplates\MasterData\MstGeneralList.xlsx" />
+    <Content Include="Content\ExcelTemplates\MasterData\MstMaintenanceItem.xlsx" />
+    <Content Include="Content\ExcelTemplates\MasterData\MstProcess.xlsx" />
+    <Content Include="Content\ExcelTemplates\MasterData\MstItemLocation.xlsx" />
+    <Content Include="Content\ExcelTemplates\MasterData\MstBrand.xlsx" />
+    <Content Include="Content\ExcelTemplates\MasterData\MstLocation.xlsx" />
+    <Content Include="Content\ExcelTemplates\MasterData\MstStandardHour.xlsx" />
+    <Content Include="Content\ExcelTemplates\MasterData\MstTPO.xlsx" />
+    <Content Include="Content\ExcelTemplates\MasterData\MstTPOPackage.xlsx" />
+    <Content Include="Content\ExcelTemplates\MasterData\MstPackageEquipment.xlsx" />
+    <Content Include="Content\ExcelTemplates\MasterData\MstUnit.xlsx" />
+    <Content Include="Content\ExcelTemplates\MasterData\MstBrandGroup.xlsx" />
+    <Content Include="Content\ExcelTemplates\MasterData\MstBrandGroupMaterial.xlsx" />
+    <Content Include="Content\ExcelTemplates\MasterData\MstTPOFeeRate.xlsx" />
+    <Content Include="Content\ExcelTemplates\MasterData\MstEmployeeJobsData.xlsx" />
+    <Content Include="Content\ExcelTemplates\MasterData\MstPlantUnit.xlsx" />
+    <Content Include="Content\ExcelTemplates\MasterData\MstPlantProductionGroup.xlsx" />
+    <Content Include="Content\ExcelTemplates\MasterData\MstTPOProductionGroup.xlsx" />
+    <Content Include="Content\ExcelTemplates\MasterData\MstPlantAbsentType.xlsx" />
+    <Content Include="Content\ExcelTemplates\MasterData\MstBrandPackageMapping.xlsx" />
+    <Content Include="Content\ExcelTemplates\MasterData\EquipmentRequest.xlsx" />
+    <Content Include="Content\ExcelTemplates\MasterData\MstGenProcessSettings.xlsx" />
+    <Content Include="Content\ExcelTemplates\MasterData\MstGenProcessSettingLocation.xlsx" />
+    <Content Include="Content\ExcelTemplates\MasterData\MstMntcConvertSts.xlsx" />
+    <Content Include="Content\ExcelTemplates\MasterData\MstGenHoliday.xlsx" />
+    <Content Include="Content\ExcelTemplates\MasterData\MaintenanceItemDisposal.xlsx" />
+    <Content Include="Content\ExcelTemplates\Planning\PlanWeeklyProductionPlanning.xlsx" />
+    <Content Include="Content\ExcelTemplates\Maintenance\EquipmentTransfer.xlsx" />
+    <Content Include="Content\ExcelTemplates\Maintenance\MaintenanceItemConversion.xlsx" />
+    <Content Include="Content\ExcelTemplates\Maintenance\MaintenanceItemConversionES.xlsx" />
+    <Content Include="Content\ExcelTemplates\Maintenance\EquipmentReceive.xlsx" />
+    <Content Include="Content\ExcelTemplates\Planning\PlanningPlantIndividualCapacity.xlsx" />
+    <Content Include="Content\ExcelTemplates\Planning\PlanningPlantIndividualCapacityByRefence.xlsx" />
+    <Content Include="Content\ExcelTemplates\Planning\ReportProductionTarget.xlsx" />
+    <Content Include="Content\ExcelTemplates\Planning\PlantGroupShift.xlsx" />
+    <Content Include="Content\ExcelTemplates\Planning\ProductionPlanTPU.xlsx" />
+    <Content Include="Content\ExcelTemplates\Planning\ReportSummaryProcessTargets.xlsx" />
+    <Content Include="Content\ExcelTemplates\Planning\PlanningTPOTPK.xlsx" />
+    <Content Include="Content\ExcelTemplates\Maintenance\MaintenanceEquipmentQualityInspection.xlsx" />
+    <Content Include="Content\ExcelTemplates\Maintenance\EquipmentFulfillment.xlsx" />
+    <Content Include="Content\ExcelTemplates\Maintenance\MaintenanceEquipmentStockReport.xlsx" />
+    <Content Include="Content\ExcelTemplates\Maintenance\MaintenanceExecutionInventory.xlsx" />
+    <Content Include="Content\ExcelTemplates\Maintenance\PlantEquipmentRepair.xlsx" />
+    <Content Include="Content\ExcelTemplates\Maintenance\PlantEquipmentRepairTPO.xlsx" />
+    <Content Include="Content\ExcelTemplates\Planning\ProductionPlantTPK.xlsx" />
+    <Content Include="Content\ExcelTemplates\Maintenance\MaintenanceExecutionInventoryAdjustment.xlsx" />
+    <Content Include="Content\ExcelTemplates\Execute\ExecutePlantProductionEntry.xlsx" />
+    <Content Include="Content\ExcelTemplates\Execute\ExecuteTPOProductionEntry.xlsx" />
+    <Content Include="Content\ExcelTemplates\Execute\ExecutePlantActualWorkHours.xlsx" />
+    <Content Include="Content\ExcelTemplates\Execute\ExecutePlantWorkerAssignment.xlsx" />
+    <Content Include="Content\ExcelTemplates\Execute\ExecuteTPOActualWorkHours.xlsx" />
+    <Content Include="Content\ExcelTemplates\Execute\ExecutePlantWorkerAbsenteeismDaily.xlsx" />
+    <Content Include="Content\ExcelTemplates\Execute\ExecutePlantWorkerAbsenteeismPieceRate.xlsx" />
+    <Content Include="Content\ExcelTemplates\Execute\ExecuteProductAdjustment.xlsx" />
+    <Content Include="Content\ExcelTemplates\Execute\ExecuteTPOProductionEntryVerification.xlsx" />
+    <Content Include="Content\ExcelTemplates\Execute\ExecutePlantProductionEntryVerification.xlsx" />
+    <Content Include="Content\ExcelTemplates\Execute\ExecutePlantWorkerAbsenteeismDaily.xlsx" />
+    <Content Include="Content\ExcelTemplates\Execute\ExecutePlantWorkerAbsenteeismPieceRate.xlsx" />
+    <Content Include="Content\ExcelTemplates\Execute\ExecuteTPOActualWorkHours.xlsx" />
+    <Content Include="Content\ExcelTemplates\PlantWages\PlantWagesExecutionProductionCard.xlsx" />
+    <Content Include="Content\ExcelTemplates\PlantWages\PlantWagesExecutionEblekRelease.xlsx" />
+    <Content Include="Content\ExcelTemplates\TPOFee\TPOFeeExeActual.xlsx" />
+    <Content Include="Content\ExcelTemplates\PlantWages\PlantWagesEblekReleaseApproval.xlsx" />
+    <Content Include="Content\ExcelTemplates\TPOFee\TPOFeeExeActualDetail.xlsx" />
+    <Content Include="Content\ExcelTemplates\TPOFee\TpoFeeExePlan.xlsx" />
+    <Content Include="Content\ExcelTemplates\TPOFee\TpoFeeExePlanDetail.xlsx" />
+    <Content Include="Content\ExcelTemplates\Execute\ExeReportByGroup.xlsx" />
+    <Content Include="Content\ExcelTemplates\TPOFee\TPOFeeExeApproval.xlsx" />
+    <Content Include="Content\ExcelTemplates\TPOFee\TPOFeeAPOpen.xlsx" />
+    <Content Include="Content\ExcelTemplates\TPOFee\TPOFeeAPClose.xlsx" />
+    <Content Include="Content\ExcelTemplates\Execute\ExeReportByStatus.xlsx" />
+    <Content Include="Content\ExcelTemplates\TPOFee\TPOFeeExeGLAccrued.xlsx" />
+    <Content Include="Content\ExcelTemplates\TPOFee\TPOFeeExeGLAccruedDetail.xlsx" />
+    <Content Include="Content\ExcelTemplates\Execute\ExecutePlantMaterialUsageNonTobacco.xlsx" />
+    <Content Include="Content\ExcelTemplates\Execute\ExecutePlantMaterialUsageTobacco.xlsx" />
+    <Content Include="Content\ExcelTemplates\PlantWages\PlantWagesProductionCardApprovalDetail.xlsx" />
+    <Content Include="Content\ExcelTemplates\PlantWages\WagesReportAvailablePositionNumber.xlsx" />
+    <Content Include="Content\ExcelTemplates\Execute\ExeReportByProcess.xlsx" />
+    <Content Include="Content\ExcelTemplates\Execute\ExeEMSSourceData.xlsx" />
+    <Content Include="Content\ExcelTemplates\Execute\ExeReportDailyProductionAchievement.xlsx" />
+    <Content Include="Content\ExcelTemplates\Execute\ExeReportProductionStockByProcess.xlsx" />
+    <Content Include="Logs\Errors\.gitkeep" />
+    <Content Include="Content\ExcelTemplates\Execute\ExecuteTPOProductionEntryMultiskill.xlsx" />
+    <Content Include="Content\ExcelTemplates\PlantWages\PlantWagesProductionCardCorrection.xlsx" />
+    <Content Include="Content\ExcelTemplates\PlantWages\WagesReportAbsentsDetail.xlsx" />
+    <Content Include="Content\ExcelTemplates\PlantWages\WagesReportAbsentsEmployee.xlsx" />
+    <Content Include="Content\ExcelTemplates\PlantWages\WagesReportAbsentsEmployeeDetail.xlsx" />
+    <Content Include="Content\ExcelTemplates\PlantWages\WagesReportSummary.xlsx" />
+    <Content Include="Content\ExcelTemplates\TPOFee\TpoFeeExePlanDetail2.xlsx" />
+    <Content Include="Content\ExcelTemplates\TPOFee\TpoFeeExePlanDetail3.xlsx" />
+    <Content Include="Content\ExcelTemplates\TPOFee\TPOFeeReportsPackage.xlsx" />
+    <Content Include="Content\ExcelTemplates\TPOFee\TPOFeeReportsProduction.xlsx" />
+    <Content Include="Content\ExcelTemplates\TPOFee\TPOFeeReportsSummary.xlsx" />
+    <Content Include="Content\ExcelTemplates\Utilities\UtilSecurityFunctions.xlsx" />
+    <Content Include="Content\ExcelTemplates\Utilities\UtilSecurityResponsibilities.xlsx" />
+    <Content Include="Content\ExcelTemplates\Utilities\UtilSecurityRules.xlsx" />
+    <None Include="MvcSiteMapSchema.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Properties\PublishProfiles\Publish QC.pubxml" />
+    <Content Include="Scripts\app\globalfunctions.js" />
+    <Content Include="Scripts\app\modal.js" />
+    <None Include="Scripts\jquery-2.1.4.intellisense.js" />
+    <Content Include="Scripts\common\app.CustomBinding.js" />
+    <Content Include="Scripts\common\app.Extenders.js" />
+    <Content Include="Scripts\common\app.GridViewModel.js" />
+    <Content Include="Scripts\jquery-2.1.4.js" />
+    <Content Include="Scripts\jquery-2.1.4.min.js" />
+    <Content Include="Scripts\jquery-2.1.4.min.map" />
+    <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
+    <Content Include="Scripts\jquery.unobtrusive-ajax.min.js" />
+    <Content Include="Scripts\jquery.validate.js" />
+    <Content Include="Scripts\jquery.validate.min.js" />
+    <Content Include="Scripts\jquery.validate.unobtrusive.js" />
+    <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
+    <Content Include="Scripts\knockout-3.3.0.debug.js" />
+    <Content Include="Scripts\knockout-3.3.0.js" />
+    <Content Include="Scripts\knockout.mapping-latest.debug.js" />
+    <Content Include="Scripts\knockout.mapping-latest.js" />
+    <Content Include="Scripts\knockout.validation.custom.js" />
+    <Content Include="Scripts\knockout.validation.debug.js" />
+    <Content Include="Scripts\knockout.validation.js" />
+    <Content Include="Scripts\languages.min.js" />
+    <Content Include="Scripts\main.js" />
+    <Content Include="Scripts\noty\jquery.noty.js" />
+    <Content Include="Scripts\noty\layouts\bottom.js" />
+    <Content Include="Scripts\noty\layouts\bottomCenter.js" />
+    <Content Include="Scripts\noty\layouts\bottomLeft.js" />
+    <Content Include="Scripts\noty\layouts\bottomRight.js" />
+    <Content Include="Scripts\noty\layouts\center.js" />
+    <Content Include="Scripts\noty\layouts\centerLeft.js" />
+    <Content Include="Scripts\noty\layouts\centerRight.js" />
+    <Content Include="Scripts\noty\layouts\inline.js" />
+    <Content Include="Scripts\noty\layouts\top.js" />
+    <Content Include="Scripts\noty\layouts\topCenter.js" />
+    <Content Include="Scripts\noty\layouts\topLeft.js" />
+    <Content Include="Scripts\noty\layouts\topRight.js" />
+    <Content Include="Scripts\noty\themes\bootstrap.js" />
+    <Content Include="Scripts\noty\themes\default.js" />
+    <Content Include="Scripts\noty\themes\relax.js" />
+    <Content Include="Scripts\numeral.min.js" />
+    <Content Include="Scripts\vendors\async.min.js" />
+    <Content Include="Scripts\vendors\boostrap.tooltip.js" />
+    <Content Include="Scripts\vendors\bootstrap-datepicker.js" />
+    <Content Include="Scripts\vendors\bootstrap-datetimepicker.js" />
+    <Content Include="Scripts\vendors\bootstrap-filestyle.js" />
+    <Content Include="Scripts\bootstrap.js" />
+    <Content Include="Scripts\jquery-ui.js" />
+    <Content Include="Scripts\modernizr-2.6.2.js" />
+    <Content Include="Scripts\moment.js" />
+    <Content Include="Scripts\vendors\bootstrap-timepicker.min.js" />
+    <Content Include="Scripts\vendors\fileman\css\images\animated-overlay.gif" />
+    <Content Include="Scripts\vendors\fileman\css\images\ui-bg_flat_0_aaaaaa_40x100.png" />
+    <Content Include="Scripts\vendors\fileman\css\images\ui-bg_flat_75_ffffff_40x100.png" />
+    <Content Include="Scripts\vendors\fileman\css\images\ui-bg_glass_55_fbf9ee_1x400.png" />
+    <Content Include="Scripts\vendors\fileman\css\images\ui-bg_glass_65_ffffff_1x400.png" />
+    <Content Include="Scripts\vendors\fileman\css\images\ui-bg_glass_75_dadada_1x400.png" />
+    <Content Include="Scripts\vendors\fileman\css\images\ui-bg_glass_75_e6e6e6_1x400.png" />
+    <Content Include="Scripts\vendors\fileman\css\images\ui-bg_glass_95_fef1ec_1x400.png" />
+    <Content Include="Scripts\vendors\fileman\css\images\ui-bg_highlight-soft_75_cccccc_1x100.png" />
+    <Content Include="Scripts\vendors\fileman\css\images\ui-icons_222222_256x240.png" />
+    <Content Include="Scripts\vendors\fileman\css\images\ui-icons_2e83ff_256x240.png" />
+    <Content Include="Scripts\vendors\fileman\css\images\ui-icons_454545_256x240.png" />
+    <Content Include="Scripts\vendors\fileman\css\images\ui-icons_888888_256x240.png" />
+    <Content Include="Scripts\vendors\fileman\css\images\ui-icons_cd0a0a_256x240.png" />
+    <Content Include="Scripts\vendors\fileman\css\jquery-ui-1.10.4.custom.css" />
+    <Content Include="Scripts\vendors\fileman\css\jquery-ui-1.10.4.custom.min.css" />
+    <Content Include="Scripts\vendors\fileman\css\main.css" />
+    <Content Include="Scripts\vendors\fileman\css\main.min.css" />
+    <Content Include="Scripts\vendors\fileman\dev.html" />
+    <Content Include="Scripts\vendors\fileman\images\action-folder-paste.png" />
+    <Content Include="Scripts\vendors\fileman\images\action-folder-rename.png" />
+    <Content Include="Scripts\vendors\fileman\images\arrow_down.png" />
+    <Content Include="Scripts\vendors\fileman\images\arrow_up.png" />
+    <Content Include="Scripts\vendors\fileman\images\blank.gif" />
+    <Content Include="Scripts\vendors\fileman\images\copy.png" />
+    <Content Include="Scripts\vendors\fileman\images\cut.png" />
+    <Content Include="Scripts\vendors\fileman\images\dir-minus.png" />
+    <Content Include="Scripts\vendors\fileman\images\dir-plus.png" />
+    <Content Include="Scripts\vendors\fileman\images\file-add.png" />
+    <Content Include="Scripts\vendors\fileman\images\file-delete.png" />
+    <Content Include="Scripts\vendors\fileman\images\file-download.png" />
+    <Content Include="Scripts\vendors\fileman\images\file-duplicate.png" />
+    <Content Include="Scripts\vendors\fileman\images\file-upload.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_3gp.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_7z.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_ace.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_ai.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_aif.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_aiff.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_amr.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_asf.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_asx.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_bat.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_bin.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_bmp.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_bup.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_cab.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_cbr.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_cda.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_cdl.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_cdr.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_chm.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_dat.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_divx.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_dll.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_dmg.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_doc.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_dss.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_dvf.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_dwg.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_eml.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_eps.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_exe.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_fla.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_flv.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_gif.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_gz.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_hqx.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_htm.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_html.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_ifo.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_indd.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_iso.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_jar.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_jpeg.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_jpg.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_lnk.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_log.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_m4a.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_m4b.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_m4p.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_m4v.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_mcd.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_mdb.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_mid.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_mov.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_mp2.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_mp4.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_mpeg.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_mpg.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_msi.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_mswmm.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_ogg.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_pdf.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_png.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_pps.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_ps.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_psd.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_pst.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_ptb.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_pub.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_qbb.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_qbw.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_qxd.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_ram.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_rar.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_rm.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_rmvb.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_rtf.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_sea.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_ses.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_sit.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_sitx.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_ss.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_swf.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_tgz.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_thm.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_tif.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_tmp.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_torrent.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_ttf.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_txt.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_vcd.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_vob.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_wav.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_wma.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_wmv.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_wps.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_xls.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_xpi.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\file_extension_zip.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\big\unknown.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_3gp.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_7z.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_ace.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_ai.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_aif.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_aiff.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_amr.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_asf.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_asx.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_bat.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_bin.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_bmp.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_bup.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_cab.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_cbr.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_cda.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_cdl.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_cdr.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_chm.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_dat.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_divx.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_dll.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_dmg.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_doc.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_dss.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_dvf.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_dwg.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_eml.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_eps.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_exe.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_fla.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_flv.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_gif.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_gz.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_hqx.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_htm.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_html.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_ifo.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_indd.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_iso.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_jar.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_jpeg.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_jpg.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_lnk.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_log.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_m4a.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_m4b.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_m4p.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_m4v.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_mcd.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_mdb.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_mid.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_mov.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_mp2.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_mp4.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_mpeg.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_mpg.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_msi.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_mswmm.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_ogg.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_pdf.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_png.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_pps.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_ps.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_psd.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_pst.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_ptb.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_pub.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_qbb.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_qbw.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_qxd.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_ram.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_rar.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_rm.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_rmvb.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_rtf.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_sea.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_ses.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_sit.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_sitx.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_ss.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_swf.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_tgz.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_thm.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_tif.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_tmp.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_torrent.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_ttf.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_txt.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_vcd.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_vob.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_wav.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_wma.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_wmv.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_wps.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_xls.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_xpi.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\file_extension_zip.png" />
+    <Content Include="Scripts\vendors\fileman\images\filetypes\unknown.png" />
+    <Content Include="Scripts\vendors\fileman\images\find.png" />
+    <Content Include="Scripts\vendors\fileman\images\folder-add.png" />
+    <Content Include="Scripts\vendors\fileman\images\folder-delete.png" />
+    <Content Include="Scripts\vendors\fileman\images\folder-download.png" />
+    <Content Include="Scripts\vendors\fileman\images\folder-green.png" />
+    <Content Include="Scripts\vendors\fileman\images\folder-opened.png" />
+    <Content Include="Scripts\vendors\fileman\images\folder.png" />
+    <Content Include="Scripts\vendors\fileman\images\loading-dir.gif" />
+    <Content Include="Scripts\vendors\fileman\images\loading.gif" />
+    <Content Include="Scripts\vendors\fileman\images\paste.png" />
+    <Content Include="Scripts\vendors\fileman\images\preview.png" />
+    <Content Include="Scripts\vendors\fileman\images\rename.png" />
+    <Content Include="Scripts\vendors\fileman\images\search.png" />
+    <Content Include="Scripts\vendors\fileman\images\select.png" />
+    <Content Include="Scripts\vendors\fileman\images\upload-big.png" />
+    <Content Include="Scripts\vendors\fileman\images\view-list.png" />
+    <Content Include="Scripts\vendors\fileman\images\view-tile.png" />
+    <Content Include="Scripts\vendors\fileman\index.html" />
+    <Content Include="Scripts\vendors\fileman\js\custom.js" />
+    <Content Include="Scripts\vendors\fileman\js\directory.js" />
+    <Content Include="Scripts\vendors\fileman\js\file.js" />
+    <Content Include="Scripts\vendors\fileman\js\filetypes.js" />
+    <Content Include="Scripts\vendors\fileman\js\jquery-1.10.2.min.js" />
+    <Content Include="Scripts\vendors\fileman\js\jquery-dateFormat.min.js" />
+    <Content Include="Scripts\vendors\fileman\js\jquery-ui-1.10.4.custom.min.js" />
+    <Content Include="Scripts\vendors\fileman\js\main.js" />
+    <Content Include="Scripts\vendors\fileman\js\main.min.js" />
+    <Content Include="Scripts\vendors\fileman\js\mini-main.js" />
+    <Content Include="Scripts\vendors\fileman\js\tiny_mce_popup.js" />
+    <Content Include="Scripts\vendors\fileman\js\utils.js" />
+    <Content Include="Scripts\vendors\fileman\LICENSE.txt" />
+    <Content Include="Scripts\vendors\fileman\Uploads\1234\Koala.jpg" />
+    <Content Include="Scripts\vendors\fileman\Uploads\Images\DSC_2987.jpg" />
+    <Content Include="Scripts\vendors\fileman\Uploads\LICENSE.txt" />
+    <Content Include="Scripts\vendors\fileman\Uploads\roxy-fileman-logo.gif" />
+    <Content Include="Scripts\vendors\tinymce\jquery.tinymce.min.js" />
+    <Content Include="Scripts\vendors\tinymce\license.txt" />
+    <Content Include="Scripts\vendors\tinymce\plugins\advlist\plugin.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\advlist\plugin.min.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\anchor\plugin.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\anchor\plugin.min.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\autolink\plugin.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\autolink\plugin.min.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\autoresize\plugin.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\autoresize\plugin.min.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\autosave\plugin.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\autosave\plugin.min.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\bbcode\plugin.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\bbcode\plugin.min.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\charmap\plugin.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\charmap\plugin.min.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\code\plugin.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\code\plugin.min.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\colorpicker\plugin.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\colorpicker\plugin.min.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\compat3x\css\dialog.css" />
+    <Content Include="Scripts\vendors\tinymce\plugins\compat3x\img\buttons.png" />
+    <Content Include="Scripts\vendors\tinymce\plugins\compat3x\img\icons.gif" />
+    <Content Include="Scripts\vendors\tinymce\plugins\compat3x\img\items.gif" />
+    <Content Include="Scripts\vendors\tinymce\plugins\compat3x\img\menu_arrow.gif" />
+    <Content Include="Scripts\vendors\tinymce\plugins\compat3x\img\menu_check.gif" />
+    <Content Include="Scripts\vendors\tinymce\plugins\compat3x\img\progress.gif" />
+    <Content Include="Scripts\vendors\tinymce\plugins\compat3x\img\tabs.gif" />
+    <Content Include="Scripts\vendors\tinymce\plugins\compat3x\plugin.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\compat3x\plugin.min.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\compat3x\tiny_mce_popup.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\compat3x\utils\editable_selects.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\compat3x\utils\form_utils.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\compat3x\utils\mctabs.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\compat3x\utils\validate.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\contextmenu\plugin.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\contextmenu\plugin.min.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\directionality\plugin.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\directionality\plugin.min.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\emoticons\img\smiley-cool.gif" />
+    <Content Include="Scripts\vendors\tinymce\plugins\emoticons\img\smiley-cry.gif" />
+    <Content Include="Scripts\vendors\tinymce\plugins\emoticons\img\smiley-embarassed.gif" />
+    <Content Include="Scripts\vendors\tinymce\plugins\emoticons\img\smiley-foot-in-mouth.gif" />
+    <Content Include="Scripts\vendors\tinymce\plugins\emoticons\img\smiley-frown.gif" />
+    <Content Include="Scripts\vendors\tinymce\plugins\emoticons\img\smiley-innocent.gif" />
+    <Content Include="Scripts\vendors\tinymce\plugins\emoticons\img\smiley-kiss.gif" />
+    <Content Include="Scripts\vendors\tinymce\plugins\emoticons\img\smiley-laughing.gif" />
+    <Content Include="Scripts\vendors\tinymce\plugins\emoticons\img\smiley-money-mouth.gif" />
+    <Content Include="Scripts\vendors\tinymce\plugins\emoticons\img\smiley-sealed.gif" />
+    <Content Include="Scripts\vendors\tinymce\plugins\emoticons\img\smiley-smile.gif" />
+    <Content Include="Scripts\vendors\tinymce\plugins\emoticons\img\smiley-surprised.gif" />
+    <Content Include="Scripts\vendors\tinymce\plugins\emoticons\img\smiley-tongue-out.gif" />
+    <Content Include="Scripts\vendors\tinymce\plugins\emoticons\img\smiley-undecided.gif" />
+    <Content Include="Scripts\vendors\tinymce\plugins\emoticons\img\smiley-wink.gif" />
+    <Content Include="Scripts\vendors\tinymce\plugins\emoticons\img\smiley-yell.gif" />
+    <Content Include="Scripts\vendors\tinymce\plugins\emoticons\plugin.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\emoticons\plugin.min.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\example\dialog.html" />
+    <Content Include="Scripts\vendors\tinymce\plugins\example\plugin.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\example\plugin.min.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\example_dependency\plugin.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\example_dependency\plugin.min.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\fullpage\plugin.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\fullpage\plugin.min.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\fullscreen\plugin.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\fullscreen\plugin.min.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\hr\plugin.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\hr\plugin.min.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\image\plugin.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\image\plugin.min.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\importcss\plugin.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\importcss\plugin.min.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\insertdatetime\plugin.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\insertdatetime\plugin.min.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\layer\plugin.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\layer\plugin.min.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\legacyoutput\plugin.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\legacyoutput\plugin.min.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\link\plugin.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\link\plugin.min.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\lists\plugin.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\lists\plugin.min.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\media\moxieplayer.swf" />
+    <Content Include="Scripts\vendors\tinymce\plugins\media\plugin.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\media\plugin.min.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\nonbreaking\plugin.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\nonbreaking\plugin.min.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\noneditable\plugin.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\noneditable\plugin.min.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\pagebreak\plugin.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\pagebreak\plugin.min.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\paste\plugin.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\paste\plugin.min.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\preview\plugin.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\preview\plugin.min.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\print\plugin.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\print\plugin.min.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\save\plugin.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\save\plugin.min.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\searchreplace\plugin.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\searchreplace\plugin.min.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\spellchecker\plugin.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\spellchecker\plugin.min.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\tabfocus\plugin.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\tabfocus\plugin.min.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\table\plugin.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\table\plugin.min.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\template\plugin.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\template\plugin.min.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\textcolor\plugin.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\textcolor\plugin.min.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\textpattern\plugin.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\textpattern\plugin.min.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\visualblocks\css\visualblocks.css" />
+    <Content Include="Scripts\vendors\tinymce\plugins\visualblocks\img\address.gif" />
+    <Content Include="Scripts\vendors\tinymce\plugins\visualblocks\img\article.gif" />
+    <Content Include="Scripts\vendors\tinymce\plugins\visualblocks\img\aside.gif" />
+    <Content Include="Scripts\vendors\tinymce\plugins\visualblocks\img\blockquote.gif" />
+    <Content Include="Scripts\vendors\tinymce\plugins\visualblocks\img\div.gif" />
+    <Content Include="Scripts\vendors\tinymce\plugins\visualblocks\img\dl.gif" />
+    <Content Include="Scripts\vendors\tinymce\plugins\visualblocks\img\figure.gif" />
+    <Content Include="Scripts\vendors\tinymce\plugins\visualblocks\img\h1.gif" />
+    <Content Include="Scripts\vendors\tinymce\plugins\visualblocks\img\h2.gif" />
+    <Content Include="Scripts\vendors\tinymce\plugins\visualblocks\img\h3.gif" />
+    <Content Include="Scripts\vendors\tinymce\plugins\visualblocks\img\h4.gif" />
+    <Content Include="Scripts\vendors\tinymce\plugins\visualblocks\img\h5.gif" />
+    <Content Include="Scripts\vendors\tinymce\plugins\visualblocks\img\h6.gif" />
+    <Content Include="Scripts\vendors\tinymce\plugins\visualblocks\img\hgroup.gif" />
+    <Content Include="Scripts\vendors\tinymce\plugins\visualblocks\img\ol.gif" />
+    <Content Include="Scripts\vendors\tinymce\plugins\visualblocks\img\p.gif" />
+    <Content Include="Scripts\vendors\tinymce\plugins\visualblocks\img\pre.gif" />
+    <Content Include="Scripts\vendors\tinymce\plugins\visualblocks\img\section.gif" />
+    <Content Include="Scripts\vendors\tinymce\plugins\visualblocks\img\ul.gif" />
+    <Content Include="Scripts\vendors\tinymce\plugins\visualblocks\plugin.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\visualblocks\plugin.min.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\visualchars\plugin.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\visualchars\plugin.min.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\wordcount\plugin.js" />
+    <Content Include="Scripts\vendors\tinymce\plugins\wordcount\plugin.min.js" />
+    <Content Include="Scripts\vendors\tinymce\skins\lightgray\content.inline.min.css" />
+    <Content Include="Scripts\vendors\tinymce\skins\lightgray\content.min.css" />
+    <Content Include="Scripts\vendors\tinymce\skins\lightgray\fonts\tinymce-small.svg" />
+    <Content Include="Scripts\vendors\tinymce\skins\lightgray\fonts\tinymce.svg" />
+    <Content Include="Scripts\vendors\tinymce\skins\lightgray\img\anchor.gif" />
+    <Content Include="Scripts\vendors\tinymce\skins\lightgray\img\loader.gif" />
+    <Content Include="Scripts\vendors\tinymce\skins\lightgray\img\object.gif" />
+    <Content Include="Scripts\vendors\tinymce\skins\lightgray\img\trans.gif" />
+    <Content Include="Scripts\vendors\tinymce\skins\lightgray\skin.ie7.min.css" />
+    <Content Include="Scripts\vendors\tinymce\skins\lightgray\skin.min.css" />
+    <Content Include="Scripts\vendors\tinymce\themes\modern\theme.js" />
+    <Content Include="Scripts\vendors\tinymce\themes\modern\theme.min.js" />
+    <Content Include="Scripts\vendors\tinymce\tinymce.js" />
+    <Content Include="Scripts\vendors\tinymce\tinymce.min.js" />
+    <Content Include="Scripts\vendors\bootstrap-select.js" />
+    <Content Include="Scripts\jquery.tree.js" />
+    <Content Include="Scripts\vendors\multiselect.js" />
+    <Content Include="Scripts\scripts.js" />
+    <Content Include="Scripts\vendors\typeAhead.js" />
+    <Content Include="Upload\MasterTpoPackage\readme.txt" />
+    <Content Include="Upload\MasterTpoRate\readme.txt" />
+    <Content Include="Upload\TPODaily\readme.txt" />
+    <Content Include="Upload\WPP\readme.txt" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Views\_ViewStart.cshtml" />
+    <Content Include="Views\Shared\_Layout.cshtml" />
+    <Content Include="Views\Shared\_sitemaster.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="App_Start\BundleConfig.cs" />
+    <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Code\ApplicationService.cs" />
+    <Compile Include="Code\AuthorizeADAttribute.cs" />
+    <Compile Include="Code\CustomPrincipal.cs" />
+    <Compile Include="Code\CustomRoleProvider.cs" />
+    <Compile Include="Code\FormsAuthenticationService.cs" />
+    <Compile Include="Code\IApplicationService.cs" />
+    <Compile Include="Code\ICustomPrincipal.cs" />
+    <Compile Include="Code\IFormsAuthentication.cs" />
+    <Compile Include="Code\IReportByStatusService.cs" />
+    <Compile Include="Code\IUploadService.cs" />
+    <Compile Include="Code\ReportByStatusService.cs" />
+    <Compile Include="Code\SecurityAttributes.cs" />
+    <Compile Include="Code\UploadService.cs" />
+    <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Controllers\EblekReleaseApprovalController.cs" />
+    <Compile Include="Controllers\EmailApprovalsController.cs" />
+    <Compile Include="Controllers\EquipmentRepairPlantController.cs" />
+    <Compile Include="Controllers\EquipmentFulfillmentController.cs" />
+    <Compile Include="Controllers\EquipmentRepairTPOController.cs" />
+    <Compile Include="Controllers\ErrorController.cs" />
+    <Compile Include="Controllers\ExeEMSSourceDataController.cs" />
+    <Compile Include="Controllers\ExeOthersProductionEntryPrintController.cs" />
+    <Compile Include="Controllers\ExePlantActualWorkHoursController.cs" />
+    <Compile Include="Controllers\ExePlantMaterialUsagesController.cs" />
+    <Compile Include="Controllers\ExePlantProductionEntryController.cs" />
+    <Compile Include="Controllers\ExePlantProductionEntryVerificationController.cs" />
+    <Compile Include="Controllers\ExePlantWorkerAbsenteeismController.cs" />
+    <Compile Include="Controllers\ExePlantWorkerAssignmentController.cs" />
+    <Compile Include="Controllers\ExePlantWorkerBalancingController.cs" />
+    <Compile Include="Controllers\ExeProductAdjustmentController.cs" />
+    <Compile Include="Controllers\ExeReportByGroupController.cs" />
+    <Compile Include="Controllers\ExeReportByProcessController.cs" />
+    <Compile Include="Controllers\ExeReportByStatusController.cs" />
+    <Compile Include="Controllers\ExeReportDailyProductionController.cs" />
+    <Compile Include="Controllers\ExeReportProductionStockController.cs" />
+    <Compile Include="Controllers\ExeTPOActualWorkHoursController.cs" />
+    <Compile Include="Controllers\ExeTPOProductionEntryController.cs" />
+    <Compile Include="Controllers\ExeTPOProductionEntryVerificationController.cs" />
+    <Compile Include="Controllers\GenerateP1TemplateAP.cs" />
+    <Compile Include="Controllers\GeneratorReportByProccessController.cs" />
+    <Compile Include="Controllers\GroupShiftAssignmentController.cs" />
+    <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\IndividualCapacityController.cs" />
+    <Compile Include="Controllers\LoginController.cs" />
+    <Compile Include="Controllers\MaintenanceEquipmentQualityInspectionController.cs" />
+    <Compile Include="Controllers\MaintenanceEquipmentReceiveController.cs" />
+    <Compile Include="Controllers\MaintenanceEquipmentTransferController.cs" />
+    <Compile Include="Controllers\MaintenanceExecutionInventoryAdjustmentController.cs" />
+    <Compile Include="Controllers\MaintenanceExecutionInventoryController.cs" />
+    <Compile Include="Controllers\MaintenanceExecutionItemConversionController.cs" />
+    <Compile Include="Controllers\MaintenanceItemDisposalController.cs" />
+    <Compile Include="Controllers\MaintenanceReportEquipmentRequirementController.cs" />
+    <Compile Include="Controllers\MaintenanceReportEquipmentStockController.cs" />
+    <Compile Include="Controllers\MasterAbsentTypeController.cs" />
+    <Compile Include="Controllers\MasterGenClosingPayrollController.cs" />
+    <Compile Include="Controllers\MasterGroupPlantController.cs" />
+    <Compile Include="Controllers\MasterMaintenanceConvertController.cs" />
+    <Compile Include="Controllers\MasterPlantEmployeeJobDataController.cs" />
+    <Compile Include="Controllers\EquipmentRequestController.cs" />
+    <Compile Include="Controllers\MasterGenBrandController.cs" />
+    <Compile Include="Controllers\MasterGenBrandGroupController.cs" />
+    <Compile Include="Controllers\MasterGenBrandGroupMaterialController.cs" />
+    <Compile Include="Controllers\MasterGenBrandPackageItemController.cs" />
+    <Compile Include="Controllers\MasterGenHolidayController.cs" />
+    <Compile Include="Controllers\MasterGenBrandPackageMappingController.cs" />
+    <Compile Include="Controllers\MasterGenProcessSettingController.cs" />
+    <Compile Include="Controllers\MasterGenListController.cs" />
+    <Compile Include="Controllers\MasterGenLocationController.cs" />
+    <Compile Include="Controllers\MasterGenProcessController.cs" />
+    <Compile Include="Controllers\MasterMntcItemController.cs" />
+    <Compile Include="Controllers\MasterMntcItemLocationController.cs" />
+    <Compile Include="Controllers\MasterGenStandardHourController.cs" />
+    <Compile Include="Controllers\MasterPlantAbsentTypeController.cs" />
+    <Compile Include="Controllers\MasterPlantProductionGroupController.cs" />
+    <Compile Include="Controllers\MasterProcessSettingController.cs" />
+    <Compile Include="Controllers\MasterShiftController.cs" />
+    <Compile Include="Controllers\MasterTpoConversionController.cs" />
+    <Compile Include="Controllers\MasterTPOInfoController.cs" />
+    <Compile Include="Controllers\MasterTpoPackageController.cs" />
+    <Compile Include="Controllers\MasterTPOProductionGroupController.cs" />
+    <Compile Include="Controllers\MasterTpoRateController.cs" />
+    <Compile Include="Controllers\NewsController.cs" />
+    <Compile Include="Controllers\MasterPlantUnitController.cs" />
+    <Compile Include="Controllers\PlanningPlantIndividualCapacityController.cs" />
+    <Compile Include="Controllers\PlanningPlantTPKController.cs" />
+    <Compile Include="Controllers\PlanningPlantTPUController.cs" />
+    <Compile Include="Controllers\PlanningReportSummaryProcessTargetsController.cs" />
+    <Compile Include="Controllers\PlanningTPOTPKController.cs" />
+    <Compile Include="Controllers\PlanningReportProductionTargetController.cs" />
+    <Compile Include="Controllers\PlantGroupShiftController.cs" />
+    <Compile Include="Controllers\PlanningWPPController.cs" />
+    <Compile Include="Controllers\TPOFeeExeAPOpenController.cs" />
+    <Compile Include="Controllers\TPOFeeReportsPackageController.cs" />
+    <Compile Include="Controllers\TPOFeeReportsProductionController.cs" />
+    <Compile Include="Controllers\TPOFeeReportsSummaryController.cs" />
+    <Compile Include="Controllers\TPOFeeSettingCalculationController.cs" />
+    <Compile Include="Controllers\UtilSecurityDelegationsController.cs" />
+    <Compile Include="Controllers\UtilSecurityFunctionsController.cs" />
+    <Compile Include="Controllers\UtilSecurityResponsibilitiesController.cs" />
+    <Compile Include="Controllers\UtilSecurityRulesController.cs" />
+    <Compile Include="Controllers\UtilSecurityRolesController.cs" />
+    <Compile Include="Controllers\UtilWorkflowFlowController.cs" />
+    <Compile Include="Controllers\WagesReportAbsentsController.cs" />
+    <Compile Include="Controllers\WagesProductionCardCorrectionController.cs" />
+    <Compile Include="Controllers\ProductionCardController.cs" />
+    <Compile Include="Controllers\QualityInspectionController.cs" />
+    <Compile Include="Controllers\ReportPlanController.cs" />
+    <Compile Include="Controllers\ReportTpoController.cs" />
+    <Compile Include="Controllers\TargetProduksiKelompokController.cs" />
+    <Compile Include="Controllers\TargetProduksiUnitController.cs" />
+    <Compile Include="Controllers\TPOFeeAPCloseController.cs" />
+    <Compile Include="Controllers\TPOFeeAPOpenController.cs" />
+    <Compile Include="Controllers\TPOFeeApprovalController.cs" />
+    <Compile Include="Controllers\TPOFeeExeActualController.cs" />
+    <Compile Include="Controllers\TPOFeeExeGLAccruedDetailController.cs" />
+    <Compile Include="Controllers\TPOFeeExePlanController.cs" />
+    <Compile Include="Controllers\TPOFeeExeActualDetailController.cs" />
+    <Compile Include="Controllers\TPOFeeExePlanDetailController.cs" />
+    <Compile Include="Controllers\TPOFeeExeGLAccruedController.cs" />
+    <Compile Include="Controllers\WagesEblekReleaseController.cs" />
+    <Compile Include="Controllers\WagesProductionCardApprovalController.cs" />
+    <Compile Include="Controllers\WagesProductionCardApprovalDetailController.cs" />
+    <Compile Include="Controllers\WagesReportAvailablePositionNumberController.cs" />
+    <Compile Include="Controllers\WagesReportSummaryProductionCardController.cs" />
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Helper\UtilHelper.cs" />
+    <Compile Include="Helper\CustomHelper.cs" />
+    <Compile Include="Helper\ExcelHelper.cs" />
+    <Compile Include="Models\Account\SKTISUserModel.cs" />
+    <Compile Include="Models\Account\UserModel.cs" />
+    <Compile Include="Models\Common\P1Template.cs" />
+    <Compile Include="Models\Common\CustomResult.cs" />
+    <Compile Include="Models\Common\MessageModel.cs" />
+    <Compile Include="Models\EblekReleaseApproval\EblekReleaseApprovalViewModel.cs" />
+    <Compile Include="Models\EblekReleaseApproval\InitEblekRelaseApproval.cs" />
+    <Compile Include="Models\EquipmentFulfillment\EquipmentFulfillmentViewModel.cs" />
+    <Compile Include="Models\EquipmentFulfillment\InitEquipmentFulfillment.cs" />
+    <Compile Include="Models\EquipmentFulfillment\ItemDetailViewModel.cs" />
+    <Compile Include="Models\EquipmentFulfillment\MntcInventoryViewModel.cs" />
+    <Compile Include="Models\EquipmentReceive\EquipmentReceiveViewModel.cs" />
+    <Compile Include="Models\EquipmentReceive\InitEquipmentReceiveViewModel.cs" />
+    <Compile Include="Models\EquipmentRepairPlant\EquipmentRepairViewModel.cs" />
+    <Compile Include="Models\EquipmentRepairPlant\InitEquipmentRepairPlantViewModel.cs" />
+    <Compile Include="Models\EquipmentRepairPlant\InsertUpdateRepairPlant.cs" />
+    <Compile Include="Models\EquipmentRepairPlant\MntcRepairItemUsageViewModel.cs" />
+    <Compile Include="Models\EquipmentRepairPlant\SparepartViewModel.cs" />
+    <Compile Include="Models\EquipmentRepairTPO\EquipmentRepairTPOViewModel.cs" />
+    <Compile Include="Models\EquipmentRepairTPO\InitEquipmentRepairTPOViewModel.cs" />
+    <Compile Include="Models\EquipmentRepairTPO\ItemSelectionItemCodeDetail.cs" />
+    <Compile Include="Models\EquipmentTransfer\EquipmentTransferViewModel.cs" />
+    <Compile Include="Models\EquipmentTransfer\InitEquipmentTransferViewModel.cs" />
+    <Compile Include="Models\ExeEMSSourceData\ExeReportEMSSourceDataViewModel.cs" />
+    <Compile Include="Models\ExeEMSSourceData\InitExeEMSSourceDataViewModel.cs" />
+    <Compile Include="Models\ExeOthersProductionEntryPrint\ExeOthersProductionEntryPrintViewModel.cs" />
+    <Compile Include="Models\ExeOthersProductionEntryPrint\InitExeOthersProductionEntryPrintModel.cs" />
+    <Compile Include="Models\ExeOthersProductionEntryPrint\ExeProductionEntryPrintViewPartitionModel.cs" />
+    <Compile Include="Models\ExeOthersProductionEntryPrint\PrintDataModel.cs" />
+    <Compile Include="Models\ExePlantActualWorkHours\ExePlantActualWorkHoursViewModel.cs" />
+    <Compile Include="Models\ExePlantActualWorkHours\InitExePlantActualWorkHoursViewModel.cs" />
+    <Compile Include="Models\ExePlantMaterialUsages\ExePlantMaterialUsagesViewModel.cs" />
+    <Compile Include="Models\ExePlantMaterialUsages\InitExePlantMaterialUsagesViewModel.cs" />
+    <Compile Include="Models\ExePlantProductionEntryVerification\ExePlantProductionEntryVerificationViewViewModel.cs" />
+    <Compile Include="Models\ExePlantProductionEntryVerification\InitExePlantProductionEntryVerificationViewModel.cs" />
+    <Compile Include="Models\ExePlantProductionEntry\ExePlantProductionEntryViewModel.cs" />
+    <Compile Include="Models\ExePlantProductionEntry\InitExePlantProductionEntryViewModel.cs" />
+    <Compile Include="Models\ExePlantWorkerAbsenteeism\ExePlantWorkerAbsenteeismViewModel.cs" />
+    <Compile Include="Models\ExePlantWorkerAbsenteeism\InitExePlantWorkerAbsenteeism.cs" />
+    <Compile Include="Models\ExePlantWorkerAbsenteeism\InsertMultipleAbsenteeism.cs" />
+    <Compile Include="Models\ExePlantWorkerAssignment\ExePlantWorkerAssignmentViewModel.cs" />
+    <Compile Include="Models\ExePlantWorkerAssignment\InitExePlantWorkerAssignmentViewModel.cs" />
+    <Compile Include="Models\ExePlantWorkerBalancing\ExePlantWorkerBalancingViewModel.cs" />
+    <Compile Include="Models\ExePlantWorkerBalancing\ExePlantWorkerSingleBalancingViewModel.cs" />
+    <Compile Include="Models\ExePlantWorkerBalancing\InitExePlantWorkerBalancing.cs" />
+    <Compile Include="Models\ExeProductAdjustment\ExeProductAdjustmentViewModel.cs" />
+    <Compile Include="Models\ExeProductAdjustment\InitExeProductAdjustment.cs" />
+    <Compile Include="Models\ExeReportByGroup\ExeReportByGroupWeeklyViewModel.cs" />
+    <Compile Include="Models\ExeReportByGroup\InitExeReportByGroupWeeklyViewModel.cs" />
+    <Compile Include="Models\ExeReportByGroup\ExeReportByGroupMonthlyViewModel.cs" />
+    <Compile Include="Models\ExeReportByGroup\InitExeReportByGroupMonthlyViewModel.cs" />
+    <Compile Include="Models\ExeReportByGroup\ExeReportByGroupViewModel.cs" />
+    <Compile Include="Models\ExeReportByGroup\InitExeReportByGroupViewModel.cs" />
+    <Compile Include="Models\ExeReportByProcess\ExeReportByProcessViewModel.cs" />
+    <Compile Include="Models\ExeReportByProcess\InitExeReportByProcessViewModel.cs" />
+    <Compile Include="Models\ExeReportByStatus\ExeReportByStatusCompositeViewModel.cs" />
+    <Compile Include="Models\ExeReportByStatus\ExeReportByStatusMonthlyViewModel.cs" />
+    <Compile Include="Models\ExeReportByStatus\ExeReportByStatusViewModel.cs" />
+    <Compile Include="Models\ExeReportByStatus\ExeReportByStatusWeeklyViewModel.cs" />
+    <Compile Include="Models\ExeReportByStatus\GetReportByStatusCompositeViewModel.cs" />
+    <Compile Include="Models\ExeReportByStatus\GetReportByStatusViewModel.cs" />
+    <Compile Include="Models\ExeReportByStatus\InitExeReportByStatusViewModel.cs" />
+    <Compile Include="Models\ExeReportDailyProductionAchievement\ExeReportDailyProdAchievementFinalViewModel.cs" />
+    <Compile Include="Models\ExeReportDailyProductionAchievement\ExeReportDailyProductionAchievementViewModel.cs" />
+    <Compile Include="Models\ExeReportDailyProductionAchievement\InitExeReportDailyProductionAchievementViewModel.cs" />
+    <Compile Include="Models\ExeReportProductionStock\ExeReportProdStockPerBrandGroupCodeViewModel.cs" />
+    <Compile Include="Models\ExeReportDailyProductionAchievement\ReportDailyProductionViewModel.cs" />
+    <Compile Include="Models\ExeReportProductionStock\ExeReportProdStockPerBrandViewModel.cs" />
+    <Compile Include="Models\ExeReportProductionStock\ExeReportProductionStockViewModel.cs" />
+    <Compile Include="Models\ExeReportProductionStock\InitExeReportProductionStockViewModel.cs" />
+    <Compile Include="Models\ExeTPOActualWorkHours\ExeTPOActualWorkHoursViewModel.cs" />
+    <Compile Include="Models\ExeTPOActualWorkHours\InitExeTPOActualWorkHoursViewModel.cs" />
+    <Compile Include="Models\ExeTPOProductionEntryVerification\ExeTPOProductionEntryVerificationCompositeViewModel.cs" />
+    <Compile Include="Models\ExeTPOProductionEntryVerification\InitExeTPOProductionEntryVerificationViewModel.cs" />
+    <Compile Include="Models\ExeTPOProductionEntryVerification\SubmitAndCancelViewModel.cs" />
+    <Compile Include="Models\ExeTPOProductionEntry\ExeTPOProductionEntryViewModel.cs" />
+    <Compile Include="Models\ExeTPOProductionEntry\InitExeTPOProductionEntryViewModel.cs" />
+    <Compile Include="Models\GenerateP1TemplateAP\GenerateP1TemplateAPViewModel.cs" />
+    <Compile Include="Models\GenerateP1TemplateGL\GenerateP1TemplateGLViewModel.cs" />
+    <Compile Include="Models\Home\InformatipsNewsInfoViewModel.cs" />
+    <Compile Include="Models\Home\InitHomeViewModel.cs" />
+    <Compile Include="Models\Home\SliderNewsInfoViewModel.cs" />
+    <Compile Include="Models\LookupList\RolesLookupList.cs" />
+    <Compile Include="Models\MaintenanceEquipmentQualityInspection\InitMaintenanceExecutionQualityInspection.cs" />
+    <Compile Include="Models\MaintenanceEquipmentQualityInspection\MaintenanceEquipmentQuaityInspectionViewModel.cs" />
+    <Compile Include="Models\MaintenanceExecutionInventoryAdjustment\InitMaintenanceExecutionInventoryAdjustment.cs" />
+    <Compile Include="Models\MaintenanceExecutionInventoryAdjustment\MaintenanceExecutionInventoryAdjustmentViewModel.cs" />
+    <Compile Include="Models\MaintenanceExecutionInventory\InitMaintenanceExecutionInventoryViewModel.cs" />
+    <Compile Include="Models\MaintenanceExecutionInventory\MaintenanceExecutionInventoryViewModel.cs" />
+    <Compile Include="Models\MaintenanceItemDisposal\GetItemDisposalViewModel.cs" />
+    <Compile Include="Models\MaintenanceExecutionItemConversion\MaintenanceExecutionItemConversionViewModel.cs" />
+    <Compile Include="Models\MaintenanceReportEquipmentRequirement\EquipmentRequirementItemViewModel.cs" />
+    <Compile Include="Models\MaintenanceReportEquipmentRequirement\EquipmentRequirementViewModel.cs" />
+    <Compile Include="Models\MaintenanceReportEquipmentRequirement\InitMaintenanceReportEquipmentRequirement.cs" />
+    <Compile Include="Models\MaintenanceReportEquipmentRequirement\MaintenanceEquipmentRequirementViewModel.cs" />
+    <Compile Include="Models\MaintenanceReportEquipmentStock\InitMaintenanceReportEquipmentStock.cs" />
+    <Compile Include="Models\MaintenanceReportEquipmentStock\MaintenanceEquipmentStockReportViewModel.cs" />
+    <Compile Include="Models\MasterGenClosingPayroll\GetMasterGenClosingPayrollViewModel.cs" />
+    <Compile Include="Models\MasterGenClosingPayroll\InitMasterGenClosingPayroll.cs" />
+    <Compile Include="Models\MasterGenClosingPayroll\MasterGenClosingPayrollViewModel.cs" />
+    <Compile Include="Models\MasterGenProccessSetting\ProcessSettingsAndLocationViewModel.cs" />
+    <Compile Include="Models\MasterGenWeek\MasterGenWeekViewModel.cs" />
+    <Compile Include="Models\LookupList\AbsentTypeLookupList.cs" />
+    <Compile Include="Models\MstPlantEmployeeJobsData\InitMstPlantEmployeeJobsData.cs" />
+    <Compile Include="Models\MstPlantUnit\InitMstPlantUnit.cs" />
+    <Compile Include="Models\News\NewsInfoCompositeViewModel.cs" />
+    <Compile Include="Models\News\NewsInfoDetailsViewModel.cs" />
+    <Compile Include="Models\News\NewsInfoLevelViewModel.cs" />
+    <Compile Include="Models\News\NewsInfoViewModel.cs" />
+    <Compile Include="Models\Common\InsertUpdateData.cs" />
+    <Compile Include="Models\Common\PageResult.cs" />
+    <Compile Include="Models\EquipmentRequest\InitEquipmentRequest.cs" />
+    <Compile Include="Models\Factories\Concreate\ConcreteSelectList.cs" />
+    <Compile Include="Models\Factories\Contract\AbstractSelectList.cs" />
+    <Compile Include="Models\EquipmentRequest\EquipmentRequestViewModel.cs" />
+    <Compile Include="Models\LookupList\ItemLocationLookupList.cs" />
+    <Compile Include="Models\LookupList\MandorsLookupList.cs" />
+    <Compile Include="Models\LookupList\LocationNameLookupList.cs" />
+    <Compile Include="Models\MaintenanceExecutionItemConversion\InitMaintenanceExecutionItemConversionViewModel.cs" />
+    <Compile Include="Models\MaintenanceItemDisposal\InitItemDisposal.cs" />
+    <Compile Include="Models\MasterBrandGroupMaterial\MasterBrandGroupMaterialData.cs" />
+    <Compile Include="Models\MasterBrand\BrandCodeModel.cs" />
+    <Compile Include="Models\MasterGenBrandGroup\MasterGenBrandGroupViewModel.cs" />
+    <Compile Include="Models\MasterBrandPackageMapping\MasterBrandPackageMappingIndexViewModel.cs" />
+    <Compile Include="Models\MasterBrand\GetMasterBrandViewModel.cs" />
+    <Compile Include="Models\MasterGenBrandPackageMapping\BrandPkgMappingViewModel.cs" />
+    <Compile Include="Models\MasterGenBrandPackageMapping\InitBrandPackageMapping.cs" />
+    <Compile Include="Models\MasterGenProccessSetting\InitMasterGenProccessSetting.cs" />
+    <Compile Include="Models\MasterGenProccessSetting\MstGenProccessSettingLocationViewModel.cs" />
+    <Compile Include="Models\MasterGenProccessSetting\MstGenProccessSettingViewModel.cs" />
+    <Compile Include="Models\MasterGenProccessSetting\MstGenProcessSettingLocationViewModel.cs" />
+    <Compile Include="Models\MasterGenProcess\MasterGenProcessIdentifier.cs" />
+    <Compile Include="Models\MasterGenHoliday\InitHolidayModel.cs" />
+    <Compile Include="Models\MasterGenHoliday\MasterGenHolidayViewModel.cs" />
+    <Compile Include="Models\MasterBrandGroupMaterial\MasterBrandGroupMaterialIndexViewModel.cs" />
+    <Compile Include="Models\MasterGenBrandGroup\IndexMasterBrandGroupViewModel.cs" />
+    <Compile Include="Models\MasterBrand\IndexMasterBrandViewModel.cs" />
+    <Compile Include="Models\MasterGenLocations\InitMstLocationItem.cs" />
+    <Compile Include="Models\MasterGenLocations\MstGenLocationViewModel.cs" />
+    <Compile Include="Models\MasterGenStandardHour\MasterGenStandardHourViewModel.cs" />
+    <Compile Include="Models\MasterMaintenanceConvert\InitMntcConvert.cs" />
+    <Compile Include="Models\MasterMaintenanceConvert\MasterMntcConvertViewModel.cs" />
+    <Compile Include="Models\MasterPlantAbsentType\MstPlantAbsentTypeViewModel.cs" />
+    <Compile Include="Models\MasterPlantProductionGroup\InitMstPlantProductionGroup.cs" />
+    <Compile Include="Models\MasterPlantProductionGroup\MstPlantProductionGroupViewModel.cs" />
+    <Compile Include="Models\MasterTPOProductionGroup\InitMasterTPOProductionGroup.cs" />
+    <Compile Include="Models\MasterTPOProductionGroup\MasterTPOProductionGroupViewModel.cs" />
+    <Compile Include="Models\MstPlantEmployeeJobsData\MstEmployeeJobsDataViewModel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Models\MstTPOFeeRate\MstTPOFeeRateViewModel.cs" />
+    <Compile Include="Models\MasterGenBrandPackageItem\BrandCodeSelectItem.cs" />
+    <Compile Include="Models\MasterGenBrandPackageItem\InitGenBrandPackageItem.cs" />
+    <Compile Include="Models\MasterGenBrandPackageItem\MasterGenBrandPackageItemViewModel.cs" />
+    <Compile Include="Models\MstTPOPackage\InitMstTPOPackageViewModel.cs" />
+    <Compile Include="Models\MstTPOPackage\MstTPOPackageViewModel.cs" />
+    <Compile Include="Models\MasterGenLocations\MasterGenLocationDesc.cs" />
+    <Compile Include="Models\MasterTPOInfo\InitMasterTPOInfo.cs" />
+    <Compile Include="Models\MasterTPOInfo\MasterTPOInfoViewModels.cs" />
+    <Compile Include="Models\MasterMntcItemLocation\InitMntcItemLocation.cs" />
+    <Compile Include="Models\MasterMntcItemLocation\MstMntcItemDescription.cs" />
+    <Compile Include="Models\MasterMntcItemLocation\MstMntcItemLocationViewModel.cs" />
+    <Compile Include="Models\MasterGenList\MasterGenListViewModel.cs" />
+    <Compile Include="Models\MasterGenProcess\MasterGenProcessViewModel.cs" />
+    <Compile Include="Models\MasterGenStandardHour\IndexMasterStandardHourViewModel.cs" />
+    <Compile Include="Models\MasterMntcItem\InitMntcItem.cs" />
+    <Compile Include="Models\MasterMntcItem\MasterMntcItemViewModel.cs" />
+    <Compile Include="Models\MstPlantUnit\MstPlantUnitViewModel.cs" />
+    <Compile Include="Models\MstTPOPackage\UploadViewModel.cs" />
+    <Compile Include="Models\GridBaseViewModel.cs" />
+    <Compile Include="Models\PlanningPlantIndividualCapacity\InitPlanningPlantIndividualCapacityViewModel.cs" />
+    <Compile Include="Models\PlanningPlantIndividualCapacity\PlanningPlantIndividualCapacityByReferenceViewModel.cs" />
+    <Compile Include="Models\PlanningPlantIndividualCapacity\PlanningPlantIndividualCapacityViewModel.cs" />
+    <Compile Include="Models\PlanningPlantTPK\DateStateModel.cs" />
+    <Compile Include="Models\PlanningPlantTPK\InitPlantTPKViewModel.cs" />
+    <Compile Include="Models\PlanningPlantTPK\InitWorkerBrandAssignmentViewModel.cs" />
+    <Compile Include="Models\PlanningPlantTPK\PlantTPKTotalModel.cs" />
+    <Compile Include="Models\PlanningPlantTPK\PlanTPKViewModel.cs" />
+    <Compile Include="Models\PlanningPlantTPK\PlantTPKExcelModel.cs" />
+    <Compile Include="Models\PlanningPlantTPK\PlantTPKModel.cs" />
+    <Compile Include="Models\PlanningPlantTPK\TPKStatusModel.cs" />
+    <Compile Include="Models\PlanningPlantTPU\DateStateModel.cs" />
+    <Compile Include="Models\PlanningPlantTPU\InitPlantTPUViewModel.cs" />
+    <Compile Include="Models\PlanningPlantTPU\PlanTPUViewModel.cs" />
+    <Compile Include="Models\PlanningPlantTPU\TPUStatusModel.cs" />
+    <Compile Include="Models\PlanningReportSummaryProcessTargets\InitPlanningReportSummaryProcessTargetsViewModel.cs" />
+    <Compile Include="Models\PlanningReportSummaryProcessTargets\PlanningReportSummaryProcessTargetsViewModel.cs" />
+    <Compile Include="Models\PlanningTPOTPK\InitTPOTPKViewModel.cs" />
+    <Compile Include="Models\PlanningTPOTPK\PlanTPOTPKTotalModel.cs" />
+    <Compile Include="Models\Common\CustomInsertUpdateData.cs" />
+    <Compile Include="Models\Common\CustomPageResult.cs" />
+    <Compile Include="Models\PlanningTPOTPK\PlanTPOTPKModel.cs" />
+    <Compile Include="Models\PlanningTPOTPK\PlanTPOTPKViewModel.cs" />
+    <Compile Include="Models\PlanningReportProductionTarget\InitPlanningReportProductionTargetViewModel.cs" />
+    <Compile Include="Models\PlanningReportProductionTarget\PlanningReportProductionTargetViewModel.cs" />
+    <Compile Include="Models\PlanningTPOTPK\PlantTPOTPKExcelModel.cs" />
+    <Compile Include="Models\PlanningWPP\WPP13WeekModel.cs" />
+    <Compile Include="Models\PlantGroupShift\InitPlantGroupShift.cs" />
+    <Compile Include="Models\PlantGroupShift\PlanPlantGroupShiftViewModel.cs" />
+    <Compile Include="Models\PlanningWPP\InitPlanningWPPModel.cs" />
+    <Compile Include="Models\PlanningWPP\WPPResultModel.cs" />
+    <Compile Include="Models\PlanTmpWeeklyProductionPlanning\PlanTmpWeeklyProductionPlanningViewModel.cs" />
+    <Compile Include="Models\ProductionCard\InitProductionCardViewModel.cs" />
+    <Compile Include="Models\ProductionCard\ProductionCardViewModel.cs" />
+    <Compile Include="Models\ReportPlan\ReportPlanModel.cs" />
+    <Compile Include="Models\ReportPlan\ReportPlanViewModel.cs" />
+    <Compile Include="Models\ReportPlan\ReportPlanViewReportViewModel.cs" />
+    <Compile Include="Models\ReportTpo\ReportTpoModel.cs" />
+    <Compile Include="Models\ReportTpo\ReportTpoViewModel.cs" />
+    <Compile Include="Models\ReportTpo\ReportTpoViewReportViewModel.cs" />
+    <Compile Include="Models\TPOFeeAPClose\InitTPOFeeAPCloseViewModel.cs" />
+    <Compile Include="Models\TPOFeeAPClose\TPOFeeAPCloseViewModel.cs" />
+    <Compile Include="Models\TPOFeeAPOpen\InitTPOFeeAPOpenViewModel.cs" />
+    <Compile Include="Models\TPOFeeAPOpen\TPOFeeAPOpenViewModel.cs" />
+    <Compile Include="Models\TPOFeeApproval\InitTPOFeeApprovalViewModel.cs" />
+    <Compile Include="Models\TPOFeeApproval\TPOFeeApprovalViewModel.cs" />
+    <Compile Include="Models\TPOFeeExeActualDetail\InitTPOFeeExeActualDetailViewModel.cs" />
+    <Compile Include="Models\TPOFeeExeActual\InitTPOFeeExeActualViewModel.cs" />
+    <Compile Include="Models\TPOFeeExeActual\TPOFeeExeActualViewModel.cs" />
+    <Compile Include="Models\TPOFeeExeAPOpen\InitTPOFeeExeAPOpenViewModel.cs" />
+    <Compile Include="Models\TPOFeeExeAPOpen\TPOFeeExeAPOpenViewModel.cs" />
+    <Compile Include="Models\TPOFeeExePlanDetail\InitTPOFeeExePlanDetailViewModel.cs" />
+    <Compile Include="Models\TPOFeeExeGLAccrued\InitTPOFeeExeGLAccruedDetailViewModel.cs" />
+    <Compile Include="Models\TPOFeeExeGLAccrued\TPOFeeExeGLAccruedViewListModel.cs" />
+    <Compile Include="Models\TPOFeeExePlan\InitTPOFeeExePlanViewModel.cs" />
+    <Compile Include="Models\TPOFeeExePlan\TpoFeeExePlanViewModel.cs" />
+    <Compile Include="Models\TPOFeeExeGLAccrued\InitTPOFeeExeGLAccruedViewModel.cs" />
+    <Compile Include="Models\TPOFeeReportsPackage\InitTPOFeeReportsPackageViewModel.cs" />
+    <Compile Include="Models\TPOFeeReportsPackage\TPOFeeReportsPackageViewModel.cs" />
+    <Compile Include="Models\TPOFeeReportsProduction\InitTPOFeeReportsProductionViewModel.cs" />
+    <Compile Include="Models\TPOFeeReportsProduction\TPOFeeReportsProductionViewModel.cs" />
+    <Compile Include="Models\TPOFeeReportsSummary\InitTPOFeeReportsSummaryViewModel.cs" />
+    <Compile Include="Models\TPOFeeReportsSummary\TPOFeeReportsSummaryViewModel.cs" />
+    <Compile Include="Models\TPOFeeSettingCalculation\TPOFeeSettingCalculationViewModel.cs" />
+    <Compile Include="Models\TPOGenerateP1TemplateView\TPOGenerateP1TemplateViewModel.cs" />
+    <Compile Include="Models\UtilWorkflowFlow\UtilWorkflowFlowViewModel.cs" />
+    <Compile Include="Models\UtilSecurityDelegations\UtilSecurityDelegationsViewModel.cs" />
+    <Compile Include="Models\UtilSecurityResponsibilities\InitUtilSecurityResponsibilities.cs" />
+    <Compile Include="Models\UtilSecurityResponsibilities\UtilSecurityResponsibilitiesViewModel.cs" />
+    <Compile Include="Models\UtilSecurityFunctions\UtilSecurityFunctionsViewModel.cs" />
+    <Compile Include="Models\UtilSecurityRules\InitUtilSecurityRules.cs" />
+    <Compile Include="Models\UtilSecurityRules\UtilSecurityRulesViewModel.cs" />
+    <Compile Include="Models\UtilSecurityRoles\InitUtilSecurityRoles.cs" />
+    <Compile Include="Models\UtilSecurityRoles\UtilSecurityRolesViewModel.cs" />
+    <Compile Include="Models\UtilTransactionLog\TransactionFlowViewModel.cs" />
+    <Compile Include="Models\UtilTransactionLog\TransactionHistoryViewModel.cs" />
+    <Compile Include="Models\UtilTransactionLog\UtilTransactionLogViewModel.cs" />
+    <Compile Include="Models\ViewModelBase.cs" />
+    <Compile Include="Models\WagesEblekRelease\ExePlantProductionEntryVerificationModel.cs" />
+    <Compile Include="Models\WagesEblekRelease\ExePlantProductionEntryVerificationViewModel.cs" />
+    <Compile Include="Models\WagesEblekRelease\ExeProductionEntryReleaseModel.cs" />
+    <Compile Include="Models\WagesEblekRelease\ExeProductionEntryReleaseViewModel.cs" />
+    <Compile Include="Models\WagesProductionCardApprovalDetail\InitWagesProductionCardApprovalDetailViewModel.cs" />
+    <Compile Include="Models\WagesEblekRelease\InitWagesEblekReleaseViewModel.cs" />
+    <Compile Include="Models\WagesProductionCardApprovalDetail\WagesProductionCardApprovalDetailGridViewGroupModel.cs" />
+    <Compile Include="Models\WagesProductionCardApprovalDetail\WagesProductionCardApprovalDetailGridViewModel.cs" />
+    <Compile Include="Models\WagesProductionCardApprovalDetail\WagesProductionCardApprovalDetailTotalViewGroupModel.cs" />
+    <Compile Include="Models\WagesProductionCardApprovalDetail\WagesProductionCardApprovalDetailTotalViewModel.cs" />
+    <Compile Include="Models\WagesProductionCardApprovalDetail\WagesProductionCardApprovalDetailViewModel.cs" />
+    <Compile Include="Models\WagesProductionCardApproval\InitWagesProductionCardApprovalViewModel.cs" />
+    <Compile Include="Models\WagesProductionCardApproval\WagesProductionCardApprovalViewModel.cs" />
+    <Compile Include="Models\WagesReportAbsents\GetWagesReportAbsentDetailViewModel.cs" />
+    <Compile Include="Models\WagesReportAbsents\GetWagesReportAbsentViewModel.cs" />
+    <Compile Include="Models\WagesReportAbsents\InitWagesReportAbsentsDetailViewModel.cs" />
+    <Compile Include="Models\WagesReportAbsents\InitWagesReportAbsentsViewModel.cs" />
+    <Compile Include="Models\WagesReportAbsents\WagesReportDetailEmployeeViewModel.cs" />
+    <Compile Include="Models\WagesReportAvailablePositionNumber\ExeWagesReportAvailablePositionNumberViewModel.cs" />
+    <Compile Include="Models\WagesReportAvailablePositionNumber\InitWagesReportAvailablePositionNumberViewModel.cs" />
+    <Compile Include="Models\WagesReportSummaryProductionCard\InitWagesReportSummary.cs" />
+    <Compile Include="Models\WagesReportSummaryProductionCard\WagesReportSummaryProductionCardViewModel.cs" />
+    <Compile Include="Models\WagesReportSummaryProductionCard\WagesReportSummaryViewModel.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SKTISWebsiteMapper.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\web.config" />
+    <Content Include="packages.config" />
+    <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Login\Index.cshtml" />
+    <Content Include="Views\Shared\Header.cshtml" />
+    <Content Include="Views\Shared\Sidebar.cshtml" />
+    <Content Include="Views\Shared\Footer.cshtml" />
+    <Content Include="Views\TargetProduksiUnit\Index.cshtml" />
+    <Content Include="Views\TargetProduksiKelompok\Index.cshtml" />
+    <Content Include="Views\IndividualCapacity\Index.cshtml" />
+    <Content Include="Views\GroupShiftAssignment\Index.cshtml" />
+    <Content Include="Views\MasterPlantUnit\Index.cshtml" />
+    <Content Include="Views\MasterGenBrandGroup\Index.cshtml" />
+    <Content Include="Views\MasterGenBrand\Index.cshtml" />
+    <Content Include="Views\MasterGenProcess\Index.cshtml" />
+    <Content Include="Views\MasterGroupPlant\Index.cshtml" />
+    <Content Include="Views\MasterProcessSetting\Index.cshtml" />
+    <Content Include="Views\MasterTPOInfo\Index.cshtml" />
+    <Content Include="Views\MasterTPOPackage\Index.cshtml" />
+    <Content Include="Views\MasterTpoRate\Index.cshtml" />
+    <Content Include="Views\MasterTpoConversion\Index.cshtml" />
+    <Content Include="Views\MasterPlantEmployeeJobData\Index.cshtml" />
+    <Content Include="Views\MasterShift\Index.cshtml" />
+    <Content Include="Views\MasterMaintenanceConvert\Index.cshtml" />
+    <Content Include="Views\Home\HomepageSlider.cshtml" />
+    <Content Include="Views\News\Index.cshtml" />
+    <Content Include="Views\News\Edit.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\TinyMCERichTextEditor.cshtml" />
+    <Content Include="Scripts\vendors\tinymce\langs\readme.md" />
+    <Content Include="Scripts\vendors\tinymce\skins\lightgray\fonts\readme.md" />
+    <Content Include="Scripts\vendors\tinymce\skins\lightgray\fonts\tinymce-small.eot" />
+    <Content Include="Scripts\vendors\tinymce\skins\lightgray\fonts\tinymce-small.json" />
+    <Content Include="Scripts\vendors\tinymce\skins\lightgray\fonts\tinymce-small.ttf" />
+    <Content Include="Scripts\vendors\tinymce\skins\lightgray\fonts\tinymce-small.woff" />
+    <Content Include="Scripts\vendors\tinymce\skins\lightgray\fonts\tinymce.eot" />
+    <Content Include="Scripts\vendors\tinymce\skins\lightgray\fonts\tinymce.json" />
+    <Content Include="Scripts\vendors\tinymce\skins\lightgray\fonts\tinymce.ttf" />
+    <Content Include="Scripts\vendors\tinymce\skins\lightgray\fonts\tinymce.woff" />
+    <Content Include="Scripts\vendors\fileman\asp_net\main.ashx" />
+    <Content Include="Scripts\vendors\fileman\conf.json" />
+    <Content Include="Scripts\vendors\fileman\js\fileman-modified.zip" />
+    <Content Include="Scripts\vendors\fileman\lang\bg.json" />
+    <Content Include="Scripts\vendors\fileman\lang\de.json" />
+    <Content Include="Scripts\vendors\fileman\lang\en.json" />
+    <Content Include="Scripts\vendors\fileman\lang\fr.json" />
+    <Content Include="Scripts\vendors\fileman\web.config" />
+    <Content Include="Views\Shared\DisplayTemplates\SiteMapTitleHelperModel.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\SiteMapPathHelperModel.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\SiteMapNodeModelList.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\SiteMapNodeModel.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\SiteMapHelperModel.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\MetaRobotsHelperModel.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\MenuHelperModel.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\CanonicalHelperModel.cshtml" />
+    <Content Include="Views\Shared\GridViewFooter.cshtml" />
+    <Content Include="Views\Shared\GridViewPageSizeSelector.cshtml" />
+    <Content Include="Views\MasterGenStandardHour\Index.cshtml" />
+    <Content Include="Views\MasterGenList\Index.cshtml" />
+    <Content Include="Views\MasterGenLocation\Index.cshtml" />
+    <Content Include="Views\MasterMntcItem\Index.cshtml" />
+    <Content Include="Views\MasterMntcItemLocation\Index.cshtml" />
+    <Content Include="Views\MasterGenBrandPackageItem\Index.cshtml" />
+    <Content Include="Views\MasterPlantProductionGroup\Index.cshtml" />
+    <Content Include="Views\MasterGenHoliday\Index.cshtml" />
+    <Content Include="Views\MasterGenBrandGroupMaterial\Index.cshtml" />
+    <Content Include="Views\MasterGenBrandPackageMapping\Index.cshtml" />
+    <Content Include="Views\MasterTPOProductionGroup\Index.cshtml" />
+    <Content Include="Views\MasterGenProcessSetting\Index.cshtml" />
+    <Content Include="Views\MasterPlantAbsentType\Index.cshtml" />
+    <Content Include="Views\EquipmentRequest\Index.cshtml" />
+    <Content Include="Views\MaintenanceItemDisposal\Index.cshtml" />
+    <Content Include="Views\Shared\GridPageSizeSelector.cshtml" />
+    <Content Include="Views\PlantGroupShift\Index.cshtml" />
+    <Content Include="Views\PlantGroupShift\_PlantGroupShiftPartial.cshtml" />
+    <Content Include="Views\PlanningWPP\BrandGroupCodePartial.cshtml" />
+    <Content Include="Views\PlanningWPP\Index.cshtml" />
+    <Content Include="Views\PlanningWPP\WPPTablePartial.cshtml" />
+    <Content Include="Views\PlanningPlantTPU\Index.cshtml" />
+    <Content Include="Views\MaintenanceEquipmentTransfer\Index.cshtml" />
+    <Content Include="Views\MaintenanceEquipmentReceive\Index.cshtml" />
+    <Content Include="Views\MaintenanceExecutionItemConversion\Index.cshtml" />
+    <Content Include="Views\PlanningTPOTPK\Index.cshtml" />
+    <Content Include="Views\PlanningPlantIndividualCapacity\Index.cshtml" />
+    <Content Include="Views\PlanningReportProductionTarget\Index.cshtml" />
+    <Content Include="Views\PlanningPlantTPK\Index.cshtml" />
+    <Content Include="Views\PlanningReportSummaryProcessTargets\Index.cshtml" />
+    <Content Include="Views\EquipmentRepairPlant\Index.cshtml" />
+    <Content Include="Views\EquipmentFulfillment\Index.cshtml" />
+    <Content Include="Views\MaintenanceEquipmentQualityInspection\Index.cshtml" />
+    <Content Include="Views\MaintenanceReportEquipmentStock\Index.cshtml" />
+    <Content Include="Views\MaintenanceReportEquipmentRequirement\Index.cshtml" />
+    <Content Include="Views\EquipmentRepairTPO\Index.cshtml" />
+    <Content Include="Views\MaintenanceExecutionInventory\Index.cshtml" />
+    <Content Include="Views\Error\UserNotRegistered.cshtml" />
+    <Content Include="Views\MaintenanceExecutionInventoryAdjustment\index.cshtml" />
+    <Content Include="Views\Error\UserNotAuthorized.cshtml" />
+    <Content Include="Views\Shared\TransactionHistory.cshtml" />
+    <Content Include="Views\ExePlantWorkerAbsenteeism\index.cshtml" />
+    <Content Include="Views\ExePlantProductionEntry\Index.cshtml" />
+    <Content Include="Views\ExePlantActualWorkHours\Index.cshtml" />
+    <Content Include="Views\ExePlantWorkerAssignment\Index.cshtml" />
+    <Content Include="Views\ExeTPOProductionEntry\Index.cshtml" />
+    <Content Include="Views\ExePlantMaterialUsages\Index.cshtml" />
+    <Content Include="Views\ExePlantWorkerAssignment\Index.cshtml" />
+    <Content Include="Views\ExePlantWorkerAssignment\Index.cshtml" />
+    <Content Include="Views\ExeTPOActualWorkHours\index.cshtml" />
+    <Content Include="Views\MasterGenClosingPayroll\Index.cshtml" />
+    <Content Include="Views\ExeOthersProductionEntryPrint\Index.cshtml" />
+    <Content Include="Views\ExeTPOProductionEntryVerification\index.cshtml" />
+    <Content Include="Views\ExeProductAdjustment\Index.cshtml" />
+    <Content Include="Views\ExePlantProductionEntryVerification\Index.cshtml" />
+    <Content Include="Views\ExePlantWorkerBalancing\Index.cshtml" />
+    <Content Include="Views\ProductionCard\Index.cshtml" />
+    <Content Include="Views\WagesEblekRelease\Index.cshtml" />
+    <Content Include="Views\EblekReleaseApproval\Index.cshtml" />
+    <Content Include="Views\ExePlantWorkerBalancing\GridBalancingProcessPerUnit.cshtml" />
+    <Content Include="Views\ExeOthersProductionEntryPrint\PrintPartial.cshtml" />
+    <Content Include="Views\WagesProductionCardApproval\index.cshtml" />
+    <Content Include="Views\News\Details.cshtml" />
+    <Content Include="Views\WagesProductionCardApprovalDetail\index.cshtml" />
+    <Content Include="Views\Home\HomepageNewsInfo.cshtml" />
+    <Content Include="Views\Home\HomepageInformatips.cshtml" />
+    <Content Include="Views\WagesProductionCardApprovalDetail\partialbrand.cshtml" />
+    <Content Include="Views\WagesProductionCardApprovalDetail\partialbranddetail.cshtml" />
+    <Content Include="Views\TPOFeeExeActual\Index.cshtml" />
+    <Content Include="Views\TPOFeeExePlan\Index.cshtml" />
+    <Content Include="Views\TPOFeeExeActualDetail\Index.cshtml" />
+    <Content Include="Views\WagesReportAbsents\Index.cshtml" />
+    <Content Include="Views\WagesReportAbsents\WagesReportAbsentsGroup.cshtml" />
+    <Content Include="Views\WagesReportAbsents\WagesReportAbsentsDetail.cshtml" />
+    <Content Include="Views\TPOFeeExePlanDetail\Index.cshtml" />
+    <Content Include="Views\TPOFeeApproval\Index.cshtml" />
+    <Content Include="Views\TPOFeeExeGLAccrued\Index.cshtml" />
+    <Content Include="Views\ExeReportByGroup\Index.cshtml" />
+    <Content Include="Views\TPOFeeExeGLAccruedDetail\Index.cshtml" />
+    <Content Include="Views\TPOFeeAPOpen\Index.cshtml" />
+    <Content Include="Views\TPOFeeAPClose\Index.cshtml" />
+    <Content Include="Views\WagesProductionCardCorrection\Index.cshtml" />
+    <Content Include="Views\ReportPlan\Index.cshtml" />
+    <Content Include="Views\ReportTpo\Index.cshtml" />
+    <Content Include="Views\ReportPlan\ViewReport.cshtml" />
+    <Content Include="Views\ExeReportByStatus\index.cshtml" />
+    <Content Include="Views\ReportTpo\ViewReport.cshtml" />
+    <Content Include="Views\TPOFeeSettingCalculation\Index.cshtml" />
+    <Content Include="Views\News\Create.cshtml" />
+    <Content Include="Views\ExeReportDailyProduction\Index.cshtml" />
+    <Content Include="Scripts\vendors\async.min.map" />
+    <Content Include="Views\ExeReportProductionStock\Index.cshtml" />
+    <Content Include="Views\ExeReportDailyProduction\_GridIReportDailyProductionIndex.cshtml" />
+    <Content Include="Views\ExeReportProductionStock\GridViewExeReportProductionStock.cshtml" />
+    <Content Include="Views\UtilSecurityRoles\Index.cshtml" />
+    <Content Include="Views\TPOFeeReportsPackage\Index.cshtml" />
+    <Content Include="Views\UtilSecurityRules\Index.cshtml" />
+    <Content Include="Views\UtilSecurityFunctions\Index.cshtml" />
+    <Content Include="Views\ExeReportByProcess\index.cshtml" />
+    <Content Include="Views\ExeEMSSourceData\index.cshtml" />
+    <Content Include="Views\TPOFeeReportsSummary\Index.cshtml" />
+    <Content Include="Views\TPOFeeExeAPOpen\Index.cshtml" />
+    <Content Include="Views\TPOFeeReportsProduction\Index.cshtml" />
+    <Content Include="Views\UtilSecurityResponsibilities\Index.cshtml" />
+    <Content Include="Views\WagesReportSummaryProductionCard\Index.cshtml" />
+    <Content Include="Views\WagesReportAvailablePositionNumber\Index.cshtml" />
+    <Content Include="Views\UtilSecurityDelegations\Index.cshtml" />
+    <Content Include="Views\UtilSecurityResponsibilities\_TabRulesPartial.cshtml" />
+    <Content Include="Views\UtilSecurityResponsibilities\_TabUsersPartial.cshtml" />
+    <Content Include="Views\UtilWorkflowFlow\Index.cshtml" />
+    <Content Include="Views\GeneratorReportByProccess\index.cshtml" />
+    <None Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+    <None Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+    <Folder Include="Content\assets\videos\" />
+    <Folder Include="Content\News\" />
+    <Folder Include="Content\P1Template\" />
+    <Folder Include="Scripts\vendors\fileman\tmp\" />
+    <Folder Include="Scripts\vendors\fileman\Uploads\Documents\" />
+    <Folder Include="Scripts\vendors\fileman\Uploads\FLV\" />
+    <Folder Include="Views\EmailApprovals\" />
+    <Folder Include="Views\QualityInspection\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\HMS.SKTIS.Application\HMS.SKTIS.Application.csproj">
+      <Project>{2f73b164-e5d7-4c42-907c-42ff296db6ad}</Project>
+      <Name>HMS.SKTIS.Application</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\HMS.SKTIS.AutoMapperExtensions\HMS.SKTIS.AutoMapperExtensions.csproj">
+      <Project>{44a78d43-860d-4feb-aa07-69de6ecabc50}</Project>
+      <Name>HMS.SKTIS.AutoMapperExtensions</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\HMS.SKTIS.BLL\HMS.SKTIS.BLL.csproj">
+      <Project>{33240099-8b3a-4912-aac7-441e58e13243}</Project>
+      <Name>HMS.SKTIS.BLL</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\HMS.SKTIS.BusinessObjects\HMS.SKTIS.BusinessObjects.csproj">
+      <Project>{d09928d1-f7e1-4c8a-ad81-da808f82b918}</Project>
+      <Name>HMS.SKTIS.BusinessObjects</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\HMS.SKTIS.Contracts\HMS.SKTIS.Contracts.csproj">
+      <Project>{f26065c9-42cc-4254-ab01-472cb8b4dc2e}</Project>
+      <Name>HMS.SKTIS.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\HMS.SKTIS.Core\HMS.SKTIS.Core.csproj">
+      <Project>{a6a6706f-9385-4f85-b9b6-5dfd4ef88db8}</Project>
+      <Name>HMS.SKTIS.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\HMS.SKTIS.DAL\HMS.SKTIS.DAL.csproj">
+      <Project>{6bd6412e-49db-432b-85f2-bdf660ba20dc}</Project>
+      <Name>HMS.SKTIS.DAL</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\HMS.SKTIS.SSISPackageService\HMS.SKTIS.SSISPackageService.csproj">
+      <Project>{ce42d97e-4aa4-4924-9bc3-7988215f500a}</Project>
+      <Name>HMS.SKTIS.SSISPackageService</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\HMS.SKTIS.Utils\HMS.SKTIS.Utils.csproj">
+      <Project>{42afcba1-cf31-40df-ba30-8a225747cf92}</Project>
+      <Name>HMS.SKTIS.Utils</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>True</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>54229</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://www.skt-is.voxteneo.com</IISUrl>
+          <OverrideIISAppRootUrl>True</OverrideIISAppRootUrl>
+          <IISAppRootUrl>http://www.skt-is.voxteneo.com</IISAppRootUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <Import Project="..\packages\AutoMapper.3.3.1\tools\AutoMapper.targets" Condition="Exists('..\packages\AutoMapper.3.3.1\tools\AutoMapper.targets')" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

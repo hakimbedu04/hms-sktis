@@ -1,0 +1,454 @@
+﻿@model SKTISWebsite.Models.ExeOthersProductionEntryPrint.InitExeOthersProductionEntryPrintModel
+@using HMS.SKTIS.Application.Resources
+@using SKTISWebsite.Helper
+@{ Html.SetPageTitle(" Production Entry Print"); }
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="col-md-6 not-print">
+                <div class="row">
+                    <label class="form-label col-md-3">
+                        Location
+                    </label>
+                    <div class="col-md-3">
+                        @*@Html.DropDownList("ddlFilterLocationCode", new SelectList(Model.LocationLookupList, "LocationCode", "LocationCode"),
+                            new
+                            {
+                                @class = "selectpicker show-tick form-control",
+                                id = "ddlFilterLocationCode",
+                                data_live_search = "true",
+                                data_bind = "value:$root.filterLocationCode, event : { change : $root.onLocationCodeChange}"
+                            })*@
+                        <select id="ddlFilterLocationCode"
+                                class="selectpicker show-tick form-control"
+                                data-live-search="true"
+                                data-bind="selectPicker:$root.filterLocationCode, optionsText: 'LocationCode', optionsValue : 'LocationCode', optionsAfterRender: locationDesc, selectPickerOptions: { optionsArray: $root.itemLocations }, event : { change : $root.onLocationCodeChange}"></select>
+                    </div>
+                    <div class="col-md-5">
+                        <input type="text" class="form-control" readonly="readonly" data-bind="value:$root.filterLocationName">
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="form-label col-md-3">
+                        Unit
+                    </label>
+                    <div class="col-md-3">
+                        <select class="selectpicker show-tick form-control" id="ddlUnitCodeFilter"
+                                data-live-search="true"
+                                data-bind="selectPicker: $root.filterUnitCode, optionsText: 'Text', optionsValue : 'Value', selectPickerOptions: { optionsArray: $root.unitCodeSelectList }, event : {change : $root.getGroupByParam}"></select>
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="form-label col-md-3">
+                        Shift
+                    </label>
+                    <div class="col-md-3">
+                        <select class="selectpicker show-tick form-control" id="ddlShiftFilter"
+                                data-live-search="true"
+                                data-bind="selectPicker: $root.filterShift, optionsText: 'Text', optionsValue : 'Value', selectPickerOptions: { optionsArray: $root.shiftSelectList }"></select>
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="form-label col-md-3">
+                        Process
+                    </label>
+                    <div class="col-md-4">
+                        <select class="selectpicker show-tick form-control" id="ddlProcessFilter"
+                                data-live-search="true"
+                                data-bind="selectPicker: $root.filterProcess, optionsText: 'Text', optionsValue : 'Text', selectPickerOptions: { optionsArray: $root.processSelectList }, event : {change : $root.getGroupByParam}"></select>
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="form-label col-md-3">
+                        Brand
+                    </label>
+                    <div class="col-md-4">
+                        <select class="selectpicker show-tick form-control" id="ddlBrandFilter"
+                                data-live-search="true"
+                                data-bind="selectPicker: $root.filterBrand, optionsText: 'Text', optionsValue : 'Value', selectPickerOptions: { optionsArray: $root.brandSelectList }"></select>
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="form-label col-md-3">
+                        Year
+                    </label>
+                    <div class="col-md-4">
+                        @Html.DropDownList("filterYear", Model.YearSelectList,
+                            new Dictionary<string, object>
+                            {
+                                {"data-bind", "value:$root.filterYear, event : { change : $root.onYearSelectedChange}"},
+                                {"class", "selectpicker show-tick form-controlt"},
+                                {"data-live-search", "true"}, {"id", "filterYear"}
+                            })
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="form-label col-md-3">
+                        Week
+                    </label>
+                    <div class="col-md-4">
+                        <select id="filterWeek" class="selectpicker show-tick form-control" data-live-search="true"
+                                data-bind="selectPicker: $root.filterWeek, optionsText: 'Value', optionsValue : 'Text', selectPickerOptions: { optionsArray: $root.WeekFromSelectList }, event: { change: $root.onWeekChange }"></select>
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="form-label col-md-3">
+                        Remark
+                    </label>
+                    <div class="col-md-8">
+                        <textarea class="form-control" data-bind="value:$root.filterRemark, valueUpdate:'afterkeydown'"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 not-print">
+                <div class="row">
+                    <label class="form-label col-md-2">
+                        Group
+                    </label>
+                    <div class="col-md-5">
+                        <select id="filterGroup" class="form-control" multiple="multiple"
+                                data-bind="value: $root.filterGroup, optionsText: 'Value', optionsValue : 'Text', options: $root.groupSelectList "></select>
+                    </div>
+                </div>
+            </div>
+            <div class="row not-print">
+                <div class="col-md-12">
+                    <div class="action-btn">
+                    @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.Print.ToString()))
+                    {
+                     <button type="submit" class="btn btn-primary" data-bind="event:{click:$root.getPrint}">Print</button>   
+                    }        
+                    </div>
+                </div>
+            </div>
+            <div id="print-container"></div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <link rel="stylesheet" media="print" href="~/Content/css/print.css">
+    <script src="~/Scripts/app/globalfunctions.js" type="text/javascript"></script>
+    <script src="~/Scripts/common/app.GridViewModel.js" type="text/javascript"></script>
+    <script src="~/Scripts/common/app.Extenders.js" type="text/javascript"></script>
+    <script type="text/javascript">
+    (function(app) {
+        app.EditGrid = function() {
+            var self = this;
+            //self.itemLocations = @Html.Raw(Json.Encode(@Model.LocationLookupList));
+            self.itemLocations = ko.observableArray(@Html.Raw(Json.Encode(@Model.LocationLookupList)));
+
+            self.filterLocationCode = ko.observable($("#ddlFilterLocationCode").val());
+            self.filterLocationName = ko.observable('');
+            self.filterUnitCode = ko.observable('');
+            self.filterBrand = ko.observable('');
+            self.filterShift = ko.observable($("#ddlShiftFilter").val());
+            self.filterRemark = ko.observable('');
+            self.filterYear = ko.observable('@Model.DefaultYear');
+            self.filterWeek = ko.observable('@Model.DefaultWeek');
+            self.filterProcess = ko.observable('');
+            self.filterGroup = ko.observableArray([]);
+
+            //event on location dropdown change
+            self.onLocationCodeChange = function(cb) {
+                
+                async.series([
+                    function(cb) {
+                        self.getLocationNameFilter(cb);
+                    },
+                    function(cb) {
+                        self.getProcessByLocation(cb);
+                    },
+                    function(cb) {
+                        self.getBrandFromExePlantProductionEntryVerificationByLocation();
+                        cb();
+                    },
+                    function(cb) {
+                        self.getUnitCodeSelectListByLocation(cb);
+                    }
+                ],
+                function() {
+                    if (typeof cb == 'function') cb(); 
+                });
+            };
+
+            self.onYearSelectedChange = function() {
+                self.GetWeekFromSelectList();
+                self.getBrandFromExePlantProductionEntryVerificationByLocation();
+            };
+
+            //get location name by location code
+            self.getLocationNameFilter = function(cb) {
+                //for (var i = 0; i < self.itemLocations.length; i++) {
+                //    if (self.itemLocations[i].LocationCode == self.filterLocationCode()) {
+                //        self.filterLocationName(self.itemLocations[i].LocationName);
+                //        break;
+                //    }
+                //}
+
+                self.itemLocations().map(function(v) {
+                    if (typeof v.LocationCode !== 'undefined' && v.LocationCode == self.filterLocationCode()) {
+                        
+                        self.filterLocationName(v.LocationName);
+                    }
+                });
+
+                if (typeof cb == 'function') cb();
+            };
+
+            //prepare unitCode selectlist data
+            self.unitCodeSelectList = ko.observableArray([]);
+            self.getUnitCodeSelectListByLocation = function(cb) {
+                $.ajax({
+                    url: @Html.BaseUrl("ExeOthersProductionEntryPrint/GetUnitCodeSelectListByLocationCode"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: { locationCode: self.filterLocationCode() },
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#ddlUnitCodeFilter').find('option').remove();
+                        $('#ddlUnitCodeFilter').selectpicker('refresh');
+                        self.unitCodeSelectList(data);
+                        self.filterUnitCode($('#ddlUnitCodeFilter').val());
+
+                        if (typeof cb == 'function') cb(); 
+                    }
+                });
+            };
+
+            self.processSelectList = ko.observableArray([]);
+            self.getProcessByLocation = function(cb) {
+                $.ajax({
+                    url: @Html.BaseUrl("ExeOthersProductionEntryPrint/GetProcessByLocation"),
+                        type: 'GET',
+                        contentType: 'application/json',
+                        data: { locationCode: self.filterLocationCode()},
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#ddlProcessFilter').find('option').remove();
+                            $('#ddlProcessFilter').selectpicker('refresh');
+                            self.processSelectList(data);
+                            self.filterProcess($('#ddlProcessFilter').val());
+
+                            if (typeof cb == 'function') cb(); 
+                        }
+                    });
+                };
+
+                self.brandSelectList = ko.observableArray([]);
+                self.getBrandFromExePlantProductionEntryVerificationByLocation = function() {
+                    $.ajax({
+                        url: @Html.BaseUrl("ExeOthersProductionEntryPrint/GetBrandFromExePlantProductionEntryVerificationByLocation"),
+                        type: 'GET',
+                        contentType: 'application/json',
+                        data: {
+                            locationCode: self.filterLocationCode(),
+                            week: self.filterWeek(),
+                            year: self.filterYear()
+                        },
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#ddlBrandFilter').find('option').remove();
+                            $('#ddlBrandFilter').selectpicker('refresh');
+                            var brandCodeModel = [];
+                            $.each(data, function(index, value) {
+                                brandCodeModel.push({ "Text": value, "Value": value });
+                            });
+                            self.brandSelectList(brandCodeModel);
+                        }
+                    });
+                };
+
+                self.groupSelectList = ko.observableArray([]);
+                self.getGroupByParam = function() {
+                    if((self.filterUnitCode()) && (self.filterProcess())){
+                        self.filterGroup([]);
+                        $.ajax({
+                            url: @Html.BaseUrl("ExeOthersProductionEntryPrint/GetGoupByParam"),
+                            type: 'GET',
+                            contentType: 'application/json',
+                            data: { locationCode: self.filterLocationCode(), unitCode: self.filterUnitCode(), processCode: self.filterProcess()},
+                            dataType: 'json',
+                            success: function(data) {
+                                $('#filterGroup').find('option').remove();
+                                var groupModel = [];
+                                $.each(data, function(index, value) {
+                                    groupModel.push({ "Text": value, "Value": value });
+                                });
+                                self.groupSelectList(groupModel);
+                            }
+                        });
+                    }
+                };
+
+                self.shiftSelectList = ko.observableArray([]);
+                self.getShiftSelectList = function(cb) {
+                    $.ajax({
+                        url: @Html.BaseUrl("ExeOthersProductionEntryPrint/GetShiftByLocation"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: { locationCode: self.filterLocationCode() },
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#ddlShiftFilter').find('option').remove();
+                        $('#ddlShiftFilter').selectpicker('refresh');
+                        var kpsWeekModel = [];
+                        $.each(data, function(index, value) {
+                            kpsWeekModel.push({ "Text": value.Text, "Value": value.Text });
+                        });
+                        self.shiftSelectList(kpsWeekModel);
+                        self.filterShift(kpsWeekModel[0].Text);
+
+                        if (typeof cb == 'function') cb();
+
+                    }
+                });
+            };
+
+            self.WeekFromSelectList = ko.observableArray([]);
+            self.GetWeekFromSelectList = function(cb) {
+                $.ajax({
+                    url: @Html.BaseUrl("ExeOthersProductionEntryPrint/GetWeekByYear"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: { year: self.filterYear() },
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#filterWeek').find('option').remove();
+                        $('#filterWeek').selectpicker('refresh');
+                        var kpsWeekModel = [];
+                        $.each(data, function(index, value) {
+                            kpsWeekModel.push({ "Text": value, "Value": value });
+                        });
+                        self.WeekFromSelectList(kpsWeekModel);
+                        self.filterWeek('@Model.DefaultWeek');
+                        
+                        if (typeof cb == 'function') cb(); 
+                    }
+                });
+            };
+
+            self.onWeekChange = function() {
+                async.series([
+                    function(cb) {
+                        self.getBrandFromExePlantProductionEntryVerificationByLocation();
+                        cb();
+                    },
+                    function(cb) {
+                        self.getShiftSelectList();
+                    },
+                    function(cb) {
+                        self.getProcessByLocation();
+                    }
+                ]);
+            }
+
+            var filter = {
+                LocationCode: "",
+                LocationName: "",
+                UnitCode: "",
+                Shift: "",
+                Brand: "",
+                Process: "",
+                Remark: "",
+                GroupCode: "",
+                Year: 0,
+                Week: 0,
+                PageSize: 100,
+                PageIndex: 1,
+                SortExpression:  "EmployeeID",
+                SortOrder: "ASC"
+            };
+
+            //description : generateExcel
+            self.getPrint = function() {
+
+                var listGroup = [];
+                $("#filterGroup option:selected").each(function() {
+                    listGroup.push($(this).val().trim());
+                });
+                
+                filter.LocationCode = $('#ddlFilterLocationCode').val();
+                filter.LocationName = self.filterLocationName();
+                filter.UnitCode = $("#ddlUnitCodeFilter").val();
+                filter.Year = $("#filterYear").val();
+                filter.Week = $("#filterWeek").val();
+                filter.Shift = $("#ddlShiftFilter").val();
+                filter.Brand = $("#ddlBrandFilter").val();
+                filter.Process = $("#ddlProcessFilter").val();
+                filter.Remark = self.filterRemark();
+                filter.GroupCode = listGroup.join();
+
+                $.ajax({
+                    url: @Html.BaseUrl("ExeOthersProductionEntryPrint/GetPrint"),
+                    type: 'GET',
+                    contentType: 'text/html',
+                    cache: false,
+                    data: filter,
+                    dataType: 'html',
+                    success: function(data) {
+                        $("#print-container").html(data);
+                        //var isIE11 = !!navigator.userAgent.match(/Trident.*rv[ :]*11\./);
+                        //console.log(isIE11);
+                        //if (navigator.appName == "Microsoft Internet Explorer" || isIE11== true) {
+                        //    var PrintCommand = '<OBJECT ID="PrintCommandObject" WIDTH=0 HEIGHT=0 ';
+                        //    PrintCommand += 'CLASSID="CLSID:8856F961-340A-11D0-A96B-00C04FD705A2"></OBJECT>';
+                        //    document.body.insertAdjacentHTML('beforeEnd', PrintCommand);
+                        //    PrintCommandObject.ExecWB(6, 2); 
+                        //    PrintCommandObject.outerHTML = "";
+                        //    window.close();
+                        //} else {
+                            window.print();
+                        //}
+                    },
+                    error: function(data) {
+                        console.log(data);
+                    }
+                });
+
+                
+
+            };
+
+            self.init = function() {
+                async.series([
+                    function(callback) {
+                        self.onLocationCodeChange(callback);
+                    },
+                    function(callback) {
+                        self.GetWeekFromSelectList(callback);
+                    },
+                    // Get units by location
+                    function(callback) {
+                        self.getUnitCodeSelectListByLocation(callback);
+                    },
+                    // Get brands
+                    function(callback) {
+                        self.getBrandFromExePlantProductionEntryVerificationByLocation();
+                    },
+                    function(callback) {
+                        self.getProcessByLocation(callback);
+                    },
+                    function(cb) {
+                        self.getShiftSelectList(callback);
+                    }
+                ]);
+                
+            };
+
+            $(document).ready(function(){
+
+                self.init();
+
+            });
+            //self.init();
+
+            //self.onLocationCodeChange();
+        };
+        ko.applyBindings(new app.EditGrid());
+    })(app = this.app || {});
+
+    </script>
+}

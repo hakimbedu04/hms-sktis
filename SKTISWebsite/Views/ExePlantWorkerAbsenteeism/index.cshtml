@@ -1,0 +1,2960 @@
+﻿@using HMS.SKTIS.Application.Resources
+@using SKTISWebsite.Helper
+@using HMS.SKTIS.Application.Resources.Views.ExePlantWorkerAbsenteeism
+@model SKTISWebsite.Models.ExePlantWorkerAbsenteeism.InitExePlantWorkerAbsenteeism
+@{ Html.SetPageTitle(" Worker Absenteeism"); }
+
+<div class="col-lg-12">
+    <div class="tabs" role="tabpanel">
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs" role="tablist" id="absence">
+            <li role="presentation" class="active"><a href="#piecerate" aria-controls="	home" role="tab" data-toggle="tab">Piece Rate</a></li>
+            <li role="presentation"><a href="#daily" aria-controls="profile" role="tab" data-toggle="tab">Daily</a></li>
+        </ul>
+        <!-- Tab panes -->
+        <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade in active" id="piecerate" data-bind="with: gridViewPieceRate">
+                <div class="col-lg-6">
+                    <div class="row">
+                        <label class="form-label col-lg-4">
+                            @ExePlantWorkerAbsenteeism.lblFilterLocation
+                        </label>
+                        <div class="col-lg-3">
+                            @*@Html.DropDownList("ddlLocationPieceRate", Model.LocationCodeSelectList,
+                                         new Dictionary<string, object> { { "data-bind", "value:$root.locationCodePieceRate, event : { change : $root.onLocationChangePieceRate }, isDisabled: $root.isLoading()" },
+                                    { "class", "selectpicker show-tick form-controlt" },
+                                    {"data-live-search","true"},{"id","ddlLocationPieceRate"} })*@
+
+                            <select id="ddlLocationPieceRate"
+                                    class="selectpicker show-tick form-control"
+                                    data-live-search="true"
+                                    data-bind="selectPicker:$root.locationCodePieceRate, optionsText: 'LocationCode', optionsValue : 'LocationCode', optionsAfterRender: locationDesc, selectPickerOptions: { optionsArray: $root.itemLocationsPieceRate}, event : { change : $root.onLocationChangePieceRate}, isDisabled: $root.isLoading()"></select>
+
+                        </div>
+                        <div class="col-lg-4">
+                            <input id="locationName" type="text" class="form-control" readonly="readonly" data-bind="value:$root.filterLocationNamePieceRate, isDisabled: $root.isLoading()">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label class="form-label col-lg-4">
+                            @ExePlantWorkerAbsenteeism.lblFilterUnit
+                        </label>
+                        <div class="col-lg-7">
+                            <select class="selectpicker show-tick form-control" id="ddlUnitPieceRate"
+                                    data-live-search="true"
+                                    data-bind="selectPicker: $root.unitCodePieceRate, optionsText: 'Text', optionsValue : 'Value', selectPickerOptions: { optionsArray: $root.unitSelectListPieceRate }, event : { change : $root.onUnitChangePieceRate }, isDisabled: $root.isLoading()"></select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label class="form-label col-lg-4">
+                            @ExePlantWorkerAbsenteeism.lblFilterShift
+                        </label>
+                        <div class="col-lg-7">
+                            <select class="selectpicker show-tick form-control" id="ddlShiftPieceRate"
+                                    data-live-search="true"
+                                    data-bind="selectPicker: $root.shiftPieceRate, optionsText: 'Text', optionsValue : 'Value', selectPickerOptions: { optionsArray: $root.shiftSelectListPieceRate }, event : { change : $root.onShiftChangePieceRate }, isDisabled: $root.isLoading()"></select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label class="form-label col-lg-4">
+                            @ExePlantWorkerAbsenteeism.lblFilterProcess
+                        </label>
+                        <div class="col-lg-7">
+                            <select class="selectpicker show-tick form-control" id="ddlProcessPieceRate"
+                                    data-live-search="true"
+                                    data-bind="selectPicker: $root.processCodePieceRate, optionsText: 'Text', optionsValue : 'Value', selectPickerOptions: { optionsArray: $root.processSelectListPieceRate }, event : { change : $root.onProcessChangePieceRate }, isDisabled: $root.isLoading()"></select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label class="form-label col-lg-4">
+                            @ExePlantWorkerAbsenteeism.lblFilterGroup
+                        </label>
+                        <div class="col-lg-7">
+                            <select class="selectpicker show-tick form-control" id="ddlGroupPieceRate"
+                                    data-live-search="true"
+                                    data-bind="selectPicker: $root.groupCodePieceRate, optionsText: 'Text', optionsValue : 'Value', selectPickerOptions: { optionsArray: $root.groupSelectListPieceRate }, event : { change : $root.onGroupChangePieceRate }, isDisabled: $root.isLoading()"></select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="row">
+                        <label class="form-label nopadding col-lg-4">
+                            @ExePlantWorkerAbsenteeism.lblFilterKPSYear
+                        </label>
+                        <div class="col-lg-4">
+                            @Html.DropDownList("ddlYearsPieceRate", Model.YearSelectList,
+                                         new Dictionary<string, object> { { "data-bind", "value:$root.KPSYearValuePieceRate, event : { change : $root.onKPSYearChangePieceRate}, isDisabled: $root.isLoading()" },
+                                    { "class", "selectpicker show-tick form-controlt" },
+                                    {"data-live-search","true"},{"id","ddlYearsPieceRate"} })
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label class="form-label col-lg-4">
+                            @ExePlantWorkerAbsenteeism.lblFilterKPSWeek
+                        </label>
+                        <div class="col-lg-4">
+                            <select id="ddlWeeksPieceRate" class="selectpicker show-tick form-control" data-live-search="true"
+                                    data-bind="selectPicker: $root.KPSWeekValuePieceRate, optionsText: 'Value', optionsValue : 'Text', selectPickerOptions: { optionsArray: $root.KPSWeekSelectListPieceRate }, event : { change : $root.onKPSWeekChangePieceRate}, isDisabled: $root.isLoading()"></select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label class="form-label col-lg-4">
+                            @ExePlantWorkerAbsenteeism.lblFilterDate
+                        </label>
+                        <div class="col-lg-4">
+                            <div id="dtpDatePieceRate" class='input-group date time' data-bind="dateTimePicker: $root.dateValuePieceRate, value: $root.dateValuePieceRate, dateTimePickerOptions: {widgetPositioning: {vertical: 'bottom'}, showClear: true, ignoreReadonly: true}, dateChange : $root.onProcessChangePieceRate, isDisabled: $root.isLoading()">
+                                <input id="dtpDateInput" class="form-control" readonly="readonly" />
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-12">
+                    <div class="row">
+                        <div class="action-btn">
+                            @*@if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.View.ToString()))*@
+                            @if (ViewBag.ButtonAccess.Contains(String.Format("{0}/{1}", HMS.SKTIS.Core.Enums.TabName.PieceRate, HMS.SKTIS.Core.Enums.ButtonName.View)))
+                            {
+                                <button type="button" class="btn btn-primary" data-bind="click:$root.searchPieceRate">@CommonLabel.btnView</button>   
+                            }
+                            
+                            @if (ViewBag.ButtonAccess.Contains(String.Format("{0}/{1}", HMS.SKTIS.Core.Enums.TabName.PieceRate, HMS.SKTIS.Core.Enums.ButtonName.Save)))
+                            {
+                                <button type="button" class="btn btn-primary" data-bind="click:$root.savePieceRate">@CommonLabel.btnSave</button>
+                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#multipleAbsent" data-bind="click:$root.ShowMultipleAbsent">Multiple Absent</button>
+                            }
+                            
+                            @using (Html.BeginForm("GenerateExcelPieceRate", "ExePlantWorkerAbsenteeism", FormMethod.Post, new { @data_bind = "submit: $root.generateExcelPieceRate" }))
+                            {
+                                <input type="hidden" name="LocationCode">
+                                <input type="hidden" name="LocationName">
+                                <input type="hidden" name="UnitCode">
+                                <input type="hidden" name="KPSYear">
+                                <input type="hidden" name="KPSWeek">
+                                <input type="hidden" name="Date">
+                                <input type="hidden" name="Shift">
+                                <input type="hidden" name="Process">
+                                <input type="hidden" name="Group">
+                                <button type="submit" class="btn btn-primary">Excel</button>
+                            }
+
+
+                            @Html.Partial("GridViewPageSizeSelector")
+                        </div>
+                    </div>
+                </div>
+                <div class="table-overflow auto-overflow">
+                    <table class="table table-striped table-hover" id="employeeabsent">
+                        <thead>
+                            <tr class="head">
+                                <th class="widthsmall">ID</th>
+                                <th>Name</th>
+                                <th class="widthsmall">Absen Type</th>
+                                <th>SKT Code</th>
+                                <th>Payroll Code</th>
+                                <th class="widthdate">Start Date</th>
+                                <th class="widthdate">End Date</th>
+                                <th>Supporting Documents Number</th>
+                                <th>Supporting Documents</th>
+                            </tr>
+                            <tr class="insertRow" data-bind="inlineAddProccess:[$data, $root.newDataPieceRate]">
+                                <th class="current right">
+                                    <select id="spEmployeeID" class="selectpicker show-tick form-control" data-live-search="true" data-bind="selectPicker: $root.newDataPieceRate.EmployeeID, value: $root.newDataPieceRate.EmployeeID, optionsText: 'EmployeeCompact', optionsValue : 'EmployeeID', optionsAfterRender : $root.afterRender,selectPickerOptions: { optionsArray: $root.employeeSelectListPieceRate, container: 'body' }, event : { change : $root.onEmployeeChangePieceRate }"></select>
+                                </th>
+                                <th><span data-bind="text: $root.newDataPieceRate.EmployeeNameMix"></span></th>
+                                <th class="current">
+                                    <select class="selectpicker show-tick form-control" data-live-search="true" data-bind="selectPicker: $root.newDataPieceRate.AbsentType, value: $root.newDataPieceRate.AbsentType, optionsText: 'AbsentType', optionsValue : 'AbsentType', selectPickerOptions: { optionsArray: $root.absentTypeSelectListPieceRate, container: 'body' }, event : { change : $root.onAbsentTypeChangePieceRate }"></select>
+                                </th>
+                                <th><span data-bind="text: $root.newDataPieceRate.SktAbsentCode"></span></th>
+                                <th><span data-bind="text: $root.newDataPieceRate.PayrollAbsentCode"></span></th>
+                                <th class="current">
+                                    <div id="dtpStartDatePieceRate" class='input-group date time insidetable' data-bind="dateTimePicker: $root.newDataPieceRate.StartDateAbsent, value:$root.newDataPieceRate.StartDateAbsent, dateTimePickerOptions: {defaultDate: new Date(), widgetPositioning: {vertical: 'bottom'}, showClear: true, ignoreReadonly: true, useCurrent: true, appendToBody: true }">
+                                        <input type='text' class="form-control" readonly="readonly" />
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                    </div>
+                                </th>
+                                <th class="current">
+                                    <div id="dtpEndDatePieceRate" class='input-group date time insidetable' data-bind="dateTimePicker: $root.newDataPieceRate.EndDateAbsent, value:$root.newDataPieceRate.EndDateAbsent, dateTimePickerOptions: {widgetPositioning: {vertical: 'bottom'}, showClear: true, ignoreReadonly: true, useCurrent: true, appendToBody: true }">
+                                        <input type='text' class="form-control" readonly="readonly" />
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                    </div>
+                                </th>
+                                <th class="right"><input data-bind="value: $root.newDataPieceRate.ePaf" class="form-control" /></th>
+                                <th class="no-wrap">
+                                    <span data-bind="visible: $root.newDataPieceRate.AttachmentName, text: $root.newDataPieceRate.AttachmentName"></span>
+                                    <span class="file-input btn btn-primary btn-file">
+                                        @CommonLabel.btnChooseFile <input type="file" data-mode="insert" data-type='piece-rate' accept=".jpg,.jpeg,.pdf,.doc,.docx" data-bind="event: { change: function() { $root.uploadAttachment($element) }}">
+                                    </span>
+                                    <span style="display:none" data-bind="text: $root.newDataPieceRate.LocationCode"></span>
+                                    <span style="display:none" data-bind="text: $root.newDataPieceRate.UnitCode"></span>
+                                    <span style="display:none" data-bind="text: $root.newDataPieceRate.ProcessSettingsCode"></span>
+                                    <span style="display:none" data-bind="text: $root.newDataPieceRate.GroupCode"></span>
+                                    <span style="display:none" data-bind="text: $root.newDataPieceRate.OldValueEmployeeID"></span>
+                                    <span style="display:none" data-bind="text: $root.newDataPieceRate.OldValueStartDateAbsent"></span>
+                                    <span style="display:none" data-bind="text: $root.newDataPieceRate.OldValueEndDateAbsent"></span>
+                                    <span style="display:none" data-bind="text: $root.newDataPieceRate.OldValueShift"></span>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody data-bind="foreach: listDataItems">
+                            
+                            @*insert template*@
+                            <tr data-bind="if: ($parent.editingRowIndex() !== $index() && (ko.utils.unwrapObservable($data.OldValueEmployeeID) === '')),
+                                   click: $parent.editInline3.bind($data,$index())">
+                                <td class="current"><span data-bind="text:$data.EmployeeID"></span></td>
+                                <td><span data-bind="text:$data.EmployeeNameMix"></span></td>
+                                <td class="current"><span data-bind="text: $data.AbsentType"></span></td>
+                                <td><span data-bind="text:$data.SktAbsentCode"></span></td>
+                                <td><span data-bind="text:$data.PayrollAbsentCode"></span></td>
+                                <td class="current"><span data-bind="text: $data.StartDateAbsent"></span></td>
+                                <td class="current"><span data-bind="text: $data.EndDateAbsent"></span></td>
+                                <td class="right current"><span data-bind="text: $data.ePaf"></span></td>
+                                <td class="current">
+                                    <span class="truncate uploadfile" style="display: inline-block; padding-top:5px;" data-bind="visible: ko.utils.unwrapObservable($data.AttachmentName)">
+                                        <a href="#" target="_blank" class="uploadfile newTabLink" data-bind="text: $data.AttachmentName, attr: {href: $root.parseAttachmentUrl($data) }"></a>
+                                    </span>
+                                    <span style="display:none" data-bind="text: $data.LocationCode"></span>
+                                    <span style="display:none" data-bind="text: $data.UnitCode"></span>
+                                    <span style="display:none" data-bind="text: $data.ProcessSettingsCode"></span>
+                                    <span style="display:none" data-bind="text: $data.GroupCode"></span>
+                                    <span style="display:none" data-bind="text: $data.OldValueEmployeeID"></span>
+                                    <span style="display:none" data-bind="text: $data.OldValueStartDateAbsent"></span>
+                                    <span style="display:none" data-bind="text: $data.OldValueEndDateAbsent"></span>
+                                    <span style="display:none" data-bind="text: $data.OldValueShift"></span>
+                                </td>
+                            </tr>
+                            @*insert template*@
+                            <tr data-bind="if: ($parent.editingRowIndex() !== $index() && (ko.utils.unwrapObservable($data.EblekStatus) === 'LOCKED') && (ko.utils.unwrapObservable($data.IsFromEblek) === true) && $root.ValidateDateIsFuture($data.OldValueStartDateAbsent)),
+                                   click: $parent.editInline3.bind($data,$index())">
+                                <td><span data-bind="text:$data.EmployeeID"></span></td>
+                                <td><span data-bind="text:$data.EmployeeNameMix"></span></td>
+                                <td class="current"><span data-bind="text: $data.AbsentType"></span></td>
+                                <td><span data-bind="text:$data.SktAbsentCode"></span></td>
+                                <td><span data-bind="text:$data.PayrollAbsentCode"></span></td>
+                                <td><span data-bind="text: $data.StartDateAbsent"></span></td>
+                                <td><span data-bind="text: $data.EndDateAbsent"></span></td>
+                                <td><span data-bind="text: $data.ePaf"></span></td>
+                                <td>
+                                    <span class="truncate uploadfile" data-bind="text:$data.AttachmentName"></span>
+                                    <span style="display:none" data-bind="text: $data.LocationCode"></span>
+                                    <span style="display:none" data-bind="text: $data.UnitCode"></span>
+                                    <span style="display:none" data-bind="text: $data.ProcessSettingsCode"></span>
+                                    <span style="display:none" data-bind="text: $data.GroupCode"></span>
+                                    <span style="display:none" data-bind="text: $data.OldValueEmployeeID"></span>
+                                    <span style="display:none" data-bind="text: $data.OldValueStartDateAbsent"></span>
+                                    <span style="display:none" data-bind="text: $data.OldValueEndDateAbsent"></span>
+                                    <span style="display:none" data-bind="text: $data.OldValueShift"></span>
+                                </td>
+                            </tr>
+                            @*insert template*@
+                            <tr data-bind="if: ($parent.editingRowIndex() !== $index() && (ko.utils.unwrapObservable($data.EblekStatus) === 'LOCKED') && (ko.utils.unwrapObservable($data.IsFromEblek) === true) && $root.ValidateDateIsPast($data.OldValueStartDateAbsent)),
+                                   click: $parent.editInline3.bind($data,$index())">
+                                <td><span data-bind="text:$data.EmployeeID"></span></td>
+                                <td><span data-bind="text:$data.EmployeeNameMix"></span></td>
+                                <td><span data-bind="text: $data.AbsentType"></span></td>
+                                <td><span data-bind="text:$data.SktAbsentCode"></span></td>
+                                <td><span data-bind="text:$data.PayrollAbsentCode"></span></td>
+                                <td><span data-bind="text: $data.StartDateAbsent"></span></td>
+                                <td><span data-bind="text: $data.EndDateAbsent"></span></td>
+                                <td><span data-bind="text: $data.ePaf"></span></td>
+                                <td>
+                                    <span class="truncate uploadfile" data-bind="text:$data.AttachmentName"></span>
+                                    <span style="display:none" data-bind="text: $data.LocationCode"></span>
+                                    <span style="display:none" data-bind="text: $data.UnitCode"></span>
+                                    <span style="display:none" data-bind="text: $data.ProcessSettingsCode"></span>
+                                    <span style="display:none" data-bind="text: $data.GroupCode"></span>
+                                    <span style="display:none" data-bind="text: $data.OldValueEmployeeID"></span>
+                                    <span style="display:none" data-bind="text: $data.OldValueStartDateAbsent"></span>
+                                    <span style="display:none" data-bind="text: $data.OldValueEndDateAbsent"></span>
+                                    <span style="display:none" data-bind="text: $data.OldValueShift"></span>
+                                </td>
+                            </tr>
+                            @*insert template*@
+                            <tr data-bind="if: ($parent.editingRowIndex() !== $index() && (ko.utils.unwrapObservable($data.EblekStatus) === 'LOCKED')  && (ko.utils.unwrapObservable($data.IsFromEblek) === false) && $root.ValidateDateIsFuture($data.OldValueStartDateAbsent)),
+                                   click: $parent.editInline3.bind($data,$index())">
+                                <td class="current"><span data-bind="text:$data.EmployeeID"></span></td>
+                                <td><span data-bind="text:$data.EmployeeNameMix"></span></td>
+                                <td class="current"><span data-bind="text: $data.AbsentType"></span></td>
+                                <td><span data-bind="text:$data.SktAbsentCode"></span></td>
+                                <td><span data-bind="text:$data.PayrollAbsentCode"></span></td>
+                                <td class="current"><span data-bind="text: $data.StartDateAbsent"></span></td>
+                                <td class="current"><span data-bind="text: $data.EndDateAbsent"></span></td>
+                                <td class="right current"><span data-bind="text: $data.ePaf"></span></td>
+                                <td class="current">
+                                    <span class="truncate uploadfile" style="display: inline-block; padding-top:5px;" data-bind="visible: ko.utils.unwrapObservable($data.AttachmentName)">
+                                        <a href="#" target="_blank" class="uploadfile newTabLink" data-bind="text: $data.AttachmentName, attr: {href: $root.parseAttachmentUrl($data) }"></a>
+                                    </span>
+                                    <span style="display:none" data-bind="text: $data.LocationCode"></span>
+                                    <span style="display:none" data-bind="text: $data.UnitCode"></span>
+                                    <span style="display:none" data-bind="text: $data.ProcessSettingsCode"></span>
+                                    <span style="display:none" data-bind="text: $data.GroupCode"></span>
+                                    <span style="display:none" data-bind="text: $data.OldValueEmployeeID"></span>
+                                    <span style="display:none" data-bind="text: $data.OldValueStartDateAbsent"></span>
+                                    <span style="display:none" data-bind="text: $data.OldValueEndDateAbsent"></span>
+                                    <span style="display:none" data-bind="text: $data.OldValueShift"></span>
+                                </td>
+                            </tr>
+                            @*insert template*@
+                            <tr data-bind="if: ($parent.editingRowIndex() !== $index() && (ko.utils.unwrapObservable($data.EblekStatus) === 'LOCKED')  && (ko.utils.unwrapObservable($data.IsFromEblek) === false) && $root.ValidateDateIsPast($data.OldValueStartDateAbsent) && $root.ValidateDateIsFuture($data.OldValueEndDateAbsent)),
+                                   click: $parent.editInline3.bind($data,$index())">
+                                <td><span data-bind="text: $data.EmployeeID"></span></td>
+                                <td><span data-bind="text:$data.EmployeeNameMix"></span></td>
+                                <td><span data-bind="text: $data.AbsentType"></span></td>
+                                <td><span data-bind="text:$data.SktAbsentCode"></span></td>
+                                <td><span data-bind="text:$data.PayrollAbsentCode"></span></td>
+                                <td><span data-bind="text: $data.StartDateAbsent"></span></td>
+                                <td class="current"><span data-bind="text: $data.EndDateAbsent"></span></td>
+                                <td class="right current"><span data-bind="text: $data.ePaf"></span></td>
+                                <td class="current">
+                                    <span class="truncate uploadfile" data-bind="text:$data.AttachmentName"></span>
+                                    <span style="display:none" data-bind="text: $data.LocationCode"></span>
+                                    <span style="display:none" data-bind="text: $data.UnitCode"></span>
+                                    <span style="display:none" data-bind="text: $data.ProcessSettingsCode"></span>
+                                    <span style="display:none" data-bind="text: $data.GroupCode"></span>
+                                    <span style="display:none" data-bind="text: $data.OldValueEmployeeID"></span>
+                                    <span style="display:none" data-bind="text: $data.OldValueStartDateAbsent"></span>
+                                    <span style="display:none" data-bind="text: $data.OldValueEndDateAbsent"></span>
+                                    <span style="display:none" data-bind="text: $data.OldValueShift"></span>
+                                </td>
+                            </tr>
+                            @*insert template*@
+                            <tr data-bind="if: ($parent.editingRowIndex() !== $index() && (ko.utils.unwrapObservable($data.EblekStatus) === 'LOCKED')  && (ko.utils.unwrapObservable($data.IsFromEblek) === false) && $root.ValidateDateIsPast($data.OldValueEndDateAbsent)),
+                                   click: $parent.editInline3.bind($data,$index())">
+                                <td><span data-bind="text: $data.EmployeeID"></span></td>
+                                <td><span data-bind="text:$data.EmployeeNameMix"></span></td>
+                                <td><span data-bind="text: $data.AbsentType"></span></td>
+                                <td><span data-bind="text:$data.SktAbsentCode"></span></td>
+                                <td><span data-bind="text:$data.PayrollAbsentCode"></span></td>
+                                <td><span data-bind="text: $data.StartDateAbsent"></span></td>
+                                <td><span data-bind="text: $data.EndDateAbsent"></span></td>
+                                <td class="right"><span data-bind="text: $data.ePaf"></span></td>
+                                <td>
+                                    <span class="truncate uploadfile" data-bind="text:$data.AttachmentPath"></span>
+                                    <span style="display:none" data-bind="text: $data.LocationCode"></span>
+                                    <span style="display:none" data-bind="text: $data.UnitCode"></span>
+                                    <span style="display:none" data-bind="text: $data.ProcessSettingsCode"></span>
+                                    <span style="display:none" data-bind="text: $data.GroupCode"></span>
+                                    <span style="display:none" data-bind="text: $data.OldValueEmployeeID"></span>
+                                    <span style="display:none" data-bind="text: $data.OldValueStartDateAbsent"></span>
+                                    <span style="display:none" data-bind="text: $data.OldValueEndDateAbsent"></span>
+                                    <span style="display:none" data-bind="text: $data.OldValueShift"></span>
+                                </td>
+                            </tr>
+                            @*insert template*@
+                            <tr data-bind="if: ($parent.editingRowIndex() !== $index() && (ko.utils.unwrapObservable($data.EblekStatus) === 'UNLOCKED')),
+                                   click: $parent.editInline3.bind($data,$index())">
+                                <td><span data-bind="text:$data.EmployeeID"></span></td>
+                                <td><span data-bind="text:$data.EmployeeNameMix"></span></td>
+                                <td class="current"><span data-bind="text: $data.AbsentType"></span></td>
+                                <td><span data-bind="text:$data.SktAbsentCode"></span></td>
+                                <td><span data-bind="text:$data.PayrollAbsentCode"></span></td>
+                                <td class="current"><span data-bind="text: $data.StartDateAbsent"></span></td>
+                                <td class="current"><span data-bind="text: $data.EndDateAbsent"></span></td>
+                                <td class="right current"><span data-bind="text: $data.ePaf"></span></td>
+                                <td class="current">
+                                    <span class="truncate uploadfile" style="display: inline-block; padding-top:5px;" data-bind="visible: ko.utils.unwrapObservable($data.AttachmentName)">
+                                        <a href="#" target="_blank" class="uploadfile newTabLink" data-bind="text: $data.AttachmentName, attr: {href: $root.parseAttachmentUrl($data) }"></a>
+                                    </span>
+                                    <span style="display:none" data-bind="text: $data.LocationCode"></span>
+                                    <span style="display:none" data-bind="text: $data.UnitCode"></span>
+                                    <span style="display:none" data-bind="text: $data.ProcessSettingsCode"></span>
+                                    <span style="display:none" data-bind="text: $data.GroupCode"></span>
+                                    <span style="display:none" data-bind="text: $data.OldValueEmployeeID"></span>
+                                    <span style="display:none" data-bind="text: $data.OldValueStartDateAbsent"></span>
+                                    <span style="display:none" data-bind="text: $data.OldValueEndDateAbsent"></span>
+                                    <span style="display:none" data-bind="text: $data.OldValueShift"></span>
+                                </td>
+                            </tr>
+    
+                            @*edit template*@
+                            <tr data-bind="validationOptions: {insertMessages: false, showTooltip:true, decorateInputElement: true, errorElementClass: 'input-error'}, inlineProccess:[$parent,$data],
+                                   if:($parent.editingRowIndex() === $index() && (ko.utils.unwrapObservable($data.OldValueEmployeeID) === '')),
+                                   click: $parent.selectRow.bind($data, $index())">
+                                <td class="current">
+                                    @*<span data-bind="text:$data.EmployeeID"></span>*@
+                                    <select id="spEmployeeIDEdit" class="selectpicker show-tick form-control" data-live-search="true" data-bind="selectPickerCustom: $data.EmployeeID, value: $data.EmployeeID, optionsText: 'EmployeeCompact', optionsValue : 'EmployeeID', optionsAfterRender : $root.afterRender, isSelectPicker: true, event : { change : $root.onEmployeeChangeOnEditPieceRate.bind($data) }, selectPickerOptions: { optionsArray: $root.employeeSelectListPieceRate }"></select>
+                                </td>
+                                <td><span data-bind="text: $data.EmployeeNameMix"></span></td>
+                                <td class="current">
+                                    <select class="selectpicker show-tick form-control" data-live-search="true" data-bind="selectPickerCustom: $data.AbsentType, value: $data.AbsentType, optionsText: 'AbsentType', optionsValue : 'AbsentType', isSelectPicker: true, event : { change : $root.onAbsentTypeChangeOnEditPieceRate.bind($data) }, selectPickerOptions: { optionsArray: $root.absentTypeSelectListPieceRate}"></select>
+                                </td>
+                                <td><span data-bind="text: $data.SktAbsentCode"></span></td>
+                                <td><span data-bind="text: $data.PayrollAbsentCode"></span></td>
+                                <td class="current">
+                                    <div class='input-group date time insidetable' data-bind="dateTimePicker: $data.StartDateAbsent, value:$data.StartDateAbsent, dateTimePickerOptions: {widgetPositioning: {vertical: 'bottom'}, ignoreReadonly: true, appendToBody: true}">
+                                        <input type='text' class="form-control" readonly="readonly" />
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                    </div>
+                                </td>
+                                <td class="current">
+                                    <div class='input-group date time insidetable' data-bind="dateTimePicker: $data.EndDateAbsent, value:$data.EndDateAbsent, dateTimePickerOptions: {widgetPositioning: {vertical: 'bottom'}, ignoreReadonly: true, appendToBody: true}">
+                                        <input type='text' class="form-control" readonly="readonly" />
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                    </div>
+                                </td>
+                                <td class="right current"><input data-bind="value: $data.ePaf, valueUpdate: 'afterkeydown'" class="form-control tr" /></td>
+                                <td class="center">
+                                    <span class="file-input btn btn-primary btn-file" data-bind="visible: !ko.utils.unwrapObservable($data.AttachmentName)">
+                                        @CommonLabel.btnChooseFile <input type="file" data-mode="update" data-type='piece-rate' data-bind="attr: {'data-filename':$data.AttachmentPath}, event: { change: function() { $root.uploadAttachment($element, $data) } }" accept=".jpg,.jpeg,.pdf,.doc,.docx">
+                                    </span>
+                                    <div data-bind="visible: ko.utils.unwrapObservable($data.AttachmentName)" style="width: 160px;">
+                                        <span class="truncate uploadfile" style="display: inline-block; padding-top:5px;">
+                                            <a href="#" target="_blank" class="uploadfile newTabLink" data-bind="text: $data.AttachmentName, attr: {href: $root.parseAttachmentUrl($data) }"></a>
+                                        </span>
+                                        <span class="pull-right">
+                                            <span class="file-input btn btn-primary btn-file">
+                                                CHG <input type="file" data-mode="update" data-bind="attr: {'data-filename':$data.AttachmentPath}, event: { change: function() { $root.uploadAttachment($element, $data) } }" accept=".jpg,.jpeg,.pdf,.doc,.docx" data-type='piece-rate'>
+                                            </span>
+                                        </span>
+                                    </div>
+                                    <span style="display:none" data-bind="text: $data.LocationCode"></span>
+                                    <span style="display:none" data-bind="text: $data.UnitCode"></span>
+                                    <span style="display:none" data-bind="text: $data.ProcessSettingsCode"></span>
+                                    <span style="display:none" data-bind="text: $data.GroupCode"></span>
+                                    <span style="display:none" data-bind="text: $data.OldValueEmployeeID"></span>
+                                    <span style="display:none" data-bind="text: $data.OldValueStartDateAbsent"></span>
+                                    <span style="display:none" data-bind="text: $data.OldValueEndDateAbsent"></span>
+                                    <span style="display:none" data-bind="text: $data.OldValueShift"></span>
+                                </td>
+                            </tr>
+                            @*edit template*@
+                            <tr data-bind="validationOptions: {insertMessages: false, showTooltip:true, decorateInputElement: true, errorElementClass: 'input-error'}, inlineProccess:[$parent,$data],
+                                   if:($parent.editingRowIndex() === $index() && (ko.utils.unwrapObservable($data.EblekStatus) === 'LOCKED') && (ko.utils.unwrapObservable($data.IsFromEblek) === true) && $root.ValidateDateIsFuture($data.OldValueStartDateAbsent)),
+                                   click: $parent.selectRow.bind($data, $index())">
+                                <td><span data-bind="text:$data.EmployeeID"></span></td>
+                                <td><span data-bind="text:$data.EmployeeNameMix"></span></td>
+                                <td class="current">
+                                    <select id="listAbsentWithEblek" class="selectpicker show-tick form-control" data-live-search="true" data-bind="selectPickerCustom: $data.AbsentType, value: $data.AbsentType, optionsText: 'AbsentType', optionsValue : 'AbsentType', isSelectPicker: true, event : { change : $root.onAbsentTypeChangeOnEditPieceRate.bind($data) }, selectPickerOptions: { optionsArray: $root.getListAbsentTypeWithActiveinEblek($data.OldValueAbsentType)}"></select>
+                                </td>
+                                <td><span data-bind="text:$data.SktAbsentCode"></span></td>
+                                <td><span data-bind="text:$data.PayrollAbsentCode"></span></td>
+                                <td><span data-bind="text: $data.StartDateAbsent"></span></td>
+                                <td><span data-bind="text: $data.EndDateAbsent"></span></td>
+                                <td><span data-bind="text: $data.ePaf"></span></td>
+                                <td>
+                                    <span class="truncate uploadfile" data-bind="text:$data.AttachmentName"></span>
+                                    <span style="display:none" data-bind="text: $data.LocationCode"></span>
+                                    <span style="display:none" data-bind="text: $data.UnitCode"></span>
+                                    <span style="display:none" data-bind="text: $data.ProcessSettingsCode"></span>
+                                    <span style="display:none" data-bind="text: $data.GroupCode"></span>
+                                    <span style="display:none" data-bind="text: $data.OldValueEmployeeID"></span>
+                                    <span style="display:none" data-bind="text: $data.OldValueStartDateAbsent"></span>
+                                    <span style="display:none" data-bind="text: $data.OldValueEndDateAbsent"></span>
+                                    <span style="display:none" data-bind="text: $data.OldValueShift"></span>
+                                </td>
+                            </tr>
+                            @*edit template*@
+                            <tr data-bind="validationOptions: {insertMessages: false, showTooltip:true, decorateInputElement: true, errorElementClass: 'input-error'}, inlineProccess:[$parent,$data],
+                                   if:($parent.editingRowIndex() === $index() && (ko.utils.unwrapObservable($data.EblekStatus) === 'LOCKED') && (ko.utils.unwrapObservable($data.IsFromEblek) === true) && $root.ValidateDateIsPast($data.OldValueStartDateAbsent)),
+                                   click: $parent.selectRow.bind($data, $index())">
+                                <td><span data-bind="text:$data.EmployeeID"></span></td>
+                                <td><span data-bind="text:$data.EmployeeNameMix"></span></td>
+                                <td><span data-bind="text: $data.AbsentType"></span></td>
+                                <td><span data-bind="text:$data.SktAbsentCode"></span></td>
+                                <td><span data-bind="text:$data.PayrollAbsentCode"></span></td>
+                                <td><span data-bind="text: $data.StartDateAbsent"></span></td>
+                                <td><span data-bind="text: $data.EndDateAbsent"></span></td>
+                                <td><span data-bind="text: $data.ePaf"></span></td>
+                                <td>
+                                    <span class="truncate uploadfile" data-bind="text:$data.AttachmentName"></span>
+                                    <span style="display:none" data-bind="text: $data.LocationCode"></span>
+                                    <span style="display:none" data-bind="text: $data.UnitCode"></span>
+                                    <span style="display:none" data-bind="text: $data.ProcessSettingsCode"></span>
+                                    <span style="display:none" data-bind="text: $data.GroupCode"></span>
+                                    <span style="display:none" data-bind="text: $data.OldValueEmployeeID"></span>
+                                    <span style="display:none" data-bind="text: $data.OldValueStartDateAbsent"></span>
+                                    <span style="display:none" data-bind="text: $data.OldValueEndDateAbsent"></span>
+                                    <span style="display:none" data-bind="text: $data.OldValueShift"></span>
+                                </td>
+                            </tr>
+                            @*edit template*@
+                            <tr data-bind="validationOptions: {insertMessages: false, showTooltip:true, decorateInputElement: true, errorElementClass: 'input-error'}, inlineProccess:[$parent,$data],
+                                   if:($parent.editingRowIndex() === $index() && (ko.utils.unwrapObservable($data.EblekStatus) === 'LOCKED') && (ko.utils.unwrapObservable($data.IsFromEblek) === false) && (ko.utils.unwrapObservable($data.OldValueEmployeeID) === '' || $root.ValidateDateIsFuture($data.OldValueStartDateAbsent))),
+                                   click: $parent.selectRow.bind($data, $index())">
+                                <td class="current">
+                                    @*<span data-bind="text:$data.EmployeeID"></span>*@
+                                    <select id="spEmployeeIDEdit" class="selectpicker show-tick form-control" data-live-search="true" data-bind="selectPickerCustom: $data.EmployeeID, value: $data.EmployeeID, optionsText: 'EmployeeCompact', optionsValue : 'EmployeeID', optionsAfterRender : $root.afterRender, isSelectPicker: true, event : { change : $root.onEmployeeChangeOnEditPieceRate.bind($data) }, selectPickerOptions: {optionsArray: $root.employeeSelectListPieceRate }"></select>
+                                </td>
+                                <td><span data-bind="text: $data.EmployeeNameMix"></span></td>
+                                <td class="current">
+                                    <select class="selectpicker show-tick form-control" data-live-search="true" data-bind="selectPickerCustom: $data.AbsentType, value: $data.AbsentType, optionsText: 'AbsentType', optionsValue : 'AbsentType', isSelectPicker: true, event : { change : $root.onAbsentTypeChangeOnEditPieceRate.bind($data) }, selectPickerOptions: { optionsArray: $root.absentTypeSelectListPieceRate}"></select>
+                                </td>
+                                <td><span data-bind="text: $data.SktAbsentCode"></span></td>
+                                <td><span data-bind="text: $data.PayrollAbsentCode"></span></td>
+                                <td class="current">
+                                    <div class='input-group date time insidetable' data-bind="dateTimePicker: $data.StartDateAbsent, value:$data.StartDateAbsent, dateTimePickerOptions: {widgetPositioning: {vertical: 'bottom'}, ignoreReadonly: true, appendToBody: true}">
+                                        <input type='text' class="form-control" readonly="readonly" />
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                    </div>
+                                </td>
+                                <td class="current">
+                                    <div class='input-group date time insidetable' data-bind="dateTimePicker: $data.EndDateAbsent, value:$data.EndDateAbsent, dateTimePickerOptions: {widgetPositioning: {vertical: 'bottom'}, ignoreReadonly: true, appendToBody: true}">
+                                        <input type='text' class="form-control" readonly="readonly" />
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                    </div>
+                                </td>
+                                <td class="right current"><input data-bind="value: $data.ePaf, valueUpdate: 'afterkeydown'" class="form-control tr" /></td>
+                                <td class="center">
+                                    <span class="file-input btn btn-primary btn-file" data-bind="visible: !ko.utils.unwrapObservable($data.AttachmentName)">
+                                        @CommonLabel.btnChooseFile <input type="file" data-mode="update" data-type='piece-rate' data-bind="attr: {'data-filename':$data.AttachmentPath}, event: { change: function() { $root.uploadAttachment($element, $data) } }" accept=".jpg,.jpeg,.pdf,.doc,.docx">
+                                    </span>
+                                    <div data-bind="visible: ko.utils.unwrapObservable($data.AttachmentName)" style="width: 160px;">
+                                        <span class="truncate uploadfile" style="display: inline-block; padding-top:5px;">
+                                            <a href="#" target="_blank" class="uploadfile newTabLink" data-bind="text: $data.AttachmentName, attr: {href: $root.parseAttachmentUrl($data) }"></a>
+                                        </span>
+                                        <span class="pull-right">
+                                            <span class="file-input btn btn-primary btn-file">
+                                                CHG <input type="file" data-mode="update" data-bind="attr: {'data-filename':$data.AttachmentPath}, event: { change: function() { $root.uploadAttachment($element, $data) } }" accept=".jpg,.jpeg,.pdf,.doc,.docx" data-type='piece-rate'>
+                                            </span>
+                                        </span>
+                                    </div>
+                                    <span style="display:none" data-bind="text: $data.LocationCode"></span>
+                                    <span style="display:none" data-bind="text: $data.UnitCode"></span>
+                                    <span style="display:none" data-bind="text: $data.ProcessSettingsCode"></span>
+                                    <span style="display:none" data-bind="text: $data.GroupCode"></span>
+                                    <span style="display:none" data-bind="text: $data.OldValueEmployeeID"></span>
+                                    <span style="display:none" data-bind="text: $data.OldValueStartDateAbsent"></span>
+                                    <span style="display:none" data-bind="text: $data.OldValueEndDateAbsent"></span>
+                                    <span style="display:none" data-bind="text: $data.OldValueShift"></span>
+                                </td>
+                            </tr>
+                            @*edit template*@
+                            <tr data-bind="validationOptions: {insertMessages: false, showTooltip:true, decorateInputElement: true, errorElementClass: 'input-error'}, inlineProccess:[$parent,$data],
+                                   if:($parent.editingRowIndex() === $index() && (ko.utils.unwrapObservable($data.EblekStatus) === 'LOCKED') && (ko.utils.unwrapObservable($data.IsFromEblek)  === false) && $root.ValidateDateIsPast($data.OldValueStartDateAbsent) && $root.ValidateDateIsFuture($data.OldValueEndDateAbsent)),
+                                   click: $parent.selectRow.bind($data, $index())">
+                                <td><span data-bind="text:$data.EmployeeID"></span></td>
+                                <td><span data-bind="text: $data.EmployeeNameMix"></span></td>
+                                <td><span data-bind="text:$data.AbsentType"></span></td>
+                                <td><span data-bind="text: $data.SktAbsentCode"></span></td>
+                                <td><span data-bind="text: $data.PayrollAbsentCode"></span></td>
+                                <td><span data-bind="text: $data.StartDateAbsent"></span></td>
+                                <td class="current">
+                                    <div class='input-group date time insidetable' data-bind="dateTimePicker: $data.EndDateAbsent, value:$data.EndDateAbsent, dateTimePickerOptions: {widgetPositioning: {vertical: 'bottom'}, ignoreReadonly: true, appendToBody: true }">
+                                        <input type='text' class="form-control" readonly="readonly" />
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                    </div>
+                                </td>
+                                <td class="right current"><input data-bind="value: $data.ePaf, valueUpdate: 'afterkeydown'" class="form-control" /></td>
+                                <td class="center">
+                                    <span class="file-input btn btn-primary btn-file" data-bind="visible: !ko.utils.unwrapObservable($data.AttachmentName)">
+                                        @CommonLabel.btnChooseFile <input type="file" data-mode="update" data-bind="attr: {'data-filename':$data.AttachmentPath}, event: { change: function() { $root.uploadAttachment($element, $data) } }" data-type='piece-rate'>
+                                    </span>
+                                    <div data-bind="visible: ko.utils.unwrapObservable($data.AttachmentName)" style="width: 160px;">
+                                        <span class="truncate uploadfile" style="display: inline-block; padding-top:5px;">
+                                            <a href="#" target="_blank" class="uploadfile newTabLink" data-bind="text: $data.AttachmentName, attr: {href: $root.parseAttachmentUrl($data) }"></a>
+                                        </span>
+                                        <span class="pull-right">
+                                            <span class="file-input btn btn-primary btn-file">
+                                                CHG <input type="file" data-mode="update" data-bind="attr: {'data-filename':$data.AttachmentPath}, event: { change: function() { $root.uploadAttachment($element, $data) } }">
+                                            </span>
+                                        </span>
+                                    </div>
+                                    <span style="display:none" data-bind="text: $data.LocationCode"></span>
+                                    <span style="display:none" data-bind="text: $data.UnitCode"></span>
+                                    <span style="display:none" data-bind="text: $data.ProcessSettingsCode"></span>
+                                    <span style="display:none" data-bind="text: $data.GroupCode"></span>
+                                    <span style="display:none" data-bind="text: $data.OldValueEmployeeID"></span>
+                                    <span style="display:none" data-bind="text: $data.OldValueStartDateAbsent"></span>
+                                    <span style="display:none" data-bind="text: $data.OldValueEndDateAbsent"></span>
+                                    <span style="display:none" data-bind="text: $data.OldValueShift"></span>
+                                </td>
+                            </tr>
+                            @*edit template*@
+                            <tr data-bind="validationOptions: {insertMessages: false, showTooltip:true, decorateInputElement: true, errorElementClass: 'input-error'}, inlineProccess:[$parent,$data],
+                                   if:($parent.editingRowIndex() === $index() && (ko.utils.unwrapObservable($data.EblekStatus) === 'LOCKED') && (ko.utils.unwrapObservable($data.IsFromEblek)  === false) && $root.ValidateDateIsPast($data.OldValueEndDateAbsent)),
+                                   click: $parent.selectRow.bind($data, $index())">
+                                <td><span data-bind="text:$data.EmployeeID"></span></td>
+                                <td><span data-bind="text: $data.EmployeeNameMix"></span></td>
+                                <td><span data-bind="text:$data.AbsentType"></span></td>
+                                <td><span data-bind="text: $data.SktAbsentCode"></span></td>
+                                <td><span data-bind="text: $data.PayrollAbsentCode"></span></td>
+                                <td><span data-bind="text: $data.StartDateAbsent"></span></td>
+                                <td><span data-bind="text: $data.EndDateAbsent"></span></td>
+                                <td><span data-bind="text: $data.ePaf"></span></td>
+                                <td class="center">
+                                    <span class="file-input btn btn-default btn-file">
+                                        @CommonLabel.btnChooseFile <input type="file" disabled="disabled" data-mode="update" data-bind="attr: {'data-filename':$data.AttachmentPath}, event: { change: $root.uploadAttachment($element, $data) }" accept=".jpg,.jpeg,.pdf,.doc,.docx" data-type='piece-rate'>
+                                    </span>
+                                    <span style="display:none" data-bind="text: $data.LocationCode"></span>
+                                    <span style="display:none" data-bind="text: $data.UnitCode"></span>
+                                    <span style="display:none" data-bind="text: $data.ProcessSettingsCode"></span>
+                                    <span style="display:none" data-bind="text: $data.GroupCode"></span>
+                                    <span style="display:none" data-bind="text: $data.OldValueEmployeeID"></span>
+                                    <span style="display:none" data-bind="text: $data.OldValueStartDateAbsent"></span>
+                                    <span style="display:none" data-bind="text: $data.OldValueEndDateAbsent"></span>
+                                    <span style="display:none" data-bind="text: $data.OldValueShift"></span>
+                                </td>
+                            </tr>
+                            @*edit template*@
+                            <tr data-bind="validationOptions: {insertMessages: false, showTooltip:true, decorateInputElement: true, errorElementClass: 'input-error'}, inlineProccess:[$parent,$data],
+                                   if:($parent.editingRowIndex() === $index() && (ko.utils.unwrapObservable($data.EblekStatus) === 'UNLOCKED')),
+                                   click: $parent.selectRow.bind($data, $index())">
+                                <td><span data-bind="text:$data.EmployeeID"></span></td>
+                                <td><span data-bind="text: $data.EmployeeNameMix"></span></td>
+                                <td class="current">
+                                    <select class="selectpicker show-tick form-control" data-live-search="true" data-bind="selectPickerCustom: $data.AbsentType, value: $data.AbsentType, optionsText: 'AbsentType', optionsValue : 'AbsentType', isSelectPicker: true, event : { change : $root.onAbsentTypeChangeOnEditPieceRate.bind($data) }, selectPickerOptions: { optionsArray: $root.absentTypeSelectListPieceRate}"></select>
+                                </td>
+                                <td><span data-bind="text: $data.SktAbsentCode"></span></td>
+                                <td><span data-bind="text: $data.PayrollAbsentCode"></span></td>
+                                <td class="current">
+                                    <div class='input-group date time insidetable' data-bind="dateTimePicker: $data.StartDateAbsent, value:$data.StartDateAbsent, dateTimePickerOptions: {widgetPositioning: {vertical: 'bottom'}, ignoreReadonly: true, appendToBody: true}">
+                                        <input type='text' class="form-control" readonly="readonly" />
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                    </div>
+                                </td>
+                                <td class="current">
+                                    <div class='input-group date time insidetable' data-bind="dateTimePicker: $data.EndDateAbsent, value:$data.EndDateAbsent, dateTimePickerOptions: {widgetPositioning: {vertical: 'bottom'}, ignoreReadonly: true, appendToBody: true}">
+                                        <input type='text' class="form-control" readonly="readonly" />
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                    </div>
+                                </td>
+                                <td class="right current"><input data-bind="value: $data.ePaf, valueUpdate: 'afterkeydown'" class="form-control tr" /></td>
+                                <td class="center">
+                                    <span class="file-input btn btn-primary btn-file" data-bind="visible: !ko.utils.unwrapObservable($data.AttachmentName)">
+                                        @CommonLabel.btnChooseFile <input type="file" data-mode="update" data-type='piece-rate' data-bind="attr: {'data-filename':$data.AttachmentPath}, event: { change: function() { $root.uploadAttachment($element, $data) } }" accept=".jpg,.jpeg,.pdf,.doc,.docx">
+                                    </span>
+                                    <div data-bind="visible: ko.utils.unwrapObservable($data.AttachmentName)" style="width: 160px;">
+                                        <span class="truncate uploadfile" style="display: inline-block; padding-top:5px;">
+                                            <a href="#" target="_blank" class="uploadfile newTabLink" data-bind="text: $data.AttachmentName, attr: {href: $root.parseAttachmentUrl($data) }"></a>
+                                        </span>
+                                        <span class="pull-right">
+                                            <span class="file-input btn btn-primary btn-file">
+                                                CHG <input type="file" data-mode="update" data-bind="attr: {'data-filename':$data.AttachmentPath}, event: { change: function() { $root.uploadAttachment($element, $data) } }" accept=".jpg,.jpeg,.pdf,.doc,.docx" data-type='piece-rate'>
+                                            </span>
+                                        </span>
+                                    </div>
+                                    <span style="display:none" data-bind="text: $data.LocationCode"></span>
+                                    <span style="display:none" data-bind="text: $data.UnitCode"></span>
+                                    <span style="display:none" data-bind="text: $data.ProcessSettingsCode"></span>
+                                    <span style="display:none" data-bind="text: $data.GroupCode"></span>
+                                    <span style="display:none" data-bind="text: $data.OldValueEmployeeID"></span>
+                                    <span style="display:none" data-bind="text: $data.OldValueStartDateAbsent"></span>
+                                    <span style="display:none" data-bind="text: $data.OldValueEndDateAbsent"></span>
+                                    <span style="display:none" data-bind="text: $data.OldValueShift"></span>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tbody data-bind="visible: !listDataItems().length">
+                            <tr>
+                                <td colspan="9" class="empty-row-message"><div class="loader"></div></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div data-bind="if: (listDataItems() != null && listDataItems().length !== 0)">
+                    @Html.Partial("GridViewFooter")
+                </div>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="daily" data-bind="with: gridViewDaily">
+                <div class="col-lg-6">
+                    <div class="row">
+                        <label class="form-label col-lg-4">
+                            @ExePlantWorkerAbsenteeism.lblFilterLocation
+                        </label>
+                        <div class="col-lg-3">
+                            @*@Html.DropDownList("ddlLocationDaily", Model.LocationCodeSelectList,
+                                new Dictionary<string, object> { { "data-bind", "value:$root.locationCodeDaily, event : { change : $root.onLocationChangeDaily }" },
+                                    { "class", "selectpicker show-tick form-control" },
+                                    {"data-live-search","true"},{"id","ddlLocationDaily"} })*@
+
+                            <select id="ddlLocationDaily"
+                                    class="selectpicker show-tick form-control"
+                                    data-live-search="true"
+                                    data-bind="selectPicker:$root.locationCodeDaily, optionsText: 'LocationCode', optionsValue : 'LocationCode', optionsAfterRender: locationDesc, selectPickerOptions: { optionsArray: $root.menuItemLocationsDaily}, event : { change : $root.onLocationChangeDaily}"></select>
+                        </div>
+                        <div class="col-lg-4">
+                            <input id="locationNameDaily"  type="text" class="form-control" readonly="readonly" data-bind="value:$root.filterLocationNameDaily">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label class="form-label col-lg-4">
+                            @ExePlantWorkerAbsenteeism.lblFilterUnit
+                        </label>
+                        <div class="col-lg-7">
+                            <select class="selectpicker show-tick form-control" id="ddlUnitDaily"
+                                    data-live-search="true"
+                                    data-bind="selectPicker: $root.unitCodeDaily, optionsText: 'Text', optionsValue : 'Value', selectPickerOptions: { optionsArray: $root.unitSelectListDaily }, event : { change : $root.onUnitChangeDaily }"></select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label class="form-label col-lg-4">
+                            @ExePlantWorkerAbsenteeism.lblFilterShift
+                        </label>
+                        <div class="col-lg-7">
+                            <select class="selectpicker show-tick form-control" id="ddlShiftDaily"
+                                    data-live-search="true"
+                                    data-bind="selectPicker: $root.shiftDaily, optionsText: 'Text', optionsValue : 'Value', selectPickerOptions: { optionsArray: $root.shiftSelectListDaily }, event : { change : $root.onShiftChangeDaily }"></select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="row">
+                        <label class="form-label nopadding col-lg-4">
+                            @ExePlantWorkerAbsenteeism.lblFilterKPSYear
+                        </label>
+                        <div class="col-lg-4">
+                            @Html.DropDownList("ddlYearsDaily", Model.YearSelectList,
+                                    new Dictionary<string, object> { { "data-bind", "value:$root.KPSYearValueDaily, event : { change : $root.onKPSYearChangeDaily}" },
+                                    { "class", "selectpicker show-tick form-controlt" },
+                                    {"data-live-search","true"},{"id","ddlYearsDaily"} })
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label class="form-label col-lg-4">
+                            @ExePlantWorkerAbsenteeism.lblFilterKPSWeek
+                        </label>
+                        <div class="col-lg-4">
+                            <select id="ddlWeeksDaily" class="selectpicker show-tick form-control" data-live-search="true"
+                                    data-bind="selectPicker: $root.KPSWeekValueDaily, optionsText: 'Value', optionsValue : 'Text', selectPickerOptions: { optionsArray: $root.KPSWeekSelectListDaily },  event : { change : $root.onKPSWeekChangeDaily}"></select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label class="form-label col-lg-4">
+                            @ExePlantWorkerAbsenteeism.lblFilterDate
+                        </label>
+                        <div class="col-lg-4">
+                            <div id="dtpDateDaily" class='input-group date time' data-bind="dateTimePicker: $root.dateValueDaily, value: $root.dateValueDaily, dateTimePickerOptions: {widgetPositioning: {vertical: 'bottom'}, showClear: true, ignoreReadonly: true}">
+                                <input id="dtpDateInputDaily" class="form-control" readonly="readonly" />
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-12">
+                    <div class="row">
+                        <div class="action-btn">
+                            @if (ViewBag.ButtonAccess.Contains(String.Format("{0}/{1}", HMS.SKTIS.Core.Enums.TabName.Daily, HMS.SKTIS.Core.Enums.ButtonName.View)))
+{
+                            <button type="button" class="btn btn-primary" data-bind="click:$root.searchDaily">@CommonLabel.btnView</button>
+                            }
+
+                            @if (ViewBag.ButtonAccess.Contains(String.Format("{0}/{1}", HMS.SKTIS.Core.Enums.TabName.Daily, HMS.SKTIS.Core.Enums.ButtonName.Save)))
+{
+                            <button type="button" class="btn btn-primary" data-bind="click:$root.saveDaily">@CommonLabel.btnSave</button>
+                            }
+                            
+                            @using (Html.BeginForm("GenerateExcelDaily", "ExePlantWorkerAbsenteeism", FormMethod.Post, new { @data_bind = "submit: $root.generateExcelDaily" }))
+                            {
+                                <input type="hidden" name="LocationCode">
+                                <input type="hidden" name="LocationName">
+                                <input type="hidden" name="UnitCode">
+                                <input type="hidden" name="KPSYear">
+                                <input type="hidden" name="KPSWeek">
+                                <input type="hidden" name="Date">
+                                <input type="hidden" name="Shift">
+                                <button type="submit" class="btn btn-primary">Excel</button>
+                            }
+                            @Html.Partial("GridViewPageSizeSelector")
+                        </div>
+                    </div>
+                </div>
+                <div class="table-overflow auto-overflow">
+                    <table class="table table-striped" id="employeeabsent">
+                        <thead>
+                            <tr class="head">
+                                <th>Title</th>
+                                <th class="widthsmall">Employee ID</th>
+                                <th>Name</th>
+                                <th class="widthsmall">Absen Type</th>
+                                <th>SKT Code</th>
+                                <th>Payroll Code</th>
+                                <th class="widthdate">Start Date</th>
+                                <th class="widthdate">End Date</th>
+                                <th>Supporting Documents Number</th>
+                                <th>Supporting Documents</th>
+                            </tr>
+                            <tr class="insertRow" data-bind="inlineAddProccess:[$data, $root.newDataDaily]">
+                                <th>
+                                    <select id="spProcessSettingCode" class="selectpicker show-tick form-control" data-live-search="true" data-bind="selectPicker: $root.newDataDaily.ProcessSettingsCode, value: $root.newDataDaily.ProcessSettingsCode, optionsText: 'ProcessSettingsCode', optionsValue : 'ProcessSettingsCode', selectPickerOptions: { container: 'body', optionsArray: $root.processSelectListDaily }, event : { change : $root.onProcessChangeDaily }"></select>
+                                </th>
+                                <th class="current right">
+                                    <select id="spEmployeeIDDaily" class="selectpicker show-tick form-control" data-live-search="true" data-bind="selectPicker: $root.newDataDaily.EmployeeID, optionsText: 'EmployeeCompact', optionsValue : 'EmployeeID',optionsAfterRender : $root.afterRender, selectPickerOptions: { optionsArray: $root.employeeSelectListDaily, container: 'body' }, event : { change : $root.onEmployeeChangeDaily }"></select>
+                                </th>
+                                <th><span data-bind="text: $root.newDataDaily.EmployeeName"></span></th>
+                                <th class="current">
+                                    <select class="selectpicker show-tick form-control" data-live-search="true" data-bind="selectPicker: $root.newDataDaily.AbsentType, optionsText: 'AbsentType', optionsValue : 'AbsentType', selectPickerOptions: { optionsArray: $root.absentTypeSelectListDaily, container: 'body' }, event : { change : $root.onAbsentTypeChangeDaily }"></select>
+                                </th>
+                                <th><span data-bind="text: $root.newDataDaily.SktAbsentCode"></span></th>
+                                <th><span data-bind="text: $root.newDataDaily.PayrollAbsentCode"></span></th>
+                                <th class="current">
+                                    <div id="dtpStartDateDaily" class='input-group date time insidetable' data-bind="dateTimePicker: $root.newDataDaily.StartDateAbsent, value:$root.newDataDaily.StartDateAbsent, dateTimePickerOptions: {defaultDate: new Date(), widgetPositioning: {vertical: 'bottom'}, showClear: true, ignoreReadonly: true, useCurrent: false, appendToBody: true }">
+                                        <input type='text' class="form-control" readonly="readonly" />
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                    </div>
+                                </th>
+                                <th class="current">
+                                    <div id="dtpEndDateDaily" class='input-group date time insidetable' data-bind="dateTimePicker: $root.newDataDaily.EndDateAbsent, value:$root.newDataDaily.EndDateAbsent, dateTimePickerOptions: {widgetPositioning: {vertical: 'bottom'}, showClear: true, ignoreReadonly: true, useCurrent: false, appendToBody: true }">
+                                        <input type='text' class="form-control" readonly="readonly" />
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                    </div>
+                                </th>
+                                <th class="right"><input data-bind="value: $root.newDataDaily.ePaf, valueUpdate: 'afterkeydown'" class="form-control" /></th>
+                                <th class="no-wrap">
+                                    <span data-bind="visible: $root.newDataDaily.AttachmentName, text: $root.newDataDaily.AttachmentName"></span>
+                                    <span class="file-input btn btn-primary btn-file">
+                                        @CommonLabel.btnChooseFile <input type="file" data-mode="insert" accept=".jpg,.jpeg,.pdf,.doc,.docx" data-bind="event: { change: function() { $root.uploadAttachment($element) }}" data-type="daily">
+                                    </span>
+                                    <span style="display:none" data-bind="text: $root.newDataDaily.LocationCode"></span>
+                                    <span style="display:none" data-bind="text: $root.newDataDaily.UnitCode"></span>
+                                    <span style="display:none" data-bind="text: $root.newDataDaily.Shift"></span>
+                                    <span style="display:none" data-bind="text: $root.newDataDaily.OldValueEmployeeID"></span>
+                                    <span style="display:none" data-bind="text: $root.newDataDaily.OldValueStartDateAbsent"></span>
+                                    <span style="display:none" data-bind="text: $root.newDataDaily.OldValueEndDateAbsent"></span>
+                                    <span style="display:none" data-bind="text: $root.newDataDaily.OldValueShift"></span>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody data-bind="foreach: listDataItems">
+                            @*insert template*@
+                            <tr data-bind="if: ($parent.editingRowIndex() !== $index()),
+                                   click: $parent.editInline3.bind($data,$index())">
+                                <td class="current"><span data-bind="text: $data.ProcessSettingsCode"></span></td>
+                                <td class="current"><span data-bind="text: $data.EmployeeID"></span></td>
+                                <td><span data-bind="text: $data.EmployeeName"></span></td>
+                                <td class="current"><span data-bind="text: $data.AbsentType"></span></td>
+                                <td><span data-bind="text: $data.SktAbsentCode"></span></td>
+                                <td><span data-bind="text: $data.PayrollAbsentCode"></span></td>
+                                <td class="current"><span data-bind="text: $data.StartDateAbsent"></span></td>
+                                <td class="current"><span data-bind="text: $data.EndDateAbsent"></span></td>
+                                <td class="right current"><span data-bind="text: $data.ePaf"></span></td>
+                                <td class="current">
+                                    <span class="truncate uploadfile" style="display: inline-block; padding-top:5px;" data-bind="visible: ko.utils.unwrapObservable($data.AttachmentName)">
+                                        <a href="#" target="_blank" class="uploadfile newTabLink" data-bind="text: $data.AttachmentName, attr: {href: $root.parseAttachmentUrl($data) }"></a>
+                                    </span>
+
+                                    <div data-bind="visible: !ko.utils.unwrapObservable($data.AttachmentName)" style="width: 160px;">
+                                        <span class="truncate uploadfile" style="display: inline-block; padding-top:5px;">
+                                            <a href="#" target="_blank" class="uploadfile newTabLink" data-bind="text: $data.AttachmentName, attr: {href: $root.parseAttachmentUrl($data) }"></a>
+                                        </span>
+                                        <span class="pull-right">
+                                            <span class="file-input btn btn-primary btn-file">
+                                                CHG <input type="file" data-mode="update" data-bind="event: { change: function() { $root.uploadAttachment($element) }}" data-type="daily">
+                                            </span>
+                                        </span>
+                                    </div>
+                                    <span style="display:none" data-bind="text: $data.LocationCode"></span>
+                                    <span style="display:none" data-bind="text: $data.UnitCode"></span>
+                                    <span style="display:none" data-bind="text: $data.Shift"></span>
+                                    <span style="display:none" data-bind="text: $data.OldValueEmployeeID"></span>
+                                    <span style="display:none" data-bind="text: $data.OldValueStartDateAbsent"></span>
+                                    <span style="display:none" data-bind="text: $data.OldValueEndDateAbsent"></span>
+                                    <span style="display:none" data-bind="text: $data.OldValueShift"></span>
+                                </td>
+                            </tr>
+                            @*edit template*@
+                            <tr data-bind="validationOptions: {insertMessages: false, showTooltip:true, decorateInputElement: true, errorElementClass: 'input-error'}, inlineProccess:[$parent,$data],
+                                   if:($parent.editingRowIndex() === $index() && (ko.utils.unwrapObservable($data.OldValueEmployeeID) === '' || $root.ValidateDateIsFuture($data.OldValueStartDateAbsent))),
+                                   click: $parent.selectRow.bind($data, $index())">
+                                <td class="current">
+                                    @*<span data-bind="text: $data.ProcessSettingsCode"></span>*@
+                                    <select class="selectpicker show-tick form-control" data-live-search="true" data-bind="selectPickerCustom: $data.ProcessSettingsCode, value: $data.ProcessSettingsCode, optionsText: 'ProcessSettingsCode', optionsValue : 'ProcessSettingsCode', selectPickerOptions: { optionsArray: $root.processSelectListDaily, container: 'body' }, isSelectPicker: true, event : { change : $root.onProcessChangeDailyOnEdit.bind($data) }"></select>
+                                </td>
+                                <td class="current">
+                                    @*<span data-bind="text: $data.EmployeeID"></span>*@
+                                    <select id="spEmployeeIDDailyEdit" class="selectpicker show-tick form-control" data-live-search="true" data-bind="selectPickerCustom: $data.EmployeeID, value: $data.EmployeeID, optionsText: 'EmployeeCompact', optionsAfterRender : $root.afterRender, optionsValue : 'EmployeeID', selectPickerOptions: { optionsArray: $root.employeeSelectListDaily, container: 'body' }, isSelectPicker: true, event : { change : $root.onEmployeeChangeDailyOnEdit.bind($data) }"></select>
+                                </td>   
+                                <td><span data-bind="text: $data.EmployeeName"></span></td>
+                                <td class="current">
+                                    <select class="selectpicker show-tick form-control" data-live-search="true" data-bind="selectPickerCustom: $data.AbsentType, value: $data.AbsentType, optionsText: 'AbsentType', optionsValue : 'AbsentType', selectPickerOptions: { optionsArray: $root.absentTypeSelectListDaily, container: 'body' }, isSelectPicker: true, event : { change : $root.onAbsentTypeChangeOnEditDaily.bind($data) }"></select>
+                                </td>
+                                <td><span data-bind="text: $data.SktAbsentCode"></span></td>
+                                <td><span data-bind="text: $data.PayrollAbsentCode"></span></td>
+                                <td class="current">
+                                    <div class='input-group date time insidetable' data-bind="dateTimePicker: $data.StartDateAbsent, value:$data.StartDateAbsent, dateTimePickerOptions: {widgetPositioning: {vertical: 'bottom'}, ignoreReadonly: true, appendToBody: true}">
+                                        <input type='text' class="form-control" readonly="readonly" />
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                    </div>
+                                </td>
+                                <td class="current">
+                                    <div class='input-group date time insidetable' data-bind="dateTimePicker: $data.EndDateAbsent, value:$data.EndDateAbsent, dateTimePickerOptions: {widgetPositioning: {vertical: 'bottom'}, ignoreReadonly: true, appendToBody: true}">
+                                        <input type='text' class="form-control" readonly="readonly" />
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                    </div>
+                                </td>
+                                <td class="right current"><input data-bind="value: $data.ePaf, valueUpdate: 'afterkeydown'" class="form-control" /></td>
+                                <td class="center">
+                                    <div style="width: 160px;">
+                                        <span class="truncate uploadfile" style="display: inline-block; padding-top:5px;">
+                                            <a href="#" target="_blank" class="uploadfile newTabLink" data-bind="text: $data.AttachmentName, attr: {href: $root.parseAttachmentUrl($data) }"></a>
+                                        </span>
+                                        <span class="pull-right">
+                                            <span class="file-input btn btn-primary btn-file">
+                                                CHG <input type="file" data-mode="update" data-bind="event: { change: function() { $root.uploadAttachment($element) }}" accept=".jpg,.jpeg,.pdf,.doc,.docx" data-type="daily">
+                                            </span>
+                                        </span>
+                                    </div>
+                                    <span style="display:none" data-bind="text: $data.LocationCode"></span>
+                                    <span style="display:none" data-bind="text: $data.UnitCode"></span>
+                                    <span style="display:none" data-bind="text: $data.Shift"></span>
+                                    <span style="display:none" data-bind="text: $data.OldValueEmployeeID"></span>
+                                    <span style="display:none" data-bind="text: $data.OldValueStartDateAbsent"></span>
+                                    <span style="display:none" data-bind="text: $data.OldValueEndDateAbsent"></span>
+                                    <span style="display:none" data-bind="text: $data.OldValueShift"></span>
+                                </td>
+                            </tr>
+                            @*edit template*@
+                            <tr data-bind="validationOptions: {insertMessages: false, showTooltip:true, decorateInputElement: true, errorElementClass: 'input-error'}, inlineProccess:[$parent,$data],
+                                   if:($parent.editingRowIndex() === $index() && $root.ValidateDateIsPast($data.OldValueStartDateAbsent) && $root.ValidateDateIsFuture($data.OldValueEndDateAbsent)),
+                                   click: $parent.selectRow.bind($data, $index())">
+                                <td class="current"><span data-bind="text: $data.ProcessSettingsCode"></span></td>
+                                <td class="current"><span data-bind="text: $data.EmployeeID"></span></td>
+                                <td><span data-bind="text: $data.EmployeeName"></span></td>
+                                <td class="current"><span data-bind="text:$data.AbsentType"></span></td>
+                                <td><span data-bind="text: $data.SktAbsentCode"></span></td>
+                                <td><span data-bind="text: $data.PayrollAbsentCode"></span></td>
+                                <td class="current"><span data-bind="text: $data.StartDateAbsent"></span></td>
+                                <td class="current">
+                                    <div class='input-group date time insidetable' data-bind="dateTimePicker: $data.EndDateAbsent, value:$data.EndDateAbsent, dateTimePickerOptions: {widgetPositioning: {vertical: 'bottom'}, ignoreReadonly: true, appendToBody: true}">
+                                        <input type='text' class="form-control" readonly="readonly" />
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                    </div>
+                                </td>
+                                <td class="right current"><input data-bind="value: $data.ePaf, valueUpdate: 'afterkeydown'" class="form-control" /></td>
+                                <td class="center">
+                                    <span class="btn btn-default btn-file">
+                                        @CommonLabel.btnChooseFile <input type="file" data-mode="update" data-bind="attr: {'data-filename':$data.AttachmentPath}" accept=".jpg,.jpeg,.pdf,.doc,.docx" data-type="daily">
+                                    </span>
+                                    <span style="display:none" data-bind="text: $data.LocationCode"></span>
+                                    <span style="display:none" data-bind="text: $data.UnitCode"></span>
+                                    <span style="display:none" data-bind="text: $data.Shift"></span>
+                                    <span style="display:none" data-bind="text: $data.OldValueEmployeeID"></span>
+                                    <span style="display:none" data-bind="text: $data.OldValueStartDateAbsent"></span>
+                                    <span style="display:none" data-bind="text: $data.OldValueEndDateAbsent"></span>
+                                    <span style="display:none" data-bind="text: $data.OldValueShift"></span>
+                                </td>
+                            </tr>
+                            @*edit template*@
+                            <tr data-bind="validationOptions: {insertMessages: false, showTooltip:true, decorateInputElement: true, errorElementClass: 'input-error'}, inlineProccess:[$parent,$data],
+                                   if:($parent.editingRowIndex() === $index() && $root.ValidateDateIsPast($data.OldValueEndDateAbsent)),
+                                   click: $parent.selectRow.bind($data, $index())">
+                                <td class="current"><span data-bind="text: $data.ProcessSettingsCode"></span></td>
+                                <td class="current"><span data-bind="text: $data.EmployeeID"></span></td>
+                                <td><span data-bind="text: $data.EmployeeName"></span></td>
+                                <td class="current"><span data-bind="text:$data.AbsentType"></span></td>
+                                <td><span data-bind="text: $data.SktAbsentCode"></span></td>
+                                <td><span data-bind="text: $data.PayrollAbsentCode"></span></td>
+                                <td class="current"><span data-bind="text: $data.StartDateAbsent"></span></td>
+                                <td class="current"><span data-bind="text: $data.EndDateAbsent"></span></td>
+                                <td class="right current"><input data-bind="value: $data.ePaf, valueUpdate: 'afterkeydown'" class="form-control" /></td>
+                                <td class="center">
+                                    <span class="btn btn-default btn-file">
+                                        @CommonLabel.btnChooseFile <input type="file" data-mode="update" data-bind="attr: {'data-filename':$data.AttachmentPath}" accept=".jpg,.jpeg,.pdf,.doc,.docx" data-type="daily">
+                                    </span>
+                                    <span style="display:none" data-bind="text: $data.LocationCode"></span>
+                                    <span style="display:none" data-bind="text: $data.UnitCode"></span>
+                                    <span style="display:none" data-bind="text: $data.Shift"></span>
+                                    <span style="display:none" data-bind="text: $data.OldValueEmployeeID"></span>
+                                    <span style="display:none" data-bind="text: $data.OldValueStartDateAbsent"></span>
+                                    <span style="display:none" data-bind="text: $data.OldValueEndDateAbsent"></span>
+                                    <span style="display:none" data-bind="text: $data.OldValueShift"></span>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tbody data-bind="visible: !listDataItems().length">
+                            <tr>
+                                <td colspan="12" class="empty-row-message"><div class="loader"></div></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Multiple Absent -->
+<div class="modal fade" id="multipleAbsent" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Multiple Absent</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <label class="form-label col-lg-3">
+                        Absent Type
+                    </label>
+                    <div class="col-lg-4">
+                        @Html.DropDownList("ddlMultipleAbsentTypePopUp",
+                                            new SelectList(Model.AbsentTypePopUpList),
+                                                     new Dictionary<string, object> {   { "data-bind", "value:$root.PopUpAbsentType" },
+                                                                                        { "class", "selectpicker show-tick form-control" },
+                                                                                        { "data-live-search","true"},
+                                                                                        { "id","ddlMultipleAbsentTypePopUp"} 
+                                                                            })
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="form-label col-lg-3">
+                        Start Date
+                    </label>
+                    <div class="col-lg-4">
+                        <div id="dtpPopUpStartDate" class='input-group date time insidetable' data-bind="dateTimePicker: $root.PopUpStartDate, value: $root.PopUpStartDate, dateTimePickerOptions: {widgetPositioning: {vertical: 'bottom'}, showClear: true, ignoreReadonly: true}">
+                            <input id="dtpInputPopUpStartDate" class="form-control" readonly="readonly" />
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="form-label col-lg-3">
+                        End Date
+                    </label>
+                    <div class="col-lg-4">
+                        <div id="dtpPopUpStartDate" class='input-group date time insidetable' data-bind="dateTimePicker: $root.PopUpEndDate, value: $root.PopUpEndDate, dateTimePickerOptions: {widgetPositioning: {vertical: 'bottom'}, showClear: true, ignoreReadonly: true}">
+                            <input id="dtpInputPopUpEndDate" class="form-control" readonly="readonly" />
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="panel panel-default multiple-absent">
+                            <div class="panel-heading">
+                                <div class="checkbox nomargin">
+                                    <label><input type="checkbox" data-bind="click: $root.selectAllEmployeePopUp, checked: $root.allSelectedEmployeePopUp" name="check_all_EmployeePopUp">Check All</label>
+                                </div>
+                            </div>
+                            <div id="listEmployeeCheckboxes" class="panel-body scrolled" style="overflow-x:auto; height:250px" data-bind="foreach: listEmployeePopUp">
+                                <div class="checkbox" style="white-space:nowrap">
+                                    <label>
+                                        <input type="checkbox" data-bind="checked: IsChecked, value: EmployeeID, text: EmployeeNumber, click: $root.checkedAllorNotEmployeePopUp" name="checked" class="idRow">
+                                        <span data-bind="text: Employee"></span>
+                                        <!-- ko if: IsValidated -->
+                                        <span data-bind="text: ResponseType" class="markSuccess" style="color:green"></span>
+                                        <!-- /ko -->
+                                        <!-- ko if: IsValidated == false -->
+                                        <span data-bind="text: ResponseType" class="markFailed" style="color:red"></span>
+                                        <!-- /ko -->
+                                     
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <p id="totalCheckedEmployeePopUp">Total employees checked : 12</p>
+                       
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+
+                <p id="loading" class="pull-left"><span>Please Wait </span> <img src="@Url.Content("~/content/assets/images/ajax-loader.gif")" style="display:inline"/></p>
+                <button type="button" class="btn btn-default" data-bind="click: $root.saveMultipleAbsenteeism">Save</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Modal -->
+
+
+@section Scripts
+{
+    <script src="~/Scripts/app/globalfunctions.js" type="text/javascript"></script>
+    <script src="~/Scripts/common/app.GridViewModel.js" type="text/javascript"></script>
+    <script src="~/Scripts/common/app.Extenders.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        
+        $(document).ready(function() {
+            $('#ddlLocationPieceRate').selectpicker('refresh');
+            $('#ddlLocationPieceRate').change();
+            $('#ddlLocationDaily').selectpicker('refresh');
+            $('#ddlLocationDaily').change();
+            $('.markSuccess').hide();
+            $('.markFailed').hide();
+            $('.errorMessage').hide();
+            $('#loading').hide();
+        });
+
+    (function(app) {
+        app.EditGrid = function() {
+            var self = this;
+
+            self.dateNow = ko.observable(moment().format('DD/MM/YYYY'));
+            self.isLoading = ko.observable(false);
+            self.firstLoad = true;
+
+            //*******************REGION POP UP MULTIPLE ABSENT *************************//
+            self.PopUpAbsentType = ko.observable();
+            self.PopUpStartDate = ko.observable(moment().format('DD/MM/YYYY'));
+            self.PopUpEndDate = ko.observable(moment().format('DD/MM/YYYY'));
+            self.listEmployeePopUp = ko.observableArray([]);
+
+            //*****************************************REGION TAB PIECE RATE******************************************//
+
+            //Filter Variables - Piece Rate
+            self.itemLocationsPieceRate         = @Html.Raw(Json.Encode(@Model.PLNTChildLocationLookupList));
+            self.itemLocationsPieceRate         = ko.observableArray(@Html.Raw(Json.Encode(@Model.PLNTChildLocationLookupList)));
+            self.AllAbsentTypePieceRate         = @Html.Raw(Json.Encode(@Model.AllAbsentType));
+            self.locationCodePieceRate          = ko.observable($("#ddlLocationPieceRate").val());
+            self.filterLocationNamePieceRate    = ko.observable();
+            self.unitCodePieceRate              = ko.observable();
+            self.shiftPieceRate                 = ko.observable();
+            self.shiftDailyPieceRate            = ko.observable();
+            self.processCodePieceRate           = ko.observable();
+            self.groupCodePieceRate             = ko.observable();
+            self.KPSYearValuePieceRate          = ko.observable(@Model.DefaultYear);
+            self.KPSWeekValuePieceRate          = ko.observable();
+            self.InitDateValuePieceRate         = ko.observable(true);
+            self.dateValuePieceRate             = ko.observable('@Model.TodayDate');
+            self.ClosingPayrollDate             = ko.observable('@Model.ClosingPayrollDate'),
+
+            // List Data Source Variables - Piece Rate
+            self.unitSelectListPieceRate        = ko.observableArray();
+            self.shiftSelectListPieceRate       = ko.observableArray();
+            self.processSelectListPieceRate     = ko.observableArray();
+            self.groupSelectListPieceRate       = ko.observableArray();
+            self.KPSWeekSelectListPieceRate     = ko.observableArray();
+            self.employeeSelectListPieceRate    = ko.observableArray();
+            self.absentTypeSelectListPieceRate  = ko.observableArray();
+
+            self.newDataPieceRate = {
+                EmployeeID:             ko.observableArray([]),
+                OldValueEmployeeID:     ko.observable(''),
+                EmployeeNumber:         ko.observable(''),
+                EmployeeName:           ko.observable(''),
+                EmployeeNameMix:        ko.observable(''),
+                ProcessSettingsCode:    ko.observable(self.processCodePieceRate()),
+                GroupCode:              ko.observable(self.groupCodePieceRate()),
+                AbsentType:             ko.observable(''),
+                SktAbsentCode:          ko.observable(''),
+                PayrollAbsentCode:      ko.observable(''),
+                StartDateAbsent:        ko.observable('@Model.ClosingPayrollDate'),
+                OldValueStartDateAbsent:ko.observable(''),
+                EndDateAbsent:          ko.observable('@Model.ClosingPayrollDate'),
+                ePaf:                   ko.observable(''),
+                Attachment:             ko.observable(''),
+                Doc:                    ko.observable(''),
+                AttachmentPath:         ko.observable(''),
+                AttachmentName:         ko.observable(''),
+                LocationCode:           ko.observable(self.locationCodePieceRate()),
+                UnitCode:               ko.observable(''),
+                OldValueShift:          ko.observable(''),
+                IsFromEblek:            ko.observable(false)
+            };
+
+            self.afterRender = function(options, item)
+            {
+                if (typeof(item) === 'undefined') return;
+
+                $(options).attr('title', item.EmployeeID);
+            }
+
+            //===============================EVENT HANDLER - PIECE RATE==================================
+
+            //Filter Location Code Event Handler - Piece Rate
+            //Get unitCode, shift, process by Location
+            self.onLocationChangePieceRate = function() {
+                //TODO Async
+                //self.getLocationNameFilterPieceRate();
+                //self.getUnitByLocationPieceRate(self.unitSelectListPieceRate, self.locationCodePieceRate, $('#ddlUnitPieceRate'));
+                //self.getShiftByLocationPieceRate(self.shiftSelectListPieceRate, self.locationCodePieceRate, $('#ddlShiftPieceRate'));
+                //self.getProcessByLocationPieceRate(self.processSelectListPieceRate, self.locationCodePieceRate, $('#ddlProcessPieceRate'));
+                //self.getGroupByLocationUnitProcessPieceRate(self.groupSelectListPieceRate, self.locationCodePieceRate, $('#ddlGroupPieceRate'));
+                //$('option:selected', $("#ddlLocationPieceRate")).text(self.locationCodePieceRate());
+                if((! self.firstLoad) && (! self.isLoading())){
+                    self.isLoading(true);
+
+                    async.series([
+                        function(cb) {
+                            self.getLocationNameFilterPieceRate(cb);//location
+                        },
+                        function(cb) {
+                            self.getUnitByLocationPieceRate(cb,self.unitSelectListPieceRate, self.locationCodePieceRate, $('#ddlUnitPieceRate'));
+                        },
+                        function(cb) {
+                            self.getShiftByLocationPieceRate(cb,self.shiftSelectListPieceRate, self.locationCodePieceRate, $('#ddlShiftPieceRate'));
+                        },
+                        function(cb) {
+                            self.getProcessByLocationPieceRate(cb,self.processSelectListPieceRate, self.locationCodePieceRate, $('#ddlProcessPieceRate'));
+                        },
+                        function(cb){
+                            self.getGroupByLocationUnitProcessPieceRate(cb,self.groupSelectListPieceRate, self.locationCodePieceRate, $('#ddlGroupPieceRate'));
+                        }
+                    ], function() {
+                        self.isLoading(false);
+                        $('option:selected', $("#ddlLocationPieceRate")).text(self.locationCodePieceRate());
+                    });
+                }
+            };
+
+            //Filter Unit Code Event Handler - Piece Rate
+            self.onUnitChangePieceRate = function() {
+                if ((! self.firstLoad) && (! self.isLoading())) {
+                    self.isLoading(true);
+
+                    async.series([
+                            
+                        function(cb) {
+                            self.getGroupByLocationUnitProcessPieceRate(cb,self.groupSelectListPieceRate, self.locationCodePieceRate, $('#ddlGroupPieceRate'));
+                        },
+                    ], function() {
+                        self.isLoading(false);
+                    });
+                }
+            };
+
+            //Filter Process Event Handler - Piece Rate
+            self.onProcessChangePieceRate = function() {
+                if ((! self.firstLoad) && (! self.isLoading())) {
+                    self.isLoading(true);
+
+                    async.series([
+                            
+                        function(cb) {
+                            self.getGroupByLocationUnitProcessPieceRate(cb,self.groupSelectListPieceRate, self.locationCodePieceRate, $('#ddlGroupPieceRate'));
+                        },
+                    ], function() {
+                        self.isLoading(false);
+                    });
+                }
+            };
+
+            //Filter Group Event Handler - Piece Rate
+            self.onGroupChangePieceRate = function() {
+            };
+
+            //Filter KPS Year Event Handler - Piece Rate
+            self.onKPSYearChangePieceRate = function() {
+                self.getKPSWeeks(self.KPSYearValuePieceRate);
+            };
+
+            //Filter KPS Week Event Handler - Piece Rate
+            self.onKPSWeekChangePieceRate = function() {
+                self.setDateRangePieceRate();
+            };
+
+            //Filter EmployeeID Event Handler - Piece Rate
+            self.onEmployeeChangePieceRate = function() {
+                self.getEmployeeDetailPieceRate(self.newDataPieceRate);
+            };
+
+            //Filter EmployeeID Event Handler EDIT - Piece Rate
+            self.onEmployeeChangeOnEditPieceRate = function(data) {
+                self.getEmployeeDetailPieceRate(data);
+            };
+
+            //Filter Absent Type Event Handler - Piece Rate
+            self.onAbsentTypeChangePieceRate = function() {
+                if((! self.firstLoad) && (! self.isLoading())){
+                    self.getAbsentTypeDescription(self.newDataPieceRate);
+                    self.getMaxDayAbsentType(self.newDataPieceRate);
+                }
+            };
+
+            //Filter Absent Type Event Handler on EDIT - Piece Rate
+            self.onAbsentTypeChangeOnEditPieceRate = function(data) {
+                if((! self.firstLoad) && (! self.isLoading())){
+                    self.getAbsentTypeDescription(data);
+                    self.getMaxDayAbsentType(data);
+                }
+            };
+
+            //===============================METHOD DECLARATION - PIECE RATE==================================
+            //Method Get Location Name - Piece Rate
+            self.getLocationNameFilterPieceRate = function(cb) {
+                //console.log(self.itemLocationsPieceRate());
+                for (var i = 0; i < self.itemLocationsPieceRate().length; i++) {
+                    if (self.itemLocationsPieceRate()[i].LocationCode == self.locationCodePieceRate()) {
+                        self.filterLocationNamePieceRate(self.itemLocationsPieceRate()[i].LocationName);
+                        break;
+                    }
+                }
+                if (typeof cb == 'function') cb();
+            };
+
+            //Method Get Unit By Location - Piece Rate
+            self.getUnitByLocationPieceRate = function(cb, datasource, locationcode, dropdownObject) {
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantWorkerAbsenteeism/GetUnitCodeSelectListByLocationCode"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: { locationCode: locationcode() },
+                    dataType: 'json',
+                    success: function(data) {
+                        dropdownObject.find('option').remove();
+                        dropdownObject.selectpicker('refresh');
+                        datasource(data);
+                        self.unitCodePieceRate(data[0].Value);
+
+                    },
+                    complete : function() {
+                        if (typeof cb == 'function') cb();
+                    }
+                });
+            };
+
+            //Method Get Shift By Location - Piece Rate
+            self.getShiftByLocationPieceRate = function(cb,datasource, locationcode, dropdownObject) {
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantWorkerAbsenteeism/GetShiftSelectListByLocationCode"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: { locationCode: locationcode() },
+                    dataType: 'json',
+                    success: function(data) {
+                        dropdownObject.find('option').remove();
+                        dropdownObject.selectpicker('refresh');
+                        var unitModel = [];
+                        $.each(data, function(index, value) {
+                            unitModel.push({ "Text": value, "Value": value });
+                        });
+                        datasource(unitModel);
+                        self.shiftPieceRate(unitModel[0].Value);
+                    },
+                    complete : function() {
+                        if (typeof cb == 'function') cb();
+                    }
+                });
+            };
+
+            //Method Get Process By Location - Piece Rate
+            self.getProcessByLocationPieceRate = function(cb, datasource, locationcode, dropdownObject) {
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantWorkerAbsenteeism/GetProcessByLocationCode"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: { locationCode: locationcode() },
+                    dataType: 'json',
+                    success: function(data) {
+                        dropdownObject.find('option').remove();
+                        dropdownObject.selectpicker('refresh');
+                        datasource(data);
+                        if(data.length > 0) self.processCodePieceRate(data[0].Value);
+                        else self.processCodePieceRate('');
+                    },
+                    complete : function() {
+                        if (typeof cb == 'function') cb();
+                    }
+                });
+            };
+
+            //Method Get Group By Location, UnitCode, Process - Piece Rate
+            self.getGroupByLocationUnitProcessPieceRate = function(cb, datasource, locationcode, dropdownobject) {
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantWorkerAbsenteeism/GetGroupFromExePlantProductionEntryVerificationByLocationUnitAndProcess"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: {    
+                        locationCode: locationcode(), 
+                        unit: self.unitCodePieceRate(), 
+                        shift: self.shiftPieceRate(),
+                        processGroup: self.processCodePieceRate(),    
+                        productionDate: self.dateValuePieceRate(),  
+                    },
+                    dataType: 'json',
+                    success: function(data) {
+                        dropdownobject.find('option').remove();
+                        dropdownobject.selectpicker('refresh');
+                        self.groupSelectListPieceRate(data);
+                        if(data.length > 0)
+                            self.groupCodePieceRate(data[0].Value);
+                    },
+                    complete : function() {
+                        if (typeof cb == 'function') cb();
+                    }
+                });
+            };
+
+            //Method Get Employee ID Grid Row - Piece Rate
+            self.getEmployeesPieceRate = function(dataSource, locationCode, unitCode, processCode, groupCode, dropdownobject) {
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantWorkerAbsenteeism/GetPieceRateEmployeesActive"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: { LocationCode: locationCode(), UnitCode: unitCode(), ProcessSettingCode: processCode(), GroupCode: groupCode() },
+                    dataType: 'json',
+                    success: function(data) {
+                        dropdownobject.find('option').remove();
+                        dropdownobject.selectpicker('refresh');
+
+                        var list = [];
+                        //var employeeNumber = data.EmployeeNumber;
+                        //var lastTwoNumber = employeeNumber.slice(-2);
+                        $.each(data, function(index, value) {
+                            list.push({
+                                EmployeeID: value.EmployeeID,
+                                EmployeeName: value.EmployeeName,
+                                EmployeeCompact: value.EmployeeID + ' - ' + value.EmployeeNumber.slice(-2) + ' - ' + value.EmployeeName
+                            });
+                        });
+                        if (list.length == 0) {
+                            self.newDataPieceRate.EmployeeID(null);
+                        }
+                        $("#spEmployeeID").find('option').remove();
+                        $("#spEmployeeID").selectpicker('refresh');
+                        dataSource(list);
+                        $('.on-edit-employee').selectpicker('refresh');
+                    },
+                    complete : function() {
+                        if (typeof cb == 'function') cb();
+                    }
+                });
+            };
+
+            //Method Set Date Range - Piece Rate
+            self.setDateRangePieceRate = function(cb) {
+                if (self.InitDateValuePieceRate()) {
+                    self.InitDateValuePieceRate(false);
+                } else {
+                    $.ajax({
+                        url: @Html.BaseUrl("ExePlantWorkerAbsenteeism/GetDateByYearWeek"),
+                        type: 'GET',
+                        contentType: 'application/json',
+                        data: { year: self.KPSYearValuePieceRate(), week: self.KPSWeekValuePieceRate() },
+                        dataType: 'json',
+                        success: function(data) {
+                            //$('#dtpDatePieceRate').data("DateTimePicker").options({
+                            //    //date: moment(data.StartDate),
+                            //    maxDate: moment(data.EndDate),
+                            //    minDate: moment(data.StartDate).subtract(1, 'days')
+                            //});
+                            if (self.KPSWeekValuePieceRate() == '@Model.DefaultWeek'){
+                                self.dateValuePieceRate('@Model.TodayDate');
+                            }else{
+                                self.dateValuePieceRate(moment(data.StartDate).format("DD/MM/YYYY"));
+                            };
+                        },
+                        complete : function() {
+                            if (typeof cb == 'function') cb();
+                        }
+                    });
+                }
+            };
+
+            //Method Get Employee Detail/Description - Piece Rate
+            self.getEmployeeDetailPieceRate = function(context) {
+                if (typeof context.EmployeeID() != 'undefined') {
+                    var employeeID = context.EmployeeID().split("-");
+                    $.ajax({
+                        url: @Html.BaseUrl("ExePlantWorkerAbsenteeism/GetEmployeeDetail"),
+                        type: 'GET',
+                        contentType: 'application/json',
+                        data: { EmployeeID: employeeID[0] },
+                        dataType: 'json',
+                        success: function(data) {
+                            context.EmployeeNumber(data.EmployeeNumber);
+                            context.EmployeeName(data.EmployeeName);
+                            var employeeNumber = data.EmployeeNumber;
+                            var lastTwoNumber = employeeNumber.slice(-2);
+                            context.EmployeeNameMix(lastTwoNumber + " - " + data.EmployeeName);
+                            context.ProcessSettingsCode(data.ProcessSettingsCode);
+                            context.GroupCode(data.GroupCode);
+                        }
+                    });
+                } else {
+                    context.EmployeeNumber("");
+                    context.EmployeeName("");
+                    context.EmployeeNameMix("");
+                }
+            };
+
+            //Method Get All Absenty Type with Condition based on condition "Pulang Pagi (Mendadak) > 4 jam"
+            self.getAbsentTypeWithCondition = function(context) {
+                if (typeof context.EmployeeID() != 'undefined') {
+                    var criteriaInput = {
+                        LocationCode: self.locationCodePieceRate,
+                        UnitCode: self.unitCodePieceRate,
+                        Shift: self.shiftPieceRate,
+                        Process: self.processCodePieceRate,
+                        GroupCode: self.groupCodePieceRate,
+                        EmployeeId: context.EmployeeID,
+                        StartDateAbsent: context.StartDateAbsent,
+                        KPSYear: self.KPSYearValuePieceRate,
+                        KPSWeek: self.KPSWeekValuePieceRate,
+                        TransactionDate: self.dateValuePieceRate
+                    };
+
+                    $.ajax({
+                        url: @Html.BaseUrl("ExePlantWorkerAbsenteeism/GetAllAbsentTypeWithCondition"),
+                        type: 'GET',
+                        contentType: 'application/json',
+                        data: criteriaInput,
+                        dataType: 'json',
+                        success: function(data) {
+                            var list = [];
+                            list.push({ "AbsentType": "" });
+                            $.each(data, function(index, value) {
+                                list.push({ "AbsentType": value.AbsentType });
+                            });
+                            self.absentTypeSelectListPieceRate(list);
+                        }
+                    });
+                } else {
+                    self.absentTypeSelectListPieceRate(" ");
+                }
+            };
+
+            //Method Get Employee ID when Edit
+            self.EmployeeIDSelectListPieceRateEdit = ko.observableArray();
+            self.getEmployeeIDEdit = function(locationCode, unitCode, processGroup, groupCode){
+                var list = [];
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantWorkerAbsenteeism/GetPieceRateEmployeesActive"),
+                    type: 'GET',
+                    async: false,
+                    contentType: 'application/json',
+                    data: { LocationCode: locationCode, UnitCode: unitCode, ProcessSettingCode: processGroup, GroupCode: groupCode },
+                    dataType: 'json',
+                    success: function(data) {
+                        $.each(data, function(index, value) {
+                            list.push({ "EmployeeID": value.EmployeeID });
+                        });
+
+                    }
+                });
+                return list;
+                $("#spEmployeeIDEdit").selectpicker('refresh');
+            };
+
+            //Get Absent Type Description
+            self.getAbsentTypeDescription = function(context) {
+                for (var i = 0; i < self.AllAbsentTypePieceRate.length; i++) {
+                    if (self.AllAbsentTypePieceRate[i].AbsentType == context.AbsentType()) {
+                        context.SktAbsentCode(self.AllAbsentTypePieceRate[i].SktAbsentCode);
+                        context.PayrollAbsentCode(self.AllAbsentTypePieceRate[i].PayrollAbsentCode);
+                        break;
+                    }
+                }
+            }.bind(this);
+
+            //Function Get List Absent type with active in eblek
+            self.getListAbsentTypeWithActiveinEblek = function(absentTypeFromEblek) {
+                var list = [];
+                list.push({ "AbsentType": "" });
+                $.each(@Html.Raw(Json.Encode(Model.AllAbsentTypeActiveInAbsenteeism)), function(index, value) {
+                    list.push({ "AbsentType": value.AbsentType });
+                });
+
+                if(jQuery.isFunction( absentTypeFromEblek )){
+                    list.push({ "AbsentType": absentTypeFromEblek() });
+                }else{
+                    list.push({ "AbsentType": absentTypeFromEblek });
+                }
+
+                list.sort(function(a, b){
+                    var absentA=a.AbsentType.toLowerCase(), absentB=b.AbsentType.toLowerCase()
+                    if (absentA < absentB) //sort string ascending
+                        return -1 
+                    if (absentA > absentB)
+                        return 1
+                    return 0 //default return value (no sorting)
+                });
+                
+                return ko.observableArray(list);
+                $('#listAbsentWithEblek').selectpicker('refresh');
+            };
+
+            //Method Generate Excel function - Piece Rate
+            self.generateExcelPieceRate = function(formElement) {
+                $(formElement).find("input[name=LocationCode]").val($('#ddlLocationPieceRate').val());
+                $(formElement).find("input[name=LocationName]").val($('#locationName').val());
+                $(formElement).find("input[name=UnitCode]").val($('#ddlUnitPieceRate').val());
+                $(formElement).find("input[name=KPSYear]").val($('#ddlYearsPieceRate').val());
+                $(formElement).find("input[name=KPSWeek]").val($('#ddlWeeksPieceRate').val());
+                $(formElement).find("input[name=Date]").val($('#dtpDatePieceRate').val());
+                $(formElement).find("input[name=Shift]").val($('#ddlShiftPieceRate').val());
+                $(formElement).find("input[name=Group]").val($('#ddlGroupPieceRate').val());
+                $(formElement).find("input[name=Process]").val($('#ddlProcessPieceRate').val());
+                return true;
+            };
+
+            self.ValidateDateIsFuture= function(date) {
+                if(ko.utils.unwrapObservable(date) === '' || typeof ko.utils.unwrapObservable(date) === 'undefined') return false;
+                //return moment() < moment(ko.utils.unwrapObservable(date), 'DD/MM/YYYY').format('YYYY-MM-DD');
+                
+                return (moment(moment(ko.utils.unwrapObservable(date), 'DD/MM/YYYY').format('YYYY-MM-DD')).isAfter(moment(self.ClosingPayrollDate(), 'DD/MM/YYYY').format('YYYY-MM-DD')) || moment(moment(ko.utils.unwrapObservable(date), 'DD/MM/YYYY').format('YYYY-MM-DD')).isSame(moment(self.ClosingPayrollDate(), 'DD/MM/YYYY').format('YYYY-MM-DD')));
+            };
+
+            self.ValidateDateIsPast= function(date) {
+                if(ko.utils.unwrapObservable(date) === '' || typeof ko.utils.unwrapObservable(date) === 'undefined') return false;
+                //return moment() == moment(ko.utils.unwrapObservable(date), 'DD/MM/YYYY').format('YYYY-MM-DD');
+                return moment(moment(ko.utils.unwrapObservable(date), 'DD/MM/YYYY').format('YYYY-MM-DD')).isBefore(moment(self.ClosingPayrollDate(), 'DD/MM/YYYY').format('YYYY-MM-DD'));
+            };
+
+            self.ValidateDateIsFutureFromCurrent = function(date){
+                if(ko.utils.unwrapObservable(date) === '' || typeof ko.utils.unwrapObservable(date) === 'undefined') return false;
+                return (moment(ko.utils.unwrapObservable(date), 'DD/MM/YYYY').startOf('day')).isAfter(moment().startOf('day')) || (moment(ko.utils.unwrapObservable(date), 'DD/MM/YYYY').startOf('day')).isSame(moment().startOf('day'));
+            };
+
+            self.ValidateDateIsPastFromCurrent = function(date){
+                if(ko.utils.unwrapObservable(date) === '' || typeof ko.utils.unwrapObservable(date) === 'undefined') return false;
+                return moment(ko.utils.unwrapObservable(date), 'DD/MM/YYYY').startOf('day').isBefore(moment().startOf('day'));
+            };
+
+            //============================GRID - PIECE RATE===============================
+
+            //gridView Piece Rate Initialization
+            self.gridViewPieceRate = new app.GridViewModel({
+                Criteria: {
+                    PageSize: 10,
+                    PageIndex: 1,
+                    SortExpression: "UpdatedDate",
+                    SortOrder: "DESC",
+                    LocationCode: self.locationCodePieceRate,
+                    UnitCode: self.unitCodePieceRate,
+                    Shift: self.shiftPieceRate,
+                    Process: self.processCodePieceRate,
+                    GroupCode: self.groupCodePieceRate,
+                    TransactionDate: self.dateValuePieceRate
+                },
+                DataSourceUrl: @Html.BaseUrl("ExePlantWorkerAbsenteeism/GetWorkerAbsenteeism"),
+                InlineEdit: true,
+                InsertRowFocusedControlIndex: 1
+            });
+            
+            function absenteeism(data) {
+                ko.mapping.fromJS(data, {}, this);
+
+                this.EmployeeNameMix = ko.computed({
+                    read: function() {
+                        var employeeNumber = this.EmployeeNumber();
+                        var lastTwoNumber = employeeNumber.slice(-2);
+                        return lastTwoNumber + " - " + this.EmployeeName();
+                    },
+                    write: function(value) {
+                        //update your self.chosenAge().population value here
+                    },
+                    owner: this
+                }, this);
+            }
+
+            self.isValidating = ko.observable(false);
+            self.ajaxMsg = ko.observable("");
+            self.DataSubmittedProdCard = ko.observable();
+            //Grid Validation
+            self.gridViewPieceRate.applyValidationRules = function(entity) {
+                self.RemoveNotification();
+
+                //console.log(entity.EndDateAbsent() + "\n");
+                //entity.EndDateAbsent(entity.EndDateAbsent());
+                //console.log(entity.EndDateAbsent() + "\n");
+                //console.log(entity.StartDateAbsent() + " and " + moment(ko.utils.unwrapObservable(entity.EndDateAbsent())).format('DD/MM/YYYY'));
+                entity.EmployeeID.extend({
+                    required: {
+                        message: "<strong>Employee ID</strong> Cannot be Empty!"
+                    }
+                });
+
+                //entity.StartDateAbsent.extend({
+                //    cannotLessThan: {
+                //        params: self.ClosingPayrollDate,
+                //        message: "<strong>Start Date</strong> cannot be less than <strong>Last Closing Payroll Date Before Today</strong>"
+                //    },
+                //    required: {
+                //        message: "<strong>Start Date</strong> cannot be empty!"
+                //    }
+                //});
+
+                entity.EndDateAbsent.extend({
+                    cannotGreaterThan: {
+                        params: entity.StartDateAbsent,
+                        message: "<strong>Start Date</strong> cannot be greater than <strong>End Date</strong>"
+                    },
+                    required: {
+                        message: "<strong>End Date</strong> cannot be empty!"
+                    }
+                });
+
+                
+                var oldValEmployeeID = jQuery.isFunction(entity.OldValueEmployeeID) ? entity.OldValueEmployeeID() : entity.OldValueEmployeeID;
+                var editState = jQuery.isFunction(entity.StateOnEdit) ? entity.StateOnEdit() : entity.StateOnEdit;
+                entity.StartDateAbsent.extend({
+                    validation: {
+                        validator: function (val, otherVal) {
+                            var closingPayrollDate = moment(self.ClosingPayrollDate(), "DD/MM/YYYY");
+                            var startDate = moment(jQuery.isFunction(entity.StartDateAbsent) ? entity.StartDateAbsent() : entity.StartDateAbsent, "DD/MM/YYYY").startOf('day');
+                            var endDate = moment(jQuery.isFunction(entity.EndDateAbsent) ? entity.EndDateAbsent() : entity.EndDateAbsent, "DD/MM/YYYY").startOf('day');
+                            
+                            var eblekStat = jQuery.isFunction(entity.EblekStatus) ? entity.EblekStatus() : entity.EblekStatus;
+                            var statOnEdit = jQuery.isFunction(entity.StateOnEdit) ? entity.StateOnEdit() : entity.StateOnEdit;
+                            var startDateAbsent = jQuery.isFunction(entity.StartDateAbsent) ? entity.StartDateAbsent() : entity.StartDateAbsent;
+                            var endDateAbsent = jQuery.isFunction(entity.EndDateAbsent) ? entity.EndDateAbsent() : entity.EndDateAbsent;
+                            var oldEmployeeID = jQuery.isFunction(entity.OldValueEmployeeID) ? entity.OldValueEmployeeID() : entity.OldValueEmployeeID;
+                            
+                            if(eblekStat === 'UNLOCKED')
+                            {
+                                return true;
+                            }
+                            else
+                            {
+                                if(oldEmployeeID === ''){
+                                    if(closingPayrollDate.isBefore(startDate)){
+                                        return true;
+                                    }else if(closingPayrollDate.isSame(startDate)){
+                                        return true;
+                                    }else{
+                                        return false;
+                                    }
+                                }else{
+                                    if(statOnEdit === "EDIT")
+                                    {
+                                        //console.log("DDDDDDD");
+                                        //console.log(endDate);
+                                        //console.log(closingPayrollDate);
+                                        if(closingPayrollDate.isBefore(endDate)){
+                                            return true;
+                                        }else if(closingPayrollDate.isSame(endDate)){
+                                            return true;
+                                        }else{
+                                            return false;
+                                        }
+                                    }else if(statOnEdit === "INSERT"){
+                                        if(closingPayrollDate.isBefore(startDate)){
+                                            return true;
+                                        }else if(closingPayrollDate.isSame(startDate)){
+                                            return true;
+                                        }else{
+                                            return false;
+                                        }
+                                    }
+                                
+                                }
+                            }
+                        },
+                        message: (oldValEmployeeID !== '' && editState === "EDIT") ? "<strong>End Date</strong> cannot be less than <strong>Last Closing Payroll Date Before Today</strong>" : "<strong>Start Date</strong> cannot be less than <strong>Last Closing Payroll Date Before Today</strong>"
+                    }
+                });
+
+                entity.AbsentType.extend({
+                    validation: {
+                        validator: function (val, otherVal) {
+                            if(oldValEmployeeID === ''){
+                                if(val === ''){
+                                    return false;
+                                }else{
+                                    return true;
+                                }
+                            }else{
+                                return true;
+                            }
+                        },
+                        message: "<strong>Absent Type</strong> cannot be empty!"
+                    }
+                });
+
+                //if(!self.isValidating()){
+                //self.isValidating(true);
+                //self.ajaxMsg("There is Already Submitted Production Entry for Employee " + entity.EmployeeID() + " in Range Date " + entity.StartDateAbsent() + " to " + entity.EndDateAbsent());
+                @*self.ajaxMsg("There is Already Submitted Production Entry for this employee in selected range date.");
+                    entity.Attachment.extend({
+                        validation: {
+                            async: false,
+                            validator: function(val, otherVal, callBack) {
+                                var isSubmitted;
+                                //console.log(moment(ko.utils.unwrapObservable(entity.EndDateAbsent)).format('DD/MM/YYYY'));
+                                $.ajax({
+                                    url: @Html.BaseUrl("ExePlantWorkerAbsenteeism/GetProductionCardSubmitted"),
+                                    type: 'GET',
+                                    async: false,
+                                    contentType: 'application/json',
+                                    data: {
+                                        employeeID: entity.EmployeeID,
+                                        startDateAbsent: entity.StartDateAbsent,
+                                        endDateAbsent: entity.EndDateAbsent,
+                                        locationCode : self.locationCodePieceRate(),
+                                        shift: self.shiftPieceRate(),
+                                        unitCode: self.unitCodePieceRate(),
+                                        group: self.groupCodePieceRate()
+                                    },
+                                    dataType: 'json',
+                                    success: function(data) {
+                                        if(data.length > 0){
+                                            isSubmitted = false;
+                                            //if(data[0] == "eblekSubmited"){
+                                            //    self.ajaxMsg("There is Already Submitted Production Entry for Employee " + entity.EmployeeID() + " in Range Date " + entity.StartDateAbsent() + " to " + entity.EndDateAbsent());
+                                            //}else{
+                                            //    self.ajaxMsg("There is Already Submitted Production for Employee " + entity.EmployeeID() + " in Range Date " + entity.StartDateAbsent() + " to " + entity.EndDateAbsent());
+                                            //}
+                                        }
+                                        else
+                                            isSubmitted = true;
+
+                                        //self.isValidating(false);
+                                        //console.log(isSubmitted);
+                                        //return isSubmitted;
+                                    }
+                                });
+                                return isSubmitted;
+                            },
+                            message: self.ajaxMsg()
+                        }
+                    });*@
+                //}
+            };
+
+            // Reset Fields for Insert Row
+            self.gridViewPieceRate.resetDefault = function(viewModel) {
+                //console.log(self.EndDateAbsent + "\n");
+                viewModel.StartDateAbsent('@Model.ClosingPayrollDate');
+                self.getMaxDayAbsentType(self.newDataPieceRate);
+                //viewModel.EndDateAbsent(moment(ko.utils.unwrapObservable(self.EndDateAbsent)).format('DD/MM/YYYY'));
+                viewModel.Attachment('');
+                viewModel.AttachmentName('');
+                viewModel.ePaf('');
+
+                /*
+                    Dev : Indra Permana
+                    Desc: Uncomment below code because it will make datetimepicker into null after insert new row
+                */
+                //$('.insertRow .input-group.date input').val('');
+                //$('#dtpStartDatePieceRate').data('DateTimePicker').val('@Model.ClosingPayrollDate');
+                $('#dtpStartDatePieceRate').val('@Model.ClosingPayrollDate');
+                //$('#dtpEndDatePieceRate').data('DateTimePicker').clear();
+                //$('#dtpEndDatePieceRate').datetimepicker({ dateFormat: 'DD/MM/YYYY' });
+
+            };
+
+            self.gridViewPieceRate.mapping = {
+                create: function(options) {
+                    return new absenteeism(options.data);
+                }
+            };
+
+            // Load Data
+            self.searchPieceRate = function() {
+                $('.empty-row-message').html('<div class="loader"></div>'); // Reset New and Edit row
+
+                self.newDataPieceRate.UnitCode(self.unitCodePieceRate);
+                self.newDataPieceRate.StartDateAbsent('@Model.ClosingPayrollDate');
+                self.getEmployeesPieceRate(self.employeeSelectListPieceRate, self.locationCodePieceRate, self.unitCodePieceRate, self.processCodePieceRate, self.groupCodePieceRate, $("#spEmployeeID"));
+
+                // Check whether New or Edit data is existing and not saved to database yet (on Ajax Action)
+                if (SKTIS.Checker.modifiedDataExistsForAjax([self.gridViewPieceRate.listNewItems, self.gridViewPieceRate.listEditItems]) == true) {
+                    return;
+                } else {
+                    self.gridViewPieceRate.listNewItems.removeAll();
+                    self.gridViewPieceRate.listEditItems.removeAll();
+                }
+
+                self.gridViewPieceRate.search({}, function(response) {
+                    if (response.status == 'KO') {
+                        SKTIS.Helper.Notification(response.message, 'error');
+                        $('.empty-row-message').html(response.message);
+                    } else if (response.status == 'Empty') {
+                        self.RemoveNotification();
+                        //SKTIS.Helper.Notification(response.message,'warning');
+                        $('.empty-row-message').html('@CommonLabel.lblDataEmpty');
+                    }
+                });
+                //self.getAbsentTypeProdEntry();
+
+            };
+
+            // Save piece rate action
+            self.savePieceRate = function() {
+                if (self.gridViewPieceRate.editingRowIndex() !== -1)
+                    return;
+                // Prevent Edited new Row data for triggering Edited message
+                // Primary Key : StartDateAbsent, EmployeeID (need to compare both of arrays using unique key[s])
+                var newItemLength = self.gridViewPieceRate.listNewItems().length;
+                $.each(self.gridViewPieceRate.listNewItems(), function(k, v) {
+                    var shouldBeAsNew = ko.utils.arrayFirst(self.gridViewPieceRate.listEditItems(), function(editItem) {
+                        if (editItem) {
+                            return (editItem['OldValueStartDateAbsent'] == null || editItem['OldValueStartDateAbsent'] === "") ||
+                                    (editItem['OldValueEmployeeID'] == null || editItem['OldValueEmployeeID'] === "")
+                        }
+                    });
+                    if (shouldBeAsNew) {
+                        self.gridViewPieceRate.listNewItems()[k] = shouldBeAsNew;
+                    }
+                    self.gridViewPieceRate.listEditItems.remove(function(data) {
+                        if (data) {
+                            return (data['OldValueStartDateAbsent'] !== null || data['OldValueStartDateAbsent'] !== "") ||
+                                    (data['OldValueEmployeeID'] !== null || data['OldValueEmployeeID'] !== "")
+                        }
+                    });
+                });
+
+                var datas = {
+                    "Parameters": 
+                        { 
+                            "LocationCode": self.locationCodePieceRate(), 
+                            "UnitCode": self.unitCodePieceRate(), 
+                            "TransactionDate": self.dateValuePieceRate(), 
+                            "Shift": self.shiftPieceRate(),
+                            "GroupCodePieceRate": self.groupCodePieceRate()
+                        },
+                    "new": self.gridViewPieceRate.listNewItems(),
+                    "edit": self.gridViewPieceRate.listEditItems()
+                };
+
+                datas = JSON.stringify(datas);
+
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantWorkerAbsenteeism/SaveAllPlantWokerAbsenteeism"),
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: datas,
+                    dataType: 'json',
+                    success: function(data) {
+                        if (data.New) {
+                            $.each(data.New, function(k, value) {
+                                if (value)
+                                    SKTIS.Helper.ResponseNotification(value, "Insert Worker Absenteeism", value.StartDateAbsent + " - " + value.EmployeeID);
+                            });
+                        }
+
+                        if (data.Edit) {
+                            $.each(data.Edit, function(k, value) {
+                                if (value)
+                                    SKTIS.Helper.ResponseNotification(value, "Edit Worker Absenteeism", value.StartDateAbsent + " - " + value.EmployeeID);
+                            });
+                        }
+
+                        self.gridViewPieceRate.sort('StartDateAbsent', 'DESC');
+                        self.gridViewPieceRate.listNewItems.removeAll();
+                        self.gridViewPieceRate.listEditItems.removeAll();
+                    }
+                });
+            };
+
+            //*****************************************END REGION TAB PIECE RATE*********************************//
+
+            //*****************************************REGION TAB DAILY*********************************//
+
+            // Filter Variables - Daily
+            self.filterLocationNameDaily = ko.observable();
+            self.itemLocationsDaily = @Html.Raw(Json.Encode(@Model.PLNTChildLocationLookupList));
+            self.menuItemLocationsDaily = ko.observableArray(@Html.Raw(Json.Encode(@Model.PLNTChildLocationLookupList)));
+            self.locationCodeDaily = ko.observable($("#ddlLocationDaily").val());
+            self.unitCodeDaily = ko.observable();
+            self.shiftDaily = ko.observable();
+            self.KPSYearValueDaily = ko.observable(@Model.DefaultYear);
+            self.KPSWeekValueDaily = ko.observable();
+            self.InitDateValueDaily = ko.observable(true);
+            self.dateValueDaily = ko.observable('@Model.TodayDate');
+
+            // List Data Source Variables - Daily
+            self.unitSelectListDaily = ko.observableArray();
+            self.shiftSelectListDaily = ko.observableArray();
+            self.KPSWeekSelectListDaily = ko.observableArray();
+            self.employeeSelectListDaily = ko.observableArray();
+            self.employeeSelectListDailyOnEdit = ko.observableArray();
+            self.processSelectListDaily = ko.observableArray();
+            self.absentTypeSelectListDaily = ko.observableArray();
+
+            self.newDataDaily = {
+                EmployeeID:         ko.observableArray([]),
+                EmployeeNumber:     ko.observable(''),
+                EmployeeName:       ko.observable(''),
+                EmployeeNameMix:    ko.observable(''),
+                ProcessSettingsCode: ko.observable(''),
+                AbsentType:         ko.observable(''),
+                SktAbsentCode:      ko.observable(''),
+                PayrollAbsentCode:  ko.observable(''),
+                StartDateAbsent:    ko.observable('@Model.TodayDate'),
+                EndDateAbsent:      ko.observable(''),
+                ePaf:               ko.observable(''),
+                Attachment:         ko.observable(''),
+                Doc:                ko.observable(''),
+                AttachmentPath:     ko.observable(''),
+                AttachmentName:     ko.observable(''),
+                LocationCode:       ko.observable(self.locationCodeDaily()),
+                UnitCode:           ko.observable(''),
+                Shift:              ko.observable(''),
+                OldValueEmployeeID: ko.observable(''),
+                OldValueStartDateAbsent:    ko.observable(''),
+                OldValueEndDateAbsent:      ko.observable(''),
+                OldValueShift:              ko.observable(''),
+            };
+
+            //===============================EVENT HANDLER - DAILY==================================
+
+            //Filter Location Code Event Handler - Daily
+            //Get unitCode, shift, process by Location
+            self.onLocationChangeDaily = function() {
+                if ((! self.firstLoad) && (! self.isLoading())) {
+                    self.isLoading(true);
+                    async.series([
+                        function(cb) {
+                            self.getLocationNameFilterDaily(cb);
+                        },    
+                        function(cb) {
+                            self.getUnitByLocationDaily(cb,self.unitSelectListDaily, self.locationCodeDaily, $('#ddlUnitDaily'));
+                        },
+                        function(cb) {
+                            self.getShiftByLocationDaily(cb,self.shiftSelectListDaily, self.locationCodeDaily, $('#ddlShiftDaily'));
+                        },
+                    ], function() {
+                        self.isLoading(false);
+                        $('option:selected', $("#ddlLocationDaily")).text(self.locationCodeDaily());
+                    });
+                }
+            };
+
+            //Filter Unit Code Event Handler - Daily
+            self.onUnitChangeDaily = function() {
+                if ((! self.firstLoad) && (! self.isLoading())) {
+                    self.isLoading(true);
+                    async.series([
+                        function(cb) {
+                            self.getShiftByLocationDaily(cb,self.shiftSelectListDaily, self.locationCodeDaily, $('#ddlShiftDaily'));
+                        }
+                    ], function() {
+                        self.isLoading(false);
+                    });
+                }
+            };
+
+            //Filter Shift Code Event Handler - Daily
+            self.onShiftChangeDaily = function() {
+            };
+
+            //Filter Process Code Event Handler - Daily
+            self.onProcessChangeDaily = function() {
+                if ((! self.firstLoad) && (! self.isLoading())) {
+                    self.isLoading(true);
+                    async.series([
+                        function(cb) {
+                            self.getEmployeesDaily(cb,$('#spEmployeeIDDaily'));
+                        }
+                    ], function() {
+                        self.isLoading(false);
+                    });
+                }
+            };
+
+            //Filter Process Code Event Handler EDIT - Daily
+            self.onProcessChangeDailyOnEdit = function(data) {
+                self.getEmployeesDailyEdit(data.LocationCode, data.UnitCode, data.ProcessSettingCode);
+                $('#spEmployeeIDDailyEdit').selectpicker('refresh');
+            };
+
+            //Filter KPSYear Event Handler - Daily
+            self.onKPSYearChangeDaily = function() {
+                self.getKPSWeeks(self.KPSYearValueDaily, 'daily');
+            };
+
+            //Filter KPSWeek Event Handler - Daily
+            self.onKPSWeekChangeDaily = function() {
+                self.setDateRangeDaily();
+            };
+
+            //Filter Employee ID Event Handler - Daily
+            self.onEmployeeChangeDaily = function() {
+                self.getEmployeeDetailDaily(self.newDataDaily);
+            };
+
+            //Filter Employee ID Event Handler EDIT - Daily
+            self.onEmployeeChangeDailyOnEdit = function(data) {
+                self.getEmployeeDetailDaily(data);
+            };
+
+            //Filter Absent Type Event Handler - Daily
+            self.onAbsentTypeChangeDaily = function() {
+                if((! self.firstLoad) && (! self.isLoading())){
+                    self.getAbsentTypeDescription(self.newDataDaily);
+                    self.getMaxDayAbsentType(self.newDataDaily);
+                }
+            };
+
+            //Filter Absent Type Event Handler on EDIT - Daily
+            self.onAbsentTypeChangeOnEditDaily = function(data) {
+                self.getAbsentTypeDescription(data);
+                self.getMaxDayAbsentType(data);
+            };
+
+            //===============================METHOD DECLARATION - DAILY==================================
+
+            //Method Get Location Name - Daily
+            self.getLocationNameFilterDaily = function(cb) {
+                for (var i = 0; i < self.itemLocationsDaily.length; i++) {
+                    if (self.itemLocationsDaily[i].LocationCode == self.locationCodeDaily()) {
+                        self.filterLocationNameDaily(self.itemLocationsDaily[i].LocationName);
+                        break;
+                    }
+                }
+                if (typeof cb == 'function') cb();
+            };
+
+            //Method Get Unit By Location - Daily
+            self.getUnitByLocationDaily = function(cb,datasource, locationcode, dropdownObject) {
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantWorkerAbsenteeism/GetUnitCodeSelectListByLocationCode"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: { locationCode: locationcode() },
+                    dataType: 'json',
+                    success: function(data) {
+                        dropdownObject.find('option').remove();
+                        dropdownObject.selectpicker('refresh');
+                        datasource(data);
+                        self.unitCodeDaily(data[0].Value);
+                    },
+                    complete : function() {
+                        if (typeof cb == 'function') cb();
+                    }
+                });
+            };
+
+            //Method Get Shift By Location - Daily
+            self.getShiftByLocationDaily = function(cb, datasource, locationcode, dropdownObject) {
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantWorkerAbsenteeism/GetShiftSelectListByLocationCode"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: { locationCode: locationcode() },
+                    dataType: 'json',
+                    success: function(data) {
+                        dropdownObject.find('option').remove();
+                        dropdownObject.selectpicker('refresh');
+                        var unitModel = [];
+                        $.each(data, function(index, value) {
+                            unitModel.push({ "Text": value, "Value": value });
+                        });
+                        datasource(unitModel);
+                        self.shiftDaily(unitModel[0].Value);
+                    },
+                    complete : function() {
+                        if (typeof cb == 'function') cb();
+                    }
+                });
+            };
+
+            //Method Get Process By Location - Daily
+            self.getProcessByLocationDaily = function(cb, datasource, locationcode, unitCode, dropdownobject) {
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantWorkerAbsenteeism/GetProcessDailyEmployeeJobData"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: { locationCode: locationcode(), unitCode: unitCode() },
+                    dataType: 'json',
+                    success: function(data) {
+                        var list = [];
+                        $.each(data, function(index, value) {
+                            list.push({ "ProcessSettingsCode": value });
+                        });
+                        datasource(list);
+                        self.newDataDaily.ProcessSettingsCode(list[0].ProcessSettingsCode);
+                        //self.getEmployeesDaily($('#spEmployeeIDDaily'));
+                    },
+                    complete : function() {
+                        if (typeof cb == 'function') cb();
+                    }
+                });
+            };
+
+            //Method Get Employee ID Grid Row - Daily
+            self.getEmployeesDaily = function(cb,dropdownobject) {
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantWorkerAbsenteeism/GetDailyEmployeesActive"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: { LocationCode: self.locationCodeDaily(), UnitCode: self.unitCodeDaily(), ProcessSettingCode: self.newDataDaily.ProcessSettingsCode },
+                    dataType: 'json',
+                    success: function(data) {
+                        dropdownobject.find('option').remove();
+                        dropdownobject.selectpicker('refresh');
+                        var list = [];
+                        $.each(data, function(index, value) {
+                            list.push({
+                                EmployeeID: value.EmployeeID,
+                                EmployeeName: value.EmployeeName,
+                                EmployeeCompact: value.EmployeeID + ' - ' + value.EmployeeName
+                            });
+                        });
+                        if (list.length == 0) {
+                            self.newDataDaily.EmployeeID(null);
+                        }
+                        self.employeeSelectListDaily(list);
+                    },
+                    complete : function() {
+                        if (typeof cb == 'function') cb();
+                    }
+                });
+            };
+
+            //Method Get Employee ID Grid Row - Daily Edit
+            self.getEmployeesDailyEdit = function(locationCode, UnitCode, ProcessSettingCode) {
+                var list = [];
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantWorkerAbsenteeism/GetDailyEmployeesActive"),
+                    type: 'GET',
+                    async: false,
+                    contentType: 'application/json',
+                    data: { LocationCode: locationCode, UnitCode: UnitCode, ProcessSettingCode: ProcessSettingCode },
+                    dataType: 'json',
+                    success: function(data) {
+                        $.each(data, function(index, value) {
+                            list.push({ "EmployeeID": value.EmployeeID + ' - ' + value.EmployeeName });
+                        });
+                    }
+                });
+                return ko.observableArray(list);
+            };
+
+            //Method Get Employee Detail/Description - Daily
+            self.getEmployeeDetailDaily = function(context) {
+                if (typeof context.EmployeeID() != 'undefined') {
+                    $.ajax({
+                        url: @Html.BaseUrl("ExePlantWorkerAbsenteeism/GetEmployeeDetail"),
+                        type: 'GET',
+                        contentType: 'application/json',
+                        data: { EmployeeID: context.EmployeeID() },
+                        dataType: 'json',
+                        success: function(data) {
+                            context.EmployeeNumber(data.EmployeeNumber);
+                            context.EmployeeName(data.EmployeeName);
+                            var employeeNumber = data.EmployeeNumber;
+                            //var lastTwoNumber = employeeNumber.slice(-2);
+                            //context.EmployeeNameMix(lastTwoNumber + " - " + data.EmployeeName);
+                            //context.ProcessSettingsCode(data.ProcessSettingsCode);
+                        }
+                    });
+                } else {
+                    context.EmployeeNumber("");
+                    context.EmployeeName("");
+                }
+            };
+
+            //Method Generate Excel - Daily
+            self.generateExcelDaily = function(formElement) {
+                $(formElement).find("input[name=LocationCode]").val($('option:selected', $("#ddlLocationDaily")).text());
+                $(formElement).find("input[name=LocationName]").val($('#locationNameDaily').val());
+                $(formElement).find("input[name=UnitCode]").val($('#ddlUnitPieceRate').val());
+                $(formElement).find("input[name=KPSYear]").val($('#ddlYearsPieceRate').val());
+                $(formElement).find("input[name=KPSWeek]").val($('#ddlWeeksPieceRate').val());
+                $(formElement).find("input[name=Date]").val($('#dtpDatePieceRate').val());
+                $(formElement).find("input[name=Shift]").val($('#ddlShiftPieceRate').val());
+                return true;
+            };
+
+            //Method Set Date Range - Daily
+            self.setDateRangeDaily = function(cb) {
+                if (self.InitDateValueDaily()) {
+                    self.InitDateValueDaily(false);
+                } else {
+                    $.ajax({
+                        url: @Html.BaseUrl("ExePlantWorkerAbsenteeism/GetDateByYearWeek"),
+                        type: 'GET',
+                        contentType: 'application/json',
+                        data: { year: self.KPSYearValueDaily(), week: self.KPSWeekValueDaily() },
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#dtpDateDaily').data("DateTimePicker").options({
+                                //date: moment(data.StartDate),
+                                maxDate: moment(data.EndDate),
+                                minDate: moment(data.StartDate).subtract(1, 'days')
+                            });
+                            if (self.KPSWeekValueDaily() == '@Model.DefaultWeek'){
+                                self.dateValueDaily('@Model.TodayDate');
+                            }else{
+                                self.dateValueDaily(moment(data.StartDate).format("DD/MM/YYYY"));
+                            };
+                        },
+                        complete : function() {
+                            if (typeof cb == 'function') cb();
+                        }
+                    });
+                }
+            };
+
+            //============================GRID - DAILY===============================
+            // gridView Daily Initialization
+            self.gridViewDaily = new app.GridViewModel({
+                Criteria: {
+                    PageSize: 10,
+                    PageIndex: 1,
+                    SortExpression: "UpdatedDate",
+                    SortOrder: "DESC",
+                    LocationCode: self.locationCodeDaily,
+                    UnitCode: self.unitCodeDaily,
+                    Shift: self.shiftDaily,
+                    TransactionDate: self.dateValueDaily
+                },
+                DataSourceUrl: @Html.BaseUrl("ExePlantWorkerAbsenteeism/GetWorkerAbsenteeismDaily"),
+                InlineEdit: true,
+                InsertRowFocusedControlIndex: 1
+            });
+
+            self.gridViewDaily.applyValidationRules = function(entity) {
+                self.RemoveNotification();
+
+                entity.EmployeeID.extend({
+                    required: {
+                        message: "<strong>Employee ID</strong> Cannot be Empty!"
+                    }
+                });
+
+                entity.StartDateAbsent.extend({
+                    required: {
+                        message: "<strong>Start Date</strong> cannot be empty!"
+                    }
+                });
+                entity.EndDateAbsent.extend({
+                    cannotGreaterThan: {
+                        params: entity.StartDateAbsent,
+                        message: "<strong>Start Date</strong> cannot be greater than <strong>End Date</strong>"
+                    },
+                    required: {
+                        message: "<strong>End Date</strong> cannot be empty!"
+                    }
+                });
+                entity.ProcessSettingsCode.extend({
+                    validation: {
+                        validator: function() {
+                            var result;
+                            var criteriaInput = {
+                                LocationCode: self.locationCodeDaily,
+                                UnitCode: self.unitCodeDaily,
+                                Shift: self.shiftDaily,
+                                Process: entity.ProcessSettingCode,
+                                EmployeeID: entity.EmployeeID,
+                                StartDateAbsent: entity.StartDateAbsent,
+                                KPSYear: self.KPSYearValueDaily,
+                                KPSWeek: self.KPSWeekValueDaily,
+                                TransactionDate: self.dateValueDaily,
+                                EndDateAbsent: entity.EndDateAbsent
+                            };
+
+                            $.ajax({
+                                url: @Html.BaseUrl("ExePlantWorkerAbsenteeism/GetEmployeeActualStdStickPerHour"),
+                                type: 'GET',
+                                async: false,
+                                contentType: 'application/json',
+                                data: criteriaInput,
+                                dataType: 'json',
+                                success: function(data) {
+                                    var dt = moment(entity.StartDateAbsent(), "DD/MM/YYYY").format('dddd');
+
+                                    if (data <= 4 && entity.AbsentType() === "Pulang Pagi (Mendadak) > 4 jam") {
+                                        result = false;
+                                        //} else if ((entity.AbsentType() === "Sakit" && entity.StartDateAbsent() == moment().format('DD/MM/YYYY')) || (entity.AbsentType() === "Sakit" && dt == 'Saturday')) {
+                                    } else if (entity.AbsentType() === "Sakit" && dt == 'Saturday') {
+                                        result = false;
+                                    } else {
+                                        result =  true;
+                                    }
+                                }
+                            });
+                            return result;
+                        },
+                        message: entity.AbsentType() + ' Cannot be Choose!'
+                    }
+                });
+
+                entity.AbsentType.extend({
+                    required: {
+                        message: "<strong>Absent Type</strong> Cannot be Empty!"
+                    }
+                });
+
+                entity.ProcessSettingsCode.extend({
+                    required: {
+                        message: "<strong>Process Code</strong> Cannot be Empty!"
+                    }
+                });
+
+                //entity.AbsentType.extend({
+                //    validation: {
+                //        validator: function() {
+                //            var result;
+                //            if()
+                //            return result;
+                //        }
+                //    }
+                //});
+            };
+
+            self.gridViewDaily.resetDefault = function(viewModel) {
+                viewModel.StartDateAbsent('@Model.TodayDate');
+                //viewModel.EndDateAbsent('');
+                viewModel.Attachment('');
+                viewModel.AttachmentName('');
+                viewModel.AttachmentPath('');
+
+                //$('.insertRow .input-group.date input').val('');
+                //$('#dtpStartDateDaily').data('DateTimePicker').clear();
+                //$('#dtpEndDateDaily').data('DateTimePicker').clear();
+                $('#dtpStartDatePieceRate').val('@Model.TodayDate');
+                //$('#dtpEndDatePieceRate').data('DateTimePicker').clear();
+                $('#dtpEndDatePieceRate').datetimepicker({ dateFormat: 'DD/MM/YYYY' });
+            };
+
+            self.searchDaily = function() {
+                $('.empty-row-message').html('<div class="loader"></div>'); // Reset New and Edit row
+                // Check whether New or Edit data is existing and not saved to database yet (on Ajax Action)
+                if (SKTIS.Checker.modifiedDataExistsForAjax([self.gridViewDaily.listNewItems, self.gridViewDaily.listEditItems]) == true) {
+                    return;
+                } else {
+                    self.gridViewDaily.listNewItems.removeAll();
+                    self.gridViewDaily.listEditItems.removeAll();
+                }
+
+                self.newDataDaily.UnitCode(self.unitCodeDaily());
+                self.newDataDaily.StartDateAbsent('@Model.TodayDate');
+
+                //self.getProcessByLocationDaily(self.processSelectListDaily, self.locationCodeDaily, self.unitCodeDaily, $('#spProcessSettingCode'));
+
+                self.gridViewDaily.search({}, function(response) {
+                    if (response.status == 'KO') {
+                        SKTIS.Helper.Notification(response.message, 'error');
+                        $('.empty-row-message').html(response.message);
+                    } else if (response.status == 'Empty') {
+                        self.RemoveNotification();
+                        //SKTIS.Helper.Notification(response.message,'warning');
+                        $('.empty-row-message').html('@CommonLabel.lblDataEmpty');
+                    }
+                });
+            };
+
+            // Save daily action
+            self.saveDaily = function() {
+                if (self.gridViewDaily.editingRowIndex() !== -1)
+                    return;
+                // Prevent Edited new Row data for triggering Edited message
+                // Primary Key : StartDateAbsent, EmployeeID (need to compare both of arrays using unique key[s])
+                var newItemLength = self.gridViewDaily.listNewItems().length;
+                $.each(self.gridViewDaily.listNewItems(), function(k, v) {
+                    var shouldBeAsNew = ko.utils.arrayFirst(self.gridViewDaily.listEditItems(), function(editItem) {
+                        if (editItem) {
+                            return editItem['StartDateAbsent'] == v['StartDateAbsent'] && editItem['EmployeeID'] == v['EmployeeID'];
+                        }
+                    });
+                    if (shouldBeAsNew) {
+                        self.gridViewDaily.listNewItems()[k] = shouldBeAsNew;
+                    }
+                    self.gridViewDaily.listEditItems.remove(function(data) {
+                        if (data) {
+                            return data['StartDateAbsent'] == v['StartDateAbsent'] && data['EmployeeID'] == v['EmployeeID'];
+                        }
+                    });
+                });
+
+                var datas = {
+                    "Parameters": { "LocationCode": self.locationCodeDaily(), "UnitCode": self.unitCodeDaily(), "TransactionDate": self.dateValueDaily(), "Shift": self.shiftDaily() },
+                    "new": self.gridViewDaily.listNewItems(),
+                    "edit": self.gridViewDaily.listEditItems()
+                };
+
+                datas = JSON.stringify(datas);
+
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantWorkerAbsenteeism/SaveAllPlantWokerAbsenteeism"),
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: datas,
+                    dataType: 'json',
+                    success: function(data) {
+                        if (data.New) {
+                            $.each(data.New, function(k, value) {
+                                if (value)
+                                    SKTIS.Helper.ResponseNotification(value, "Insert Worker Absenteeism", value.StartDateAbsent + " - " + value.EmployeeID);
+                            });
+                        }
+
+                        if (data.Edit) {
+                            $.each(data.Edit, function(k, value) {
+                                if (value)
+                                    SKTIS.Helper.ResponseNotification(value, "Edit Worker Absenteeism", value.StartDateAbsent + " - " + value.EmployeeID);
+                            });
+                        }
+
+                        self.gridViewDaily.sort('StartDateAbsent', 'DESC');
+                        self.gridViewDaily.listNewItems.removeAll();
+                        self.gridViewDaily.listEditItems.removeAll();
+
+                    }
+                });
+            };
+
+            //*****************************************END REGION TAB DAILY*********************************//
+
+            //*****************************************REGION BOTH*********************************//
+
+            //Method to get MaxDay Absent Type and set End Date
+            self.getMaxDayAbsentType = function(context) {
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantWorkerAbsenteeism/GetMaxDayAsbentType"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: { absentType: context.AbsentType() },
+                    dataType: 'json',
+                    success: function(data) {
+                        if(ko.utils.unwrapObservable(context.IsFromEblek) !== true)
+                        {
+                            if (data == 0)
+                                context.EndDateAbsent(context.StartDateAbsent());
+                            else if (data > 0) {
+                                var day = moment(context.StartDateAbsent(), "DD/MM/YYYY");
+                                day.add(data-1, 'days');
+                                context.EndDateAbsent(moment(day.toDate()).format('DD/MM/YYYY'));
+                            }
+                        }
+                    }
+                });
+            };
+
+            //Get Absent Type Description
+            self.getAbsentTypeDescription = function(context) {
+                for (var i = 0; i < self.AllAbsentTypePieceRate.length; i++) {
+                    if (self.AllAbsentTypePieceRate[i].AbsentType == context.AbsentType()) {
+                        context.SktAbsentCode(self.AllAbsentTypePieceRate[i].SktAbsentCode);
+                        context.PayrollAbsentCode(self.AllAbsentTypePieceRate[i].PayrollAbsentCode);
+                        break;
+                    }
+                }
+                if (typeof cb == 'function') cb();
+            }.bind(this);
+
+            //Method to get All Absent Type
+            self.getAllAbsentType = function(cb) {
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantWorkerAbsenteeism/GetAllAbsentTypesActiveInAbsent"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    success: function(data) {
+                        var list = [];
+                        list.push({ "AbsentType": "" });
+                        $.each(data, function(index, value) {
+                            list.push({ "AbsentType": value.AbsentType });
+                        });
+                        self.absentTypeSelectListPieceRate(list);
+                        self.absentTypeSelectListDaily(list);
+                    },
+                    complete : function() {
+                        if (typeof cb == 'function') cb();
+                    }
+                });
+            };
+
+            //Method to get All Absent Type production Entry
+            @*self.getAbsentTypeProdEntry = function() {
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantWorkerAbsenteeism/GetAllAbsentTypeIsfromEntryOrNot"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    success: function(data) {
+
+                    }
+                });
+            };*@
+
+            //Method get KPS Week
+            self.getKPSWeeks = function(cb,KPSYear, type) {
+                type = (typeof type != 'undefined') ? type : 'piece-rate';
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantWorkerAbsenteeism/GetWeekByYear"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: { year: KPSYear() },
+                    dataType: 'json',
+                    success: function(data) {
+                        if (type != 'daily') {
+                            $('#ddlWeeksPieceRate').find('option').remove();
+                            $('#ddlWeeksPieceRate').selectpicker('refresh');
+                            var kpsWeekModel = [];
+                            $.each(data, function(index, value) {
+                                kpsWeekModel.push({ "Text": value, "Value": value });
+                            });
+                            self.KPSWeekSelectListPieceRate(kpsWeekModel);
+
+                            self.KPSWeekValuePieceRate(@Model.DefaultWeek);
+                            //TODO Asynch
+                            //self.setDateRangePieceRate();
+                        } else {
+                            $('#ddlWeeksDaily').find('option').remove();
+                            $('#ddlWeeksDaily').selectpicker('refresh');
+                            var kpsWeekModel = [];
+                            $.each(data, function(index, value) {
+                                kpsWeekModel.push({ "Text": value, "Value": value });
+                            });
+                            self.KPSWeekSelectListDaily(kpsWeekModel);
+
+                            self.KPSWeekValueDaily(@Model.DefaultWeek);
+                            //TODO Asycn
+                            //self.setDateRangeDaily();
+                        }
+                    },
+                    complete : function() {
+                        if (typeof cb == 'function') cb();
+                    }
+                });
+            };
+
+            self.RemoveNotification = function() {
+                if ($('#noty_top_layout_container').length > 0) {
+                    $('#noty_top_layout_container').remove();
+                }
+            };
+
+            self.parseAttachmentUrl = function($data)
+            {
+                if (typeof ($data.AttachmentName) !== 'undefined')
+                {
+                    var name = ko.isObservable($data.AttachmentName) ? $data.AttachmentName() : $data.AttachmentName;
+                    return name != null ? '@Model.UploadPath' + name : null;
+                }
+
+                return null;
+            }
+
+            self.uploadAttachment = function(el)
+            {
+                var mode = $(el).data('mode');
+                var files = el.files;
+                var type = $(el).data('type');
+
+                if (files.length > 0) {
+                    if (window.FormData !== undefined) {
+                        var data = new FormData();
+                        data.append('mode', mode);
+                        if (mode == 'update')
+                            data.append('oldFileName', $(el).data('filename'));
+                        for (var x = 0; x < files.length; x++) {
+                            data.append(files[x].name, files[x]);
+                        }
+                        $.ajax({
+                            type: "POST",
+                            url: "ExePlantWorkerAbsenteeism/Upload?modulepath=PlantWorkerAbsenteeism",
+                            contentType: false,
+                            processData: false,
+                            data: data,
+                            success: function(result) {
+                                SKTIS.Helper.Log(result);
+                                if (result.ResponseType == 'OK') {
+                                    var splitFilename = result.Filename.split('/');
+                                    var attchFilename = splitFilename[splitFilename.length - 1];
+                                    self.newDataPieceRate.Attachment(attchFilename);
+                                    self.newDataDaily.Attachment(attchFilename);
+                                    if (mode == 'insert') {
+                                        if (type == 'daily') {
+                                            self.newDataDaily.AttachmentPath(result.Filename);
+                                            self.newDataDaily.AttachmentName(result.AbsoluteName);
+                                        } else {
+                                            self.newDataPieceRate.AttachmentPath(result.Filename);
+                                            self.newDataPieceRate.AttachmentName(result.AbsoluteName);
+                                        }
+                                    } else {
+                                        ko.contextFor(el).$data.AttachmentPath(result.Filename);
+                                        ko.contextFor(el).$data.AttachmentName(result.AbsoluteName);
+                                    }
+                                }
+
+                                el.value = '';
+                            },
+                            error: function(xhr, status, p3, p4) {
+                                var err = "Error " + " " + status + " " + p3 + " " + p4;
+                                if (xhr.responseText && xhr.responseText[0] == "{")
+                                    err = JSON.parse(xhr.responseText).Message;
+                                SKTIS.Helper.Log(err);
+                            }
+                        });
+                    } else {
+                        SKTIS.Helper.Notification("This browser doesn't support HTML5 file uploads!", 'warning');
+                    }
+                }
+            }
+
+            // jQuery Event inside app namespace
+            // Upload Event Handler
+            //$(document).on('change', '.file-input input[type=file]', function(e) {
+            //var that = this;
+            //var mode = $(that).data('mode');
+            //var files = e.target.files;
+            //if (files.length > 0) {
+            //    if (window.FormData !== undefined) {
+            //        var data = new FormData();
+            //        data.append('mode', mode);
+            //        if (mode == 'update')
+            //            data.append('oldFileName', $(that).data('filename'));
+            //        for (var x = 0; x < files.length; x++) {
+            //            data.append(files[x].name, files[x]);
+            //        }
+            //        $.ajax({
+            //            type: "POST",
+            //            url: "ExePlantWorkerAbsenteeism/Upload?modulepath=PlantWorkerAbsenteeism",
+            //            contentType: false,
+            //            processData: false,
+            //            data: data,
+            //            success: function(result) {
+            //                SKTIS.Helper.Log(result);
+            //                if (result.ResponseType == 'OK') {
+            //                    var splitFilename = result.Filename.split('/');
+            //                    var attchFilename = splitFilename[splitFilename.length - 1];
+            //                    self.newDataPieceRate.Attachment(attchFilename);
+            //                    self.newDataDaily.Attachment(attchFilename);
+            //                    if (mode == 'insert') {
+            //                        self.newDataPieceRate.AttachmentPath(result.Filename);
+            //                        self.newDataDaily.AttachmentPath(result.Filename);
+            //                    } else {
+            //                        ko.contextFor(e.target).$data.AttachmentPath(result.Filename);
+            //                    }
+            //                }
+            //            },
+            //            error: function(xhr, status, p3, p4) {
+            //                var err = "Error " + " " + status + " " + p3 + " " + p4;
+            //                if (xhr.responseText && xhr.responseText[0] == "{")
+            //                    err = JSON.parse(xhr.responseText).Message;
+            //                SKTIS.Helper.Log(err);
+            //            }
+            //        });
+            //    } else {
+            //        SKTIS.Helper.Notification("This browser doesn't support HTML5 file uploads!", 'warning');
+            //    }
+            //}
+            //});
+
+            //*****************************************END REGION BOTH*********************************//
+
+            //============================INIT METHOD - PIECE RATE=========================
+            //Get Default value filter
+            //self.onLocationChangePieceRate();
+            //self.getUnitByLocationPieceRate(self.unitSelectListPieceRate, self.locationCodePieceRate, $('#ddlUnitPieceRate'));
+            //self.getShiftByLocationPieceRate(self.shiftSelectListPieceRate, self.locationCodePieceRate, $('#ddlShiftPieceRate'));
+            //self.getProcessByLocationPieceRate(self.processSelectListPieceRate, self.locationCodePieceRate, $('#ddlProcessPieceRate'));
+            //TODO Async
+            //self.getKPSWeeks(self.KPSYearValuePieceRate);
+            //self.getAbsentTypeDescription(self.newDataPieceRate);
+            //self.getLocationNameFilterPieceRate();
+            //self.newDataPieceRate.UnitCode(self.unitCodePieceRate);
+            self.initPieceRate = function(cb) {
+                //Asynch setting
+                self.isLoading(true);
+                async.series([
+                    function(callback) {
+                        self.getKPSWeeks(callback,self.KPSYearValuePieceRate); //Week
+                    },
+                    function(callback) {
+                        self.setDateRangePieceRate(callback); //Date
+                    },
+                    function(callback) {
+                        self.getLocationNameFilterPieceRate(callback); //LocationName
+                    },
+                    function(callback) {
+                        self.getUnitByLocationPieceRate(callback,self.unitSelectListPieceRate, self.locationCodePieceRate, $('#ddlUnitPieceRate')); //Unit
+                    },
+                    function(callback) {
+                        self.getShiftByLocationPieceRate(callback,self.shiftSelectListPieceRate, self.locationCodePieceRate, $('#ddlShiftPieceRate')); //Shift
+                    },
+                    function(callback) {
+                        self.getProcessByLocationPieceRate(callback,self.processSelectListPieceRate, self.locationCodePieceRate, $('#ddlProcessPieceRate')); //Process
+                    },
+                    function(callback) {
+                        self.getGroupByLocationUnitProcessPieceRate(callback,self.groupSelectListPieceRate, self.locationCodePieceRate, $('#ddlGroupPieceRate')); //Group
+                    }
+                ], function() {
+                    self.searchPieceRate();
+                    self.isLoading(false);
+                    if (typeof cb == 'function') cb();
+                });
+            };
+
+
+            //==================================INIT METHOD - DAILY============================
+            //Get Default value filter
+            //TODO Async
+            //self.getKPSWeeks(self.KPSYearValueDaily, 'daily');
+            //self.getUnitByLocationDaily(self.unitSelectListDaily, self.locationCodeDaily, $('#ddlUnitDaily'));
+            //self.getShiftByLocationDaily(self.shiftSelectListDaily, self.locationCodeDaily, $('#ddlShiftDaily'));
+            //self.getAbsentTypeDescription(self.newDataDaily);
+            //self.getLocationNameFilterDaily();
+            //self.searchDaily();
+            //self.searchPieceRate();
+            //INIT METHOD BOTH
+            //self.getAllAbsentType();
+            self.initDialy = function(cb) {
+                self.isLoading(true);
+                async.series([
+                    function(callback) {
+                        self.getKPSWeeks(callback,self.KPSYearValuePieceRate,'daily'); //Week
+                    },
+                    function(callback) {
+                        self.setDateRangeDaily(callback); //Date
+                    },
+                    function(callback) {
+                        self.getLocationNameFilterDaily(callback); //LocationName
+                    },
+                    function(callback) {
+                        self.getUnitByLocationDaily(callback,self.unitSelectListDaily, self.locationCodeDaily, $('#ddlUnitDaily')); //Unit
+                    },
+                    function(callback) {
+                        self.getShiftByLocationDaily(callback,self.shiftSelectListDaily, self.locationCodeDaily, $('#ddlShiftDaily')); //Shift
+                    },
+                    function(callback) {
+                        self.getProcessByLocationDaily(callback,self.processSelectListDaily, self.locationCodeDaily, self.unitCodeDaily, $('#spProcessSettingCode')); //Process
+                    },
+                    function(callback) {
+                        self.getEmployeesDaily(callback,$('#spEmployeeIDDaily'));//Employee
+                    },
+                ], function() {
+                    self.isLoading(false);
+                    self.searchDaily();
+                    if (typeof cb == 'function') cb();
+                });
+            }
+            //INIT METHOD BOTH
+            self.init = (function() {
+                //Asynch setting
+                self.isLoading(true);
+                async.series([
+                    function(callback) {
+                        self.getAllAbsentType(callback);
+                    },
+                    function(callback) {
+                        self.initPieceRate(callback);
+                    },
+                    function(callback) {
+                        self.initDialy(callback);
+                    },
+                ], function() {
+                    self.isLoading(false);
+                    self.firstLoad = false;
+                });
+
+            }());
+
+            //********************************** REGION POP UP MULTIPLE ABSENT ****************//
+
+            self.ShowMultipleAbsent = function() 
+            {
+                self.allSelectedEmployeePopUp(false);
+                $('#totalCheckedEmployeePopUp').text("Total employees checked : 0");
+                self.getEmployeesPieceRatePopUp(self.listEmployeePopUp, self.locationCodePieceRate, self.unitCodePieceRate, self.processCodePieceRate, self.groupCodePieceRate);
+            };
+
+            // observe variable buat togle all checked
+            self.allSelectedEmployeePopUp = ko.observable('');
+
+            // pungsi buat toggle all checked atau unchecked
+            self.selectAllEmployeePopUp = function() {
+                var all = self.allSelectedEmployeePopUp();
+                ko.utils.arrayForEach(self.listEmployeePopUp(), function(item) {
+                    item.IsChecked(!all);
+                });
+                
+                $('#totalCheckedEmployeePopUp').text("Total employees checked : " + $(".idRow:checked").length);
+                return true;
+            };
+
+            self.checkedAllorNotEmployeePopUp = function(){
+                $('#totalCheckedEmployeePopUp').text("Total employees checked : " + $(".idRow:checked").length);
+                return true;
+            };
+
+            //Method Get Employee Pop Up
+            self.getEmployeesPieceRatePopUp = function(listObject, locationCode, unitCode, processCode, groupCode) {
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantWorkerAbsenteeism/GetPieceRateEmployeesActive"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: { LocationCode: locationCode(), UnitCode: unitCode(), ProcessSettingCode: processCode(), GroupCode: groupCode() },
+                    dataType: 'json',
+                    success: function(data) {
+                        var list = [];
+
+                        $.each(data, function(index, value) {
+                            list.push({ 
+                                "EmployeeID": value.EmployeeID,
+                                "EmployeeNumber": value.EmployeeNumber,
+                                "EmployeeName": value.EmployeeName,
+                                "Employee": value.EmployeeID + ' - ' + value.EmployeeNumber.slice(-2) + ' - ' + value.EmployeeName,
+                                "IsChecked": ko.observable(false),
+                                "IsValidated": false,
+                                "ResponseType": "",
+                            });
+                        });
+
+                        listObject(list);
+
+                        $('.markSuccess').hide();
+                        $('.markFailed').hide();
+                        $('.errorMessage').hide();
+                    }
+                });
+            };
+            
+            // Save Pop Up
+            self.saveMultipleAbsenteeism = function(){
+
+                var datas = {
+                    "ListEmployees": self.listEmployeePopUp(),
+                    "StartDateAbsent": self.PopUpStartDate(),
+                    "EndDateAbsent": self.PopUpEndDate(),
+                    "AbsentType": self.PopUpAbsentType(),
+                    "LocationCode": self.locationCodePieceRate(), 
+                    "UnitCode": self.unitCodePieceRate(),
+                    "Shift": self.shiftPieceRate(),
+                    "GroupCode": self.groupCodePieceRate()
+                };
+                
+                var dataPost = ko.toJSON(datas);
+                $('#loading').show();
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantWorkerAbsenteeism/SaveMultipleAbsenteeism"),
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: dataPost,
+                    dataType: 'json',
+                    success: function(data) {
+                        console.log(data);
+                        var list = [];
+
+                        $.each(data, function(index, value) {
+                            list.push({ 
+                                "EmployeeID": value.EmployeeID,
+                                "EmployeeNumber": value.EmployeeNumber,
+                                "Employee": value.EmployeeID + ' - ' + value.EmployeeNumber.slice(-2) + ' - ' + value.EmployeeName,
+                                "ResponseType": value.ResponseType,
+                                "IsValidated": value.IsValidated,
+                                "IsChecked": ko.observable(value.IsChecked)
+                            });
+                        });
+
+                        self.listEmployeePopUp(list);
+
+                        $('.markSuccess').show();
+                        $('.markFailed').show();
+                        $('.errorMessage').show();
+                        $('#loading').hide();
+                        self.searchPieceRate();
+                    }
+                });
+            };
+
+        };
+        ko.applyBindings(new app.EditGrid());
+    }
+    )(app = this.app || {});
+</script>
+    }

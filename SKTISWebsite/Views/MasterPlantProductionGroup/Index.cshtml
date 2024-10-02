@@ -1,0 +1,439 @@
+﻿@using HMS.SKTIS.Application.Resources
+@using SKTISWebsite.Helper
+@using HMS.SKTIS.Application.Resources.Views.MasterPlantProductionGroup
+@model SKTISWebsite.Models.MasterPlantProductionGroup.InitMstPlantProductionGroup
+
+@{Html.SetPageTitle(@MasterPlantProductionGroup.PageTitle);}
+<div data-bind="with: gridView" class="col-lg-12">
+    @*Filter*@
+    <div class="col-lg-6">
+        <div class="row">
+            <label class="form-label col-lg-4">
+                @MasterPlantProductionGroup.lblFilterLocation
+            </label>
+            <div class="col-lg-3">
+                @*@Html.DropDownList("ddlLocationCodeFilter", Model.LocationCodeSelectList,
+                    new Dictionary<string, object> { { "data-bind", "value:$root.filterLocationCode, event : { change : $root.initFilter }" },
+                        { "class", "selectpicker show-tick form-controlt" },
+                        {"data-live-search","true"},{"id","ddlLocationCodeFilter"} })*@
+                <select id="ddlLocationCodeFilter"
+                        class="selectpicker show-tick form-control"
+                        data-live-search="true"
+                        data-bind="selectPicker:$root.filterLocationCode, optionsText: 'LocationCode', optionsValue : 'LocationCode', optionsAfterRender: locationDesc, selectPickerOptions: { optionsArray: $root.locationNameList }, event : { change : $root.initFilter}"></select>
+            </div>
+            <div class="col-lg-4">
+                <span class="form-control" data-bind="text:$root.filterLocationNameInfo" />
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-4">
+                @MasterPlantProductionGroup.lblFilterUnit
+            </label>
+            <div class="col-lg-7">
+                <select class="selectpicker show-tick form-control" id="ddlUnitCodeFilter"
+                        data-live-search="true"
+                        data-bind="optionsCaption : ' @MasterPlantProductionGroup.lblFilterUnitAll', selectPicker: $root.filterUnitCode, optionsText: 'Text', optionsValue : 'Value', selectPickerOptions: { optionsArray: $root.unitCodeSelectList }"></select>
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-4">
+                @MasterPlantProductionGroup.lblFilterProcess
+            </label>
+            <div class="col-lg-7">
+                <select class="selectpicker show-tick form-control" id="ddlProcessGroupFilter"
+                        data-live-search="true"
+                        data-bind="optionsCaption : '@MasterPlantProductionGroup.lblFilterProcessAll', selectPicker: $root.filterProcessSettingsCode, optionsText: 'Text', optionsValue : 'Value', selectPickerOptions: { optionsArray: $root.processGroupSelectList }"></select>
+            </div>
+        </div>
+    </div>
+    @*Action Button and Page Size*@
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="action-btn">
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.View.ToString()))
+                {
+                    <button type="button" id="btnSave" class="btn btn-primary" data-bind="click:$root.search">@CommonLabel.btnView</button>
+                }
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.Save.ToString()))
+                {
+                    <button type="button" class="btn btn-primary" data-bind="click:$root.saveData">@CommonLabel.btnSave</button>
+                }
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.Excel.ToString()))
+                {
+                    using (Html.BeginForm("GenerateExcel", "MasterPlantProductionGroup", FormMethod.Post, new { @data_bind = "submit: $root.generateExcel" }))
+                    {
+                        <input type="hidden" name="locationCode" />
+                        <input type="hidden" name="unitCode" />
+                        <input type="hidden" name="processSettingsCode" />
+                        <button type="submit" class="btn btn-primary">@CommonLabel.btnExcel</button>
+                    }
+                }
+                @Html.Partial("GridViewPageSizeSelector")
+            </div>
+        </div>
+    </div>
+    <div id="master-item-location" class="table-overflow">
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr class="head">
+                    <th rowspan="2" data-bind="click:sortBy.bind($data,'GroupCode'), css:sortCss('GroupCode', $data.sortExpression(), $data.sortOrder())">@MasterPlantProductionGroup.lblTitleGroupID</th>
+                    <th colspan="3">@MasterPlantProductionGroup.lblTitleLeader</th>
+                    <th rowspan="2" data-bind="click:sortBy.bind($data,'WorkerCount'), css:sortCss('WorkerCount', $data.sortExpression(), $data.sortOrder())">@MasterPlantProductionGroup.lblTitleJumlahPekerja</th>
+                    <th rowspan="2" data-bind="click:sortBy.bind($data,'NextIdGroupPlant'), css:sortCss('NextIdGroupPlant', $data.sortExpression(), $data.sortOrder())">@MasterPlantProductionGroup.lblTitleNextGroup</th>
+                    <th rowspan="2" data-bind="click:sortBy.bind($data,'StatusActive'), css:sortCss('StatusActive', $data.sortExpression(), $data.sortOrder())">@MasterPlantProductionGroup.lblTitleActive</th>
+                    <th rowspan="2" data-bind="click:sortBy.bind($data,'Remark'), css:sortCss('Remark', $data.sortExpression(), $data.sortOrder())">@MasterPlantProductionGroup.lblTitleRemark</th>
+                    <th rowspan="2" class="widthsmall">@MasterPlantProductionGroup.lblTitleUpdatedBy</th>
+                    <th rowspan="2" class="widthsmall">@MasterPlantProductionGroup.lblTitleUpdatedDate</th>
+                </tr>
+                <tr class="head">
+                    <th data-bind="click:sortBy.bind($data,'Leader1'), css:sortCss('Leader1', $data.sortExpression(), $data.sortOrder())">@MasterPlantProductionGroup.lblTitleLeader1</th>
+                    <th data-bind="click:sortBy.bind($data,'Leader2'), css:sortCss('Leader2', $data.sortExpression(), $data.sortOrder())">@MasterPlantProductionGroup.lblTitleLeader2</th>
+                    <th data-bind="click:sortBy.bind($data,'LeaderInspection'), css:sortCss('LeaderInspection', $data.sortExpression(), $data.sortOrder())">@MasterPlantProductionGroup.lblTitleInspectionLeader</th>
+                </tr>
+                <!--<tr class="insertRow" data-bind="click: cancelInline.bind(),inlineAddProccess:[$data, $root.newData]" style="display: none">
+                    <th><input data-bind="text:$root.newData.GroupCode" /></th>
+                    <th><input data-bind="text:$root.newData.Leader1" /></th>
+                    <th><input data-bind="text:$root.newData.Leader2" /></th>
+                    <th><input data-bind="text:$root.newData.LeaderInspection" /></th>
+                    <th><input data-bind="text:$root.newData.WorkerCount" /></th>
+                    <th><input data-bind="text:$root.newData.NextIdGroupPlant" /></th>
+                    <th><input data-bind="text:$root.newData.StatusActive" /></th>
+                    <th><input data-bind="text:$root.newData.Remark" /></th>
+                </tr>-->
+            </thead>
+            <tbody data-bind="foreach: listDataItems">
+                <tr data-bind="if: ($parent.editingRowIndex() !== $index()),
+                                       click: $parent.editInline3.bind($data,$index())">
+                    <td><span data-bind="text:$data.GroupCode"></span></td>
+                    <td class="current"><span data-bind="text:$data.Leader1Name"></span></td>
+                    <td class="current"><span data-bind="text:$data.Leader2Name"></span></td>
+                    <td class="current"><span data-bind="text:$data.LeaderInspectionName"></span></td>
+                    <td><span data-bind="text:$data.WorkerCount"></span></td>
+                    <td class="current"><span data-bind="text:$data.NextGroupCode"></span></td>
+                    <td class="current center"><input type="checkbox" data-bind="checked:$data.StatusActive, enable: false" /></td>
+                    <td class="current"><span data-bind="text:$data.Remark"></span></td>
+                    <td><span data-bind="text:$data.UpdatedBy"></span></td>
+                    <td><span data-bind="text:$data.UpdatedDate"></span></td>
+                </tr>
+                @*edit template*@
+                <tr data-bind="validationOptions: {insertMessages: false, showTooltip:false, decorateInputElement: false, errorElementClass: 'input-error'}, inlineProccess:[$parent,$data],
+                                       if:($parent.editingRowIndex() === $index()),
+                                       click: $parent.selectRow.bind($data, $index())">
+                    <td><span class="groupCodeValue" data-bind="text:$data.GroupCode"></span></td>
+                    <td class="current">
+                        <select class="selectpicker show-tick form-control" id="ddlLeader1"
+                                data-live-search="true"
+                                data-bind="value: $data.Leader1, options: $root.getLeaderList($('.groupCodeValue').text()),
+                                            optionsText: 'Text', selectedText: $data.Leader1Name,
+                                            optionsValue : 'Value'"></select>
+                    </td>
+                    <td class="current">
+                        <select class="selectpicker show-tick form-control" id="ddlLeader2"
+                                data-live-search="true"
+                                data-bind="value: $data.Leader2, options: $root.getLeaderList($('.groupCodeValue').text()),
+                                            optionsText: 'Text', selectedText: $data.Leader2Name,
+                                            optionsValue : 'Value'"></select>
+                    </td>
+                    <td class="current">
+                        <select class="selectpicker show-tick form-control" id="ddlLeaderInspection"
+                                data-live-search="true"
+                                data-bind="value: $data.InspectionLeader, options: $root.getLeaderList($('.groupCodeValue').text()),
+                                            optionsText: 'Text', selectedText: $data.LeaderInspectionName,
+                                            optionsValue : 'Value'"></select>
+                    </td>
+                    <td><span data-bind="text:$data.WorkerCount"></span></td>
+                    <td class="current">
+                        <select class="selectpicker show-tick form-control" id="ddlNextGroup"
+                                data-live-search="true"
+                                data-bind="value: $data.NextGroupCode, options: $root.getNextGroupList($('.groupCodeValue').text()),
+                                            optionsText: 'Text', optionsValue : 'Value', optionsCaption:''"></select>
+                    </td>
+
+                    <td class="current center"><input type="checkbox" data-bind="checked:$data.StatusActive" /></td>
+                    <td class="current"><input data-bind="value:$data.Remark,tabToNext:[$parent,$data], valueUpdate: 'afterkeydown'" class="form-control transparent" /></td>
+                    <td><span data-bind="text:$data.UpdatedBy"></span></td>
+                    <td><span data-bind="text:$data.UpdatedDate"></span></td>
+                </tr>
+            </tbody>
+            <tbody data-bind="visible: !listDataItems().length">
+                <tr>
+                    <td colspan="10" class="empty-row-message"><div class="loader"></div></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div data-bind="if: (listDataItems() != null && listDataItems().length !== 0)">
+        @Html.Partial("GridViewFooter")
+    </div>
+</div>
+@section Scripts
+{
+    <script src="~/Scripts/app/globalfunctions.js" type="text/javascript"></script>
+    <script src="~/Scripts/common/app.GridViewModel.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        $(function() {
+            //$('.ddlLeader1').selectpicker();
+        });
+        (function(app) {
+            app.EditGrid = function() {
+                var self = this;
+                self.locationNameList = ko.observableArray(@Html.Raw(Json.Encode(@Model.LocationNameLookupList)));
+                self.mandorList = @Html.Raw(Json.Encode(@Model.LeaderLookupList));
+                self.groupCodeList = @Html.Raw(Json.Encode(@Model.GroupCodeSelectList));
+                self.filterLocationCode = ko.observable($("#ddlLocationCodeFilter").val());
+                self.filterLocationNameInfo = ko.observable('');
+                self.filterUnitCode = ko.observable('');
+                self.filterProcessSettingsCode = ko.observable('');
+                self.filterUnitCodeSearch = ko.observable(''); //filled after self.search triggered
+                self.filterProcessSettingsCodeSearch = ko.observable(''); //filled after self.search triggered
+                //excel
+                self.filterExcelLocationCode = self.filterLocationCode();
+                self.filterExcelUnitCode = self.filterUnitCode();
+                self.filterExcelProcessSettingsCode = self.filterProcessSettingsCode();
+
+                self.newData = {
+                    GroupCode: ko.observable(''),
+                    Leader1: ko.observable(0),
+                    Leader2: ko.observableArray([]),
+                    LeaderInspection: ko.observable(''),
+                    WorkerCount: ko.observable(''),
+                    NextIdGroupPlant: ko.observableArray([]),
+                    StatusActive: ko.observable(''),
+                    Remark: ko.observable(''),
+                    Leader1Name: ko.observable('')
+                };
+
+                //description: init gridView
+                self.gridView = new app.GridViewModel({
+                    Criteria: { PageSize: 10, PageIndex: 1, SortExpression: "UpdatedDate", SortOrder: "DESC", LocationCode: self.filterLocationCode, UnitCode: self.filterUnitCodeSearch, ProcessSettingsCode: self.filterProcessSettingsCodeSearch },
+                    DataSourceUrl: @Html.BaseUrl("MasterPlantProductionGroup/GetMstPlantProductionGroup"),
+                    InlineEdit: true,
+                    InsertRowFocusedControlIndex: 0
+                });
+
+                //get location name by location code
+                self.getLocationNameByLocationCode = function() {
+                    var result = "";
+                    //for (var i = 0; i < self.locationNameList.length; i++) {
+                    //    if (self.locationNameList[i].LocationCode == self.filterLocationCode()) {
+                    //        result = self.locationNameList[i].LocationName;
+                    //        break;
+                    //    }
+                    //}
+                    self.locationNameList().map(function(v) {
+                        if (typeof v.LocationCode !== 'undefined' && v.LocationCode == self.filterLocationCode()) {
+                            self.filterLocationNameInfo(v.LocationName);
+                        }
+                    });
+                };
+
+                //init filter
+                self.initFilter = function() {
+                    self.getLocationNameByLocationCode();
+                    //self.filterLocationNameInfo(self.getLocationNameByLocationCode());
+                    self.getUnitCodeSelectListByLocation();
+                    self.getProcessGroupSelectListByLocation();
+                }.bind(this);
+
+                //prepare unitCode selectlist data
+                self.unitCodeSelectList = ko.observableArray();
+                self.getUnitCodeSelectListByLocation = function() {
+                    $.ajax({
+                        url: @Html.BaseUrl("MasterPlantProductionGroup/GetUnitCodeSelectListByLocationCode"),
+                        type: 'GET',
+                        contentType: 'application/json',
+                        data: { locationCode: self.filterLocationCode() },
+                        dataType: 'json',
+                        success: function(data) {
+                            //$('#ddlUnitCodeFilter').find('option').remove();
+                            $('#ddlUnitCodeFilter').selectpicker('refresh');
+                            self.unitCodeSelectList(data);
+                        }
+                    });
+                };
+
+                //prepare process  selectlist data
+                self.processGroupSelectList = ko.observableArray();
+                self.getProcessGroupSelectListByLocation = function() {
+                    $.ajax({
+                        url: @Html.BaseUrl("MasterPlantProductionGroup/GetProcessGroupSelectListByLocationCode"),
+                        type: 'GET',
+                        contentType: 'application/json',
+                        data: { locationCode: self.filterLocationCode() },
+                        dataType: 'json',
+                        success: function(data) {
+                            //$('#ddlProcessGroupFilter').find('option').remove();
+                            $('#ddlProcessGroupFilter').selectpicker('refresh');
+                            self.processGroupSelectList(data);
+                        }
+                    });
+                };
+
+                self.getLeaderList = function(groupCode) {
+                    var listMandor = ko.observableArray([]);
+
+                    //console.log(self.filterLocationCode());
+                    //console.log(self.filterUnitCode());
+                    //console.log(self.mandorList);
+                    var count = 0;
+
+                    $.each(self.mandorList, function(index, value) {
+                        count += 1;
+                        if (self.filterLocationCode() == value.LocationCode) {
+                            if (typeof self.filterUnitCode() != 'undefined') {
+                                if(self.filterUnitCode() == value.UnitCode)
+                                    listMandor.push({ "Text": value.EmployeeName, "Value": value.EmployeeId });
+                            }
+                            else
+                                listMandor.push({ "Text": value.EmployeeName, "Value": value.EmployeeId });
+                        }
+                    });
+                    //console.log(count);
+                    return listMandor;
+                };
+
+                self.getNextGroupList = function(currentGroupCode) {
+                    var listGroupCode = ko.observableArray([]);
+                    $.each(self.groupCodeList, function(index, value) {
+                        var firstNumberCurrentGroupCode = (parseInt(currentGroupCode.charAt(0))+1);
+                        var firstNumberGroupCode = parseInt(value.Value.charAt(0));
+                        if(firstNumberCurrentGroupCode == firstNumberGroupCode)
+                            listGroupCode.push({ "Text": value.Text, "Value": value.Value });
+                    });
+                    return listGroupCode;
+                };
+
+                //description: validations
+                self.gridView.applyValidationRules = function(entity) {
+                    self.RemoveNotification();
+
+                    entity.Leader1.extend({
+                        required: {
+                            message: "<strong>Leader 1</strong> cannot be empty!"
+                        }
+                    });
+                    entity.Leader2.extend({
+                        required: {
+                            message: "<strong>Leader 2</strong> cannot be empty!"
+                        }
+                    });
+                    entity.InspectionLeader.extend({
+                        required: {
+                            message: "<strong>Inspection Leader</strong> cannot be empty!"
+                        }
+                    });
+                    entity.Remark.extend({
+                        required: {
+                            message: "<strong>Remark</strong> cannot be empty!",
+                            onlyIf: function () { return (! entity.StatusActive()); }
+                        }
+                    });
+                };
+
+                //description: save bulk data
+                self.saveData = function() {
+                    if (self.gridView.editingRowIndex() !== -1)
+                        return;
+
+                    self.RemoveNotification();
+
+                    //if (self.filterUnitCode() == "" || typeof self.filterUnitCode() === "undefined") {
+                    //    SKTIS.Helper.Notification("<strong>Unit</strong> cannot be empty!", 'error');
+                    //    return;
+                    //}
+
+                    //if (self.filterProcessSettingsCode() == "" || typeof self.filterProcessSettingsCode() === "undefined") {
+                    //    SKTIS.Helper.Notification("<strong>Process</strong> cannot be empty!", 'error');
+                    //    return;
+                    //}
+
+                    var datas = {
+                        "Parameters": {
+                            "LocationCode": self.filterLocationCode(),
+                            "UnitCode": self.filterUnitCode(),
+                            "ProcessSettingsCode": self.filterProcessSettingsCode()
+                        },
+                        "Edit": self.gridView.listEditItems()
+                    };
+                    datas = JSON.stringify(datas);
+                    $.ajax({
+                        url: @Html.BaseUrl("MasterPlantProductionGroup/SaveAllPlantProductionGroup"),
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: datas,
+                        dataType: 'json',
+                        success: function(data) {
+                            if (data.Edit) {
+                                $.each(data.Edit, function(k, value) {
+                                    if (value)
+                                        SKTIS.Helper.ResponseNotification(value, "Save Master Plant Production Group", value.GroupCode);
+                                });
+                            }
+
+                            self.gridView.reload();
+                            self.gridView.listNewItems.removeAll();
+                            self.gridView.listEditItems.removeAll();
+                        }
+                    });
+                };
+
+                //generate excel
+                self.generateExcel = function (formElement) {
+                    $(formElement).find("input[name=locationCode]").val(self.filterExcelLocationCode);
+                    $(formElement).find("input[name=unitCode]").val(self.filterExcelUnitCode);
+                    $(formElement).find("input[name=processSettingsCode]").val(self.filterExcelProcessSettingsCode);
+                    return true;
+                };
+
+                //description: load data
+                self.search = function() {
+
+                    $('.empty-row-message').html('<div class="loader"></div>'); // Reset New and Edit row
+                    // Check whether New or Edit data is existing and not saved to database yet (on Ajax Action)
+                    if (SKTIS.Checker.modifiedDataExistsForAjax([self.gridView.listNewItems, self.gridView.listEditItems]) == true) {
+                        return;
+                    } else {
+                        self.gridView.listNewItems.removeAll();
+                        self.gridView.listEditItems.removeAll();
+                    }
+
+                    self.filterUnitCodeSearch(self.filterUnitCode()); // fill filter for pagination
+                    self.filterProcessSettingsCodeSearch(self.filterProcessSettingsCode()); // fill filter for pagination
+
+                    self.filterExcelLocationCode = self.filterLocationCode();
+                    self.filterExcelUnitCode = self.filterUnitCode();
+                    self.filterExcelProcessSettingsCode = self.filterProcessSettingsCode();
+                    self.gridView.search({}, function (response) {
+                        if (response.status == 'KO') {
+                            SKTIS.Helper.Notification(response.message,'error');
+                            $('.empty-row-message').html(response.message);
+                        }else if (response.status == 'Empty') {
+
+                            self.RemoveNotification();
+
+                            //SKTIS.Helper.Notification(response.message,'warning');
+                            $('.empty-row-message').html('@CommonLabel.lblDataEmpty');
+                        }
+
+                        $('.selectpicker').selectpicker('render');
+                    });
+
+                    self.RemoveNotification = function() {
+                        if ($('#noty_top_layout_container').length > 0) {
+                            $('#noty_top_layout_container').remove();
+                        }
+                    };
+
+                };
+
+                SKTIS.Checker.modifiedDataExists([self.gridView.listNewItems, self.gridView.listEditItems]);
+                $(document).ready(function(){
+                    self.initFilter();
+                    self.search();
+                });
+            };
+            ko.applyBindings(new app.EditGrid());
+        })(app = this.app || {});
+
+    </script>
+}

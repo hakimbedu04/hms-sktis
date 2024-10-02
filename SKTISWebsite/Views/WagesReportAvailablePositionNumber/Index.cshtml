@@ -1,0 +1,386 @@
+﻿@model SKTISWebsite.Models.WagesReportAvailablePositionNumber.InitWagesReportAvailablePositionNumberViewModel
+@using HMS.SKTIS.Application.Resources
+@using SKTISWebsite.Helper
+@{ Html.SetPageTitle("Available Position Number"); }
+<div class="container-fluid" data-bind="with: gridView">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="col-lg-8">
+                <div class="row">
+                    <label class="form-label col-lg-2">
+                        Location Code
+                    </label>
+                    <div class="col-lg-3">
+                        @*@Html.DropDownList("ddlFilterLocationCode", Model.PLNTChildLocation,
+                                                      new Dictionary<string, object> { { "data-bind", "value:$root.filterLocationCode, event : { change : $root.onLocationCodeChange}" },
+                                                                     { "class", "selectpicker show-tick form-controlt" },
+                                                                     {"data-live-search","true"},{"id","ddlFilterLocationCode"} })*@
+                        <select id="ddlFilterLocationCode"
+                                class="selectpicker show-tick form-control"
+                                data-live-search="true"
+                                data-bind="enable: !$root.isBusy(), selectPicker:$root.filterLocationCode, optionsText: 'LocationCode', optionsValue : 'LocationCode', optionsAfterRender: locationDesc, selectPickerOptions: { optionsArray: $root.itemLocations }, event : { change : $root.onLocationCodeChange}"></select>
+                    </div>
+                    <div class="col-lg-4">
+                        <input type="text" class="form-control" readonly="readonly" data-bind="value:$root.filterLocationName">
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="form-label col-lg-2">
+                        Unit
+                    </label>
+                    <div class="col-lg-3">
+                        <select class="selectpicker show-tick form-control" id="ddlUnitFilter"
+                                data-live-search="true"
+                                data-bind="enable: !$root.isBusy(), selectPicker: $root.filterUnit, optionsText: 'Text', optionsValue : 'Value', selectPickerOptions: { optionsArray: $root.UnitSelectList }, event : {change : $root.onUnitSelectedChange}"></select>
+                    </div>
+                </div>
+                @*<div class="row">
+                        <label class="form-label col-lg-2">
+                            Shift
+                        </label>
+                        <div class="col-lg-3">
+                            <select class="selectpicker show-tick form-control" id="ddlShiftFilter"
+                                    data-live-search="true"
+                                    data-bind="selectPicker: $root.filterShift, optionsText: 'Text', optionsValue : 'Value', selectPickerOptions: { optionsArray: $root.ShiftSelectList }, event : {change : $root.onShiftSelectedChange}"></select>
+                        </div>
+                    </div>*@
+                <div class="row">
+                    <label class="form-label col-lg-2">
+                        Process
+                    </label>
+                    <div class="col-lg-3">
+                        <select class="selectpicker show-tick form-control" id="ddlProcessFilter"
+                                data-live-search="true"
+                                data-bind="enable: !$root.isBusy(), selectPicker: $root.filterProcess, optionsText: 'Text', optionsValue : 'Value', selectPickerOptions: { optionsArray: $root.ProcessSelectList }, event: { change: $root.onProcessSelectedChange }"></select>
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="form-label col-lg-2">
+                        Status
+                    </label>
+                    <div class="col-lg-3">
+                        <select class="selectpicker show-tick form-control" id="ddlEmpStatus"
+                                data-live-search="true"
+                                data-bind="enable: !$root.isBusy(), selectPicker: $root.filterEmpStatus, optionsText: 'Text', optionsValue : 'Value', selectPickerOptions: { optionsArray: $root.empStatusSelectList }, event: { change: $root.onStatusSelectedChange }"></select>
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="form-label col-lg-2">
+                        Group
+                    </label>
+                    <div class="col-lg-3">
+                        <select class="selectpicker show-tick form-control" id="ddlGroupFilter"
+                                data-live-search="true"
+                                data-bind="enable: !$root.isBusy(), selectPicker: $root.filterGroup, optionsText: 'Text', optionsValue : 'Value', selectPickerOptions: { optionsArray: $root.groupSelectList }"></select>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="action-btn">
+                        @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.View.ToString()))
+                        {
+                            <button type="button" class="btn btn-primary" data-bind="click:$root.search,enable: !$root.isBusy()">@CommonLabel.btnView</button>
+                        }
+                        @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.Excel.ToString()))
+                        {
+                            using (Html.BeginForm("generateExcel", "WagesReportAvailablePositionNumber", FormMethod.Post, new { @data_bind = "submit: $root.generateExcel" }))
+                            {
+                                <input type="hidden" name="locationCode">
+                                <input type="hidden" name="unitCode" />
+                                <input type="hidden" name="processGroup" />
+                                <input type="hidden" name="statusEmp" />
+                                <input type="hidden" name="groupCode" />
+                                <button type="submit" class="btn btn-primary" data-bind="enable: !$root.isBusy()">@CommonLabel.btnExcel</button>
+                            }
+                        }
+                        
+                        @Html.Partial("GridViewPageSizeSelector")
+                    </div>
+                </div>
+            </div>
+            <div class="table-overflow">
+                <table class="table table-striped">
+                    <thead>
+                        <tr class="head">
+                            <th colspan="5">Employee Number Available</th>
+                        </tr>
+                        <tr class="head">
+                            <th rowspan="2" class="widthsmall">Location Code</th>
+                            <th rowspan="2" class="widthsmall">Unit</th>
+                            <th rowspan="2" class="widthsmall">Process Group</th>
+                            <th rowspan="2" class="widthsmall">Status</th>
+                            <th rowspan="2" class="widthsmall">Availabel No.</th>
+                        </tr>
+                    </thead>
+                    <tbody data-bind="foreach: listDataItems">
+                        <tr>
+                            <td class="center"><span data-bind="text:$data.LocationCode"></span></td>
+                            <td class="center"><span data-bind="text:$data.UnitCode"></span></td>
+                            <td class="center"><span data-bind="text:$data.ProcessSettingsCode"></span></td>
+                            <td class="center"><span data-bind="text:$data.Status"></span></td>
+                            <td class="right"><span data-bind="text:$data.EmployeeNumber"></span></td>
+                        </tr>
+                    </tbody>
+                    <tbody data-bind="visible: !listDataItems().length">
+                        <tr>
+                            <td colspan="5" class="empty-row-message"><div class="loader"></div></td>
+                        </tr>
+                    </tbody>
+
+                </table>
+            </div>
+            <div data-bind="if: (listDataItems() != null && listDataItems().length !== 0)">
+                @Html.Partial("GridViewFooter")
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts
+    {
+    <script src="~/Scripts/app/globalfunctions.js" type="text/javascript"></script>
+    <script src="~/Scripts/common/app.GridViewModel.js" type="text/javascript"></script>
+    <script src="~/Scripts/common/app.Extenders.js" type="text/javascript"></script>
+    <script type="text/javascript">
+
+    (function(app) {
+        app.EditGrid = function() {
+            var self = this;
+
+            self.itemLocations = ko.observableArray(@Html.Raw(Json.Encode(@Model.LocationNameLookupList)));
+            self.filterLocation = ko.observable($("#ddlFilterLocationCode").val());
+            self.filterLocationName = ko.observable('');
+            self.filterLocationCode = ko.observable(self.filterLocation());
+            self.filterUnit = ko.observable('');
+
+            self.filterProcess = ko.observable('');
+            self.filterEmpStatus = ko.observable('');
+            self.filterGroup = ko.observable('');
+
+            //================= busy button state ================//
+            self.isBusy = ko.observable(true);
+
+            $(document).ajaxComplete(function () {
+                if ($.active <= 1) {
+                    self.isBusy(false);
+                }
+            });
+
+            $(document).ajaxStart(function () {
+                if (!self.isBusy()) self.isBusy(true);
+            });
+            //================= busy button state ================//
+
+
+            self.onLocationCodeChange = function() {
+                self.getLocationNameFilter();
+                self.getUnitSelectListByLocation();
+                self.getProcessSelectListByLocation();
+                self.getEmpStatus();
+                self.getGroupAvailabelPositionNumberByLocationUniShiftAndProcess();
+
+            };
+
+            self.getLocationNameFilter = function() {
+                //for (var i = 0; i < self.itemLocations.length; i++) {
+                //    if (self.itemLocations[i].LocationCode == self.filterLocationCode()) {
+                //        self.filterLocationName(self.itemLocations[i].LocationName);
+                //        break;
+                //    }
+                //}
+                self.itemLocations().map(function(v) {
+                    if (typeof v.LocationCode !== 'undefined' && v.LocationCode == self.filterLocationCode()) {
+                        self.filterLocationName(v.LocationName);
+                    }
+                });
+
+                if (typeof cb == 'function') cb();
+            };
+
+            self.onUnitSelectedChange = function(){
+                self.getGroupAvailabelPositionNumberByLocationUniShiftAndProcess();
+
+            }
+
+            //self.onShiftSelectedChange = function(){
+            //    self.getGroupAvailabelPositionNumberByLocationUniShiftAndProcess();
+
+            //}
+
+            self.onProcessSelectedChange = function(){
+                self.getGroupAvailabelPositionNumberByLocationUniShiftAndProcess();
+
+            }
+
+            self.onStatusSelectedChange = function(){
+                self.getGroupAvailabelPositionNumberByLocationUniShiftAndProcess();
+
+            }
+
+            self.UnitSelectList = ko.observableArray();
+            self.getUnitSelectListByLocation = function() {
+                $.ajax({
+                    url: @Html.BaseUrl("WagesReportAvailablePositionNumber/GetUnits"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: { locationCode: self.filterLocationCode() },
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#ddlUnitFilter').find('option').remove();
+                        $('#ddlUnitFilter').selectpicker('refresh');
+                        self.UnitSelectList(data);
+                    }
+                });
+            };
+
+
+
+            self.ProcessSelectList = ko.observableArray();
+            self.getProcessSelectListByLocation = function() {
+                $.ajax({
+                    url: @Html.BaseUrl("WagesReportAvailablePositionNumber/GetProcess"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: {locationCode    : self.filterLocationCode()},
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#ddlProcessFilter').find('option').remove();
+                        $('#ddlProcessFilter').selectpicker('refresh');
+                        self.ProcessSelectList(data);
+                    }
+                });
+            };
+
+            self.empStatusSelectList = ko.observableArray([]);
+            self.getEmpStatus = function() {
+                $.ajax({
+                    url: @Html.BaseUrl("WagesReportAvailablePositionNumber/GetEmpStatusNested"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: {
+                        locationCode: self.filterLocationCode()
+                    },
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#ddlEmpStatus').find('option').remove();
+                        $('#ddlEmpStatus').selectpicker('refresh');
+                        self.empStatusSelectList(data);
+                    }
+                });
+            };
+
+            self.groupSelectList = ko.observableArray([]);
+            self.getGroupAvailabelPositionNumberByLocationUniShiftAndProcess = function()
+            {
+                if (self.filterLocationCode() && self.filterUnit()  &&  self.filterProcess() &&  self.filterEmpStatus() ) {
+                    return      $.ajax({
+                        url: @Html.BaseUrl("WagesReportAvailablePositionNumber/GetGroupAvailabelPositionNumberByLocationUniShiftAndProcess"),
+                        type: 'GET',
+                        contentType: 'application/json',
+                        async:false,
+                        data: { locationCode: self.filterLocationCode(), unit: self.filterUnit(), process: self.filterProcess(), status : self.filterEmpStatus()},
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#ddlGroupFilter').find('option').remove();
+                            $('#ddlGroupFilter').selectpicker('refresh');
+                            self.groupSelectList(data);
+
+                            //self.filterGroup(self.groupSelectList()[0]);
+
+                        }
+
+                    });
+                    return null;
+                }
+            };
+
+            self.gridView = new app.GridViewModel({
+                Criteria: {
+                    PageSize: 10,
+                    PageIndex: 1,
+                    SortExpression: "EmployeeNumber",
+                    SortOrder: "ASC",
+                    LocationCode: self.filterLocationCode,
+                    Status : self.filterEmpStatus,
+                    GroupCode : self.filterGroup,
+                    UnitCode : self.filterUnit
+
+                },
+                DataSourceUrl: @Html.BaseUrl("WagesReportAvailablePositionNumber/GetAvailablePositionNumberView"),
+                InlineEdit: true,
+                InsertRowFocusedControlIndex: 1
+
+            });
+
+            self.search = function() {
+                    $('.empty-row-message').html('<div class="loader"></div>'); // Reset New and Edit row
+
+                    if (SKTIS.Checker.modifiedDataExistsForAjax([self.gridView.listNewItems, self.gridView.listEditItems]) == true) {
+                        return;
+                    } else {
+                        self.gridView.listNewItems.removeAll();
+                        self.gridView.listEditItems.removeAll();
+                    }
+
+                    self.gridView.search({}, function(response) {
+                        if (response.status == 'KO') {
+                            SKTIS.Helper.Notification(response.message, 'error');
+                            $('.empty-row-message').html(response.message);
+                        } else if (response.status == 'Empty') {
+                            self.RemoveNotification();
+                            //SKTIS.Helper.Notification(response.message,'warning');
+                            $('.empty-row-message').html('@CommonLabel.lblDataEmpty');
+                        }
+                    });
+
+                    self.RemoveNotification = function() {
+                        if ($('#noty_top_layout_container').length > 0) {
+                            $('#noty_top_layout_container').remove();
+                        }
+                    };
+                };
+
+                self.search();
+                SKTIS.Checker.modifiedDataExists([self.gridView.listNewItems, self.gridView.listEditItems]);
+
+                //description : generateExcel
+                self.generateExcel = function(formElement) {
+                    $(formElement).find("input[name=locationCode]").val($('#ddlFilterLocationCode').val());
+                    $(formElement).find("input[name=unitCode]").val($('#ddlUnitFilter').val());
+                    $(formElement).find("input[name=processGroup]").val($('#ddlProcessFilter').val());
+                    $(formElement).find("input[name=statusEmp]").val($('#ddlEmpStatus').val());
+                    $(formElement).find("input[name=groupCode]").val($('#ddlGroupFilter').val());
+                    return true;
+                };
+
+
+                
+                //self.getLocationNameFilter();
+                self.filterLocation =  $("#ddlFilterLocationCode").val();
+
+                $(document).ready(function(){
+
+                    self.init();
+
+                });
+
+                self.init = function() {
+                    //Asynch setting
+                    async.series([
+                        function(callback) {
+                            self.onLocationCodeChange(callback);
+                        },
+                        function(callback) {
+                            //self.onYearSelectedChange(callback);
+                        }
+                    ]);
+
+                    self.firstLoad = false;
+                };
+
+            };
+            ko.applyBindings(new app.EditGrid());
+        })(app = this.app || {});
+
+    </script>
+}

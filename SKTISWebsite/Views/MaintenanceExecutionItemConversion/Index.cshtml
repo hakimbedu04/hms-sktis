@@ -1,0 +1,1713 @@
+﻿@model SKTISWebsite.Models.MaintenanceExecutionItemConversion.InitMaintenanceExecutionItemConversionViewModel
+@using HMS.SKTIS.Application.Resources.Views.MaintenanceExecutionItemConversion
+@using HMS.SKTIS.Application.Resources
+@using SKTISWebsite.Helper
+
+@{ Html.SetPageTitle(@MaintenanceExecutionItemConversion.PageTitle); }
+<style>
+    .red-text {
+        color: #f00 !important;
+    }
+</style>
+
+<div class="col-lg-12">
+    <div class="tabs" role="tabpanel">
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs" role="tablist" id="conversionequpment">
+            <li role="presentation" class="active"><a href="#eqsp" aria-controls="profile" role="tab" data-toggle="tab">Equipment to Sparepart</a></li>
+            <li role="presentation"><a href="#spsp" aria-controls="home" role="tab" data-toggle="tab">Sparepart to Sparepart</a></li>
+        </ul>
+        <!-- Tab panes -->
+        <div class="tab-content">
+            <!--Equipment to Sparepart--->
+            <div role="tabpanel" class="tab-pane fade in active" id="eqsp" data-bind="with: gridViewES">
+                <div class="col-lg-6">
+                    <div class="row">
+                        <label class="form-label col-lg-4">
+                            Location
+                        </label>
+                        <div class="col-lg-2">
+                            @*@Html.DropDownList("ddlLocationFilterES", Model.Locations,
+                                new Dictionary<string, object> { { "data-bind", "value:$root.filterLocationES, event : { change : $root.GetLocationNameFilterES}" },
+                                    { "class", "selectpicker show-tick form-controlt" },
+                                    {"data-live-search","true"},{"id","ddlLocationFilterES"} })*@
+                            @Html.DropDownList("ddlLocationFilterES", new SelectList(Model.Locations, "LocationCode", "LocationCompat"),
+                            new
+                            {
+                                @class = "selectpicker show-tick form-control",
+                                id = "ddlLocationFilterES",
+                                data_live_search = "true",
+                                data_bind = "value:$root.filterLocationES, event : { change : $root.GetLocationNameFilterES}",
+                                data_size = "15",
+                                disabled = "disabled"
+                            })
+                        </div>
+                        <div class="col-lg-4">
+                            <input type="text" class="form-control" id="spLocationNameFilterES" readonly="true" data-bind="text:$root.filtersES.LocationName">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label class="form-label nopadding col-lg-4">
+                            KPS Year
+                        </label>
+                        <div class="col-lg-4">
+                            @Html.DropDownList("ddlYearFilterES", Model.YearSelectList,
+                                new Dictionary<string, object> { { "data-bind", "value:$root.filterKPSYearES, event : { change : $root.GetKpsWeeksES}" },
+                                    { "class", "selectpicker show-tick form-controlt" },
+                                    {"data-live-search","true"},{"id","ddlYearFilterES"},{"disabled","disabled"} })
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label class="form-label col-lg-4">
+                            KPS Week
+                        </label>
+                        <div class="col-lg-4">
+                            <select id="ddlWeekFilterES" class="selectpicker show-tick form-control" data-live-search="true"
+                                    data-bind="enable: !$root.isBusy(), selectPicker: $root.filterKPSWeekES, optionsText: 'Value', optionsValue : 'Text', selectPickerOptions: { optionsArray: $root.KpsWeekListES },  event : { change : $root.SetDateRangeES}"></select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label class="form-label col-lg-4">
+                            Transaction Date
+                        </label>
+                        <div class="col-lg-4">
+                            <div id="filterTransactionDateES" class='input-group date time' data-bind="dateTimePicker: $root.filterTransactionDateES, value: $root.filterTransactionDateES, dateTimePickerOptions: {widgetPositioning: {vertical: 'bottom'}, showClear: true, ignoreReadonly: true}">
+                                <input id="dtFilterTransactionDate" class="form-control" readonly="readonly" data-bind="enable: !$root.isBusy()" />
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="action-btn">
+                            @if (ViewBag.ButtonAccess.Contains(String.Format("{0}/{1}", HMS.SKTIS.Core.Enums.TabName.EquipmenttoSparePart, HMS.SKTIS.Core.Enums.ButtonName.View)))
+                            {
+                                <button type="button" class="btn btn-primary" data-bind="click:$root.searchES, enable: !$root.isBusy()">@CommonLabel.btnView</button>
+                            }
+                            @if (ViewBag.ButtonAccess.Contains(String.Format("{0}/{1}", HMS.SKTIS.Core.Enums.TabName.EquipmenttoSparePart, HMS.SKTIS.Core.Enums.ButtonName.Save)))
+                            {
+                                <button type="button" class="btn btn-primary" data-bind="click:$root.saveDataES, enable: !$root.isBusy()">@CommonLabel.btnSave</button>
+                            }
+                            @if (ViewBag.ButtonAccess.Contains(String.Format("{0}/{1}", HMS.SKTIS.Core.Enums.TabName.EquipmenttoSparePart, HMS.SKTIS.Core.Enums.ButtonName.Excel)))
+                                {
+                                    using (Html.BeginForm("GenerateExcelSE", "MaintenanceExecutionItemConversion", FormMethod.Post, new { @data_bind = "submit: $root.generateExcelSE" }))
+                                    {
+                                    <input type="hidden" name="conversionTypeES" />
+                                    <input type="hidden" name="locationCodeES" />
+                                    <input type="hidden" name="locationNameES" />
+                                    <input type="hidden" name="kpsYearES" />
+                                    <input type="hidden" name="kpsWeekES" />
+                                    <input type="hidden" name="transactionDateES" />
+                                    <button type="submit" class="btn btn-primary" data-bind="enable: !$root.isBusy()">@CommonLabel.btnExcel</button>
+                                    }
+                                }
+                            @Html.Partial("GridViewPageSizeSelector")
+                        </div>
+                    </div>
+                </div>
+                <div class="table-overflow">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr class="head">
+                                <th colspan="4">Source</th>
+                                <th rowspan="2"></th>
+                            </tr>
+                            <tr class="head">
+                                <th style="width: 200px">Source Status</th>
+                                <th data-bind="click:sortBy.bind($data,'ItemCodeSource'), css:sortCss('ItemCodeSource', $data.sortExpression(), $data.sortOrder())" class="widthsmall">Item Code</th>
+                                <th>Description</th>
+                                <th class="widthsmall">Qty</th>
+                            </tr>
+                            <tr class="insertRow" data-bind="click: cancelInline.bind(),inlineAddProccess:[$data, $root.newDataES]">
+                                <th>
+                                    <select class="selectpicker show-tick form-control" id="ddlListSourceStatusES" data-live-search="true"
+                                            data-bind="enable: !$root.isBusy(), enable: !$root.isBusy(), selectPicker: $root.newDataES.SourceStatus, optionsText: 'Text', optionsValue : 'Value',
+                                                       selectPickerOptions: { optionsArray: $root.SourceStatusListItemES, container: 'body' },
+                                                       event : { change: $root.onSourceStatusChangeES }"></select>
+                                </th>
+                                <th>
+                                    <select class="selectpicker show-tick form-control" id="ddlListItemCodeSourceES" data-live-search="true"
+                                            data-bind="enable: !$root.isBusy(), selectPicker: $root.newDataES.ItemCodeSource, optionsText: 'Text', optionsValue : 'Value',
+                                                       optionsAfterRender : $root.afterRender,
+                                                       selectPickerOptions: { optionsArray: $root.ListItemCodeSourceES, container: 'body' }, event : { change : $root.GetDescriptionItemCodeSourceES}"></select>
+                                </th>
+                                <th><span id="spItemCodeSourceDescriptionES" data-bind="text:$root.newDataES.ItemCodeSourceDescription" /></th>
+                                <th><input data-bind="enable: !$root.isBusy(), value:$root.newDataES.SourceStock, valueUpdate: 'afterkeydown'" class="form-control transparent" type="number" min="1" data-sktis-validation="number" /></th>
+                                <th class="widthdg15">
+                                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#itemDestinationInsert" data-bind="click:$root.ShowPopupInsert">Destination</button>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody data-bind="foreach: listDataItems">
+                            @* not past date *@
+                            <tr data-bind="if: ($parent.editingRowIndex() !== $index() && !$root.ValidateDateIsPast($data.UpdatedDate)), click: $parent.editInline3.bind($data,$index())">
+                                <td><span data-bind="text:$data.SourceStatus"></span></td>
+                                <td><span data-bind="text:$data.ItemCodeSource"></span></td>
+                                <td><span data-bind="text:$data.ItemCodeSourceDescription"></span></td>
+                                <td class="current"><span data-bind="decimal:$data.SourceStock"></span></td>
+                                <td class="center">
+                                    Destination
+                                </td>
+                            </tr>
+                            @* past date *@
+                            <tr data-bind="if: ($parent.editingRowIndex() !== $index() && $root.ValidateDateIsPast($data.UpdatedDate)), click: $parent.editInline3.bind($data,$index())">
+                                <td><span data-bind="text:$data.SourceStatus"></span></td>
+                                <td><span data-bind="text:$data.ItemCodeSource"></span></td>
+                                <td><span data-bind="text:$data.ItemCodeSourceDescription"></span></td>
+                                <td><span data-bind="decimal:$data.SourceStock"></span></td>
+                                <td class="center">
+                                    Destination
+                                </td>
+                            </tr>
+                            @* not past date *@
+                            <tr data-bind="validationOptions: {insertMessages: false, showTooltip:true, decorateInputElement: true, errorElementClass: 'input-error'}, inlineProccess:[$parent,$data],
+                                       if:($parent.editingRowIndex() === $index() && !$root.ValidateDateIsPast($data.UpdatedDate)),
+                                       click: $parent.selectRow.bind($data, $index()),
+                                        event: {keydown:$parent.keydown}">
+                                <td><span data-bind="text:$data.SourceStatus"></span></td>
+                                <td><span data-bind="text:$data.ItemCodeSource"></span></td>
+                                <td><span data-bind="text:$data.ItemCodeSourceDescription"></span></td>
+                                <td class="current"><input data-bind="value:$data.SourceStock, valueUpdate:'afterkeydown'" class="form-control transparent" type="number" min="1" data-sktis-validation="number" /></td>
+                                <td class="center">
+                                    <button id="btnShowPopupWhenEdit" type="button" class="btn btn-primary" data-toggle="modal"
+                                            data-target="#itemDestinationInsert"
+                                            data-bind="click:$root.ShowPopupEdit.bind($parent,$data)">
+                                        Destination
+                                    </button>
+                                </td>
+                            </tr>
+                            @* past date *@
+                            <tr data-bind="validationOptions: {insertMessages: false, showTooltip:true, decorateInputElement: true, errorElementClass: 'input-error'}, inlineProccess:[$parent,$data],
+                                       if:($parent.editingRowIndex() === $index() && $root.ValidateDateIsPast($data.UpdatedDate)),
+                                       click: $parent.selectRow.bind($data, $index()),
+                                        event: {keydown:$parent.keydown}">
+                                <td><span data-bind="text:$data.SourceStatus"></span></td>
+                                <td><span data-bind="text:$data.ItemCodeSource"></span></td>
+                                <td><span data-bind="text:$data.ItemCodeSourceDescription"></span></td>
+                                <td><span data-bind="decimal:$data.SourceStock"></span></td>
+                                <td class="center">
+                                    <button id="btnShowPopupWhenEdit" type="button" class="btn btn-primary" data-toggle="modal" disabled
+                                            data-target="#itemDestinationInsert"
+                                            data-bind="click:$root.ShowPopupEdit.bind($parent,$data)">
+                                        Destination
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tbody data-bind="visible: !listDataItems().length">
+                            <tr>
+                                <td colspan="7" class="empty-row-message"><div class="loader"></div></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div data-bind="if: (listDataItems() != null && listDataItems().length !== 0)">
+                    @Html.Partial("GridViewFooter")
+                </div>
+            </div>
+            <!--Sparepart to Sparepart--->
+            <div role="tabpanel" class="tab-pane fade" id="spsp" data-bind="with: gridViewSS">
+                <div class="col-lg-6">
+                    <div class="row">
+                        <label class="form-label col-lg-4">
+                            Location
+                        </label>
+                        <div class="col-lg-2">
+                            @*@Html.DropDownList("ddlLocationFilterSS", Model.Locations,
+                                new Dictionary<string, object> { { "data-bind", "value:$root.filterLocationSS, event : { change : $root.GetLocationNameFilterSS}" },
+                                    { "class", "selectpicker show-tick form-controlt" },
+                                    {"data-live-search","true"},{"id","ddlLocationFilterSS"} })*@
+                            @Html.DropDownList("ddlLocationFilterSS", new SelectList(Model.Locations, "LocationCode", "LocationCompat"),
+                            new
+                            {
+                                @class = "selectpicker show-tick form-control",
+                                id = "ddlLocationFilterSS",
+                                data_live_search = "true",
+                                data_bind = "value:$root.filterLocationSS, event : { change : $root.GetLocationNameFilterSS}",
+                                data_size = "15",
+                                disabled = "disabled"
+                            })
+                        </div>
+                        <div class="col-lg-4">
+                            <input type="text" class="form-control" id="spLocationNameFilterSS" readonly="true" data-bind="text:$root.filtersSS.LocationName">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label class="form-label nopadding col-lg-4">
+                            KPS Year
+                        </label>
+                        <div class="col-lg-4">
+                            @Html.DropDownList("ddlYearFilterSS", Model.YearSelectList,
+                                                  new Dictionary<string, object> { { "data-bind", "value:$root.filterKPSYearSS, event : { change : $root.GetKpsWeeksSS}" },
+                                    { "class", "selectpicker show-tick form-controlt" },
+                                    {"data-live-search","true"},{"id","ddlYearFilterSS"},{"disabled", "disabled"} })
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label class="form-label col-lg-4">
+                            KPS Week
+                        </label>
+                        <div class="col-lg-4">
+                            <select id="ddlWeekFilterSS" class="selectpicker show-tick form-control" data-live-search="true"
+                                    data-bind="enable: !$root.isBusy(), selectPicker: $root.filterKPSWeekSS, optionsText: 'Value', optionsValue : 'Text', selectPickerOptions: { optionsArray: $root.KpsWeekListSS },  event : { change : $root.SetDateRangeSS}"></select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label class="form-label col-lg-4">
+                            Transaction Date
+                        </label>
+                        <div class="col-lg-4">
+                            <div id="filterTransactionDateSS" class='input-group date time' data-bind="dateTimePicker: $root.filterTransactionDateSS, enable: !$root.isBusy(), value: $root.filterTransactionDateSS, dateTimePickerOptions: {widgetPositioning: {vertical: 'bottom'}, showClear: true, ignoreReadonly: true}">
+                                <input id="dtFilterTransactionDate" class="form-control" readonly="readonly" data-bind="enable: !$root.isBusy()" />
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="action-btn">
+                            @if (ViewBag.ButtonAccess.Contains(String.Format("{0}/{1}", HMS.SKTIS.Core.Enums.TabName.SpareParttoSparePart, HMS.SKTIS.Core.Enums.ButtonName.View)))
+                            {
+                                <button type="button" class="btn btn-primary" data-bind="click:$root.searchSS, enable: !$root.isBusy()">@CommonLabel.btnView</button>
+                            }
+                            @if (ViewBag.ButtonAccess.Contains(String.Format("{0}/{1}", HMS.SKTIS.Core.Enums.TabName.SpareParttoSparePart, HMS.SKTIS.Core.Enums.ButtonName.Save)))
+                            {
+                                <button type="button" class="btn btn-primary" data-bind="click:$root.saveDataSS, enable: !$root.isBusy()">@CommonLabel.btnSave</button>
+                            }
+                            @if (ViewBag.ButtonAccess.Contains(String.Format("{0}/{1}", HMS.SKTIS.Core.Enums.TabName.SpareParttoSparePart, HMS.SKTIS.Core.Enums.ButtonName.Excel)))
+                                {
+                                    using (Html.BeginForm("GenerateExcel", "MaintenanceExecutionItemConversion", FormMethod.Post, new { @data_bind = "submit: $root.generateExcelSS" }))
+                                    {
+                                    <input type="hidden" name="conversionType" />
+                                    <input type="hidden" name="locationCode" />
+                                    <input type="hidden" name="locationName" />
+                                    <input type="hidden" name="kpsYear" />
+                                    <input type="hidden" name="kpsWeek" />
+                                    <input type="hidden" name="transactionDate" />
+                                    <button type="submit" class="btn btn-primary" data-bind="enable: !$root.isBusy()">@CommonLabel.btnExcel</button>
+                                    }
+                                }
+                            @Html.Partial("GridViewPageSizeSelector")
+                        </div>
+                    </div>
+                </div>
+                <div class="table-overflow">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr class="head">
+                                <th colspan="4">Source</th>
+                                <th colspan="4">Destination</th>
+                            </tr>
+                            <tr class="head">
+                                <th data-bind="click:sortBy.bind($data,'SourceStatus'), css:sortCss('SourceStatus', $data.sortExpression(), $data.sortOrder())" style="width: 200px">Item Status</th>
+                                <th data-bind="click:sortBy.bind($data,'ItemCodeSource'), css:sortCss('ItemCodeSource', $data.sortExpression(), $data.sortOrder())" class="widthsmall">Item Code</th>
+                                <th>Description</th>
+                                <th class="widthsmall">Qty</th>
+                                <th data-bind="click:sortBy.bind($data,'ItemCodeDestination'), css:sortCss('ItemCodeDestination', $data.sortExpression(), $data.sortOrder())" class="widthsmall">Item Code</th>
+                                <th>Description</th>
+                                <th class="widthsmall" style="display: none">QtyConvert</th>
+                                <th class="widthsmall">Qty</th>
+                            </tr>
+                            <tr class="insertRow" data-bind="click: cancelInline.bind(),inlineAddProccess:[$data, $root.newDataSS]">
+                                <th>
+                                    <select class="selectpicker show-tick form-control" id="ddlListSourceStatusSS" data-live-search="true"
+                                            data-bind="enable: !$root.isBusy(), selectPicker: $root.newDataSS.SourceStatus, optionsText: 'Text', optionsValue : 'Value',
+                                                       selectPickerOptions: { optionsArray: $root.SourceStatusListItemSS, container: 'body' }, event : { change: $root.GetListItemCodeSourceSS }"></select>
+                                </th>
+                                <th>
+                                    <select class="selectpicker show-tick form-control" id="ddlListItemCodeSourceSS" data-live-search="true"
+                                            data-bind="enable: !$root.isBusy(), selectPicker: $root.newDataSS.ItemCodeSource, optionsText: 'Text', optionsValue : 'Value',
+                                                       optionsAfterRender : $root.afterRender,
+                                                       selectPickerOptions: { optionsArray: $root.ListItemCodeSourceSS, container: 'body' }, event : { change : $root.GetDescriptionItemCodeSourceSS}"></select>
+                                </th>
+                                <th><span id="spItemCodeSourceDescriptionSS" data-bind="text:$root.newDataSS.ItemCodeSourceDescription" /></th>
+                                <th><input data-bind="enable: !$root.isBusy(),value:$root.QtyItemCodeSourceSS, valueUpdate: 'afterkeydown'" class="form-control transparent" type="number" data-sktis-validation="number" min="1" /></th>
+                                <th>
+                                    <select class="selectpicker show-tick form-control" id="ddlListItemCodeDestinationSS" data-live-search="true"
+                                            data-bind="enable: !$root.isBusy(), selectPicker: $root.newDataSS.ItemCodeDestination, optionsText: 'Text', optionsValue : 'Value',
+                                                       optionsAfterRender : $root.afterRender,
+                                                       selectPickerOptions: { optionsArray: $root.ListItemCodeDestinationSS, container: 'body' }, event : { change : $root.GetDescriptionItemCodeDestinationSS}"></select>
+                                </th>
+                                <th><span id="spItemCodeDestinationDescriptionSS" data-bind="text:$root.newDataSS.ItemCodeDestinationDescription" /></th>
+                                <th style="display: none"><span id="spQtyConvert" data-bind="text:$root.newDataSS.QtyConvert"></span></th>
+                                <th style="display: none"><span id="spDestinationStockSS" data-bind="text:$root.ComputedDestinationStockSS"></span></th>
+                                <th>
+                                    <input data-bind="css:{ 'red-text' : $root.newDataSS.QtyGood() != $root.ComputedDestinationStockSS() }, enable: !$root.isBusy(), value:$root.newDataSS.QtyGood, valueUpdate: 'afterkeydown'" class="form-control transparent" type="number" data-sktis-validation="number" min="1" />
+                                    @*<span data-bind="text:$root.newDataSS.QtyGood"></span>*@
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody data-bind="foreach: listDataItems">
+                            @* not past date *@
+                            <tr data-bind="if: ($parent.editingRowIndex() !== $index() && !$root.ValidateDateIsPast($data.UpdatedDate)), click: $parent.editInline3.bind($data,$index())">
+                                <td><span data-bind="text:$data.SourceStatus"></span></td>
+                                <td><span data-bind="text:$data.ItemCodeSource"></span></td>
+                                <td><span data-bind="text:$data.ItemCodeSourceDescription"></span></td>
+                                <td class="current"><span data-bind="decimal:$data.SourceStock"></span></td>
+                                <td><span data-bind="text:$data.ItemCodeDestination"></span></td>
+                                <td><span data-bind="text:$data.ItemCodeDestinationDescription"></span></td>
+                                <td style="display: none" class="center"><span data-bind="decimal:$data.QtyConvert"></span></td>
+                                <td style="display: none" class="center"><span data-bind="text:$data.DestinationStock"></span></td>
+                                <td class="center current"><span data-bind="text:$data.QtyGood"></span></td>
+                            </tr>
+                            @* past date *@
+                            <tr data-bind="if: ($parent.editingRowIndex() !== $index() && $root.ValidateDateIsPast($data.UpdatedDate)), click: $parent.editInline3.bind($data,$index())">
+                                <td><span data-bind="text:$data.SourceStatus"></span></td>
+                                <td><span data-bind="text:$data.ItemCodeSource"></span></td>
+                                <td><span data-bind="text:$data.ItemCodeSourceDescription"></span></td>
+                                <td><span data-bind="decimal:$data.SourceStock"></span></td>
+                                <td><span data-bind="text:$data.ItemCodeDestination"></span></td>
+                                <td><span data-bind="text:$data.ItemCodeDestinationDescription"></span></td>
+                                <td style="display: none" class="center"><span data-bind="decimal:$data.QtyConvert"></span></td>
+                                <td style="display: none" class="center"><span data-bind="text:$data.DestinationStock"></span></td>
+                                <td class="center"><span data-bind="text:$data.QtyGood"></span></td>
+                            </tr>
+                            @* not past date *@
+                            <tr data-bind="validationOptions: {insertMessages: false, showTooltip:true, decorateInputElement: true, errorElementClass: 'input-error'}, inlineProccess:[$parent,$data],
+                                       if:($parent.editingRowIndex() === $index() && !$root.ValidateDateIsPast($data.UpdatedDate)),
+                                       click: $parent.selectRow.bind($data, $index()),
+                                        event: {keydown:$parent.keydown}">
+                                <td><span data-bind="text:$data.SourceStatus"></span></td>
+                                <td><span data-bind="text:$data.ItemCodeSource"></span></td>
+                                <td><span data-bind="text:$data.ItemCodeSourceDescription"></span></td>
+                                <td class="current"><input data-bind="value:$data.SourceStock, valueUpdate:'afterkeydown'" class="form-control transparent" type="number" data-sktis-validation="number" min="1" /></td>
+                                <td><span data-bind="text:$data.ItemCodeDestination"></span></td>
+                                <td class="center"><span data-bind="text:$data.ItemCodeDestinationDescription"></span></td>
+                                <td style="display: none" class="center"><span data-bind="decimal:$data.QtyConvert"></span></td>
+                                <td style="display: none" class="center"><span data-bind="text:$data.DestinationStock" /></td>
+                                <td class="center current">
+                                    <input data-bind="value:$data.QtyGood, valueUpdate: 'afterkeydown'" class="form-control transparent" type="number" data-sktis-validation="number" min="1" />
+                                    @*<span data-bind="text:$data.QtyGood"></span>*@
+                                </td>
+                            </tr>
+                            @* past date *@
+                            <tr data-bind="validationOptions: {insertMessages: false, showTooltip:true, decorateInputElement: true, errorElementClass: 'input-error'}, inlineProccess:[$parent,$data],
+                                       if:($parent.editingRowIndex() === $index() && $root.ValidateDateIsPast($data.UpdatedDate)),
+                                       click: $parent.selectRow.bind($data, $index()),
+                                        event: {keydown:$parent.keydown}">
+                                <td><span data-bind="text:$data.SourceStatus"></span></td>
+                                <td><span data-bind="text:$data.ItemCodeSource"></span></td>
+                                <td><span data-bind="text:$data.ItemCodeSourceDescription"></span></td>
+                                <td><span data-bind="decimal:$data.SourceStock"></span></td>
+                                <td><span data-bind="text:$data.ItemCodeDestination"></span></td>
+                                <td class="center"><span data-bind="text:$data.ItemCodeDestinationDescription"></span></td>
+                                <td style="display: none" class="center"><span data-bind="decimal:$data.QtyConvert"></span></td>
+                                <td style="display: none" class="center"><span data-bind="text:$data.DestinationStock" /></td>
+                                <td class="center">
+                                    <span data-bind="text:$data.QtyGood"></span>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tbody data-bind="visible: !listDataItems().length">
+                            <tr>
+                                <td colspan="7" class="empty-row-message"><div class="loader"></div></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div data-bind="if: (listDataItems() != null && listDataItems().length !== 0)">
+                    @Html.Partial("GridViewFooter")
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal Insert-->
+    <div class="modal fade" id="itemDestinationInsert" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Item Destination</h4>
+                </div>
+                <div data-bind='foreach: $root.alerts'>
+                    <div data-bind="text: $data.message" class="message-error"></div>
+                </div>
+                <div class="modal-body">
+                    <div class="table-overflow">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr class="head">
+                                    <th>Item Code</th>
+                                    <th>Item Description</th>
+                                    <th style="display: none">Source Stock</th>
+                                    <th style="display: none">QTY Convert</th>
+                                    <th>QTY</th>
+                                    <th>Good Stock</th>
+                                    <th>Bad Stock</th>
+                                </tr>
+                            </thead>
+                            <tbody data-bind='foreach: $root.detailDestinations'>
+                                <tr>
+                                    <td><span data-bind="text: $data.ItemCodeDestination"></span></td>
+                                    <td><span data-bind="text: $data.ItemCodeDestinationDescription"></span></td>
+                                    <td style="display: none"><span data-bind="text: $data.SourceStock"></span></td>
+                                    <td style="display: none"><span data-bind="decimal: $data.QtyConvert"></span></td>
+                                    <td><span data-bind="text: $data.DestinationStock"></span></td>
+                                    <td class="current"><input class="form-control transparent right" data-bind="value: $data.GoodStock, valueUpdate: 'afterkeydown'" type="number" data-sktis-validation="digit" min="0"></td>
+                                    <td><span data-bind="text: $data.BadStock"></span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-bind="click:$root.saveDataItemDestination">OK</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal Insert End -->
+</div>
+
+@section Scripts
+{
+    <script src="~/Scripts/common/app.GridViewModel.js" type="text/javascript"></script>
+    <script type="text/javascript">
+    $(document).ready(function() {
+        $('#ddlLocationFilterES, #ddlLocationFilterSS').find("option[value='SKT']").remove();
+        $('#ddlLocationFilterES, #ddlLocationFilterSS').find("option[value='PLNT']").remove();
+        $('#ddlLocationFilterES, #ddlLocationFilterSS').find("option[value='TPO']").remove();
+        $('#ddlLocationFilterES, #ddlLocationFilterSS').selectpicker('refresh');
+        $('#ddlLocationFilterES, #ddlLocationFilterSS').change();
+    });
+
+    (function(app) {
+        app.EditGrid = function() {
+            var self = this;
+            self.itemLocations = @Html.Raw(Json.Encode(@Model.LocationNameLookupList));
+            self.itemDescriptions = @Html.Raw(Json.Encode(@Model.ItemDescriptions));
+            self.listMstConversion = @Html.Raw(Json.Encode(@Model.MsterItemConversionComposites));
+
+            self.filterLocationES = ko.observable($('#ddlLocationFilterES').val());
+            self.filterKPSYearES = ko.observable('@Model.DefaultYear');
+            self.filterKPSWeekES = ko.observable('@Model.DefaultWeek');
+            self.filterTransactionDateES = ko.observable('@Model.TodayDate');
+
+            self.filterLocationSS = ko.observable($('#ddlLocationFilterSS').val());
+            self.filterKPSYearSS = ko.observable('@Model.DefaultYear');
+            self.filterKPSWeekSS = ko.observable('@Model.DefaultWeek');
+            self.filterTransactionDateSS = ko.observable('@Model.TodayDate');
+
+            self.ItemCodeSourceSS = ko.observable('');
+            self.ItemCodeDestinationSS = ko.observable('');
+            self.QtyItemCodeSourceSS = ko.observable('');
+
+            self.initDateES = false;
+            self.initDateSS = false;
+
+            self.QuantityGoodForInsert = ko.observable(0);
+
+            self.QtyConvertForComputedSS = ko.observable(0);
+
+            self.endingStock = ko.observable(0);
+
+            //================= busy button state ================//
+            self.isBusy = ko.observable(true);
+
+            $(document).ajaxComplete(function () {
+                if ($.active <= 1) {
+                    self.isBusy(false);
+                    $("#ddlLocationFilterES").removeAttr("disabled");
+                    $("#ddlYearFilterES").removeAttr("disabled");
+                    $("#ddlLocationFilterSS").removeAttr("disabled");
+                    $("#ddlYearFilterSS").removeAttr("disabled");
+                    
+                    $('#ddlLocationFilterES, #ddlLocationFilterSS, #ddlYearFilterES,#ddlYearFilterSS ').selectpicker('refresh');
+                    console.log("ajaxStop");
+                }
+            });
+
+            $(document).ajaxStart(function () {
+                if (!self.isBusy()) {
+                    self.isBusy(true);
+                    console.log("ajaxStart");
+                    $("#ddlLocationFilterES").attr("disabled", "disabled");
+                    $("#ddlYearFilterES").attr("disabled", "disabled");
+                    $("#ddlLocationFilterSS").attr("disabled", "disabled");
+                    $("#ddlYearFilterSS").attr("disabled", "disabled");
+                    
+                    $('#ddlLocationFilterES, #ddlLocationFilterSS, #ddlYearFilterES,#ddlYearFilterSS ').selectpicker('refresh');
+                    console.log("ajaxStop");
+                }
+            });
+            //================= busy button state ================//
+
+
+
+            //self.SourceStatusSS = ko.observable('');
+            self.SourceStatusListItemSS = ko.observableArray([]);
+            self.onSourceStatusChangeSS = function() {
+                $.ajax({
+                    url: @Html.BaseUrl("MaintenanceExecutionItemConversion/GetReadyToUseAndBadStock"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: { conversionType: false },
+                    dataType: 'json',
+                    success: function(data) {
+                        var kpsWeekModel = [];
+                        $.each(data, function(index, value) {
+                            kpsWeekModel.push({ "Text": value.Text, "Value": value.Text });
+                            //console.log(value.Text);
+                        });
+                        self.SourceStatusListItemSS(kpsWeekModel);
+                    }
+                });
+            };
+
+            self.SourceStatusListItemES = ko.observableArray([]);
+            self.GetSourceStatusListItemsES = function() {
+                $.ajax({
+                    url: @Html.BaseUrl("MaintenanceExecutionItemConversion/GetReadyToUseAndBadStock"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: { conversionType: true },
+                    dataType: 'json',
+                    success: function(data) {
+                        var kpsWeekModel = [];
+                        $.each(data, function(index, value) {
+                            kpsWeekModel.push({ "Text": value.Text, "Value": value.Text });
+                            //console.log(value.Text);
+                        });
+                        self.SourceStatusListItemES(kpsWeekModel);
+                    }
+                });
+            };
+
+            self.onSourceStatusChange = function() {
+                self.GetListItemCodeSourceSS();
+            };
+
+            self.onSourceStatusChangeES = function() {
+                self.GetListItemCodeSourceES();
+            };
+
+            self.ListItemCodeSourceES = ko.observableArray([]);
+            self.AllListItemCodeSourceES = [];
+            self.GetListItemCodeSourceES = function() {
+                $.ajax({
+                    url: @Html.BaseUrl("MaintenanceExecutionItemConversion/GetItemCodeSource"),
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        'locationCode': $("#ddlLocationFilterES").val(),
+                        'conversionType': true,
+                        'sourceStatus': self.newDataES.SourceStatus(),
+                        'date': self.filterTransactionDateES()
+                    }),
+                    dataType: 'json',
+                    success: function(data) {
+                        self.ListItemCodeSourceES(data);
+                        self.AllListItemCodeSourceES = data;
+                        self.ResetListItemCodeSourceES();
+
+                        //$.each(self.equipmentItemDestinations(), function(index, value) {
+                        //    console.log('load ' + value);
+                        //});
+                    }
+                });
+            };
+
+            self.ResetListItemCodeSourceES = function() {
+                var temp;
+                temp = self.AllListItemCodeSourceES;
+                if (self.gridViewES.listDataItems().length > 0) {
+                    $.each(self.gridViewES.listDataItems(), function(index, value) {
+                        //console.log(value.ItemCodeSource);
+                        $.each(temp, function(i) {
+                            if (value.ItemCodeSource === temp[i].Value) {
+                                temp.splice(i, 1);
+                                return false;
+                            }
+                        });
+                    });
+                }
+
+                self.newDataES.ItemCodeSource = ko.observable('');
+
+                //$('#ddlListItemCodeSourceES').find('option').remove();
+                if (temp.length==0){
+                    $('#ddlListItemCodeSourceES').find('option').remove();
+                }
+
+                self.newDataES.ItemCodeSource('');
+                $("#ddlListItemCodeSourceES").val('');
+                self.ListItemCodeSourceES(temp);
+
+                $.each(temp, function(i, v) {
+                    if (i == 0) {
+                        self.newDataES.ItemCodeSource(v.Value);
+                        $("#ddlListItemCodeSourceES").val(v.Value);
+                    }
+                    //var itemDesc;
+                    //var itemCompat;
+                    //for (var i = 0; i < self.itemDescriptions.length; i++) {
+                    //    if (self.itemDescriptions[i].ItemCode == v.Value) {
+                    //        itemDesc = self.itemDescriptions[i].ItemDescription;
+                    //        break;
+                    //    }
+                    //}
+                    //itemCompat = itemDesc+ " - "+ v.Value;
+                    ///$('#ddlListItemCodeSourceES').append("<option value='" + v.Value + "'>" + itemCompat + "</option>");
+                    //$('#ddlListItemCodeSourceES').append("<option value='" + v.Value + "'>" + v.Value + "</option>");
+                    //$('#ddlListItemCodeSourceES').append("<option value='" + v.Value + "' title='"+v.Value+ "'data-content='<span class="+"'text'"+">"+itemDesc+" - "+"<span style='width: 55px; display: inline-block;'>"+v.Value+"</span></span> >" + v.Value + "</option>");
+                });
+                $('#ddlListItemCodeSourceES').selectpicker('refresh');
+                self.GetDescriptionItemCodeSourceES();
+                //console.log('ah '+self.newDataES.ItemCodeSource());
+            };
+
+            self.afterRender = function(options, item)
+            {
+                var itemDesc;
+                var itemCompat;
+                for (var i = 0; i < self.itemDescriptions.length; i++) {
+                    if (self.itemDescriptions[i].ItemCode == item.Value) {
+                        itemDesc = self.itemDescriptions[i].ItemDescription;
+                        break;
+                    }
+                }
+                itemCompat = itemDesc+ " - "+ item.Value;
+                
+                $(options).attr('title', item.Value);
+                $(options).attr(
+                    'data-content',
+                    "<span class='text'>"+ itemDesc +" - "+"<span style='width: 55px; display: inline-block;'>" + item.Value + "</span>" + "</span>"
+                );
+            }
+
+            self.ListItemCodeSourceSS = ko.observableArray([]);
+            self.AllListItemCodeSourceSS = [];
+            self.GetListItemCodeSourceSS = function() {
+                $.ajax({
+                    url: @Html.BaseUrl("MaintenanceExecutionItemConversion/GetItemCodeSourceSS"),
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        'locationCode': $("#ddlLocationFilterSS").val(),
+                        'conversionType': false,
+                        'sourceStatus': self.newDataSS.SourceStatus,
+                        'date': self.filterTransactionDateSS()
+                    }),
+                    dataType: 'json',
+                    success: function(data) {
+                        //$('#ddlListItemCodeSourceSS').find('option').remove();
+                        //$('#ddlListItemCodeSourceSS').selectpicker('refresh');
+                        //console.log(data);
+
+                        self.ListItemCodeSourceSS(data);
+                        self.AllListItemCodeSourceSS = data;
+                        self.ResetListItemCodeSourceSS();
+                    }
+                });
+            };
+
+            self.ResetListItemCodeSourceSS = function() {
+                var temp;
+                temp = self.AllListItemCodeSourceSS;
+
+                if (self.gridViewSS.listDataItems().length > 0) {
+                    $.each(self.gridViewSS.listDataItems(), function(index, value) {
+                        $.each(temp, function(i) {
+                            if (value.ItemCodeSource() === temp[i].Value) {
+                                temp.splice(i, 1);
+                                return false;
+                            }
+                        });
+                    });
+                }
+
+                self.newDataSS.ItemCodeSource = ko.observable('');
+
+                //$('#ddlListItemCodeSourceSS').find('option').remove();
+                if (temp.length==0){
+                    $('#ddlListItemCodeSourceSS').find('option').remove();
+                    $('#ddlListItemCodeDestinationSS').find('option').remove();
+                }
+                self.newDataSS.ItemCodeSource('');
+                self.ListItemCodeSourceSS(temp);
+                $.each(temp, function(i, v) {
+                    if (i == 0) {
+                        self.newDataSS.ItemCodeSource(v.Value);
+                        $("#ddlListItemCodeSourceSS").val(v.Value);
+                    }
+                    //$('#ddlListItemCodeSourceSS').append("<option value='" + v.Value + "'>" + v.Value + "</option>");
+                });
+                $('#ddlListItemCodeSourceSS').selectpicker('refresh');
+                $('#ddlListItemCodeDestinationSS').selectpicker('refresh');
+                self.GetDescriptionItemCodeSourceSS();
+            };
+
+            self.ListItemCodeDestinationSS = ko.observableArray([]);
+            self.GetListItemCodeDestinationSS = function() {
+                $.ajax({
+                    url: @Html.BaseUrl("MaintenanceExecutionItemConversion/GetItemCodeDestination"),
+                        type: 'GET',
+                        contentType: 'application/json',
+                        data: { locationCode: $("#ddlLocationFilterSS").val(), itemCodeSource: $("#ddlListItemCodeSourceSS").val(), conversionType: false },
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#ddlListItemCodeDestinationSS').find('option').remove();
+                            $('#ddlListItemCodeDestinationSS').selectpicker('refresh');
+                            self.ListItemCodeDestinationSS(data);
+                        }
+                    });
+                };
+
+                self.GetDescriptionItemCodeSourceES = function() {
+                    $('#spItemCodeSourceDescriptionES').html('');
+                    for (var i = 0; i < self.itemDescriptions.length; i++) {
+                        if (self.itemDescriptions[i].ItemCode == $("#ddlListItemCodeSourceES").val()) {
+                            $('#spItemCodeSourceDescriptionES').html(self.itemDescriptions[i].ItemDescription);
+                            self.newDataES.ItemCodeSourceDescription(self.itemDescriptions[i].ItemDescription);
+                            break;
+                        }
+                    }
+                }.bind(this);
+
+                self.GetDescriptionItemCodeSourceSS = function() {
+                    //console.log('masuk get description item code source ss')
+                    self.getEndingStock($("#ddlListItemCodeSourceSS").val());
+                    $('#spItemCodeSourceDescriptionSS').html('');
+                    for (var i = 0; i < self.itemDescriptions.length; i++) {
+                        if (self.itemDescriptions[i].ItemCode == $("#ddlListItemCodeSourceSS").val()) {
+                            $('#spItemCodeSourceDescriptionSS').html(self.itemDescriptions[i].ItemDescription);
+                            self.newDataSS.ItemCodeSourceDescription(self.itemDescriptions[i].ItemDescription);
+                            self.GetListItemCodeDestinationSS();
+                            self.ItemCodeSourceSS(self.itemDescriptions[i].ItemCode);
+                            break;
+                        }
+                    }
+                }.bind(this);
+
+                self.GetDescriptionItemCodeDestinationSS = function() {
+                    for (var i = 0; i < self.itemDescriptions.length; i++) {
+                        if (self.itemDescriptions[i].ItemCode == $("#ddlListItemCodeDestinationSS").val()) {
+                            $('#spItemCodeDestinationDescriptionSS').html(self.itemDescriptions[i].ItemDescription);
+                            self.newDataSS.ItemCodeDestinationDescription(self.itemDescriptions[i].ItemDescription);
+                            self.ItemCodeDestinationSS(self.itemDescriptions[i].ItemCode);
+                            self.GetQtyConvertSS();
+                            break;
+                        }
+                    }
+                }.bind(this);
+
+                self.GetQtyConvertSS = function() {
+                    for (var i = 0; i < self.listMstConversion.length; i++) {
+                        if (self.listMstConversion[i].ItemCodeSource == self.ItemCodeSourceSS() && self.listMstConversion[i].ItemCodeDestination == self.ItemCodeDestinationSS() && self.listMstConversion[i].ConversionType == false) {
+                            $('#spQtyConvert').html(self.listMstConversion[i].QtyConvert);
+                            self.newDataSS.QtyConvert(self.listMstConversion[i].QtyConvert);
+                            self.QtyConvertForComputedSS(self.listMstConversion[i].QtyConvert);
+                            break;
+                        }
+                    }
+                };
+
+                self.ComputedDestinationStockSS = ko.computed({
+                    read: function() {
+                        var value = parseFloat(self.QtyConvertForComputedSS()) * parseFloat(self.QtyItemCodeSourceSS());
+                        self.QuantityGoodForInsert(isNaN(value) ? 0 : value);
+                        return isNaN(value) ? 0 : value;
+                    },
+                    write: function(value) {
+                        //update your self.chosenAge().population value here
+                    },
+                    owner: this
+                });
+
+
+                self.GetLocationNameFilterES = function() {
+                    //console.log($('option:selected', $("#ddlLocationFilterES")).text());
+                    for (var i = 0; i < self.itemLocations.length; i++) {
+                        if (self.itemLocations[i].LocationCode == $("#ddlLocationFilterES").val()) {
+                            $('#spLocationNameFilterES').val(self.itemLocations[i].LocationName);
+                            $('option:selected', $("#ddlLocationFilterES")).text(self.itemLocations[i].LocationCode);
+                            break;
+                        }
+                    }
+                    self.GetListItemCodeSourceES();
+                }.bind(this);
+
+                self.GetLocationNameFilterSS = function() {
+                    for (var i = 0; i < self.itemLocations.length; i++) {
+                        if (self.itemLocations[i].LocationCode == $("#ddlLocationFilterSS").val()) {
+                            $('#spLocationNameFilterSS').val(self.itemLocations[i].LocationName);
+                            $('option:selected', $("#ddlLocationFilterSS")).text(self.itemLocations[i].LocationCode);
+                            break;
+                        }
+                    }
+                    self.GetListItemCodeSourceSS();
+                }.bind(this);
+
+                self.GetDefaultLocationNameFilterES = function() {
+                    var result = "";
+                    for (var i = 0; i < self.itemLocations.length; i++) {
+                        if (self.itemLocations[i].LocationCode == $("#ddlLocationFilterES").val()) {
+                            result = self.itemLocations[i].LocationName;
+                            $('#spLocationNameFilterES').val(self.itemLocations[i].LocationName);
+                            break;
+                        }
+                    }
+                    self.GetListItemCodeSourceES();
+                    return result;
+                };
+
+                self.GetDefaultLocationNameFilterSS = function() {
+                    var result = "";
+                    for (var i = 0; i < self.itemLocations.length; i++) {
+                        if (self.itemLocations[i].LocationCode == $("#ddlLocationFilterSS").val()) {
+                            result = self.itemLocations[i].LocationName;
+                            $('#spLocationNameFilterSS').val(self.itemLocations[i].LocationName);
+                            break;
+                        }
+                    }
+                    //self.GetListItemCodeSourceSS();
+                    return result;
+                };
+
+                self.getEndingStock = function(kode) {
+                    $.ajax({
+                        url: @Html.BaseUrl("MaintenanceExecutionItemConversion/GetEndingStock"),
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify({ itemCode: kode, locationCode: self.filterLocationSS(), date: self.filterTransactionDateSS() }),
+                        dataType: 'json',
+                        cache: false,
+                        success: function(data) {
+                            self.endingStock(data);
+                        }
+                    });
+                };
+
+                self.KpsWeekListES = ko.observableArray([]);
+                self.GetKpsWeeksES = function() {
+                    $.ajax({
+                        url: @Html.BaseUrl("MaintenanceExecutionItemConversion/GetWeekByYear"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: { year: self.filterKPSYearES() },
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#ddlWeekFilterES').find('option').remove();
+                        $('#ddlWeekFilterES').selectpicker('refresh');
+                        var kpsWeekModel = [];
+                        $.each(data, function(index, value) {
+                            kpsWeekModel.push({ "Text": value, "Value": value });
+                        });
+                        self.KpsWeekListES(kpsWeekModel);
+
+                        self.filterKPSWeekES(@Model.DefaultWeek);
+                        self.SetDateRangeES();
+                    }
+                });
+            };
+
+            self.KpsWeekListSS = ko.observableArray([]);
+            self.GetKpsWeeksSS = function() {
+                $.ajax({
+                    url: @Html.BaseUrl("MaintenanceExecutionItemConversion/GetWeekByYear"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: { year: self.filterKPSYearSS() },
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#ddlWeekFilterSS').find('option').remove();
+                        $('#ddlWeekFilterSS').selectpicker('refresh');
+                        var kpsWeekModel = [];
+                        $.each(data, function(index, value) {
+                            kpsWeekModel.push({ "Text": value, "Value": value });
+                        });
+                        self.KpsWeekListSS(kpsWeekModel);
+
+                        self.filterKPSWeekSS(@Model.DefaultWeek);
+                        self.SetDateRangeSS();
+                    }
+                });
+            };
+
+            self.newDataES = {
+                ItemCodeSource: ko.observable(''),
+                ItemCodeSourceDescription: ko.observable(''),
+                SourceStock: ko.observable(''),
+                ItemDestinationEquipments: ko.observableArray([]),
+                ConversionType: ko.observable(true),
+                SourceStatus: ko.observableArray([])
+            };
+
+            self.newDataSS = {
+                ItemCodeSource: ko.observable(''),
+                ItemCodeSourceDescription: ko.observable(''),
+                ItemCodeDestination: ko.observable(''),
+                ItemCodeDestinationDescription: ko.observable(''),
+                QtyConvert: ko.observable(0),
+                SourceStock: self.QtyItemCodeSourceSS,
+                DestinationStock: self.ComputedDestinationStockSS,
+                QtyGood: ko.observable(0),
+                QtyDisposal: ko.observable(''),
+                ConversionType: ko.observable(false),
+                SourceStatus: ko.observableArray([])
+            };
+
+            self.ComputedQuantitySS = ko.computed(function() {
+                var value = parseFloat(self.QtyConvertForComputedSS()) * parseFloat(self.QtyItemCodeSourceSS());
+                self.newDataSS.QtyGood(isNaN(value) ? 0 : value);
+                return isNaN(value) ? 0 : value;
+            });
+
+            function sparepartToSparepart(data) {
+                ko.mapping.fromJS(data, {}, this);
+                //console.log(data);
+                this.DestinationStock = ko.computed({
+                    read: function() {
+                        var result = parseFloat(this.SourceStock()) * parseFloat(this.QtyConvert());
+                        return isNaN(result) ? 0 : result;
+                    },
+                    write: function(value) {
+                        //update your self.chosenAge().population value here
+                    },
+                    owner: this
+                }, this);
+                //this.QtyGood = ko.computed({
+                //    read: function() {
+                //        var result = parseFloat(this.SourceStock()) * parseFloat(this.QtyConvert());
+                //        return isNaN(result) ? 0 : result;
+                //    },
+                //    write: function(value) {
+                //        //update your self.chosenAge().population value here
+                //    },
+                //    owner: this
+                //}, this);
+                this.QtyConvert = ko.pureComputed({
+                    read: function() {
+                        return self.QtyConvertForComputedSS();
+                    },
+                    write: function(value) {
+                        //update your self.chosenAge().population value here
+                    },
+                    owner: this
+                }, this);
+            }
+
+            self.DetailValue = ko.observableArray([]);
+            self.equipmentItemDestinations = ko.observableArray([]);
+            self.ShowPopupInsert = function() {
+                self.alerts([]);
+                if (self.newDataES.SourceStock() == "") self.newDataES.SourceStock(0);
+                self.GetEquipmentItemDestination(self.newDataES.ItemCodeSource(), self.newDataES.SourceStock(), true);
+            };
+
+            self.ShowPopupEdit = function(event) {
+                self.alerts([]);
+                self.GetEquipmentItemDestination(event.ItemCodeSource(), event.SourceStock(), false);
+            };
+
+            self.detailDestinations = ko.observableArray([]);
+
+            self.GetDetailItemDestinations = function(itemCodeSource, sourceStock) {
+                self.equipmentItemDestinations([]);
+                var list = [];
+                $.each(self.DetailValue(), function(index, value) {
+                    if (value.ItemCodeSource == itemCodeSource) {
+                        $.each(value.Items, function(i, val) {
+                            list.push(new self.detailDestination(val, itemCodeSource, sourceStock));
+                        });
+                    }
+                });
+                if (list.length > 0)
+                    self.equipmentItemDestinations(list);
+                else
+                    self.GetEquipmentItemDestination(itemCodeSource, sourceStock);
+            };
+
+            self.GetEquipmentItemDestination = function(itemCode, sourceStock, newData) {
+                var Criteria = {
+                    PageSize: 10,
+                    PageIndex: 1,
+                    SortExpression: "UpdatedDate",
+                    SortOrder: "DESC",
+                    ConversionType: true,
+                    LocationCode: self.filterLocationES(),
+                    KpsYear: self.filterKPSYearES(),
+                    KpsWeek: self.filterKPSWeekES(),
+                    TransactionDate: self.filterTransactionDateES()
+                };
+                Criteria = JSON.stringify({ sourceItemCode: itemCode, criteria: Criteria });
+                console.log(itemCode);
+                console.log(Criteria);
+                $.ajax({
+                    url: @Html.BaseUrl("MaintenanceExecutionItemConversion/GetDetailItemCodeDestination"),
+                    type: "POST",
+                    data: Criteria,
+                    dataType: "json",
+                    traditional: true,
+                    contentType: "application/json; charset=utf-8",
+                    success: function(data) {
+                        //console.log(data);
+                        self.detailDestinations([]);
+                        $.each(data, function(index, value) {
+                            self.detailDestinations.push(new self.detailDestination(value, itemCode, sourceStock, newData));
+                        });
+
+                    }
+                });
+            };
+
+            self.detailDestination = function(data, itemCode, sourceStock, newData) {
+
+                var subself = this;
+                subself.ItemCodeSource = ko.observable(itemCode);
+                subself.ItemCodeDestination = ko.observable(data.ItemCodeDestination);
+                subself.ItemCodeDestinationDescription = ko.observable(data.ItemCodeDestinationDescription);
+                subself.SourceStock = ko.observable(sourceStock);
+                subself.QtyConvert = ko.observable(data.QtyConvert);
+
+                var oldData = getDataFromTemp(itemCode, data.ItemCodeDestination);
+
+                var oldQtyGood = newData ? data.QtyGood == null ? oldData.QtyGood : data.QtyGood
+                    : oldData.QtyGood == null ? data.QtyGood : oldData.QtyGood;
+                var oldQtyDisposal = newData ? data.QtyDisposal == null ? oldData.QtyDisposal : data.QtyDisposal
+                    : oldData.QtyDisposal == null ? data.QtyDisposal : oldData.QtyDisposal;
+
+                subself.DestinationStock = ko.pureComputed(function() {
+                    return subself.SourceStock() * subself.QtyConvert(); //* subself.GoodStock()
+                });
+                subself.GoodStock = ko.observable(oldQtyGood);
+                //subself.BadStock = ko.observable(oldQtyDisposal);
+                subself.BadStock = ko.pureComputed(function() {
+                    return subself.DestinationStock() - subself.GoodStock();
+                });
+            };
+
+            function getDataFromTemp(itemCode, itemCodeDestination) {
+                var result = "";
+                $.each(self.DetailValue(), function(index, value) {
+                    if (value.ItemCodeSource != itemCode) return;
+                    $.each(value.Items, function(i, val) {
+                        if (val.ItemCodeSource == itemCode && val.ItemCodeDestination == itemCodeDestination)
+                            result = val;
+                    });
+
+                });
+                return result;
+            }
+
+            ;
+
+            self.alerts = ko.observableArray([]);
+            //description: save detail
+            self.saveDataItemDestination = function() {
+                //self.newDataES.ItemDestinationEquipments(self.detailDestinations());
+                //console.log(self.detailDestinations.ItemDestinationEquipments());
+
+                var detailValue = [];
+                var valueDetail = [];
+                var list = [];
+                var itemCodeSource = "";
+                var listAlerts = [];
+                var message = false;
+                $.each(self.detailDestinations(), function(index, value) {
+                    var qtyGood = value.GoodStock() == 'null' ? 0 : parseInt(value.GoodStock());
+                    var qtyDisposal = value.BadStock() == 'null' ? 0 : parseInt(value.BadStock());
+                    var qtyDestinationStock = value.DestinationStock() == 'null' ? 0 : parseInt(value.DestinationStock());
+                    //Check Validation
+                    qtyGood = (isNaN(qtyGood) ? 0 : qtyGood);
+                    qtyDisposal = (isNaN(qtyDisposal) ? 0 : qtyDisposal);
+                    qtyDestinationStock = (isNaN(qtyDestinationStock) ? 0 : qtyDestinationStock);
+
+                    if ((qtyGood + qtyDisposal) > qtyDestinationStock) {
+                        listAlerts.push({ 'message': 'Good Stock and Bad Stock ' + value.ItemCodeDestination() + ' must be less or equal than! ' + qtyDestinationStock });
+                        message = true;
+                    }
+                    if (message) return;
+
+
+                    valueDetail = {
+                        "ItemCodeSource": value.ItemCodeSource(),
+                        "ItemCodeDestination": value.ItemCodeDestination(),
+                        "ItemCodeDestinationDescription": value.ItemCodeDestinationDescription(),
+                        "SourceStock": value.SourceStock(),
+                        "QtyConvert": value.QtyConvert(),
+                        "QtyGood": value.GoodStock(),
+                        "QtyDisposal": value.BadStock(),
+                        "DestinationStock": value.DestinationStock()
+                    };
+                    itemCodeSource = value.ItemCodeSource();
+                    list.push(valueDetail);
+                });
+
+                self.alerts(listAlerts);
+                console.log(self.alerts());
+
+                if (message) return;
+
+                self.newDataES.ItemDestinationEquipments(list);
+
+                detailValue = { "ItemCodeSource": itemCodeSource, Items: list };
+
+                if (self.DetailValue().length > 0) {
+                    $.each(self.DetailValue(), function(index, value) {
+                        if (typeof value != 'undefined') {
+                            if (value.ItemCodeSource == itemCodeSource) {
+                                self.DetailValue.remove(value);
+                            }
+                        }
+                    });
+                }
+
+                self.DetailValue.push(detailValue);
+
+                $('#itemDestinationInsert').modal('hide');
+            };
+
+            self.onFilterDateChangeSS = function() {
+                self.GetListItemCodeSourceSS();
+            };
+
+            self.onFilterDateChangeES = function() {
+                self.GetListItemCodeSourceES();
+            };
+
+            self.gridViewES = new app.GridViewModel({
+                Criteria: {
+                    PageSize: 10,
+                    PageIndex: 1,
+                    SortExpression: "UpdatedDate",
+                    SortOrder: "DESC",
+                    ConversionType: true,
+                    LocationCode: self.filterLocationES,
+                    KpsYear: self.filterKPSYearES,
+                    KpsWeek: self.filterKPSWeekES,
+                    TransactionDate: self.filterTransactionDateES
+                },
+                DataSourceUrl: @Html.BaseUrl("MaintenanceExecutionItemConversion/GetMaintenanceExecutionItemConversionES"),
+                InlineEdit: true,
+                InsertRowFocusedControlIndex: 1
+            });
+
+            //self.gridViewES.isBusy.subscribe(function(value) {
+            //    self.isBusy(value);
+            //})
+
+            // gridViewSS Initialization
+            self.gridViewSS = new app.GridViewModel({
+                Criteria: {
+                    PageSize: 10,
+                    PageIndex: 1,
+                    SortExpression: "UpdatedDate",
+                    SortOrder: "DESC",
+                    ConversionType: false,
+                    LocationCode: self.filterLocationSS,
+                    KpsYear: self.filterKPSYearSS,
+                    KpsWeek: self.filterKPSWeekSS,
+                    TransactionDate: self.filterTransactionDateSS
+                },
+                DataSourceUrl: @Html.BaseUrl("MaintenanceExecutionItemConversion/GetMaintenanceExecutionItemConversion"),
+                InlineEdit: true,
+                InsertRowFocusedControlIndex: 1
+            });
+
+            //self.gridViewSS.isBusy.subscribe(function(value) {
+            //    self.isBusy(value);
+            //})
+
+            self.gridViewSS.mapping = {
+                create: function(options) {
+                    return new sparepartToSparepart(options.data);
+                }
+            };
+
+            // Field Validations
+            self.gridViewES.applyValidationRules = function(entity) {
+
+                self.RemoveNotification();
+
+                entity.SourceStock.extend({
+                    required: {
+                        message: "<strong>Qty</strong> cannot be empty!"
+                    }
+                });
+                entity.ItemDestinationEquipments.extend({
+                    required: {
+                        message: "<strong>Destination</strong> cannot be empty!",
+                        onlyIf: function() {
+                            return self.DetailValue().length === 0 && entity.ItemDestinationEquipments() !== null;
+                        }
+                    }
+                });
+
+            };
+
+            // Remove Value in Dropdownlist after Insert
+            self.gridViewES.onAfterInsert = function(insertedData) {
+                console.log(insertedData.ItemCodeSource());
+                $.each(self.ListItemCodeSourceES(), function(index, value) {
+                    console.log(value.Value);
+                    if (typeof value != 'undefined') {
+                        if (value.Value == insertedData.ItemCodeSource()) {
+                            self.ListItemCodeSourceES.remove(function(value) {
+                                return value.Value == insertedData.ItemCodeSource();
+                            });
+                        }
+                    }
+                });
+                if (self.ListItemCodeSourceES().length < 1) {
+                    $('#ddlListItemCodeSourceES').find('option').remove();
+                    $('#ddlListItemCodeSourceES').selectpicker('refresh');
+                }
+                ;
+            };
+
+            // Field Validations
+            self.gridViewSS.applyValidationRules = function(entity) {
+
+                self.RemoveNotification();
+
+                entity.SourceStock.extend({
+                    required: {
+                        message: "<strong>Qty</strong> cannot be empty!"
+                    }
+                    //,
+                    //max:{
+                    //    params: self.endingStock(),
+                    //    message: "<strong>Source Stock</strong> value cannot be greater than ending stock!"
+                    //}
+                });
+
+                entity.ItemCodeSource.extend({
+                    required: {
+                        message: "<strong>Item Code Source</strong> cannot be empty!"
+                    }
+                });
+                entity.ItemCodeDestination.extend({
+                    required: {
+                        message: "<strong>Item Code Destination</strong> cannot be empty!"
+                    }
+                });
+                entity.QtyGood.extend({
+                    required: {
+                        message: "<strong>Qty Destination</strong> cannot be empty!"
+                    }
+                    //,
+                    //max: {
+                    //    params: entity.DestinationStock,
+                    //    message: "<strong>Qty</strong> value must be greater or equal than! " + entity.DestinationStock()
+                    //}
+                });
+            };
+
+
+            // Reset Fields for Insert Row
+            self.gridViewES.resetDefault = function(viewModel) {
+                viewModel.SourceStock('');
+                viewModel.ItemDestinationEquipments([]);
+                viewModel.ConversionType(true);
+            };
+
+            // Reset Fields for Insert Row
+            self.gridViewSS.resetDefault = function(viewModel) {
+                //viewModel.ItemCodeSource('');
+                //viewModel.ItemCodeDestination('');
+                //viewModel.SourceStock('');
+                viewModel.QtyGood(0);
+                viewModel.QtyDisposal('');
+                viewModel.ConversionType(false);
+                self.QuantityGoodForInsert(0);
+            };
+
+            // Remove Value in Dropdownlist after Insert
+            //self.gridviewes.onafterinsert = function(inserteddata) {
+            //    $.each(self.listitemcodesourcees(), function(index, value) {
+            //        console.log(inserteddata.itemcodesource());
+            //        console.log(value.value);
+            //        if (typeof value != 'undefined') {
+            //            if (value.value == inserteddata.itemcodesource()) {
+            //                self.listitemcodesourcees.remove(function(value) {
+            //                    return value.value == inserteddata.itemcodesource();
+            //                });
+            //            }
+            //        }
+            //    });
+            //    if (self.listitemcodesourcees().length < 1) {
+            //        $('#ddllistitemcodesourcees').find('option').remove();
+            //        $('#ddllistitemcodesourcees').selectpicker('refresh');
+            //    };
+            //};
+
+            self.gridViewSS.onAfterInsert = function(insertedData) {
+                $.each(self.ListItemCodeSourceSS(), function(index, value) {
+                    if (typeof value != 'undefined') {
+                        if (value.Value == insertedData.ItemCodeSource()) {
+                            self.ListItemCodeSourceSS.remove(function(value) {
+                                return value.Value == insertedData.ItemCodeSource();
+                            });
+                        }
+                    }
+                });
+                if (self.ListItemCodeSourceSS().length < 1) {
+                    $('#ddlListItemCodeSourceSS').find('option').remove();
+                    $('#ddlListItemCodeSourceSS').selectpicker('refresh');
+                }
+                ;
+            };
+
+            self.saveDataES = function() {
+                if (self.gridViewES.editingRowIndex() !== -1)
+                    return;
+
+                if (self.gridViewES.listNewItems().length > 0) {
+                    var notif = false;
+                    if ($("#ddlLocationFilterES").val() == "") {
+                        SKTIS.Helper.Notification("<strong>Location</strong> cannot be empty!", '');
+                        notif = true;
+                    }
+
+                    if (self.filterTransactionDateES() == "") {
+                        SKTIS.Helper.Notification("<strong>Transaction Date</strong> cannot be empty!", '');
+                        notif = true;
+                    }
+                    if (notif) return;
+                }
+
+                $.each(self.gridViewES.listEditItems(), function(index, value) {
+                    if (typeof value != 'undefined') {
+                        var list = [];
+                        $.each(self.DetailValue(), function(index1, value1) {
+                            if (value1.ItemCodeSource == value.ItemCodeSource) {
+                                $.each(value1.Items, function(i, val) {
+                                    list.push({
+                                        "ItemCodeSource": val.ItemCodeSource,
+                                        "ItemCodeDestination": val.ItemCodeDestination,
+                                        "ItemCodeDestinationDescription": val.ItemCodeDestinationDescription,
+                                        "SourceStock": val.SourceStock,
+                                        "QtyConvert": val.QtyConvert,
+                                        "QtyGood": val.QtyGood,
+                                        "QtyDisposal": val.QtyDisposal,
+                                        "DestinationStock": val.DestinationStock
+                                    });
+                                });
+                            }
+                        });
+                        value.ItemDestinationEquipments = list;
+                    }
+                });
+
+                $.each(self.gridViewES.listNewItems(), function(k, v) {
+                    var shouldBeAsNew = ko.utils.arrayFirst(self.gridViewES.listEditItems(), function(editItem) {
+                        if (editItem) {
+                            return editItem['ItemCodeSource'] == v['ItemCodeSource'];
+                        }
+                    });
+                    if (shouldBeAsNew) {
+                        self.gridViewES.listNewItems()[k] = shouldBeAsNew;
+                    }
+                    self.gridViewES.listEditItems.remove(function(data) {
+                        if (data) {
+                            return data['ItemCodeSource'] == v['ItemCodeSource'];
+                        }
+                    });
+                });
+
+                var datas = {
+                    "Parameters": { "LocationCode": self.filterLocationES(), "TransactionDate": self.filterTransactionDateES() },
+                    "new": self.gridViewES.listNewItems(),
+                    "edit": self.gridViewES.listEditItems()
+                };
+
+                datas = JSON.stringify(datas);
+                console.log(datas);
+                $.ajax({
+                    url: @Html.BaseUrl("MaintenanceExecutionItemConversion/SaveAllMaintenanceExecutionItemConversionES"),
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: datas,
+                    dataType: 'json',
+                    success: function(data) {
+                        //console.log(data);
+                        if (data.New) {
+                            $.each(data.New, function(k, value) {
+                                if (value)
+                                    SKTIS.Helper.ResponseNotification(value, "Insert Maintenance Item Conversion", value.ItemCodeSource);
+                            });
+                        }
+
+                        if (data.Edit) {
+                            $.each(data.Edit, function(k, value) {
+                                if (value)
+                                    SKTIS.Helper.ResponseNotification(value, "Edit Maintenance Item Conversion", value.ItemCodeSource);
+                            });
+                        }
+
+                        self.gridViewES.sort('UpdatedDate', 'DESC');
+                        self.gridViewES.listNewItems.removeAll();
+                        self.gridViewES.listEditItems.removeAll();
+
+                    }
+                });
+
+            };
+
+            // Save Action
+            self.saveDataSS = function() {
+                if (self.gridViewSS.editingRowIndex() !== -1)
+                    return;
+
+                $.each(self.gridViewSS.listNewItems(), function(k, v) {
+                    var shouldBeAsNew = ko.utils.arrayFirst(self.gridViewSS.listEditItems(), function(editItem) {
+                        if (editItem) {
+                            return editItem['ItemCodeSource'] == v['ItemCodeSource'] && editItem['ItemCodeDestination'] == v['ItemCodeDestination'];
+                        }
+                    });
+                    if (shouldBeAsNew) {
+                        self.gridViewSS.listNewItems()[k] = shouldBeAsNew;
+                    }
+                    self.gridViewSS.listEditItems.remove(function(data) {
+                        if (data) {
+                            return data['ItemCodeSource'] == v['ItemCodeSource'] && data['ItemCodeDestination'] == v['ItemCodeDestination'];
+                        }
+                    });
+                });
+
+                if (self.gridViewSS.listNewItems().length > 0) {
+                    var notif = false;
+                    if (self.filterLocationSS() == "") {
+                        SKTIS.Helper.Notification("<strong>Location</strong> cannot be empty!", '');
+                        notif = true;
+                    }
+
+                    if (self.filterTransactionDateSS() == "") {
+                        SKTIS.Helper.Notification("<strong>Transaction Date</strong> cannot be empty!", '');
+                        notif = true;
+                    }
+
+                    if (notif) return;
+                }
+
+                var datas = {
+                    "Parameters": { "LocationCode": self.filterLocationSS(), "TransactionDate": self.filterTransactionDateSS() },
+                    "new": self.gridViewSS.listNewItems(),
+                    "edit": self.gridViewSS.listEditItems()
+                };
+
+                datas = JSON.stringify(datas);
+
+                $.ajax({
+                    url: @Html.BaseUrl("MaintenanceExecutionItemConversion/SaveAllMaintenanceExecutionItemConversion"),
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: datas,
+                    dataType: 'json',
+                    success: function(data) {
+                        //console.log(data);
+                        if (data.New) {
+                            $.each(data.New, function(k, value) {
+                                if (value)
+                                    SKTIS.Helper.ResponseNotification(value, "Insert Maintenance Item Conversion", value.ItemCodeSource);
+                            });
+                        }
+
+                        if (data.Edit) {
+                            $.each(data.Edit, function(k, value) {
+                                if (value)
+                                    SKTIS.Helper.ResponseNotification(value, "Edit Maintenance Item Conversion", value.ItemCodeSource);
+                            });
+                        }
+
+                        self.gridViewSS.sort('UpdatedDate', 'DESC');
+                        self.gridViewSS.listNewItems.removeAll();
+                        self.gridViewSS.listEditItems.removeAll();
+
+                    }
+                });
+            };
+
+            self.filtersES = {
+                LocationName: self.GetDefaultLocationNameFilterES()
+            };
+
+            self.filtersSS = {
+                LocationName: self.GetDefaultLocationNameFilterSS()
+            };
+
+            self.GetKpsWeeksES();
+            self.GetKpsWeeksSS();
+
+            self.ValidateDateIsPast= function(date) {
+                if(ko.utils.unwrapObservable(date) === '' || typeof ko.utils.unwrapObservable(date) === 'undefined') return false;
+                console.log("validate is past " + ko.utils.unwrapObservable(date));
+                return moment(moment(ko.utils.unwrapObservable(date), 'DD/MM/YYYY').format('YYYY-MM-DD')).isBefore(moment().format('YYYY-MM-DD'));
+            };
+
+            self.generateExcelSE = function(formElement) {
+                $(formElement).find("input[name=conversionTypeES]").val(true);
+                //$(formElement).find("input[name=locationCodeES]").val(self.filterLocationES()+'-'+self.GetDefaultLocationNameFilterES());
+                $(formElement).find("input[name=locationCodeES]").val(self.filterLocationES());
+                $(formElement).find("input[name=locationNameES]").val(self.GetDefaultLocationNameFilterES());
+                $(formElement).find("input[name=kpsYearES]").val(self.filterKPSYearES());
+                $(formElement).find("input[name=kpsWeekES]").val(self.filterKPSWeekES());
+                $(formElement).find("input[name=transactionDateES]").val(self.filterTransactionDateES());
+                return true;
+            };
+
+            self.generateExcelSS = function(formElement) {
+                $(formElement).find("input[name=conversionType]").val(false);
+                //$(formElement).find("input[name=locationCode]").val(self.filterLocationSS()+'-'+self.GetDefaultLocationNameFilterSS());
+                $(formElement).find("input[name=locationCode]").val(self.filterLocationSS());
+                $(formElement).find("input[name=locationName]").val(self.GetDefaultLocationNameFilterSS());
+                $(formElement).find("input[name=kpsYear]").val(self.filterKPSYearSS());
+                $(formElement).find("input[name=kpsWeek]").val(self.filterKPSWeekSS());
+                $(formElement).find("input[name=transactionDate]").val(self.filterTransactionDateSS());
+                return true;
+            };
+
+            // Load Data gridViewES
+            self.searchES = function() {
+                $('.empty-row-message').html('<div class="loader"></div>'); // Reset New and Edit row
+                // Check whether New or Edit data is existing and not saved to database yet (on Ajax Action)
+                if (SKTIS.Checker.modifiedDataExistsForAjax([self.gridViewES.listNewItems, self.gridViewES.listEditItems]) == true) {
+                    return;
+                } else {
+                    self.gridViewES.listNewItems.removeAll();
+                    self.gridViewES.listEditItems.removeAll();
+                }
+
+                self.gridViewES.search({}, function(response) {
+                    if (response.status == 'KO') {
+                        SKTIS.Helper.Notification(response.message, 'error');
+                        $('.empty-row-message').html(response.message);
+                    } else if (response.status == 'Empty') {
+                        self.RemoveNotification();
+                        $('.empty-row-message').html('@CommonLabel.lblDataEmpty');
+                    }
+                    self.GetListItemCodeSourceES();
+                });
+            };
+
+            //self.searchES();
+
+            // Load Data gridViewSS
+            self.searchSS = function() {
+                $('.empty-row-message').html('<div class="loader"></div>'); // Reset New and Edit row
+                // Check whether New or Edit data is existing and not saved to database yet (on Ajax Action)
+                if (SKTIS.Checker.modifiedDataExistsForAjax([self.gridViewSS.listNewItems, self.gridViewSS.listEditItems]) == true) {
+                    return;
+                } else {
+                    self.gridViewSS.listNewItems.removeAll();
+                    self.gridViewSS.listEditItems.removeAll();
+                }
+
+                self.gridViewSS.search({}, function(response) {
+                    if (response.status == 'KO') {
+                        SKTIS.Helper.Notification(response.message, 'error');
+                        $('.empty-row-message').html(response.message);
+                    } else if (response.status == 'Empty') {
+                        self.RemoveNotification();
+                        $('.empty-row-message').html('@CommonLabel.lblDataEmpty');
+                    }
+                    //self.ResetListItemCodeSourceSS();
+                    //self.GetListItemCodeSourceSS();
+                });
+            };
+
+            //self.searchSS();
+
+            self.RemoveNotification = function() {
+                if ($('#noty_top_layout_container').length > 0) {
+                    $('#noty_top_layout_container').remove();
+                }
+            };
+
+            self.SetDateRangeES = function() {
+                if (self.initDateES) {
+                    if (self.filterKPSWeekES()) {
+                        $.ajax({
+                            url: @Html.BaseUrl("MaintenanceExecutionItemConversion/GetDateByYearWeek"),
+                            type: 'GET',
+                            contentType: 'application/json',
+                            data: { year: self.filterKPSYearES(), week: self.filterKPSWeekES() },
+                            dataType: 'json',
+                            success: function(data) {
+                                $('#filterTransactionDateES').data("DateTimePicker").options({
+                                    //date: moment(data.StartDate),
+                                    maxDate: moment(data.EndDate),
+                                    minDate: moment(data.StartDate).subtract(1, 'days')
+                                });
+
+                                if ((moment(self.filterTransactionDateES(), "DD-MM-YYYY").diff(moment(data.StartDate), 'days') < 0) || (moment(self.filterTransactionDateES(), "DD-MM-YYYY").diff(moment(data.EndDate), 'days') > 0)) {
+                                    self.filterTransactionDateES(moment(data.StartDate));
+                                }
+
+                            }
+                        });
+                    }
+                } else {
+                    self.initDateES = true;
+                }
+            };
+
+            self.SetDateRangeSS = function() {
+                if (self.initDateSS) {
+                    if (self.filterKPSWeekSS()) {
+                        $.ajax({
+                            url: @Html.BaseUrl("MaintenanceExecutionItemConversion/GetDateByYearWeek"),
+                            type: 'GET',
+                            contentType: 'application/json',
+                            data: { year: self.filterKPSYearSS(), week: self.filterKPSWeekSS() },
+                            dataType: 'json',
+                            success: function(data) {
+                                $('#filterTransactionDateSS').data("DateTimePicker").options({
+                                    //date: moment(data.StartDate),
+                                    maxDate: moment(data.EndDate),
+                                    minDate: moment(data.StartDate).subtract(1, 'days')
+                                });
+
+                                if ((moment(self.filterTransactionDateSS(), "DD-MM-YYYY").diff(moment(data.StartDate), 'days') < 0) || (moment(self.filterTransactionDateSS(), "DD-MM-YYYY").diff(moment(data.EndDate), 'days') > 0)) {
+                                    self.filterTransactionDateSS(moment(data.StartDate));
+                                }
+                            }
+                        });
+                    }
+                } else {
+                    self.initDateSS = true;
+                }
+            };
+
+
+            // Check whether New or Edit data is existing and not saved to database yet (on Request action)
+            SKTIS.Checker.modifiedDataExists([self.gridViewSS.listNewItems, self.gridViewSS.listEditItems, self.gridViewES.listNewItems, self.gridViewES.listEditItems]);
+
+
+            $('.col-lg-4 .input-group.date input').val('');
+            $(document).ready(function() {
+                //self.filterLocationES = ko.observable($('#ddlLocationFilterES').val());
+                //self.filterLocationSS = ko.observable($('#ddlLocationFilterSS').val());
+                self.searchSS();
+                self.searchES();
+
+                $('#filterTransactionDateES').on('dp.change', function(e) {
+                    self.GetListItemCodeSourceES();
+                    //self.filterTransactionDateES('');
+                });
+
+                $('#filterTransactionDateSS').on('dp.change', function(e) {
+                    self.GetListItemCodeSourceSS();
+                    //self.filterTransactionDateSS('');
+                });
+            });
+
+
+            self.onSourceStatusChangeSS();
+            self.GetSourceStatusListItemsES();
+
+        };
+        ko.applyBindings(new app.EditGrid());
+    }
+    )(app = this.app || {});
+    </script>
+}

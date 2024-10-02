@@ -1,0 +1,406 @@
+﻿@using HMS.SKTIS.Application.Resources
+@using HMS.SKTIS.Application.Resources.Views.MasterGenBrandGroupMaterial
+@using SKTISWebsite.Helper
+@model SKTISWebsite.Models.MasterBrandGroupMaterial.MasterBrandGroupMaterialIndexViewModel
+
+@{Html.SetPageTitle(@MasterGenBrandGroupMaterial.PageTitle);}
+<div class="col-lg-12" data-bind="with: gridView">
+    <div class="col-lg-6">
+        @*<div class="row">
+            <label class="form-label col-lg-4">
+                @MasterGenBrandGroupMaterial.lblLocation
+            </label>
+            <div class="col-lg-2">
+                @Html.DropDownList("ddlLocationFilter", Model.LocationCodeSelectList, new Dictionary<string, object>
+                {
+                    { "data-bind", "value:$root.filterLocation, event : { change : $root.GetLocationNameFilter}" },
+                    { "class", "selectpicker show-tick form-control" },
+                    { "data-live-search", "true" },
+                    {"id","ddlLocationFilter"}
+                })
+            </div>
+            <div class="col-lg-4">
+                <input type="text" class="form-control" data-bind="value:$root.filters" readonly>
+            </div>
+        </div>*@
+        <div class="row">
+            <label class="form-label col-lg-4">
+                @MasterGenBrandGroupMaterial.lblBrandGroup
+            </label>
+            <div class="col-lg-6">
+                <select id="ddlFilterBrandGroupCode" class="selectpicker show-tick form-control" data-live-search="true"
+                        data-bind="selectPicker: $root.BrandGroupCode, optionsText: 'Value', optionsCaption: '@CommonLabel.ddlSelectAll',optionsValue : 'Text', selectPickerOptions: { optionsArray: $root.BrandGroupCodeSelectList }"></select>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="action-btn">
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.View.ToString())) {
+                    <button type="button" class="btn btn-primary" data-bind="click: $root.search">@CommonLabel.btnView</button>
+                }
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.View.ToString()))
+                {
+                    <button type="button" class="btn btn-primary" data-bind="click: $root.saveData">@CommonLabel.btnSave</button>
+                }
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.View.ToString())) {
+                    using (Html.BeginForm("GenerateExcel", "MasterGenBrandGroupMaterial", FormMethod.Post, new { @data_bind = "submit: $root.generateExcel" }))
+                    {
+                        <input type="hidden" name="BrandGroupCode" />
+                        @*<input type="hidden" name="Location" />*@
+                        <button type="submit" class="btn btn-primary">@CommonLabel.btnExcel</button>
+                    }
+                }
+                @Html.Partial("GridViewPageSizeSelector")
+            </div>
+        </div>
+    </div>
+    <div id="master-brand">
+        <div class="table-overflow">
+            <table class="table table-striped">
+                <thead>
+                    <tr class="head">
+                        <th data-bind="click:sortBy.bind($data,'BrandGroupCode'), css:sortCss('BrandGroupCode', $data.sortExpression, $data.sortOrder())" class="widthsmall">Brand Group</th>
+                        <th data-bind="click:sortBy.bind($data,'MaterialCode'), css:sortCss('MaterialCode', $data.sortExpression, $data.sortOrder())" class="widthsmall">Material Code</th>
+                        <th data-bind="click:sortBy.bind($data,'MaterialName'), css:sortCss('MaterialName', $data.sortExpression, $data.sortOrder())" class="widthsmall">Material Name</th>
+                        <th data-bind="click:sortBy.bind($data,'Description'), css:sortCss('Description', $data.sortExpression, $data.sortOrder())" class="widthsmall">Description</th>
+                        <th data-bind="click:sortBy.bind($data,'Uom'), css:sortCss('Uom', $data.sortExpression, $data.sortOrder())" class="widthsmall">UOM</th>
+                        <th data-bind="click:sortBy.bind($data,'StatusActive'), css:sortCss('StatusActive', $data.sortExpression, $data.sortOrder())" class="widthsmall">Active</th>
+                        <th data-bind="click:sortBy.bind($data,'Remark'), css:sortCss('Remark', $data.sortExpression, $data.sortOrder())" class="widthsmall">Remark</th>
+                        <th data-bind="click:sortBy.bind($data,'UpdatedBy'), css:sortCss('UpdatedBy', $data.sortExpression, $data.sortOrder())" class="widthsmall">User Update</th>
+                        <th data-bind="click:sortBy.bind($data,'UpdatedDate'), css:sortCss('UpdatedDate', $data.sortExpression, $data.sortOrder())" class="widthsmall">Updated Date</th>
+                    </tr>
+                    <tr class="insertRow" data-bind="inlineAddProccess:[$data, $root.newData]">
+                        <th>
+                            <select id="inputBrandGroupCode" class="selectpicker show-tick form-control" data-live-search="true"
+                                    data-bind="selectPicker: $root.newData.BrandGroupCode, optionsText: 'Text' , optionsValue : 'Value', selectPickerOptions: { optionsArray: $root.BrandGroupCodeSelectList }"></select>
+                        </th>
+                        <th>
+                            <input data-bind="value:$root.newData.MaterialCode, valueUpdate: 'afterkeydown'" class="form-control transparent" />
+                            <span style="display:none" data-bind="text: $root.newData.OldMaterialCode"></span>
+                        </th>
+                        <th><input data-bind="value:$root.newData.MaterialName, valueUpdate: 'afterkeydown'" class="form-control transparent" /></th>
+                        <th><input data-bind="value:$root.newData.Description, valueUpdate: 'afterkeydown'" class="form-control transparent" /></th>
+                        <th>
+                            @Html.DropDownListFor(m => Model.Uom, Model.Uom, new Dictionary<string, object>
+                            {
+                                { "data-bind", "value:$root.newData.Uom" },
+                                { "class", "selectpicker show-tick form-control" },
+                                { "data-live-search", "true"}
+                            })
+                        </th>
+                        <th class="center"><input type="checkbox" data-bind="checked:$root.newData.StatusActive" /></th>
+                        <th><input data-bind="value:$root.newData.Remark, valueUpdate: 'afterkeydown'" class="form-control transparent" /></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody data-bind="foreach: listDataItems">
+                    @*item template*@
+                    <tr data-bind="if: ($parent.editingRowIndex() !== $index()),
+                                   click: $parent.editInline3.bind($data,$index())">
+                        <td><span data-bind="text: $data.BrandGroupCode"></span></td>
+                        <td class="current">
+                            <span data-bind="text: $data.MaterialCode"></span>
+                            <span style="display:none" data-bind="text: $data.OldMaterialCode"></span>
+                        </td>
+                        <td class="current"><span data-bind="text: $data.MaterialName"></span></td>
+                        <td class="current"><span data-bind="text: $data.Description"></span></td>
+                        <td class="current"><span data-bind="text: $data.Uom"></span></td>
+                        <td class="center current"><input type="checkbox" data-bind="checked: $data.StatusActive, enable:false" /></td>
+                        <td class="current"><span data-bind="text: $data.Remark"></span></td>
+                        <td><span data-bind="text: $data.UpdatedBy"></span></td>
+                        <td><span data-bind="text: $data.UpdatedDate"></span></td>
+                    </tr>
+                    @*edit template*@
+                    <tr data-bind="validationOptions: {insertMessages: false, showTooltip:true, decorateInputElement: true, errorElementClass: 'input-error'}, inlineProccess:[$parent,$data],
+                                   if:($parent.editingRowIndex() === $index()),
+                                   click: $parent.selectRow.bind($data, $index())">
+                        <td>
+                            @*<select id="editBrandGroupCode"
+                class="selectpicker show-tick form-control" data-live-search="true"
+                data-bind="value: $data.BrandGroupCode, optionsText: 'Text', optionsValue : 'Value', options: $root.BrandGroupCodeSelectList, isSelectPicker: true "></select>*@
+                            <span data-bind="text: $data.BrandGroupCode"></span>
+                        </td>
+                        <td class="current">
+                            <input data-bind="value: $data.MaterialCode, valueUpdate: 'afterkeydown'" class="form-control transparent" />
+                            <span style="display:none" data-bind="text: $data.OldMaterialCode"></span>
+                        </td>
+                        <td class="current"><input data-bind="value: $data.MaterialName, valueUpdate: 'afterkeydown'" class="form-control transparent" /></td>
+                        <td class="current"><input data-bind="value: $data.Description, valueUpdate: 'afterkeydown'" class="form-control transparent" /></td>
+                        <td class="current">
+                            @Html.DropDownListFor(m => m.Uom, Model.Uom, new Dictionary<string, object>
+                            {
+                                { "data-bind", "value:$data.Uom" },
+                                { "class", "selectpicker show-tick form-control" },
+                                {"data-live-search","true"}
+                            })
+                        </td>
+                        <td class="center current"><input type="checkbox" data-bind="checked:$data.StatusActive" /></td>
+                        <td class="current"><input data-bind="value: $data.Remark, valueUpdate: 'afterkeydown'" class="form-control transparent" /></td>
+                        <td><span data-bind="text: $data.UpdatedBy"></span></td>
+                        <td><span data-bind="text: $data.UpdatedDate"></span></td>
+                    </tr>
+                </tbody>
+                <tbody data-bind="visible: !listDataItems().length">
+                    <tr>
+                        <td colspan="9" class="empty-row-message"><div class="loader"></div></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div data-bind="if: (listDataItems() != null && listDataItems().length !== 0)">
+            @Html.Partial("GridViewFooter")
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script src="~/Scripts/common/app.GridViewModel.js" type="text/javascript"></script>
+    <script type="text/javascript">
+
+        (function (app) {
+            app.EditGrid = function () {
+
+                var self = this;
+                @*self.itemLocations = @Html.Raw(Json.Encode(@Model.LocationDescs));*@
+
+                // description: filter
+                //self.filterLocation = ko.observable($('#ddlLocationFilter').val());
+                self.BrandGroupCode = ko.observable($('#ddlFilterBrandGroupCode').val());
+
+                // function repopulate dropdown
+                function getBrandGroupCodeLists() {
+                    $.ajax({
+                        url: @Html.BaseUrl("MasterGenBrandGroupMaterial/GetBrandGroupByLocationCode"),
+                        type: 'GET',
+                        contentType: 'application/json',
+                        //data: {locationCode : self.filterLocation()},
+                        dataType: 'json',
+                        success: function(data) {
+
+                            //var listBrandGroupCode = [];
+
+                            // repopulate selectpicker
+                            $('#ddlFilterBrandGroupCode').find("option[value!='']").remove();
+                            $('#ddlFilterBrandGroupCode').selectpicker('refresh');
+
+                            $('#inputBrandGroupCode').find('option').remove();
+                            $('#inputBrandGroupCode').selectpicker('refresh');
+
+
+                            $('#editBrandGroupCode').find('option').remove();
+                            $('#editBrandGroupCode').selectpicker('refresh');
+
+                            //$.each(data, function(index, value) {
+                            //    listBrandGroupCode.push({ "Name": value.BrandGroupCode });
+                            //});
+                            self.BrandGroupCodeSelectList(data);
+
+                        }
+                    });
+                }
+
+
+                // description : BrandGroupCode data source
+                self.BrandGroupCodeSelectList = ko.observableArray([]);
+
+                getBrandGroupCodeLists();
+
+                //self.GetLocationNameFilter = function() {
+                //    self.filters("");
+                //    for (var i = 0; i < self.itemLocations.length; i++) {
+                //        if (self.itemLocations[i].LocationCode == self.filterLocation()) {
+                //            self.filters(self.itemLocations[i].LocationName);
+                //            break;
+                //        }
+                //    }
+                //    //$('#spLocationNameFilter').val(self.filters.LocationName);
+
+                //    // change related dropdown
+                //    getBrandGroupCodeLists();
+
+                //}.bind(this);
+
+                //self.GetDefaultLocationNameFilter = function() {
+                //    var result ="";
+                //    for (var i = 0; i < self.itemLocations.length; i++) {
+                //        if (self.itemLocations[i].LocationCode == $("#ddlLocationFilter").val()) {
+                //            result = self.itemLocations[i].LocationName;
+                //            break;
+                //        }
+                //    }
+                //    return result;
+                //};
+
+                //self.filters = ko.observable(self.GetDefaultLocationNameFilter());
+
+                // object new data
+                self.newData =
+                {
+                    MaterialCode: ko.observable(null),
+                    OldMaterialCode: ko.observable(null),
+                    //LocationCode: self.filterLocation,
+                    BrandGroupCode: ko.observableArray([]),
+                    MaterialName: ko.observable(null),
+                    Description: ko.observable(null),
+                    Uom: ko.observableArray([]),
+                    StatusActive: ko.observable(true),
+                    Remark: ko.observable(null)
+                };
+
+                // description: init grid
+                self.gridView = new app.GridViewModel({
+                    Criteria:
+                    {
+                        PageSize: 10,
+                        PageIndex: 1,
+                        SortExpression: "UpdatedDate",
+                        SortOrder: "DESC",
+                        BrandGroupCode: self.BrandGroupCode
+                        //,Location: self.filterLocation
+                    },
+                    DataSourceUrl: @Html.BaseUrl("MasterGenBrandGroupMaterial/Get"),
+                    InlineEdit: true,
+                    InsertRowFocusedControlIndex: 0
+                });
+
+                // Reset Fields for Insert Row
+                self.gridView.resetDefault = function (viewModel) {
+                    viewModel.MaterialCode(null);
+                    viewModel.OldMaterialCode(null);
+                    //viewModel.LocationCode([]);
+                    viewModel.BrandGroupCode([]);
+                    viewModel.MaterialName(null);
+                    viewModel.Description(null);
+                    viewModel.Uom([]);
+                    viewModel.StatusActive(true);
+                    viewModel.Remark(null);
+                };
+
+                // description: validations
+                self.gridView.applyValidationRules = function (entity) {
+
+                    self.RemoveNotification();
+
+                    entity.MaterialCode.extend({
+                        required: {
+                            message: "<strong>Material Code</strong> cannot be empty!"
+                        }
+                    });
+
+                    entity.MaterialName.extend({
+                        required: {
+                            message: "<strong>Material Name</strong> cannot be empty!"
+                        }
+                    });
+
+                    entity.BrandGroupCode.extend({
+                        required: {
+                            message: "<strong>Brand Group Code</strong> cannot be empty!"
+                        }
+                    });
+
+                    entity.Remark.extend({
+                        required: {
+                            message: "<strong>Remark</strong> cannot be empty!",
+                            onlyIf: function() {
+                                return entity.StatusActive() === false;
+                            }
+                        }
+                    });
+                };
+
+                // description: save bulk data
+                self.saveData = function () {
+                    if (self.gridView.editingRowIndex() !== -1)
+                        return;
+
+                    var datas =
+                    {
+                        "New": self.gridView.listNewItems(),
+                        "Edit": self.gridView.listEditItems()
+                    };
+
+                    datas = JSON.stringify(datas);
+
+                    $.ajax({
+                        url: @Html.BaseUrl("MasterGenBrandGroupMaterial/Save"),
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: datas,
+                        dataType: 'json',
+                        success: function (data) {
+                            if (data.New) {
+                                $.each(data.New, function (k, value) {
+                                    if (value) {
+                                        SKTIS.Helper.ResponseNotification(value, "Insert Master General Brand Group Material", value.BrandGroupCode);
+                                    }
+                                });
+                            }
+
+                            if (data.Edit) {
+                                $.each(data.Edit, function (k, value) {
+                                    if (value) {
+                                        SKTIS.Helper.ResponseNotification(value, "Edit Master General Brand Group Material", value.BrandGroupCode);
+                                    }
+                                });
+                            }
+
+                            self.gridView.sort('UpdatedDate', 'DESC');
+                            self.gridView.listNewItems.removeAll();
+                            self.gridView.listEditItems.removeAll();
+                        }
+                    });
+                };
+
+                self.generateExcel = function (formElement) {
+                    $(formElement).find("input[name=BrandGroupCode]").val(self.BrandGroupCode());
+                    //$(formElement).find("input[name=Location]").val(self.filterLocation());
+                    return true;
+                };
+
+                // description: load data
+                self.search = function () {
+
+                    $('.empty-row-message').html('<div class="loader"></div>'); // Reset New and Edit row
+                    // Check whether New or Edit data is existing and not saved to database yet (on Ajax Action)
+                    if (SKTIS.Checker.modifiedDataExistsForAjax([self.gridView.listNewItems, self.gridView.listEditItems]) == true) {
+                        return;
+                    }else{
+                        self.gridView.listNewItems.removeAll();
+                        self.gridView.listEditItems.removeAll();
+                    }
+
+                    self.gridView.search({}, function (response) {
+                        if (response.status == 'KO') {
+                            SKTIS.Helper.Notification(response.message,'error');
+                            $('.empty-row-message').html(response.message);
+                        }else if (response.status == 'Empty') {
+
+                            self.RemoveNotification();
+
+                            //SKTIS.Helper.Notification(response.message,'warning');
+                            $('.empty-row-message').html('@CommonLabel.lblDataEmpty');
+                        }
+                    });
+
+                    self.RemoveNotification = function() {
+                        if ($('#noty_top_layout_container').length > 0) {
+                            $('#noty_top_layout_container').remove();
+                        }
+                    };
+
+                };
+                self.search();
+
+                // Check whether New or Edit data is existing and not saved to database yet (on Request action)
+                SKTIS.Checker.modifiedDataExists([self.gridView.listNewItems, self.gridView.listEditItems]);
+            };
+
+            ko.applyBindings(new app.EditGrid());
+
+        })(app = this.app || {});
+    </script>
+}

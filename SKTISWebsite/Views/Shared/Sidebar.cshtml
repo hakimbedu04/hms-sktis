@@ -1,0 +1,775 @@
+﻿@using SKTISWebsite.Helper
+<div id="sidebar" class="hidden-print">
+    <ul id="fixed-menu">
+        <li>
+            <a href="@Url.Action("Index","Home")">
+                <i class="fa fa-home"></i><span>Homepage</span>
+            </a>
+        </li>
+        @if(UtilHelper.AccessPage("Productionplanning")){
+        <li>
+            <a class="sidebar-link trigger" data-toggle="dropdown" aria-expanded="true">
+                <i class="fa fa-pencil"></i><span>Production Planning</span>
+            </a>
+            <ul class="dropdown-menu sub-menu" role="menu" aria-labelledby="dropdownMenu2">
+                @if (UtilHelper.AccessPage("Productionplanning/WeeklyProductionPlanning"))
+                {
+                <li>
+                    @Html.ActionLink("Weekly Production Planning (WPP)", "Index", new { controller = "PlanningWPP" }, new { role = "menuitem" })
+                </li>
+                }
+                @if (UtilHelper.AccessPage("Productionplanning/Plant"))
+                {
+                <li class="dropdown-submenu">
+                    <a class="trigger" role="menuitem" data-toggle="dropdown" aria-expanded="true">Plant</a>
+                    <ul class="dropdown-menu sub-menu">
+                        @if (UtilHelper.AccessPage("Productionplanning/Plant/TargetProductionUnit"))
+                        {
+                        <li>
+                            @Html.ActionLink("Target Production Units (TPU)", "Index", new { controller = "PlanningPlantTPU" }, new { role = "menuitem" })
+                        </li>
+                        }
+                        @if (UtilHelper.AccessPage("Productionplanning/Plant/PlantTargetProductionGroup"))
+                        {
+                        <li>
+                            @Html.ActionLink("Target Production Groups (TPK)", "Index", new { controller = "PlanningPlantTPK" }, new { role = "menuitem" })
+                        </li>
+                        }
+                        @if (UtilHelper.AccessPage("Productionplanning/Plant/GroupShift"))
+                        {
+                        <li>
+                            @Html.ActionLink("Group Shift", "Index", new { controller = "PlantGroupShift" }, new { role = "menuitem" })
+                        </li>
+                        }
+                        @if (UtilHelper.AccessPage("Productionplanning/Plant/IndividualCapacity"))
+                        {
+                        <li>
+                            @Html.ActionLink("Individual Capacity", "Index", new { controller = "PlanningPlantIndividualCapacity" }, new { role = "menuitem" })
+                        </li>
+                        }
+                    </ul>
+                </li>
+                }
+                @if (UtilHelper.AccessPage("Productionplanning/TPO"))
+                {
+                <li class="dropdown-submenu">
+                    <a class="trigger" role="menuitem" data-toggle="dropdown" aria-expanded="true">TPO</a>
+                    <ul class="dropdown-menu sub-menu">
+                        @if (UtilHelper.AccessPage("Productionplanning/TPO/TPOTargetProductionGroup"))
+                        {
+                        <li>
+                            @Html.ActionLink("Target Production of Groups (TPK)", "Index", new { controller = "PlanningTPOTPK" }, new { role = "menuitem" })
+                        </li>
+                        }
+                    </ul>
+                </li>
+                }
+                @if (UtilHelper.AccessPage("Productionplanning/Report"))
+                {
+                <li class="dropdown-submenu">
+                    <a class="trigger" role="menuitem" data-toggle="dropdown" aria-expanded="true">Report</a>
+                    <ul class="dropdown-menu sub-menu">
+                        @if (UtilHelper.AccessPage("Productionplanning/Report/SummaryDailyProductionTarget"))
+                        {
+                        <li>
+                            @Html.ActionLink("Summary Daily Production Targets", "Index", new { controller = "PlanningReportProductionTarget" }, new { role = "menuitem" })
+                        </li>
+                        }
+                        @if (UtilHelper.AccessPage("Productionplanning/Report/SummaryProcessTarget"))
+                        {
+                        <li>
+                            @Html.ActionLink("Summary Process Targets", "Index", new { controller = "PlanningReportSummaryProcessTargets" }, new { role = "menuitem" })
+                        </li>
+                        }
+                    </ul>
+                </li>
+                }
+            </ul>
+        </li>
+        }
+        @if (UtilHelper.AccessPage("ProductionExecution"))
+        {
+        <li>
+            <a class="sidebar-link trigger" data-toggle="dropdown" aria-expanded="true">
+                <i class="fa fa-cubes"></i><span>Production Execution</span>
+            </a>
+            <ul class="dropdown-menu sub-menu" role="menu" aria-labelledby="dropdownMenu2">
+                @if (UtilHelper.AccessPage("ProductionExecution/Plant"))
+                {
+                <li class="dropdown-submenu">
+                    <a class="trigger" role="menuitem" data-toggle="dropdown" aria-expanded="true">Plant</a>
+                    <ul class="dropdown-menu sub-menu">
+                        @if (UtilHelper.AccessPage("ProductionExecution/Plant/ProductionEntryPrint"))
+                        {
+                        <li>
+                            @Html.ActionLink("Production Entry Print", "Index", new { controller = "ExeOthersProductionEntryPrint" }, new { role = "menuitem" })
+                        </li>
+                        }
+                        @if (UtilHelper.AccessPage("ProductionExecution/Plant/WorkerAbsenteeism"))
+                        {
+                        <li>
+                            @Html.ActionLink("Worker Absenteeism", "Index", new { controller = "ExePlantWorkerAbsenteeism" }, new { role = "menuitem" })
+                        </li>
+                        }
+                        @if (UtilHelper.AccessPage("ProductionExecution/Plant/WorkerBalancing"))
+                        {
+                        <li>
+                            @Html.ActionLink("Worker Balancing", "Index", new { controller = "ExePlantWorkerBalancing" }, new { role = "menuitem" })
+                        </li>
+                        }
+                        @if (UtilHelper.AccessPage("ProductionExecution/Plant/WorkerAssignment"))
+                        {
+                        <li>
+                            @Html.ActionLink("Worker Assignment", "Index", new { controller = "ExePlantWorkerAssignment" }, new { role = "menuitem" })
+                        </li>
+                        }
+                        @if (UtilHelper.AccessPage("ProductionExecution/Plant/PlantProductionEntry"))
+                        {
+                        <li>
+                            @Html.ActionLink("Production Entry", "Index", new { controller = "ExePlantProductionEntry" }, new { role = "menuitem" })
+                        </li>
+                        }
+                        @if (UtilHelper.AccessPage("ProductionExecution/Plant/ActualWorkHours"))
+                        {
+                        <li>
+                            @Html.ActionLink("Actual Work Hours", "Index", new { controller = "ExePlantActualWorkHours" }, new { role = "menuitem" })
+                        </li>
+                        }
+                        @if (UtilHelper.AccessPage("ProductionExecution/Plant/ProductionEntryVerification"))
+                        {
+                        <li>
+                            @Html.ActionLink("Production Entry Verification", "Index", new { controller = "ExePlantProductionEntryVerification" }, new { role = "menuitem" })
+                        </li>
+                        }
+                        @if (UtilHelper.AccessPage("ProductionExecution/Plant/MaterialUsages"))
+                        {  
+                        <li>
+                            @Html.ActionLink("Material Usages", "Index", new { controller = "ExePlantMaterialUsages" }, new { role = "menuitem" })
+                        </li>
+                        }
+                    </ul>
+                </li>
+                }
+                @if (UtilHelper.AccessPage("ProductionExecution/TPO"))
+                { 
+                <li class="dropdown-submenu">
+                    <a class="trigger" role="menuitem" data-toggle="dropdown" aria-expanded="true">TPO</a>
+                    <ul class="dropdown-menu sub-menu">
+                        @if (UtilHelper.AccessPage("ProductionExecution/TPO/TPOProductionEntry"))
+                        {
+                        <li>
+                            @Html.ActionLink("Production Entry", "Index", new { controller = "ExeTPOProductionEntry" }, new { role = "menuitem" })
+                        </li>
+                        }
+                        @if (UtilHelper.AccessPage("ProductionExecution/TPO/TPOActualWorksHours"))
+                        { 
+                        <li>
+                            @Html.ActionLink("Actual Work Hours", "Index", new { controller = "ExeTPOActualWorkHours" }, new { role = "menuitem" })
+                        </li>
+                        }
+                        @if (UtilHelper.AccessPage("ProductionExecution/TPO/TPOProductionEntryVerification"))
+                        { 
+                        <li>
+                            @Html.ActionLink("Production Entry Verification", "Index", new { controller = "ExeTPOProductionEntryVerification" }, new { role = "menuitem" })
+                        </li>
+                        }
+                    </ul>
+                </li>
+                }
+                @if (UtilHelper.AccessPage("ProductionExecution/Others"))
+                { 
+                <li class="dropdown-submenu">
+                    <a class="trigger" role="menuitem" data-toggle="dropdown" aria-expanded="true">Others</a>
+                    <ul class="dropdown-menu sub-menu">
+                        <!--<li>
+                            <a role="menuitem" href="execution-other-ck-submit-form.html" style="text-decoration: line-through;">CK Submit Form</a>
+                        </li>-->
+                        @if (UtilHelper.AccessPage("ProductionExecution/Others/ProductAdjustment"))
+                        { 
+                        <li>
+                            @Html.ActionLink("Product Adjustment", "Index", new { controller = "ExeProductAdjustment" }, new { role = "menuitem" })
+                        </li>
+                        }
+                        <!--<li>
+                            <a role="menuitem" href="execution-other-production-entry-verification.html" style="text-decoration: line-through;">Production Entry Verification</a>
+                        </li>-->
+                    </ul>
+                </li>
+                }
+                @if (UtilHelper.AccessPage("ProductionExecution/Report"))
+                { 
+                <li class="dropdown-submenu">
+                    <a class="trigger" role="menuitem" data-toggle="dropdown" aria-expanded="true">Reports</a>
+                    <ul class="dropdown-menu sub-menu">
+                        @if (UtilHelper.AccessPage("ProductionExecution/Report/ProductionReportbyGroup"))
+                        { 
+                        <li>
+                            @Html.ActionLink("Production Report by Group", "Index", new { controller = "ExeReportByGroup" }, new { role = "menuitem" })
+                        </li>
+                        }
+                        @if (UtilHelper.AccessPage("ProductionExecution/Report/ProductionReportbyStatus"))
+                        { 
+                        <li>
+                            @Html.ActionLink("Production Report by Status", "Index", new { controller = "ExeReportByStatus" }, new { role = "menuitem" })
+                        </li>
+                        }
+                        @if (UtilHelper.AccessPage("ProductionExecution/Report/ProductionReportbyProcess"))
+                        { 
+                        <li>
+                            @Html.ActionLink("Production Report by Process", "Index", new { controller = "ExeReportByProcess" }, new { role = "menuitem" })
+                        </li>
+                        }
+                        @if (UtilHelper.AccessPage("ProductionExecution/Report/ProductionandStockReportbyProcess"))
+                        { 
+                        <li>
+                            @Html.ActionLink("Production and Stock Report by Process", "Index", new { controller = "ExeReportProductionStock" }, new { role = "menuitem" })
+                        </li>
+                        }
+                        @if (UtilHelper.AccessPage("ProductionExecution/Report/DailyProductionAchievement"))
+                        { 
+                        <li>
+                            @Html.ActionLink("Daily Production Achievement", "Index", new { controller = "ExeReportDailyProduction" }, new { role = "menuitem" })
+                        </li>
+                        }
+                        @if (UtilHelper.AccessPage("ProductionExecution/Report/EMSSubmitted"))
+                        { 
+                        <li>
+                            @Html.ActionLink("EMS Source Data", "Index", new { controller = "ExeEMSSourceData" }, new { role = "menuitem" })
+                        </li>
+                        }
+                    </ul>
+                </li>
+                }
+            </ul>
+        </li>
+        }
+        @if (UtilHelper.AccessPage("PlantWages"))
+        {
+        <li>
+            <a class="sidebar-link trigger" data-toggle="dropdown" aria-expanded="true">
+                <i class="fa fa-usd"></i><span>Plant Wages</span>
+            </a>
+            <ul class="dropdown-menu sub-menu" role="menu" aria-labelledby="dropdownMenu2">
+                
+                @if (UtilHelper.AccessPage("PlantWages/Execution"))
+                {             
+                <li class="dropdown-submenu">
+                    <a class="trigger" role="menuitem" data-toggle="dropdown" aria-expanded="true">Execution</a>
+                    <ul class="dropdown-menu sub-menu">
+                        @if (UtilHelper.AccessPage("PlantWages/Execution/ProductionCard"))
+                        {
+                        <li>
+                            @Html.ActionLink("Production Card", "Index", new { controller = "ProductionCard" }, new { role = "menuitem" })
+                        </li>
+                        }
+                        @if (UtilHelper.AccessPage("PlantWages/Execution/ProductionCardApprovalList"))
+                        {
+                        <li>
+                            @Html.ActionLink("Production Card Approval", "Index", new { controller = "WagesProductionCardApproval" }, new { role = "menuitem" })
+                        </li>
+                        }
+                        @if (UtilHelper.AccessPage("PlantWages/Execution/EblekRelease"))
+                        {
+                        <li>
+                            @Html.ActionLink("Production Entry Release", "Index", new { controller = "WagesEblekRelease" }, new { role = "menuitem" })
+                            @*<a href="wages-eblek-release.html">Eblek Release</a>*@
+                        </li>
+                        }
+                        @if (UtilHelper.AccessPage("PlantWages/Execution/EblekReleaseApproval"))
+                        {
+                       <li>
+                            @Html.ActionLink("Production Entry Release Approval", "Index", new { controller = "EblekReleaseApproval" }, new { role = "menuitem" })
+                        </li>
+                        }
+                        @if (UtilHelper.AccessPage("PlantWages/Execution/ProductionCardRev."))
+                        {
+                        <li>
+                            @Html.ActionLink("Production Card Correction", "Index", new { controller = "WagesProductionCardCorrection" }, new { role = "menuitem" })
+                        </li>
+                        }
+                    </ul>
+                </li>
+                }
+                @if (UtilHelper.AccessPage("PlantWages/Execution/Report"))
+                { 
+                <li class="dropdown-submenu">
+                    <a class="trigger" role="menuitem" data-toggle="dropdown" aria-expanded="true">Reports</a>
+                    <ul class="dropdown-menu sub-menu">
+                        @if (UtilHelper.AccessPage("PlantWages/Execution/Report/AbsentsReport"))
+                        { 
+                        <li>
+                            @Html.ActionLink("Absents Report", "Index", new { controller = "WagesReportAbsents" }, new { role = "menuitem" })
+                        </li>
+                        }
+                        @if (UtilHelper.AccessPage("PlantWages/Execution/Report/SummaryProductionCard"))
+                        { 
+                        <li>
+                            @Html.ActionLink("Summary Production Card", "Index", new { controller = "WagesReportSummaryProductionCard" }, new { role = "menuitem" })
+                        </li>
+                        }
+                        @if (UtilHelper.AccessPage("PlantWages/Execution/Report/AvailablePositionNumber"))
+                        { 
+                        <li>
+                            @Html.ActionLink("Available Position Number", "Index", new { controller = "WagesReportAvailablePositionNumber" }, new { role = "menuitem" })
+                        </li>
+                        }
+                    </ul>
+                </li>
+                }
+            </ul>
+        </li>
+        }
+        @if (UtilHelper.AccessPage("TPOFee"))
+        {
+        <li>
+            <a class="sidebar-link trigger" data-toggle="dropdown" aria-expanded="true">
+                <i class="fa fa-money"></i><span>TPO Fee</span>
+            </a>
+            <ul class="dropdown-menu sub-menu" role="menu" aria-labelledby="dropdownMenu2">
+                @if (UtilHelper.AccessPage("TPOFee/Execution"))
+                { 
+                <li class="dropdown-submenu">
+                    <a class="trigger" role="menuitem" data-toggle="dropdown" aria-expanded="true">Execution</a>
+                    <ul class="dropdown-menu sub-menu">
+                        @if (UtilHelper.AccessPage("TPOFee/Execution/TPOFeeActual"))
+                        {
+                            <li>
+                                @Html.ActionLink("TPO Fee Actual", "Index", new { controller = "TPOFeeExeActual" }, new { role = "menuitem" })
+                            </li>
+                        }
+                        @if (UtilHelper.AccessPage("TPOFee/Execution/TPOFeeActual"))
+                        { 
+                        <li>
+                            @Html.ActionLink("TPO Fee Approval", "Index", new { controller = "TPOFeeExeActual" }, new { role = "menuitem" })
+                        </li>
+                        }
+                        @if (UtilHelper.AccessPage("TPOFee/Execution/TPOFeeAP"))
+                        { 
+                        <li>
+                            @*@Html.ActionLink("TPO Fee AP Open", "Index", new { controller = "TPOFeeAPOpen" }, new { role = "menuitem" })*@
+                            @Html.ActionLink("TPO Fee AP Open", "Index", new { controller = "TPOFeeExeAPOpen" }, new { role = "menuitem" })
+                        </li>
+                        }
+                        @if (UtilHelper.AccessPage("TPOFee/Execution/TPOFeeAPClose"))
+                        { 
+                        <li>
+                            @Html.ActionLink("TPO Fee AP Close", "Index", new { controller = "TPOFeeApClose" }, new { role = "menuitem" })
+                        </li>
+                        }
+                        @if (UtilHelper.AccessPage("TPOFee/Execution/TPOFeeGL"))
+                        { 
+                        <li>
+                            @Html.ActionLink("TPO Fee GL Accrued", "Index", new { controller = "TPOFeeExeGLAccrued" }, new { role = "menuitem" })
+                        </li>
+                        }
+                        @if (UtilHelper.AccessPage("TPOFee/Execution/TPOFeePlan"))
+                        { 
+                        <li>
+                            @Html.ActionLink("TPO Fee Plan", "Index", new { controller = "TPOFeeExePlan" }, new { role = "menuitem" })
+                        </li>
+                        }
+                    </ul>
+                </li>
+                }
+                @if (UtilHelper.AccessPage("TPOFee/Report"))
+                { 
+                <li class="dropdown-submenu">
+                    <a class="trigger" role="menuitem" data-toggle="dropdown" aria-expanded="true">Reports</a>
+                    <ul class="dropdown-menu sub-menu">
+                        <!-- <li><a role="menuitem" href="report-view-gl.html">View GL</a></li> -->
+                        @*<li style="text-decoration: line-through;">
+                                <a role="menuitem" href="fee-report-tpo-fee-summary.html">Summary TPO Fee</a>
+                            </li>*@
+                        @if (UtilHelper.AccessPage("TPOFee/Report/SummaryTPOFee"))
+                        {
+                            <li>
+                                @Html.ActionLink("Summary TPO Fee", "Index", new { controller = "TPOFeeReportsSummary" }, new { role = "menuitem" })
+                            </li>
+                        }
+                        @if (UtilHelper.AccessPage("TPOFee/Report/TPOPackageReport"))
+                        {
+                            <li>
+                                @Html.ActionLink("TPO Package Report", "Index", new { controller = "TPOFeeReportsPackage" }, new { role = "menuitem" })
+                            </li>
+                        }
+                        @if (UtilHelper.AccessPage("TPOFee/Report/TPORateReport"))
+                        {
+                            <li>
+                                @Html.ActionLink("TPO Production and Fee Report", "Index", new { controller = "TPOFeeReportsProduction" }, new { role = "menuitem" })
+                            </li>
+                        }
+                        
+                        <!--<li>
+                            <a role="menuitem" href="fee-report-tpo-rate-report.html">TPO Rate Report</a>
+                        </li>-->
+                    </ul>
+                </li>
+                }
+            </ul>
+        </li>
+        }
+        @if (UtilHelper.AccessPage("Maintenance"))
+        {
+        <li>
+            <a class="sidebar-link trigger" data-toggle="dropdown" aria-expanded="true">
+                <i class="fa fa-wrench"></i><span>Maintenance</span>
+            </a>
+            <ul class="dropdown-menu sub-menu" role="menu" aria-labelledby="dropdownMenu2">
+                @if (UtilHelper.AccessPage("Maintenance/Execution"))
+                { 
+                <li class="dropdown-submenu">
+                    <a class="trigger" role="menuitem" data-toggle="dropdown" aria-expanded="true">Execution</a>
+                    <ul class="dropdown-menu sub-menu">
+                        @if (UtilHelper.AccessPage("Maintenance/Execution/EquipmentRequest"))
+                        {
+                        <li>
+                            @Html.ActionLink("Equipment Request", "Index", new { controller = "EquipmentRequest" }, new { role = "menuitem" })
+                        </li>
+                        }
+                        @if (UtilHelper.AccessPage("Maintenance/Execution/EquipmentFullfillment"))
+                        { 
+                        <li>
+                            @Html.ActionLink("Equipment Fulfillment", "Index", new { controller = "EquipmentFulfillment" }, new { role = "menuitem" })
+                        </li>
+                        }
+                        @if (UtilHelper.AccessPage("Maintenance/Execution/EquipmentTransfer"))
+                        { 
+                        <li>
+                            @Html.ActionLink("Equipment Transfer", "Index", new { controller = "MaintenanceEquipmentTransfer" }, new { role = "menuitem" })
+                        </li>
+                        }
+                        @if (UtilHelper.AccessPage("Maintenance/Execution/EquipmentReceive"))
+                        { 
+                        <li>
+                            @Html.ActionLink("Equipment Receive", "Index", new { controller = "MaintenanceEquipmentReceive" }, new { role = "menuitem" })
+                        </li>
+                        }
+                        @if (UtilHelper.AccessPage("Maintenance/Execution/EquipmentRepairPlant"))
+                        { 
+                        <li>
+                            @Html.ActionLink("Equipment Repair Plant", "Index", new { controller = "EquipmentRepairPlant" }, new { role = "menuitem" })
+                        </li>
+                        }
+                        @if (UtilHelper.AccessPage("Maintenance/Execution/EquipmentRepairTPO"))
+                        { 
+                        <li>
+                            @Html.ActionLink("Equipment Repair TPO", "Index", new { controller = "EquipmentRepairTPO" }, new { role = "menuitem" })
+                        </li>
+                        }
+                        @if (UtilHelper.AccessPage("Maintenance/Execution/ItemConversion"))
+                        { 
+                        <li>
+                            @Html.ActionLink("Item Conversion", "Index", new { controller = "MaintenanceExecutionItemConversion" }, new { role = "menuitem" })
+                        </li>
+                        }
+                        @if (UtilHelper.AccessPage("Maintenance/Execution/ItemDisposal"))
+                        { 
+                        <li>
+                            @Html.ActionLink("Item Disposal", "Index", new { controller = "MaintenanceItemDisposal" }, new { role = "menuitem" })
+                        </li>
+                        }
+                        @if (UtilHelper.AccessPage("Maintenance/Execution/QualityInspection"))
+                        { 
+                        <li>
+                            @Html.ActionLink("Quality Inspection", "Index", new { controller = "MaintenanceEquipmentQualityInspection" }, new { role = "menuitem" })
+                        </li>
+                        }
+                        @if (UtilHelper.AccessPage("Maintenance/Execution/InventoryAdjustment"))
+                        { 
+                        <li>
+                            @Html.ActionLink("Inventory Adjustment", "Index", new { controller = "MaintenanceExecutionInventoryAdjustment" }, new { role = "menuitem" })
+                        </li>
+                        }
+                        @if (UtilHelper.AccessPage("Maintenance/Execution/Inventory"))
+                        { 
+                        <li>
+                            @Html.ActionLink("Inventory", "Index", new { controller = "MaintenanceExecutionInventory" }, new { role = "menuitem" })
+                        </li>
+                        }
+                    </ul>
+                </li>
+                }
+                @if (UtilHelper.AccessPage("Maintenance/Report"))
+                { 
+                <li class="dropdown-submenu">
+                    <a class="trigger" role="menuitem" data-toggle="dropdown" aria-expanded="true">Reports</a>
+                    <ul class="dropdown-menu sub-menu">
+                        @if (UtilHelper.AccessPage("Maintenance/Report/EquipmentStock"))
+                        { 
+                        <li>@Html.ActionLink("Equipment Stock", "Index", new { controller = "MaintenanceReportEquipmentStock" }, new { role = "menuitem" })</li>
+                        }
+                        @if (UtilHelper.AccessPage("Maintenance/Report/EquipmentRequirement"))
+                        { 
+                        <li>@Html.ActionLink("Equipment Requirement", "Index", new { controller = "MaintenanceReportEquipmentRequirement" }, new { role = "menuitem" })</li>
+                        }
+                    </ul>
+                </li>
+                }
+            </ul>
+        </li>
+        }
+        @if (UtilHelper.AccessPage("MasterData"))
+        {
+        <li>
+            <a class="sidebar-link trigger" data-toggle="dropdown" aria-expanded="true">
+                <i class="fa fa-cog"></i><span>Master Data</span>
+            </a>
+            <ul class="dropdown-menu sub-menu" role="menu" aria-labelledby="dropdownMenu2">
+                @if (UtilHelper.AccessPage("MasterData/General"))
+                { 
+                <li class="dropdown-submenu">
+                    <a class="trigger" role="menuitem" data-toggle="dropdown" aria-expanded="true">General</a>
+                    <ul class="dropdown-menu sub-menu">
+                        @if (UtilHelper.AccessPage("MasterData/General/ListGroup"))
+                        {  
+                        <li>
+                            @Html.ActionLink("List Group", "Index", new { controller = "MasterGenList" }, new { role = "menuitem" })
+                        </li>
+                        }
+                        @if (UtilHelper.AccessPage("MasterData/General/Location"))
+                        { 
+                        <li>
+                            @Html.ActionLink("Location", "Index", new { controller = "MasterGenLocation" }, new { role = "menuitem" })
+                        </li>
+                        }
+                        <!--<li style="text-decoration: line-through;">
+                            <a role="menuitem" href="master-material.html">Material</a>
+                        </li>-->
+                        @if (UtilHelper.AccessPage("MasterData/General/BrandGroup"))
+                        { 
+                        <li>
+                            @Html.ActionLink("Brand Group", "Index", new { controller = "MasterGenBrandGroup" }, new { role = "menuitem" })
+                        </li>
+                        }
+                        @if (UtilHelper.AccessPage("MasterData/General/BrandGroupMaterial"))
+                        { 
+                        <li>
+                            @Html.ActionLink("Brand Group Material", "Index", new { controller = "MasterGenBrandGroupMaterial" }, new { role = "menuitem" })
+                        </li>
+                        }
+                        @if (UtilHelper.AccessPage("MasterData/General/BrandGroupPackageMapping"))
+                        { 
+                        <li>
+                            @Html.ActionLink("Brand Package Mapping", "Index", new { controller = "MasterGenBrandPackageMapping" }, new { role = "menuitem" })
+                        </li>
+                        }
+                        @if (UtilHelper.AccessPage("MasterData/General/Brand"))
+                        { 
+                        <li>
+                            @Html.ActionLink("Brand", "Index", new { controller = "MasterGenBrand" }, new { role = "menuitem" })
+                        </li>
+                        }
+                        @if (UtilHelper.AccessPage("MasterData/General/Process"))
+                        { 
+                        <li>
+                            @Html.ActionLink("Process", "Index", new { controller = "MasterGenProcess" }, new { role = "menuitem" })
+                        </li>
+                        }
+                        @if (UtilHelper.AccessPage("MasterData/General/ProcessSetting"))
+                        { 
+                        <li>
+                            @Html.ActionLink("Process Setting", "Index", new { controller = "MasterGenProcessSetting" }, new { role = "menuitem" })
+                        </li>
+                        }
+                        @if (UtilHelper.AccessPage("MasterData/General/StandardHours"))
+                        { 
+                        <li>
+                            @Html.ActionLink("Standard Hours", "Index", new { controller = "MasterGenStandardHour" }, new { role = "menuitem" })
+                        </li>
+                        }
+                        @if (UtilHelper.AccessPage("MasterData/General/Holiday"))
+                        { 
+                        <li>
+                            @Html.ActionLink("Holiday", "Index", new { controller = "MasterGenHoliday" }, new { role = "menuitem" })
+                        </li>
+                        }
+                    </ul>
+                </li>
+                }
+                @if (UtilHelper.AccessPage("MasterData/TPO"))
+                { 
+                <li class="dropdown-submenu">
+                    <a class="trigger" role="menuitem" data-toggle="dropdown" aria-expanded="true">TPO</a>
+                    <ul class="dropdown-menu sub-menu">
+                        @*<li>
+                                @Html.ActionLink("TPO", "Index", new { controller = "MasterTPOInfo" }, new { role = "menuitem" })
+                            </li>*@
+                        @if (UtilHelper.AccessPage("MasterData/TPO/TPOPackages"))
+                        { 
+                        <li>
+                            @Html.ActionLink("TPO Packages", "Index", new { controller = "MasterTPOPackage" }, new { role = "menuitem" })
+                        </li>
+                        }
+                        @if (UtilHelper.AccessPage("MasterData/TPO/TPOFeeRate"))
+                        { 
+                        <li>
+                            @Html.ActionLink("TPO Fee Rate", "Index", new { controller = "MasterTPORate" }, new { role = "menuitem" })
+                        </li>
+                        }
+                        @if (UtilHelper.AccessPage("MasterData/TPO/ProductionGroup"))
+                        { 
+                        <li>
+                            @Html.ActionLink("Production Group", "Index", new { controller = "MasterTPOProductionGroup" }, new { role = "menuitem" })
+                        </li>
+                        }
+                        @if (UtilHelper.AccessPage("MasterData/TPO/TPOFeeSetting"))
+                        { 
+                        <li>
+                            @Html.ActionLink("TPO Fee Setting", "Index", new { controller = "TPOFeeSettingCalculation" }, new { role = "menuitem" })
+                        </li>
+                        }
+                    </ul>
+                </li>
+                }
+                @if (UtilHelper.AccessPage("MasterData/Plant"))
+                { 
+                <li class="dropdown-submenu">
+                    <a class="trigger" role="menuitem" data-toggle="dropdown" aria-expanded="true">Plant</a>
+                    <ul class="dropdown-menu sub-menu">
+                        @if (UtilHelper.AccessPage("MasterData/Plant/Unit"))
+                        { 
+                        <li>
+                            @Html.ActionLink("Unit", "Index", new { controller = "MasterPlantUnit" }, new { role = "menuitem" })
+                        </li>
+                        }
+                        @if (UtilHelper.AccessPage("MasterData/Plant/ProductionGroup"))
+                        { 
+                        <li>
+                            @Html.ActionLink("Production Group", "Index", new { controller = "MasterPlantProductionGroup" }, new { role = "menuitem" })
+                        </li>
+                        }
+                        @if (UtilHelper.AccessPage("MasterData/Plant/AbsentType"))
+                        { 
+                        <li>
+                            @Html.ActionLink("Absent Type", "Index", new { controller = "MasterPlantAbsentType" }, new { role = "menuitem" })
+                        </li>
+                        }
+                        @if (UtilHelper.AccessPage("MasterData/Plant/EmployeeJobData"))
+                        { 
+                        <li>
+                            @Html.ActionLink("Employee Job Data", "Index", new { controller = "MasterPlantEmployeeJobData" }, new { role = "menuitem" })
+                        </li>
+                        }
+                        @if (UtilHelper.AccessPage("MasterData/Plant/ClosingPayroll"))
+                        { 
+                        <li>
+                            @Html.ActionLink("Closing Payroll", "Index", new { controller = "MasterGenClosingPayroll" }, new { role = "menuitem" })
+                        </li>
+                        }
+                        <!-- <li><a role="menuitem" href="master-shift.html">Shift</a></li> -->
+                    </ul>
+                </li>
+                }
+                @if (UtilHelper.AccessPage("MasterData/Maintenance"))
+                { 
+                <li class="dropdown-submenu">
+                    <a class="trigger" role="menuitem" data-toggle="dropdown" aria-expanded="true">Maintenance</a>
+                    <ul class="dropdown-menu sub-menu">
+                        @if (UtilHelper.AccessPage("MasterData/Maintenance/Item"))
+                        { 
+                        <li>
+                            @Html.ActionLink("Item", "Index", new { controller = "MasterMntcItem" }, new { role = "menuitem" })
+                        </li>
+                        }
+                        @if (UtilHelper.AccessPage("MasterData/Maintenance/ItemLocation"))
+                        { 
+                        <li>
+                            @Html.ActionLink("Item Location", "Index", new { controller = "MasterMntcItemLocation" }, new { role = "menuitem" })
+                        </li>
+                        }
+                        @if (UtilHelper.AccessPage("MasterData/Maintenance/ItemConversion"))
+                        { 
+                        <li>
+                            @Html.ActionLink("Item Conversion", "Index", new { controller = "MasterMaintenanceConvert" }, new { role = "menuitem" })
+                        </li>
+                        }
+                        @if (UtilHelper.AccessPage("MasterData/Maintenance/PackageEquipments"))
+                        { 
+                        <li>
+                            @Html.ActionLink("Package Equipments", "Index", new { controller = "MasterGenBrandPackageItem" }, new { role = "menuitem" })
+                        </li>
+                        }
+                    </ul>
+                </li>
+                }
+                @if (UtilHelper.AccessPage("MasterData/NewsInfo"))
+                {
+                <li>
+                    @Html.ActionLink("News Info", "Index", new { controller = "News" }, new { role = "menuitem" })
+                </li>
+                }
+            </ul>
+        </li>
+        }
+        @if (UtilHelper.AccessPage("Utilities"))
+        {
+        <li>
+            <a class="sidebar-link trigger" data-toggle="dropdown" aria-expanded="true">
+                <i class="fa fa-shield"></i><span>Utilities</span>
+            </a>
+            <ul class="dropdown-menu sub-menu" role="menu" aria-labelledby="dropdownMenu2">
+                @if (UtilHelper.AccessPage("Utilities/Security"))
+                { 
+                <li class="dropdown-submenu">
+                    <a class="trigger" role="menuitem" data-toggle="dropdown" aria-expanded="true">Security</a>
+                    <ul class="dropdown-menu sub-menu">
+                        @if (UtilHelper.AccessPage("Utilities/Security/Rules"))
+                        { 
+                        <li>
+                            @Html.ActionLink("Rules", "Index", new { controller = "UtilSecurityRules" }, new { role = "menuitem" })
+                        </li>
+                        }
+                        @if (UtilHelper.AccessPage("Utilities/Security/Function"))
+                        { 
+                        <li>
+                            @Html.ActionLink("Functions", "Index", new { controller = "UtilSecurityFunctions" }, new { role = "menuitem" })
+                        </li>
+                        }
+                        @if (UtilHelper.AccessPage("Utilities/Security/Roles"))
+                        { 
+                        <li>
+                            @Html.ActionLink("Roles", "Index", new { controller = "UtilSecurityRoles" }, new { role = "menuitem" })
+                        </li>
+                        }
+                        @if (UtilHelper.AccessPage("Utilities/Security/Responsibilities"))
+                        { 
+                        <li>
+                            @Html.ActionLink("Responsibilities", "Index", new { controller = "UtilSecurityResponsibilities" }, new { role = "menuitem" })
+                        </li>
+                        }
+                        @if (UtilHelper.AccessPage("Utilities/Security/Responsibilities")) { 
+                        <li>
+                            @Html.ActionLink("Delegations", "Index", new { controller = "UtilSecurityDelegations" }, new { role = "menuitem" })
+                        </li>
+                        }
+                    </ul>
+                </li>
+                }
+                <li class="dropdown-submenu">
+                    <a class="trigger" role="menuitem" data-toggle="dropdown" aria-expanded="true">Workflows</a>
+                    <ul class="dropdown-menu sub-menu">
+                        <li>
+                            @Html.ActionLink("Flows", "Index", new { controller = "UtilWorkflowFlow" }, new { role = "menuitem" })
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
+        }
+        @if(UtilHelper.AccessPage("Report")){
+        <li>
+            <a aria-expanded="true" data-toggle="dropdown" class="sidebar-link trigger">
+                <i class="fa fa-shield"></i><span>Reports</span>
+            </a>
+            <ul aria-labelledby="dropdownMenu2" role="menu" class="dropdown-menu sub-menu" style="display: none;">
+                <li>
+                    @Html.ActionLink("Plant", "Index", new { controller = "ReportPlan" }, new { role = "menuitem" })
+                </li>
+                <li>
+                    @Html.ActionLink("TPO", "Index", new { controller = "ReportTpo" }, new { role = "menuitem" })
+                </li>
+            </ul>
+        </li>
+        }
+    </ul>
+</div>

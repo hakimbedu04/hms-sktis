@@ -1,0 +1,1091 @@
+﻿@model SKTISWebsite.Models.UtilSecurityResponsibilities.InitUtilSecurityResponsibilities
+@using HMS.SKTIS.Application.Resources
+@using HMS.SKTIS.Application.Resources.Views.UtilSecurityResponsibilities
+@using SKTISWebsite.Helper
+@{ Html.SetPageTitle(@UtilSecurityResponsibilities.PageTitle); }
+<style>
+    .hidden-input, .hidden-input:hover, .hidden-input:focus {
+        border: 0px!important;
+        background-color: transparent!important;
+        box-shadow: none !important;
+    }
+
+    .tt-dataset {
+        color: black;
+        font-size: 14px;
+        min-width: 195px;
+        font-weight: normal;
+    }
+
+    p.tt-suggestion.tt-selectable {
+        padding: 8px;
+        margin: 0;
+        font-size: 12px;
+    }
+
+    p.tt-suggestion.tt-selectable:hover {
+        background: #1F4E78;
+        color: #fff;
+    }
+
+</style>
+<div class="col-lg-12">
+    <div class="tabs" role="tabpanel">
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs" role="tablist" id="tabResponsibility">
+            <li role="presentation" class="active"><a href="#tmain" aria-controls="profile" role="tab" data-toggle="tab">@UtilSecurityResponsibilities.lblTabMain</a></li>
+            <li role="presentation"><a href="#rules" aria-controls="home" role="tab" data-toggle="tab">@UtilSecurityResponsibilities.lblTabRules</a></li>
+            <li role="presentation"><a href="#users" aria-controls="home" role="tab" data-toggle="tab">@UtilSecurityResponsibilities.lblTabUsers</a></li>
+        </ul>
+
+        <!-- Tab panes -->
+        <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade in active" id="tmain">
+                <div data-bind="with: gridViewResponsibilities">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="action-btn">
+                                <button type="button" class="btn btn-primary" data-bind="click:$root.saveDataRoles">@CommonLabel.btnSave</button>
+                                @using(Html.BeginForm("GenerateExcel", "UtilSecurityResponsibilities", FormMethod.Post, new { @data_bind = "submit: $root.generateExcel" }))
+                                {
+                                    <button type="submit" class="btn btn-primary">Excel</button>
+                                }
+                                @Html.Partial("GridViewPageSizeSelector")
+                            </div>
+                        </div>
+                    </div>
+                    <div id="master-tabResponsibility-proccess">
+                        <div class="table-overflow">
+                            <table class="table table-striped">
+                                <thead>
+                                    @*<tr class="head">*@
+                                    <tr class="head">
+                                        <th data-bind="click:sortBy.bind($data,'IDResponsibility'), css:sortCss('IDResponsibility', $data.sortExpression(), $data.sortOrder())">@UtilSecurityResponsibilities.lblIDResponsibility</th>
+                                        <th data-bind="click:sortBy.bind($data,'ResponsibilityName'), css:sortCss('ResponsibilityName', $data.sortExpression(), $data.sortOrder())">@UtilSecurityResponsibilities.lblResponsibilityName</th>
+                                        <th data-bind="click:sortBy.bind($data,'IDRole'), css:sortCss('IDRoles', $data.sortExpression(), $data.sortOrder())">@UtilSecurityResponsibilities.lblRole</th>
+                                    </tr>
+                                    <tr class="insertRow" data-bind="click: cancelInline.bind(),inlineAddProccess:[$data, $root.newDataMainTab]">
+                                        <th></th>
+                                        <th><input data-bind="value:$root.newDataMainTab.ResponsibilityName, valueUpdate: 'afterkeydown'" class="form-control transparent" /></th>
+                                        <th class="current right">
+                                            <select id="spRoles" class="selectpicker show-tick form-control" data-live-search="true" data-bind="selectPicker: $root.newDataMainTab.IDRole, optionsText: 'RolesCompat',optionsAfterRender: $root.afterRenderLocation, optionsValue : 'IDRole', event : { change : $root.onRoleChange($root.newDataMainTab) }, selectPickerOptions: { optionsArray: $root.rolesList }"></select>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody data-bind="foreach: listDataItems">
+                                    @*item template*@
+                                    <tr data-bind="if: ($parent.editingRowIndex() !== $index()),
+                                   click: $parent.editInlineWithCallback.bind($data,$index(),$root.showListUser.bind())">
+                                        <td><span data-bind="text:$data.IDResponsibility"></span></td>
+                                        <td class="current"><span data-bind="text: $data.ResponsibilityName"></span></td>
+                                        <td class="current"><span data-bind="text: $root.ResponsibiltyCompact($data)"></span></td>
+                                    </tr>
+                                    @*edit template*@
+                                    <tr data-bind="validationOptions: {insertMessages: false, showTooltip:true, decorateInputElement: true, errorElementClass: 'input-error'}, inlineProccess:[$parent,$data],
+                                   if:($parent.editingRowIndex() === $index()),
+                                   click: $parent.selectRow.bind($data, $index()),
+                                    event: {keydown:$parent.keydown}">
+                                        <td><span data-bind="text:$data.IDResponsibility"></span></td>
+                                        <td class="current"><input data-bind="value:$data.ResponsibilityName, valueUpdate: 'afterkeydown'" class="form-control transparent" /></td>
+                                        <td class="current">
+                                            @*<select class="selectpicker show-tick form-control" data-live-search="true" data-bind="selectPicker: $data.IDRole, optionsText: 'RolesCompat',optionsAfterRender: $root.afterRenderLocation, optionsValue : $data.IDRole, event : { change : $root.onEditRoleChange($data) }, selectPickerOptions: { optionsArray: $root.rolesList }"></select>*@
+                                            <select class="selectpicker show-tick form-control" data-live-search="true" data-bind="selectPickerCustom: $data.IDRole, value: $data.IDRole, optionsText: 'IDRole', optionsValue : 'IDRole', selectPickerOptions: { optionsArray: $root.rolesList }, event : { change : $root.onEditRoleChange($data) },optionsAfterRender : $root.afterRenderLocation"></select>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <tbody data-bind="visible: !listDataItems().length">
+                                    <tr>
+                                        <td colspan="9" class="empty-row-message"><div class="loader"></div></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div data-bind="if: (listDataItems() != null && listDataItems().length !== 0)">
+                            @Html.Partial("GridViewFooter")
+                        </div>
+                    </div>
+                </div>
+                <div data-bind="with: gridViewUser">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="action-btn">
+                                @Html.Partial("GridViewPageSizeSelector")
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="action-btn">
+                                <button type="button" class="btn btn-primary" data-bind="click:$root.saveDataUser">@CommonLabel.btnSave</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="master-unit">
+                        <div class="table-overflow">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr class="head">
+                                        <th style="width: 25%" class="widthsmall">Name</th>
+                                        <th style="width: 25%" class="widthsmall">Role</th>
+                                        <th style="width: 12.5%" class="widthsmall">Effective Date</th>
+                                        <th style="width: 12.5%" class="widthsmall">Expired Date</th>
+                                        <th style="width: 12.5%" class="widthsmall">Updated By</th>
+                                        <th style="width: 12.5%" class="widthsmall">Updated Date</th>
+                                    </tr>
+                                    <tr class="insertRow" data-bind="click: cancelInline.bind(),inlineAddProccess:[$data, $root.newDataSecondaryTab]">
+                                        
+                                        <th class="widthmedium">
+                                            <input id="typeaheadUser" class="typeahead form-control out-of-bond" data-bind="value: $root.newDataSecondaryTab.UserAD" type="text" placeholder="PMI User From">
+
+                                        </th>
+
+                                        <th class="head">
+                                            <span data-bind="text:$root.newDataSecondaryTab.RolesName"></span>
+                                        </th>
+                                        <th>
+                                            <div id="dtpEffectiveDate" class='input-group date time insidetable out-of-bond' data-bind="dateTimePicker: $root.newDataSecondaryTab.EffectiveDate, value:$root.newDataSecondaryTab.EffectiveDate, dateTimePickerOptions: {widgetPositioning: {vertical: 'bottom'}, showClear: true, ignoreReadonly: true, useCurrent: false, appendToBody: true }">
+                                                <input type='text' class="form-control" readonly="readonly" />
+                                                <span class="input-group-addon">
+                                                    <span class="glyphicon glyphicon-calendar"></span>
+                                                </span>
+                                            </div>
+                                        </th>
+
+                                        <th>
+                                            <div id="dtpExpiredDate" class='input-group date time insidetable out-of-bond' data-bind="dateTimePicker: $root.newDataSecondaryTab.ExpiredDate, value:$root.newDataSecondaryTab.ExpiredDate, dateTimePickerOptions: {widgetPositioning: {vertical: 'bottom', horizontal: 'right'}, showClear: true, ignoreReadonly: true, useCurrent: false, appendToBody: true }">
+                                                <input type='text' class="form-control" readonly="readonly" />
+                                                <span class="input-group-addon">
+                                                    <span class="glyphicon glyphicon-calendar"></span>
+                                                </span>
+                                            </div>
+                                        </th>
+                                        
+                                        <th>
+                                            
+                                        </th>
+                                        
+                                        <th>
+
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody data-bind="foreach: listDataItems">
+                                    @*item template*@
+                                    <tr data-bind="if: ($parent.editingRowIndex() !== $index()), click: $parent.editInline3.bind($data,$index())">
+                                        <td><span data-bind="text:$data.UserAD"></span></td>
+                                        <td><span data-bind="text:$data.RolesName"></span></td>
+                                        <td class="current"><span data-bind="text:$data.EffectiveDate"></span></td>
+                                        <td class="current"><span data-bind="text:$data.ExpiredDate"></span></td>
+                                        <td><span data-bind="text:$data.UpdatedBy"></span></td>
+                                        <td><span data-bind="text: $data.UpdatedDate"></span></td>
+                                        
+                                    </tr>
+                                    @*edit template*@
+                                    <tr data-bind="validationOptions: {insertMessages: false, showTooltip:true, decorateInputElement: true, errorElementClass: 'input-error'}, inlineProccess:[$parent,$data],
+                                   if:($parent.editingRowIndex() === $index()),
+                                   click: $parent.selectRow.bind($data, $index()),
+                                    event: {keydown:$parent.keydown}">
+                                        <td><input data-bind="value:$data.UserAD" class="form-control transparent hidden-input" readonly="" /></td>
+                                        <td><input data-bind="value:$data.RolesName" class="form-control transparent hidden-input" readonly="" /></td>
+                                        <td class="current">
+                                            <div class='input-group date time insidetable' data-bind="dateTimePicker: $data.EffectiveDate, value:$data.EffectiveDate, dateTimePickerOptions: {widgetPositioning: {vertical: 'bottom'}, ignoreReadonly: true, appendToBody: true }">
+                                                <input type='text' class="form-control" readonly="readonly" />
+                                                <span class="input-group-addon">
+                                                    <span class="glyphicon glyphicon-calendar"></span>
+                                                </span>
+                                            </div>
+                                        </td>
+                                        <td class="current">
+                                            <div class='input-group date time insidetable' data-bind="dateTimePicker: $data.ExpiredDate, value:$data.ExpiredDate, dateTimePickerOptions: {widgetPositioning: {vertical: 'bottom'}, ignoreReadonly: true, appendToBody: true }">
+                                                <input type='text' class="form-control" readonly="readonly" />
+                                                <span class="input-group-addon">
+                                                    <span class="glyphicon glyphicon-calendar"></span>
+                                                </span>
+                                            </div>
+                                        </td>
+                                        <td><span data-bind="text:$data.UpdatedBy"></span></td>
+                                        <td><span data-bind="text: $data.UpdatedDate"></span></td>
+                                    </tr>
+                                </tbody>
+
+                                <tbody data-bind="visible: !listDataItems().length">
+                                    <tr>
+                                        <td colspan="7" class="empty-row-message"><div class="loader"></div></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            @*Agar datepicker tidak terpotong*@
+                            <p>&nbsp;</p>
+                            <p>&nbsp;</p>
+                            <p>&nbsp;</p>
+                            <p>&nbsp;</p>
+                            <p>&nbsp;</p>
+                            <p>&nbsp;</p>
+                            <p>&nbsp;</p>
+                            <p>&nbsp;</p>
+                            @*################################*@
+
+                        </div>
+                        <div data-bind="if: (listDataItems() != null && listDataItems().length !== 0)">
+                            @Html.Partial("GridViewFooter")
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <p>&nbsp;</p>
+            <div role="tabpanel" class="tab-pane fade" id="rules">
+                <div class="row">
+                    <label class="form-label col-lg-2">
+                        Responsibilities
+                    </label>
+                    <div class="col-lg-3">
+                        <select class="selectpicker show-tick form-control" id="ddlResponsibilitiesFilter"
+                                data-live-search="true"
+                                data-bind="selectPicker: $root.filterResponsibilities, optionsText: 'Text', optionsValue : 'Value', selectPickerOptions: { optionsArray: $root.responsibilitiesSelectList }"></select>
+
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="action-btn">
+                            <button type="button" class="btn btn-primary" data-bind="click:$root.showRules">@CommonLabel.btnView</button>
+                            <button type="button" class="btn btn-primary" data-bind="click:$root.saveDataRuleResponsibilities">@CommonLabel.btnSave</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" id="RulesMultiselect">
+                    @Html.Partial("_TabRulesPartial")
+                </div>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="users">
+                <div class="row">
+                    <label class="form-label col-lg-2">
+                        Users
+                    </label>
+                    <div class="col-lg-3">
+                        <input id="typeaheadUsersTab" class="typeahead form-control" data-bind="value: $root.filterUsers" type="text" placeholder="PMI Users">
+
+                        @*<select class="selectpicker show-tick form-control" id="ddlResponsibilitiesFilter"
+                                data-live-search="true"
+                                data-bind="selectPicker: $root.filterUsers, optionsText: 'Text', optionsValue : 'Value', selectPickerOptions: { optionsArray: $root.usersSelectList }"></select>*@
+
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="action-btn">
+                            <button type="button" class="btn btn-primary" data-bind="enable: !$root.isEmptyUsers(), click:$root.showResponsibilities">@CommonLabel.btnView</button>
+                            <button type="button" class="btn btn-primary" data-bind="enable: !$root.isEmptyUsers() && $root.enableSave(), click:$root.saveDataUserResponsibilities">@CommonLabel.btnSave</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="form-label col-lg-2">
+                        Effective Date
+                    </label>
+                    <div class="col-lg-4">
+                        <div id="effectiveDate" class='input-group date time' data-bind="dateTimePicker: $root.effectiveDate, value: $root.effectiveDate, dateTimePickerOptions: {widgetPositioning: {vertical: 'bottom'}, showClear: true, ignoreReadonly: true}, dateChange: $root.onDateChange">
+                            <input id="filterDateFrom" class="form-control" readonly="readonly" data-bind="enable: !$root.isEmptyUsers()" />
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="form-label col-lg-2">
+                        Expired Date
+                    </label>
+                    <div class="col-lg-4">
+                        <div id="expiredDate" class='input-group date time' data-bind="dateTimePicker: $root.expiredDate, value: $root.expiredDate, dateTimePickerOptions: {widgetPositioning: {vertical: 'bottom'}, showClear: true, ignoreReadonly: true}, dateChange: $root.onDateChange">
+                            <input id="expiredDate" class="form-control" readonly="readonly" data-bind="enable: !$root.isEmptyUsers()" />
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" id="ResponsibilitiesMultiselect">
+                    @Html.Partial("_TabUsersPartial")
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts
+{
+    <script src="~/Scripts/jquery.unobtrusive-ajax.min.js" type="text/javascript"></script>
+    <script src="~/Scripts/common/app.GridViewModel.js" type="text/javascript"></script>
+    <script src="~/Scripts/jquery-ui.js"></script>
+    <script type="text/javascript" src="~/Scripts/vendors/multiselect.js"></script>
+    <script src="~/Scripts/jquery.tree.js"></script>
+    <script src="~/Scripts/vendors/typeAhead.js"></script>
+    <script type="text/javascript">
+    var effectiveDate = moment().toDate();
+    var expiredDate = moment().toDate();
+    $(function() {
+        $('#tabResponsibility a').click(function(e) {
+            e.preventDefault();
+            $(this).tab('show');
+        });
+    });
+
+    (function(app) {
+        app.EditGrid = function() {
+            var self = this;
+            self.filterIDResponsibility = ko.observable();
+            self.effectiveDate = ko.observable(moment().toDate());
+            self.expiredDate = ko.observable(moment().add(1,'years'));
+            self.filterResponsibilities = ko.observable('');
+            self.filterUsers = ko.observable('');
+            self.rolesList = ko.observableArray();
+            self.responsibilitiesSelectList = ko.observableArray();
+            self.usersSelectList = ko.observableArray();
+            self.UtilRoles = ko.observableArray(@Html.Raw(Json.Encode(@Model.UtilRoles)));
+            self.multiRulesSelectFrom = ko.observableArray([]);
+            self.multiRulesSelectTo = ko.observableArray([]);
+            self.multiResponsibilitiesSelectFrom = ko.observableArray([]);
+            self.multiResponsibilitiesSelectTo = ko.observableArray([]);
+            self.isEmptyUsers = ko.observable(true);
+            self.enableSave = ko.observable(false);
+
+            
+            // If someone find another/faster solution to get RolesName, please don't hesitate do change below codes
+            self.ResponsibiltyCompact = function(data) {
+                return ko.utils.unwrapObservable(data.IDRole) + ' - ' + ko.utils.unwrapObservable(data.RolesName);
+            };
+
+            self.newDataMainTab = {
+                ResponsibilityName: ko.observable(''),
+                IDRole :ko.observable(''),
+                RolesName: ko.observable('')
+            };
+
+            self.newDataSecondaryTab = {
+                UserAD: ko.observable(''),
+                IDRole :ko.observable(''),
+                EffectiveDate: ko.observable(''),
+                ExpiredDate: ko.observable(''),
+                ResponsibilityName: ko.observable(''),
+                RolesName: ko.observable(''),
+                RolesCode: ko.observable(''),
+                IDResponsibility : ko.observable('')
+            };
+            
+            $('#typeaheadUser').on('typeahead:selected', function (e, value) {
+                //console.log(value.UserAD +' / ');
+                self.newDataSecondaryTab.UserAD(value.UserAD);
+            });
+            
+            self.showListUser = function(data, index) {
+                //untuk grid bawah
+                self.newDataSecondaryTab.RolesName(data.RolesName());
+                self.newDataSecondaryTab.EffectiveDate(self.effectiveDate());
+                self.newDataSecondaryTab.ExpiredDate(self.expiredDate());
+                self.newDataSecondaryTab.IDRole(data.IDRole());
+                self.newDataSecondaryTab.IDResponsibility(data.IDResponsibility());
+                self.newDataSecondaryTab.ResponsibilityName(data.ResponsibilityName());
+                //----------------
+                self.filterIDResponsibility(data.IDResponsibility);
+                self.searchUser();
+            }
+
+            self.searchUser = function() {
+                
+                //self.getUserList();
+                $('.empty-row-message').html('<div class="loader"></div>'); // Reset New and Edit row
+                // Check whether New or Edit data is existing and not saved to database yet (on Ajax Action)
+                if (SKTIS.Checker.modifiedDataExistsForAjax([self.gridViewUser.listNewItems, self.gridViewUser.listEditItems]) == true) {
+                    return;
+                } else {
+                    self.gridViewUser.listNewItems.removeAll();
+                    self.gridViewUser.listEditItems.removeAll();
+                }
+
+                self.gridViewUser.search({}, function(response) {
+                    if (response.status == 'KO') {
+                        SKTIS.Helper.Notification(response.message, 'error');
+                        $('.empty-row-message').html(response.message);
+                    } else if (response.status == 'Empty') {
+
+                        self.RemoveNotification();
+
+                        //SKTIS.Helper.Notification(response.message, 'warning');
+                        $('.empty-row-message').html('@CommonLabel.lblDataEmpty');
+                    }
+                });
+
+                self.RemoveNotification = function() {
+                    if ($('#noty_top_layout_container').length > 0) {
+                        $('#noty_top_layout_container').remove();
+                    }
+                };
+            }
+
+            self.onRoleChange = function() {
+                self.rolesList().map(function(v) {
+                    if (ko.utils.unwrapObservable(self.newDataMainTab.IDRole) == v.IDRole) {
+                        self.newDataMainTab.RolesName(v.RolesName);
+                    }
+                });
+            }
+
+            self.onEditRoleChange = function(data) {
+                self.rolesList().map(function(v) {
+                    if (ko.utils.unwrapObservable(data.IDRole) == v.IDRole) {
+                        if(typeof data.RolesName == 'function') {
+                            data.RolesName(v.RolesName);
+                        }
+                    }
+                });
+
+            };
+
+            self.onDateChange = function(data) {
+                //console.log(data);
+                var awal = moment(self.effectiveDate(),'DD/MM/YYYY').format('DD/MM/YYYY');
+                var akhir = moment(self.expiredDate(),'DD/MM/YYYY').format('DD/MM/YYYY');
+                var dtAwal = moment(self.effectiveDate(),'DD/MM/YYYY').format('YYYY/MM/DD');
+                var dtAkhir = moment(self.expiredDate(),'DD/MM/YYYY').format('YYYY/MM/DD');
+
+
+                //console.log(awal,akhir,dtAwal, dtAkhir);
+                
+                if ((awal == "01/01/0001") && (akhir == "01/01/0001")){
+                    awal = moment().format("DD/MM/YYYY");
+                    akhir = moment().add(1,'years').format('DD/MM/YYYY');
+                    dtAwal =  moment().format('YYYY/MM/DD');
+                    dtAkhir = moment().add(1,'years').format('YYYY/MM/DD');
+                    //console.log(awal,akhir,dtAwal, dtAkhir);
+                }
+
+                if (dtAkhir<dtAwal){
+                   // SKTIS.Helper.Notification("<strong>Expired Date is on previous Effective Date</strong>", "error");
+                }
+
+                //if (dtAwal == "Invalid date"){
+                //    dtAwal = moment().add(-1,'years').format('YYYY/MM/DD');
+                //}
+                //if (dtAkhir == "Invalid date"){
+                //    dtAkhir = moment().add(1,'years').format('YYYY/MM/DD');
+                //}
+                //console.log(dtAwal);
+                //console.log(dtAkhir);
+                //self.RemoveNotification();
+
+                var selectedItems = $('#multiselectResponsibilities_to').find('option:selected');
+                
+                
+                $.each(selectedItems, function(i, v) {
+                    $(v).attr('data-effective-date', moment(awal,'DD/MM/YYYY').format('DD/MM/YYYY'));
+                    $(v).attr('data-expired-date', moment(akhir,'DD/MM/YYYY').format('DD/MM/YYYY'));
+                    //console.log($(v))
+                });
+                
+            }
+
+            self.afterRenderLocation = function(options, item)
+            {
+                //console.log(item)
+                //var locDesc;
+                //for (var i = 0; i < self.locationDescriptions.length; i++) {
+                //    if (self.locationDescriptions[i].LocationCode == item.Value) {
+                //        locDesc = self.locationDescriptions[i].LocationName;
+                //        break;
+                //    }
+                //}
+
+                $(options).attr('title', item.RolesName);
+                $(options).attr(
+                    'data-content',
+                    "<span class='text'><span style='width: 15px; display: inline-block;'>" + item.IDRole + "</span> - " + item.RolesName + "</span>"
+                );
+
+            }
+
+
+            self.saveDataRoles = function() {
+                var data = {
+                    "New": self.gridViewResponsibilities.listNewItems(),
+                    "Edit": self.gridViewResponsibilities.listEditItems()
+                };
+
+                $.ajax({
+                    url: @Html.BaseUrl("UtilSecurityResponsibilities/SaveRoles"),
+                    type: 'POST',
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    data: JSON.stringify(data),
+                    success: function(data, success, httpOptions) {
+                        if (httpOptions.status !== 200) {
+                            SKTIS.Helper.Notification("Unknown error while saving data", "error");
+                        } else {
+                            SKTIS.Helper.Notification(data.Message, data.Error == 1 ? 'error' : 'success');
+                        }
+
+                        self.gridViewResponsibilities.listNewItems.removeAll();
+                        self.gridViewResponsibilities.listEditItems.removeAll();
+
+                        self.gridViewResponsibilities.reload({});
+                    }
+                });
+            };
+
+            self.getSelectRoles = function() {
+                $.ajax({
+                    url: @Html.BaseUrl("UtilSecurityResponsibilities/GetRolesList"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    success: function(data) {
+                        $("#spRoles").find('option').remove();
+                        $("#spRoles").selectpicker('refresh');
+
+                        var list = [];
+
+                        $.each(data, function(index, value) {
+                            list.push({
+                                IDRole: value.IDRole,
+                                RolesCode: value.RolesName,
+                                RolesName: value.RolesName,
+                                RolesCompat: value.IDRole+" - "+value.RolesName
+                            });
+
+                        });
+
+                        if (list.length == 0) {
+                            self.newDataMainTab.IDRole(null);
+                            self.newDataMainTab.RolesCode(null);
+                            self.newDataMainTab.RolesName(null);
+                            self.newDataMainTab.RolesCompat(null);
+                        }
+                        self.rolesList(list);
+                        $('.on-edit-roles').selectpicker('refresh');
+                    }
+                });
+            };
+
+            //get responsibilities
+            self.getResponsibilitiesSelectList = function() {
+                $.ajax({
+                    url: @Html.BaseUrl("UtilSecurityResponsibilities/GetResponsibilitiesSelectList"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#ddlResponsibilitiesFilter').find('option').remove();
+                        $('#ddlResponsibilitiesFilter').selectpicker('refresh');
+                        self.responsibilitiesSelectList(data);
+                    }
+                });
+            };
+
+            $('#typeaheadUsersTab').on('typeahead:selected', function (e, value) {
+                self.filterUsers(value.UserAD);
+                self.cekisEmptyUsers(value == null);
+            });
+            
+            //get responsibilities
+            self.getUsersSelectList = function() {
+                $.ajax({
+                    url: @Html.BaseUrl("UtilSecurityResponsibilities/GetUsersSelectList"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#ddlUsersFilter').find('option').remove();
+                        $('#ddlUsersFilter').selectpicker('refresh');
+                        self.usersSelectList(data);
+
+                        var substringMatcher = function(strs) {
+                            return function findMatches(q, cb) {
+                                var matches, substringRegex;
+
+                                // an array that will be populated with substring matches
+                                matches = [];
+
+                                // regex used to determine if a string contains the substring `q`
+                                substrRegex = new RegExp(q, 'i');
+
+                                // iterate through the pool of strings and for any string that
+                                // contains the substring `q`, add it to the `matches` array
+                                $.each(strs, function(i, str) {
+                                    if (substrRegex.test(str.Name) || substrRegex.test(str.UserAD)) {
+                                        matches.push(str);
+                                    }
+                                });
+
+                                cb(matches);
+                            };
+                        };
+                        
+                        var namaUser = data;
+                        
+                        $('#typeaheadUsersTab').typeahead({
+                            hint: true,
+                            highlight: true,
+                            minLength: 1
+                        },
+                        {
+                            name: 'namaUser',
+                            source: substringMatcher(namaUser),
+                            display: 'UserAD',
+                            limit:8,
+                            templates: {
+                                suggestion: function (data) {
+                                    return '<p>' + data.UserAD + ' - ' + data.Name + '</p>';
+                                }
+                            }
+                        });
+                        
+                        $('#typeaheadUser').typeahead({
+                            hint: true,
+                            highlight: true,
+                            minLength: 1
+                        },
+                        {
+                            name: 'namaUser',
+                            source: substringMatcher(namaUser),
+                            display: 'UserAD',
+                            limit:8,
+                            templates: {
+                                suggestion: function (data) {
+                                    return '<p>' + data.UserAD + ' - ' + data.Name + '</p>';
+                                }
+                            }
+                        });
+                    }
+                });
+            };
+            //description: init gridView roles tab
+            self.gridViewResponsibilities = new app.GridViewModel({
+                Criteria: { PageSize: 10, PageIndex: 1, SortExpression: "IDResponsibility", SortOrder: "ASC"},
+                DataSourceUrl: @Html.BaseUrl("UtilSecurityResponsibilities/GetResponsibility"),
+                InlineEdit: true,
+                InsertRowFocusedControlIndex: 1
+            });
+
+
+            self.gridViewUser = new app.GridViewModel({
+                Criteria: { PageSize: 10, PageIndex: 1, SortExpression: "UpdatedDate", SortOrder: "DESC", IDResponsibility: self.filterIDResponsibility },
+                DataSourceUrl: @Html.BaseUrl("UtilSecurityResponsibilities/GetUserByResponsibility"),
+                InlineEdit: true,
+                InsertRowFocusedControlIndex: 1
+            });
+
+            //validations: roles tab
+            self.gridViewResponsibilities.applyValidationRules = function(entity) {
+
+                self.RemoveNotification();
+
+                entity.ResponsibilityName.extend({
+                    required: {
+                        message: "<strong>Responsibility Name</strong> cannot be empty!"
+                    }
+                });
+
+                //entity.Roles.extend({
+                //    required: {
+                //        message: "<strong>Roles</strong> cannot be empty!"
+                //    }
+                //});
+            };
+
+            self.gridViewUser.applyValidationRules = function(entity) {
+
+                self.RemoveNotification();
+            };
+
+            // Reset Fields for Insert Row
+            self.gridViewResponsibilities.resetDefault = function(viewModel) {
+                viewModel.ResponsibilityName('');
+                viewModel.IDRole('');
+                viewModel.RolesName('');
+            };
+
+            //description: save bulk data roles tab
+            self.saveDataResponsibility = function() {
+                if (self.gridViewResponsibilities.editingRowIndex() !== -1)
+                    return;
+
+                var datas = {
+                    "New": self.gridViewResponsibilities.listNewItems(),
+                    "Edit": self.gridViewResponsibilities.listEditItems()
+                };
+
+                datas = JSON.stringify(datas);
+                $.ajax({
+                    url:  @Html.BaseUrl("UtilSecurityResponsibilities/SaveAllRoles"),
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: datas,
+                    dataType: 'json',
+                    success: function(data) {
+                        if (data.New) {
+                            $.each(data.New, function(k, value) {
+                                if (value)
+                                    SKTIS.Helper.ResponseNotification(value, "Insert Roles Info", value.RolesCode + " - " + value.RolesName);
+                            });
+                        }
+
+                        if (data.Edit) {
+                            $.each(data.Edit, function(k, value) {
+                                if (value)
+                                    SKTIS.Helper.ResponseNotification(value, "Edit Roles Info", value.RolesCode + " - " + value.RolesName);
+                            });
+                        }
+
+                        //self.initFilterroles('roles');
+                        //self.initFilterroles('function');
+                        self.gridViewResponsibilities.sort('IDResponsibility', 'ASC');
+                        self.gridViewResponsibilities.listNewItems.removeAll();
+                        self.gridViewResponsibilities.listEditItems.removeAll();
+                    }
+                });
+            };
+
+            // Generate Excel
+            self.generateExcel = function(formElement) {
+                    
+                return true;
+            }
+            
+            self.activeResponsList = ko.observableArray([]);
+            self.activeUserResponsList = ko.observableArray([]);
+            function RulesViewModel(){
+                this.IDRule = ko.observable();
+                this.RulesName = ko.observable();
+                this.Location = ko.observable();
+                this.Unit = ko.observable();
+                this.IDResponsibility = ko.observable();
+            }
+
+            function ResponsibilitiesViewModel(){
+                this.IDResponsibility = ko.observable();
+                this.UserAD = ko.observable();
+                this.EffectiveDate = ko.observable();
+                this.ExpiredDate = ko.observable();
+            }
+
+            self.saveDataRuleResponsibilities = function(){
+                self.activeResponsList([]);
+                self.RemoveNotification();
+                $.each($('#multiselectRules_to option'), function(value, target) {
+                    var obj = new RulesViewModel();
+                    obj.IDRule =  $(target).data("idrule");
+                    obj.RulesName = $(target).data("rulesname");
+                    obj.Location = $(target).data("location");
+                    obj.Unit = $(target).data("unit");
+                    obj.IDResponsibility = self.filterResponsibilities();
+                    self.activeResponsList().push(obj);
+                });
+                if (self.activeResponsList().length == 0) {
+                    SKTIS.Helper.Notification("<strong>Rules</strong> is empty!", "warning");
+                } else {
+                    var data = JSON.stringify(self.activeResponsList());
+                    $.ajax({
+                        url: @Html.BaseUrl("UtilSecurityResponsibilities/SaveRulesResponsibilities"),
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: data,
+                        dataType: 'json',
+                        success: function (data) {
+                            SKTIS.Helper.ResponseNotification(data[0], "Save Responsibilities for Roles", "");
+                            self.multiRulesSelectFrom([]);
+                            self.multiRulesSelectTo([]);
+                            //self.isListModified(false);
+                        }
+                    });
+                }
+
+            }
+
+            self.saveDataUserResponsibilities = function() {
+                //var dtAwal = moment(self.effectiveDate(),'DD/MM/YYYY').format('YYYY/MM/DD');
+                //var dtAkhir = moment(self.expiredDate(),'DD/MM/YYYY').format('YYYY/MM/DD');
+                //if (dtAkhir<dtAwal){
+                //    SKTIS.Helper.Notification("<strong>Expired Date is on previous Effective Date</strong>", "error");
+                //}
+
+                //kalo dikasih else, kalau satu data gagal, sisanya hilang HMMMMMMM.....
+                self.activeUserResponsList([]);
+                self.RemoveNotification();
+                $.each($('#multiselectResponsibilities_to option'), function(value, target) {
+                    var awal = $(target).attr('data-effective-date');
+                    var akhir = $(target).attr('data-expired-date');
+                    console.log(111,awal,akhir);
+                    var dtAwal = moment(awal,'DD/MM/YYYY').format('YYYY/MM/DD');
+                    var dtAkhir = moment(akhir,'DD/MM/YYYY').format('YYYY/MM/DD');
+
+                    if ((awal == "01/01/0001 00:00:00") && (akhir == "01/01/0001 00:00:00")){
+                        awal= moment().format("DD/MM/YYYY");
+                        akhir= moment().add(1,'years').format('DD/MM/YYYY');
+                        dtAwal =  moment().format('YYYY/MM/DD');
+                        dtAkhir = moment().add(1,'years').format('YYYY/MM/DD');
+                    }
+
+                    if (dtAkhir<dtAwal){
+                        SKTIS.Helper.Notification("<strong>Expired Date is on previous Effective Date</strong>", "error");
+                    }
+
+                    
+                    var obj = new ResponsibilitiesViewModel();
+                    obj.IDResponsibility = $(target).data("idresponsibility");
+                    obj.UserAD = self.filterUsers();
+                    obj.EffectiveDate = moment(awal,'DD/MM/YYYY').format('DD/MM/YYYY 00:00:00');
+                    obj.ExpiredDate = moment(akhir,'DD/MM/YYYY').format('DD/MM/YYYY 00:00:00');
+                    self.activeUserResponsList().push(obj);
+                });
+
+                if (self.filterUsers() == null) {
+                    SKTIS.Helper.Notification("<strong>Users</strong> is empty!", "warning");
+                } else {
+                    var data = JSON.stringify({
+                        bulkData: self.activeUserResponsList(),
+                        UserAD: self.filterUsers()
+                    });
+                    $.ajax({
+                        url: @Html.BaseUrl("UtilSecurityResponsibilities/SaveUsersResponsibilities"),
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: data,
+                        dataType: 'json',
+                        success: function(data) {
+                            SKTIS.Helper.ResponseNotification(data[0], "Save Responsibilities for Users", "");
+                            self.multiResponsibilitiesSelectFrom([]);
+                            self.multiResponsibilitiesSelectTo([]);
+                            //self.isListModified(false);
+                        }
+                    });
+                }
+            };
+
+            self.saveDataUser = function() {
+                var datas = {
+                    "New": self.gridViewUser.listNewItems(),
+                    "Edit": self.gridViewUser.listEditItems()
+                };
+
+                $.ajax({
+                    url: @Html.BaseUrl("UtilSecurityResponsibilities/UpdateUsersAd"),
+                    type: 'POST',
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    data: ko.myToJSON(datas),
+                    success: function(data, success, httpOptions) {
+                        if (httpOptions.status !== 200) {
+                            SKTIS.Helper.Notification("Unknown error while saving data", "error");
+                        } else {
+                            SKTIS.Helper.Notification(data.Message, data.Error == 1 ? 'error' : 'success');
+                        }
+
+                        self.gridViewUser.listNewItems.removeAll();
+                        self.gridViewUser.listEditItems.removeAll();
+
+                        self.gridViewUser.reload({});
+                        self.gridViewResponsibilities.reload({});
+                    }
+                });
+            };
+
+            self.showRules = function(){
+                self.multiRulesSelectFrom([]);
+                self.multiRulesSelectTo([]);
+
+                var datas =
+                {
+                    IDResponsibility : self.filterResponsibilities()
+                }
+                datas = JSON.stringify(datas);
+                $.ajax({
+                    url: @Html.BaseUrl("UtilSecurityResponsibilities/GetRulesByResponsibility"),
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: datas,
+                    dataType: 'html',
+                    success: function (data) {
+                        $('#RulesMultiselect').html(data);
+                        self.multiRulesSelectFrom($("#multiselectRules option"));
+                        self.multiRulesSelectTo($("#multiselectRules_to option"));
+                        //console.log(self.multiSelectFrom());
+                    }
+                });
+            }
+
+
+            self.filterMultipleRules = function(data, event){
+                var txt = $(event.target).val();
+                $("#multiselectRules option, #multiselectRules_to option").each(function(){
+                    var name = $(this).data("rulesname");
+                    if(name.toLowerCase().indexOf(txt.toLowerCase()) >= 0){
+                        $(this).show();
+                    }else{
+                        $(this).hide();
+                    }
+                });
+            }
+
+            self.filterMultipleUsers = function(data, event){
+                var txt = $(event.target).val();
+                $("#multiselectResponsibilities option, #multiselectResponsibilities_to option").each(function(){
+                    var name = $(this).data("responsibilityname");
+                    if(name.toLowerCase().indexOf(txt.toLowerCase()) >= 0){
+                        $(this).show();
+                    }else{
+                        $(this).hide();
+                    }
+                });
+            }
+
+            //self.onFilterUsersChange = function() {
+            //    console.log(es)
+            //}
+
+            self.showResponsibilities = function(){
+
+                self.multiResponsibilitiesSelectFrom([]);
+                self.multiResponsibilitiesSelectTo([]);
+
+                var datas =
+                {
+                    UserAD : self.filterUsers()
+                }
+                datas = JSON.stringify(datas);
+                $.ajax({
+                    url: @Html.BaseUrl("UtilSecurityResponsibilities/GetResponsibilitiesByUser"),
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: datas,
+                    dataType: 'html',
+                    success: function (data) {
+                        //console.log(data);
+                        //console.log(1, expiredDate);
+                        //console.log(2, effectiveDate);
+                        $('#ResponsibilitiesMultiselect').html(data);
+                        self.multiRulesSelectFrom($("#multiselectResponsibilities option"));
+                        self.multiRulesSelectTo($("#multiselectResponsibilities_to option"));
+                        self.enableSave(true);
+                        //self.expiredDate(expiredDate);
+                        //self.effectiveDate(effectiveDate);
+                        //console.log(self.filterUsers());
+                        //console.log(self.multiSelectFrom());
+                    }
+                });
+            }
+
+            //load data: roles
+            self.search = function(cb) {
+                self.getSelectRoles();
+                $('.empty-row-message').html('<div class="loader"></div>'); // Reset New and Edit row
+                // Check whether New or Edit data is existing and not saved to database yet (on Ajax Action)
+                if (SKTIS.Checker.modifiedDataExistsForAjax([self.gridViewResponsibilities.listNewItems, self.gridViewResponsibilities.listEditItems]) == true) {
+                    return;
+                }else{
+                    self.gridViewResponsibilities.listNewItems.removeAll();
+                    self.gridViewResponsibilities.listEditItems.removeAll();
+                }
+
+                self.gridViewResponsibilities.search({}, function (response) {
+                    if (response.status == 'KO') {
+                        SKTIS.Helper.Notification(response.message,'error');
+                        $('.empty-row-message').html(response.message);
+                    }else if (response.status == 'Empty') {
+
+                        self.RemoveNotification();
+
+                        //SKTIS.Helper.Notification(response.message,'warning');
+                        $('.empty-row-message').html('@CommonLabel.lblDataEmpty');
+                    }
+
+                    if (typeof cb != 'undefined') cb();
+
+                    self.filterIDResponsibility("");
+                    if ( self.gridViewResponsibilities.listDataItems().length )
+                    {
+                        self.filterIDResponsibility(self.gridViewResponsibilities.listDataItems()[0].IDResponsibility);
+                    }
+
+                    self.getResponsibilitiesSelectList();
+                    self.getUsersSelectList();
+
+                });
+            };
+
+            self.cekisEmptyUsers = ko.pureComputed({
+                read:function() {
+                    self.isEmptyUsers(false);
+                },
+                write: function(value){
+                    self.isEmptyUsers(value);
+                }
+            });
+                        
+            self.RemoveNotification = function() {
+                if ($('#noty_top_layout_container').length > 0) {
+                    $('#noty_top_layout_container').remove();
+                }
+            };
+
+            // Check whether New or Edit data is existing and not saved to database yet (on Request action)
+            SKTIS.Checker.modifiedDataExists([self.gridViewResponsibilities.listNewItems, self.gridViewResponsibilities.listEditItems]);
+
+            self.init = function() {
+
+                //Asynch setting
+                async.series([
+                    function(cb) {
+                        self.search(cb);
+                    }
+                ], function() {
+                    self.showListUser(self.gridViewResponsibilities.listDataItems()[0]);
+                });
+            };
+
+            
+            $(document).ready(function(){
+
+                $(document).on('click', '#multiselectResponsibilities_to', function(e) {
+                    self.cekisEmptyUsers(false);
+                    var selectedEffectiveDate = $(this).find('option:selected').attr('data-effective-date');
+                    var selectedExpiredDate = $(this).find('option:selected').attr('data-expired-date');
+                    //console.log(1,selectedEffectiveDate,selectedExpiredDate );
+                    if(typeof selectedEffectiveDate != 'undefined' && typeof selectedExpiredDate != 'undefined' && selectedEffectiveDate != "01/01/0001 00:00:00" && selectedExpiredDate != "01/01/0001 00:00:00"){
+                        self.effectiveDate( moment(selectedEffectiveDate,'DD/MM/YYYY').format('DD/MM/YYYY'));
+                        self.expiredDate( moment(selectedExpiredDate,'DD/MM/YYYY').format('DD/MM/YYYY'));
+                    }else{
+                        self.effectiveDate(moment().format('DD/MM/YYYY'));
+                        self.expiredDate(moment().add(1,'years').format('DD/MM/YYYY'));
+                    }
+                });
+
+                $(document).on('click', '#multiselectResponsibilities', function(e) {
+                    //self.effectiveDate( moment().format('DD/MM/YYYY'));
+                    //self.expiredDate( moment().add(1,'years').format('DD/MM/YYYY'));
+                    self.cekisEmptyUsers(true);
+                });
+                
+
+                $(document).off('click','#multiselectRules_swap');
+                $(document).on('click','#multiselectRules_swap',function () {
+                    var optionFrom = $("#multiselectRules option");
+                    var optionTo = $("#multiselectRules_to option");
+                    $("#multiselectRules").html(optionTo);
+                    $("#multiselectRules_to").html(optionFrom);
+                });
+                $(document).off('click','#multiselectResponsibilities_swap');
+                $(document).on('click','#multiselectResponsibilities_swap',function () {
+                    var optionFrom = $("#multiselectResponsibilities option");
+                    var optionTo = $("#multiselectResponsibilities_to option");
+                    $("#multiselectResponsibilities").html(optionTo);
+                    $("#multiselectResponsibilities_to").html(optionFrom);
+                });
+                self.init();
+                
+                
+            });
+        };
+        ko.applyBindings(new app.EditGrid());
+    })(app = this.app || {});
+    </script>
+}

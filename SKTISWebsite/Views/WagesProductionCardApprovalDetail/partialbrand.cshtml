@@ -1,0 +1,28 @@
+﻿<div class="tabs" role="tabpanel">
+    <!-- Nav tabs -->
+    <ul class="nav nav-tabs" role="tablist" id="BrandCodeTab">
+        @{ var brandGroup = @Model.BrandGroupCode;}
+        <li><a href="#@brandGroup.Replace(".", "")" role="tab" data-toggle="tab">@brandGroup</a></li>
+        @{int dateNo = 1;}
+        @foreach (var BrandCode in @Model.BrandCodeList)
+        {
+            //if (dateNo == 5) { continue; }
+            <li><a href="#@BrandCode.Replace(".", "")" role="tab" data-toggle="tab">@BrandCode</a></li>
+            dateNo++;
+        }
+
+    </ul>
+
+
+    <div class="tab-content">
+        @{dateNo = 1;}
+        @{ brandGroup = @Model.BrandGroupCode;}
+        <div role="tabpanel" class="tab-pane fade in @(dateNo == 1 ? "active" : "")" id="@brandGroup.Replace(".", "")"></div>
+        @foreach (var BrandCode in @Model.BrandCodeList)
+        {
+            <div role="tabpanel" class="tab-pane fade in @(dateNo == 1 ? "active" : "")" id="@BrandCode.Replace(".", "")">
+            </div>
+            dateNo++;
+        }
+    </div>
+</div>

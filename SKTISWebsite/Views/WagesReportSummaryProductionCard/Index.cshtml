@@ -1,0 +1,483 @@
+﻿@model SKTISWebsite.Models.WagesReportSummaryProductionCard.InitWagesReportSummary
+@using SKTISWebsite.Helper
+@{ Html.SetPageTitle(" Summary Production Card "); }
+@using HMS.SKTIS.Application.Resources
+<div class="col-lg-12" data-bind="with: gridView">
+    <!--  Submission List Here  -->
+
+    <div class="col-lg-6">
+        <div class="row">
+            <label class="form-label col-lg-5">
+                <input type="radio" name="period" id="rdDailyBasic" data-bind="event : { change : $root.radioChange }" value="Daily" checked>
+                Daily Basic
+            </label>
+            <label class="form-label col-lg-3">
+                Start Date
+            </label>
+            <div class="col-lg-4">
+                <div id="filterDateFrom" class='input-group date time' data-bind="dateTimePicker: $root.filterDateFrom, value: $root.filterDateFrom, dateTimePickerOptions: {widgetPositioning: {vertical: 'bottom'}, showClear: true, ignoreReadonly: true}, dateChange: $root.onDateChange">
+                    <input id="filterDateFrom" class="form-control" readonly="readonly" />
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-5">
+                <input type="radio" name="period" id="rdWeeklyBasic" data-bind="event : { change : $root.radioChange }" value="Weekly">
+                Payroll Weekly Basic
+            </label>
+            <label class="form-label col-lg-3">
+                Week
+            </label>
+            <div class="col-lg-4">
+                <select id="filterWeek" class="selectpicker show-tick form-control" data-live-search="true"
+                        data-bind="selectPicker: $root.filterWeek, optionsText: 'Value', optionsValue : 'Text', selectPickerOptions: { optionsArray: $root.WeekSelectList }, event : { change : $root.onWeekChange }"></select>
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-3 col-lg-offset-5">
+                Brand
+            </label>
+            <div class="col-lg-4">
+                <select class="selectpicker show-tick form-control" id="ddlbrandFilter"
+                        data-live-search="true"
+                        data-bind="selectPicker: $root.filterBrand, optionsText: 'Text', optionsValue : 'Text', selectPickerOptions: { optionsArray: $root.brandSelectList }"></select>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="row">
+            <label class="form-label col-lg-3">
+                End Date
+            </label>
+
+            <div class="col-lg-4">
+                <div id="filterDateTo" class='input-group date time' data-bind="dateTimePicker: $root.filterDateTo, value: $root.filterDateTo, dateTimePickerOptions: {widgetPositioning: {vertical: 'bottom'}, showClear: true, ignoreReadonly: true}, dateChange: $root.onDateChange">
+                    <input id="filterDateTo" class="form-control" readonly="readonly" />
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+            </div>
+
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-3">
+                Year
+            </label>
+            <div class="col-lg-4">
+                @Html.DropDownList("filterYearSubmission", Model.YearSelectList,
+                             new Dictionary<string, object> {
+                            { "data-bind", "value:$root.filterYearSubmission, event : {change : $root.onYearSelectedChange}" },
+                            { "class", "selectpicker show-tick form-control" },
+                            {"data-live-search","true"},{"id","filterYearSubmission"} })
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="action-btn">
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.View.ToString()))
+                {
+                    <button type="button" class="btn btn-primary" data-bind="click:$root.search">View</button>
+                }
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.View.ToString()))
+                {
+                    using (Html.BeginForm("GenerateExcel", "WagesReportSummaryProductionCard", FormMethod.Post, new { @data_bind = "submit: $root.generateExcel" }))
+                    {
+                        <input type="hidden" name="dateFrom" />
+                        <input type="hidden" name="dateTo" />
+                        <input type="hidden" name="week" />
+                        <input type="hidden" name="year" />
+                        <input type="hidden" name="brandGroupCode" />
+                        <input type="hidden" name="filterType" />
+                        <button  type="submit" class="btn btn-primary">@CommonLabel.btnExcel</button>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="table-overflow">
+                <table class="table table-striped">
+                    <thead>
+                        <tr class="head">
+                            <th colspan="4">Summary Production Card</th>
+                        </tr>
+                        <tr class="head">
+                            <th>Location</th>
+                            <th>Proses</th>
+                            <th>Total Produksi (000 btg)</th>
+                            <th>Upah Lain (000 btg)</th>
+                        </tr>
+                    </thead>
+
+                    <tbody data-bind="foreach: listDataItems">
+                        @* 1 *@
+                        <!-- ko if : $data.IsProductionCard-->
+                             
+                                    @* 3  *@
+                                    <!-- ko foreach: $data.ProductionCards -->
+
+                                        <tr>
+                                            <!-- ko if : ($index() == 0)-->
+
+                                            <td data-bind="text: $data.Location, attr:{rowspan: $parent.ProductionCards.length}"></td>
+
+                                            <!-- /ko -->
+                                            <td><span data-bind="text:$data.Process"></span></td>
+                                            <td><span data-bind="text:$data.Produksi"></span></td>
+                                            <td><span data-bind="text:$data.UpahLain"></span></td>
+
+                                        </tr>
+
+                                    @* end 3  *@
+                                    <!-- /ko -->
+
+                                <tr class="total">
+                                    <td colspan="2">Total</td>
+                                    <td><span data-bind="text:$data.TotalProduksiString"></span></td>
+                                    <td><span data-bind="text:$data.TotalUpahLainString"></span></td>
+                                    <td hidden><span data-bind="text:$data.TotalProduksi"></span></td>
+                                    <td hidden><span data-bind="text:$data.TotalUpahLain"></span></td>
+                                    <td hidden><span data-bind="text:$data.TotalProduksiCorrection"></span></td>
+                                    <td hidden><span data-bind="text:$data.TotalUpahLainCorrection"></span></td>
+                                </tr>
+
+                        @* end 1 *@
+                        <!-- /ko -->
+
+                    </tbody>
+                    <tr class="total">
+                        <td colspan="2">Grand Total</td>
+                        <td data-bind="money: $root.footerTotalProduksi"></td>
+                        <td data-bind="money: $root.footerTotalUpahLain"></td>
+                    </tr>
+
+                    <tbody data-bind="visible: !listDataItems().length">
+                        <tr>
+                            <td colspan="4" class="empty-row-message">No data found</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="col-lg-6">
+            <div class="table-overflow">
+                <table class="table table-striped">
+                    <thead>
+                        <tr class="head">
+                            <th colspan="4">Summary Production Card Correction</th>
+                        </tr>
+                        <tr class="head">
+                            <th>Location</th>
+                            <th>Proses</th>
+                            <th>Total Produksi (000 btg)</th>
+                            <th>Upah Lain (000 btg)</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="tbody1" data-bind="foreach: listDataItems">
+                        @* 1 *@
+                        <!-- ko ifnot : $data.IsProductionCard-->
+                        @* 3  *@
+                        <!-- ko foreach: $data.ProductionCards -->
+
+                        <tr>
+                            <!-- ko if : ($index() == 0)-->
+
+                            <td data-bind="text: $data.Location, attr:{rowspan: $parent.ProductionCards.length}"></td>
+
+                            <!-- /ko -->
+                            <td><span data-bind="text:$data.Process"></span></td>
+                            <td><span data-bind="text:$data.Produksi"></span></td>
+                            <td><span data-bind="text:$data.UpahLain"></span></td>
+
+                        </tr>
+
+                        @* end 3  *@
+                        <!-- /ko -->
+
+                        <tr class="total">
+                            <td colspan="2">Total</td>
+                            <td><span data-bind="text:$data.TotalProduksiCorrectionString"></span></td>
+                            <td><span data-bind="text:$data.TotalUpahLainCorrectionString"></span></td>
+                         
+                        </tr>
+
+                        @* end 1 *@
+                        <!-- /ko -->
+
+                    </tbody>
+                    <tr class="total">
+                        <td colspan="2">Grand Total</td>
+                        <td data-bind="money: $root.footerTotalProduksiCorrection"></td>
+                        <td data-bind="money: $root.footerTotalUpahLainCorrection"></td>
+                    </tr>
+
+                    <tbody data-bind="visible: !listDataItems().length">
+                        <tr>
+                            <td colspan="4" class="empty-row-message">No data found</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+<!-- Modal End -->
+@section Scripts
+{
+    <script src="~/Scripts/app/globalfunctions.js" type="text/javascript"></script>
+    <script src="~/Scripts/common/app.GridViewModel.js" type="text/javascript"></script>
+    <script src="~/Scripts/common/app.Extenders.js" type="text/javascript"></script>
+    <script type="text/javascript">
+
+        (function(app) {
+
+            app.EditGrid = function() {
+                var self = this;
+
+                self.filterYearSubmission = ko.observable('@Model.DefaultYear');
+                self.brandSelectList = ko.observableArray([]);
+                self.WeekSelectList = ko.observableArray([]);
+                self.filterBrand = ko.observable('');
+                self.filterDateFrom = ko.observable(moment().toDate());
+                self.filterDateTo = ko.observable(moment().toDate());
+                self.filterType = ko.observable('Daily');
+                self.filterWeek = ko.observable('@Model.DefaultWeek');
+
+                self.footerTotalProduksi = ko.observable('0.00');
+                self.footerTotalUpahLain = ko.observable('0.00');
+
+                self.footerTotalProduksiCorrection = ko.observable('0.00');
+                self.footerTotalUpahLainCorrection = ko.observable('0.00');
+
+                self.onYearSelectedChange = function() {
+                    self.GetWeekFromSelectList();
+                    self.GetBrandGroup();
+                };
+
+                self.onWeekChange = function() {
+                    if (self.filterType() == 'Weekly') {
+                        self.GetBrandGroup();    
+                    }
+                    
+                };
+
+                self.onDateChange = function() {
+                    if (self.filterType() == 'Daily') {
+                        self.GetBrandGroup();   
+                    }
+                   
+                };
+
+                self.radioChange = function() {
+                    self.filterType($('input[name=period]:checked').val());
+                    self.GetBrandGroup();   
+                };
+                
+                self.GetBrandGroup = function() {
+                    var criteria = {
+                        DateFrom: moment(self.filterDateFrom(), "DD/MM/YYYY").format("MM/DD/YYYY"),
+                        DateTo: moment(self.filterDateTo(), "DD/MM/YYYY").format("MM/DD/YYYY"),
+                        Week: self.filterWeek,
+                        Year: self.filterYearSubmission,
+                        FilterType: self.filterType,
+                    };
+
+                    $.ajax({
+                        url: @Html.BaseUrl("WagesReportSummaryProductionCard/GetBrandGroupCodeList"),
+                        type: 'GET',
+                        async: false,
+                        contentType: 'application/json',
+                        data: criteria,
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#ddlbrandFilter').find('option').remove();
+                            $('#ddlbrandFilter').selectpicker('refresh');
+                            var brandgroupcodeList = [];
+                            
+                            if (data.length > 1) {
+                                brandgroupcodeList.push({ "Text": "All", "Value": "All" });
+                            }
+                            
+                            $.each(data, function(index, value) {
+                                brandgroupcodeList.push({ "Text": value, "Value": value });
+                            });
+
+                           
+
+                            if (data.length === 0)
+                                self.filterBrand('');
+                            else
+                                self.filterBrand(brandgroupcodeList[0].Value);
+
+                            self.brandSelectList(brandgroupcodeList);
+                        }
+                    });
+                };
+
+                self.GetWeekFromSelectList = function() {
+                    $.ajax({
+                        url: @Html.BaseUrl("WagesReportSummaryProductionCard/GetWeekByYear"),
+                        type: 'GET',
+                        contentType: 'application/json',
+                        data: { year: self.filterYearSubmission() },
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#filterWeek').find('option').remove();
+                            $('#filterWeek').selectpicker('refresh');
+                            var kpsWeekModel = [];
+                            $.each(data, function(index, value) {
+                                kpsWeekModel.push({ "Text": value, "Value": value });
+                            });
+                            self.WeekSelectList(kpsWeekModel);
+                            self.filterWeek('@Model.DefaultWeek');
+                        }
+                    });
+                };
+
+                self.GetFooterTotal = function() {
+
+                    var totalProduksi = 0;
+                    var totalUpahLain = 0;
+                    var totalProduksiCorrection = 0;
+                    var totalUpahLainCorrection = 0;
+                    ko.utils.arrayForEach(self.gridView.listDataItems(), function(process) {
+
+                      
+                      
+                            totalProduksi += parseFloat(process.TotalProduksi());
+                            totalUpahLain += parseFloat(process.TotalUpahLain());
+                      
+                            totalProduksiCorrection += parseFloat(process.TotalProduksiCorrection());
+                            totalUpahLainCorrection += parseFloat(process.TotalUpahLainCorrection());    
+                      
+                        
+                    });
+
+
+                    self.footerTotalProduksi(totalProduksi.toFixed(2));
+                    self.footerTotalUpahLain(totalUpahLain.toFixed(2));
+
+                    
+                    
+                    self.footerTotalProduksiCorrection(totalProduksiCorrection.toFixed(2));
+                    self.footerTotalUpahLainCorrection(totalUpahLainCorrection.toFixed(2));
+                };
+
+                self.gridView = new app.GridViewModel({
+                    Criteria: {
+                        PageSize: 50,
+                        PageIndex: 1,
+                        BrandGroupCode: self.filterBrand,
+                        DateFrom: self.filterDateFrom,
+                        DateTo: self.filterDateTo,
+                        Week: self.filterWeek,
+                        Year: self.filterYearSubmission,
+                        FilterType: self.filterType
+                    },
+                    DataSourceUrl: @Html.BaseUrl("WagesReportSummaryProductionCard/GetWagesReportSummary"),
+                    InlineEdit: true,
+                    InsertRowFocusedControlIndex: 1
+                });
+
+                function WagesSummaryParent(data) {
+                    selfModel = this;
+                    ko.mapping.fromJS(data, {}, selfModel);
+                }
+
+                ;
+
+                function WagesSummaryDetail(data) {
+                    ko.mapping.fromJS(data, {}, this);
+                }
+
+                self.gridView.mapping = {
+                    create: function(options) {
+                        var parent = new WagesSummaryParent(options.data);
+
+                        parent.ProductionCards = ko.utils.arrayMap(parent.ProductionCards() || [], function(item) {
+                            return new WagesSummaryDetail(item);
+                        });
+
+                        return parent;
+                    }
+                };
+
+
+                self.generateExcel = function(formElement) {
+                    $(formElement).find("input[name=dateFrom]").val($('#filterDateFrom').val());
+                    $(formElement).find("input[name=dateTo]").val($('#filterDateTo').val());
+                    $(formElement).find("input[name=week]").val($('#filterWeek').val());
+                    $(formElement).find("input[name=year]").val(self.filterYearSubmission());
+                    $(formElement).find("input[name=brandGroupCode]").val(self.filterBrand());
+                    $(formElement).find("input[name=filterType]").val($('input[name=period]:checked').val());
+                    return true;
+                };
+
+               
+
+                // Load Data
+                self.search = function() {
+                    $('.empty-row-message').html('<div class="loader"></div>'); // Reset New and Edit row
+                  
+                    // Check whether New or Edit data is existing and not saved to database yet (on Ajax Action)
+                    if (SKTIS.Checker.modifiedDataExistsForAjax([self.gridView.listNewItems, self.gridView.listEditItems]) == true) {
+                        return;
+                    } else {
+                        self.gridView.listNewItems.removeAll();
+                        self.gridView.listEditItems.removeAll();
+                    }
+
+                    self.gridView.search({}, function(response) {
+                       
+                        if (response.status == 'KO') {
+                            SKTIS.Helper.Notification(response.message, 'error');
+                            $('.empty-row-message').html(response.message);
+                        } else if (response.status == 'Empty') {
+
+                            self.RemoveNotification();
+
+                            //SKTIS.Helper.Notification(response.message,'warning');
+                            $('.empty-row-message').html('@CommonLabel.lblDataEmpty');
+                        }
+                        self.GetFooterTotal();
+                    });
+
+                    self.RemoveNotification = function() {
+                        if ($('#noty_top_layout_container').length > 0) {
+                            $('#noty_top_layout_container').remove();
+                        }
+                    };
+                };
+
+
+                $(document).ready(function() {
+
+                    self.onYearSelectedChange();
+
+                    self.radioChange();
+                });
+
+                //self.search();
+
+
+            };
+
+            ko.applyBindings(new app.EditGrid());
+        })(app = this.app || {});
+
+    </script>
+}

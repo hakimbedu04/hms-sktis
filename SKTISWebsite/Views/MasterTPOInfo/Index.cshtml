@@ -1,0 +1,319 @@
+﻿@using HMS.SKTIS.Application.Resources
+@using SKTISWebsite.Helper
+@using HMS.SKTIS.Application.Resources.Views.MasterTPOInfo
+@model SKTISWebsite.Models.MasterTOPInfo.InitMasterTPOInfo
+
+@{Html.SetPageTitle(@MasterTPOInfo.PageTitle);}
+<div data-bind="with: gridViewTpo" class="col-lg-12">
+    <div class="col-lg-6">
+        <div class="row">
+            <label class="form-label col-lg-4">
+                @MasterTPOInfo.lblLocationFilter
+            </label>
+            <div class="col-lg-5">
+                @Html.DropDownList("dllLocation", Model.ItemLocationCodes, @CommonLabel.ddlSelectAll, new Dictionary<string, object> { { "data-bind", "value:$root.ItemLocationCodes" },
+                                                           { "class", "selectpicker show-tick form-controlt" },{"data-live-search","true"},{"id","dllLocation"} })
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="action-btn">
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.View.ToString())) {
+                    <button type="button" class="btn btn-primary" data-bind="click:$root.search">@CommonLabel.btnView</button>
+                }
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.View.ToString())) {
+                    <button type="button" class="btn btn-primary" data-bind="click:$root.saveData">@CommonLabel.btnSave</button>
+                }
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.View.ToString())) {
+                    @using (Html.BeginForm("GenerateExcel", "MasterTPOInfo", FormMethod.Post, new { @data_bind = "submit: $root.generateExcel" }))
+                    {
+                        <input type="hidden" name="locationCode" />
+                        <button type="submit" class="btn btn-primary">@CommonLabel.btnExcel</button>
+                    }
+                }
+                @Html.Partial("GridViewPageSizeSelector")
+            </div>
+        </div>
+    </div>
+    <div class="table-overflow">
+        <table class="table table-striped">
+            <thead>
+                <tr class="head">
+                    <th data-bind="click:sortBy.bind($data,'LocationCode'), css:sortCss('LocationCode', $data.sortExpression(), $data.sortOrder())">@MasterTPOInfo.lblTitleLocationCode</th>
+                    <th data-bind="click:sortBy.bind($data,'LocationName'), css:sortCss('LocationName', $data.sortExpression(), $data.sortOrder())">@MasterTPOInfo.lblTitleLocationName</th>
+                    <th data-bind="click:sortBy.bind($data,'TPORank'), css:sortCss('TPORank', $data.sortExpression(), $data.sortOrder())">@MasterTPOInfo.lblTitleTPORank</th>
+                    <th data-bind="click:sortBy.bind($data,'VendorNumber'), css:sortCss('VendorNumber', $data.sortExpression(), $data.sortOrder())">@MasterTPOInfo.lblTitleVendorNo</th>
+                    <th data-bind="click:sortBy.bind($data,'VendorName'), css:sortCss('VendorName', $data.sortExpression(), $data.sortOrder())">@MasterTPOInfo.lblTitleVendorName</th>
+                    <th data-bind="click:sortBy.bind($data,'BankType'), css:sortCss('BankType', $data.sortExpression(), $data.sortOrder())">@MasterTPOInfo.lblTitleBank</th>
+                    <th data-bind="click:sortBy.bind($data,'BankAccountNumber'), css:sortCss('BankAccountNumber', $data.sortExpression(), $data.sortOrder())">@MasterTPOInfo.lblTItleBankAccountNumber</th>
+                    <th data-bind="click:sortBy.bind($data,'BankAccountName'), css:sortCss('BankAccountName', $data.sortExpression(), $data.sortOrder())">@MasterTPOInfo.lblTItleBankAccountName</th>
+                    <th data-bind="click:sortBy.bind($data,'BankBranch'), css:sortCss('BankBranch', $data.sortExpression(), $data.sortOrder())">@MasterTPOInfo.lblTItleBankBranch</th>
+                    <th data-bind="click:sortBy.bind($data,'Owner'), css:sortCss('Owner', $data.sortExpression(), $data.sortOrder())">@MasterTPOInfo.lblTitleOwner</th>
+                    <th data-bind="click:sortBy.bind($data,'Established'), css:sortCss('Established', $data.sortExpression(), $data.sortOrder())">@MasterTPOInfo.lblTitleEstablished</th>
+                    <th>@MasterTPOInfo.lblTitleUpdatedBy</th>
+                    <th>@MasterTPOInfo.lblTitleUpdatedDate</th>
+                </tr>
+                <tr class="insertRow" data-bind="click: cancelInline.bind(),inlineAddProccess:[$data, $root.newData]">
+                    <th>
+                        @Html.DropDownList("dllLocationCode", Model.ItemLocationCodes, new Dictionary<string, object> { { "data-bind", "value:$root.newData.LocationCode, event : { change : $root.NewCodeLocationChange}" },
+                            { "class", "selectpicker show-tick form-controlt" },{"data-live-search","true"} })
+                    </th>
+                    <th><span id="spLocationDescription" data-bind="text:$root.newData.LocationName"></span></th>
+                    <th>
+                        @Html.DropDownList("dllTPORank", Model.ItemTPORanks, new Dictionary<string, object> { { "data-bind", "value:$root.newData.TPORank" },
+                            { "class", "selectpicker show-tick form-controlt" },{"data-live-search","true"} })
+                    </th>
+                    <th><input data-bind="value:$root.newData.VendorNumber, valueUpdate: 'afterkeydown'" class="form-control transparent" /></th>
+                    <th><input data-bind="value:$root.newData.VendorName, valueUpdate: 'afterkeydown'" class="form-control transparent" /></th>
+                    <th><input data-bind="value:$root.newData.BankType, valueUpdate: 'afterkeydown'" class="form-control transparent" /></th>
+                    <th><input data-bind="value:$root.newData.BankAccountNumber, valueUpdate: 'afterkeydown'" class="form-control transparent" /></th>
+                    <th><input data-bind="value:$root.newData.BankAccountName, valueUpdate: 'afterkeydown'" class="form-control transparent" /></th>
+                    <th><input data-bind="value:$root.newData.BankBranch, valueUpdate: 'afterkeydown'" class="form-control transparent" /></th>
+                    <th><input data-bind="value:$root.newData.Owner, valueUpdate: 'afterkeydown'" class="form-control transparent" /></th>
+                    <th>
+                        <div class='input-group date time insidetable' data-bind="dateTimePicker: $root.newData.Established, value:$root.newData.Established, dateTimePickerOptions: { widgetPositioning: {vertical: 'bottom'}}">
+                            <input type='text' id="establishedInsertDatePicker" class="form-control" />
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                        </div>
+                    </th>
+                    <th><span data-bind="text:$root.newData.UpdatedBy"></span></th>
+                    <th><span data-bind="text:$root.newData.UpdatedDate"></span></th>
+                </tr>
+            </thead>
+            <tbody data-bind="foreach: listDataItems">
+                <tr data-bind="if: ($parent.editingRowIndex() !== $index()),
+                                   click: $parent.editInline3.bind($data,$index())">
+                    <td class="current"><span data-bind="text:$data.LocationCode"></span></td>
+                    <td><span data-bind="text:$data.LocationName"></span></td>
+                    <td class="current"><span data-bind="text:$data.TPORank"></span></td>
+                    <td class="current"><span data-bind="text:$data.VendorNumber"></span></td>
+                    <td class="current"><span data-bind="text:$data.VendorName"></span></td>
+                    <td class="current"><span data-bind="text:$data.BankType"></span></td>
+                    <td class="current"><span data-bind="text:$data.BankAccountNumber"></span></td>
+                    <td class="current"><span data-bind="text:$data.BankAccountName"></span></td>
+                    <td class="current"><span data-bind="text:$data.BankBranch"></span></td>
+                    <td class="current"><span data-bind="text:$data.Owner"></span></td>
+                    <td class="current"><span data-bind="text:$data.Established"></span></td>
+                    <td><span data-bind="text:$data.UpdatedBy"></span></td>
+                    <td><span data-bind="text:$data.UpdatedDate"></span></td>
+                </tr>
+                @*edit template*@
+                <tr data-bind="validationOptions: {insertMessages: false, showTooltip:true, decorateInputElement: true, errorElementClass: 'input-error'}, inlineProccess:[$parent,$data],
+                                   if:($parent.editingRowIndex() === $index()),
+                                   click: $parent.selectRow.bind($data, $index())">
+                    <td class="current">
+                        @Html.DropDownList("dllLocationCode", Model.ItemLocationCodes, new Dictionary<string, object> { { "data-bind", "selectPicker:$data.LocationCode" },
+                            { "class", "selectpicker show-tick form-controlt" }, {"data-live-search","true"},{"id","dllLocationCode"} })
+                    </td>
+                    <td><span id="spLocationDescription" data-bind="text:$data.LocationName" /></td>
+                    <td class="current">
+                        @Html.DropDownList("dllTPORank", Model.ItemTPORanks, new Dictionary<string, object> { { "data-bind", "selectPicker:$data.TPORank" },
+                            { "class", "selectpicker show-tick form-controlt" }, {"data-live-search","true"},{"id","dllTPORank"} })
+                    </td>
+                    <td class="current"><input data-bind="value:$data.VendorNumber" class="form-control transparent" /></td>
+                    <td class="current"><input data-bind="value:$data.VendorName" class="form-control transparent" /></td>
+                    <td class="current"><input data-bind="value:$data.BankType" class="form-control transparent" /></td>
+                    <td class="current"><input data-bind="value:$data.BankAccountNumber" class="form-control transparent" /></td>
+                    <td class="current"><input data-bind="value:$data.BankAccountName" class="form-control transparent" /></td>
+                    <td class="current"><input data-bind="value:$data.BankBranch" class="form-control transparent" /></td>
+                    <td class="current"><input data-bind="value:$data.Owner" class="form-control transparent" /></td>
+                    <td class="current">
+                        <div class='input-group date time insidetable' data-bind="dateTimePicker: $data.Established, value:$data.Established, dateTimePickerOptions: {widgetPositioning: {vertical: 'bottom'}}">
+                            <input type='text' class="form-control" />
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                        </div>
+                    </td>
+                    <td><span data-bind="text:$data.UpdatedBy"></span></td>
+                    <td><span data-bind="text:$data.UpdatedDate"></span></td>
+                </tr>
+            </tbody>
+            <tbody data-bind="visible: !listDataItems().length">
+                <tr>
+                    <td colspan="13" class="empty-row-message"><div class="loader"></div></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div data-bind="if: (listDataItems() != null && listDataItems().length !== 0)">
+        @Html.Partial("GridViewFooter")
+    </div>
+
+</div>
+@section Scripts
+{
+    <script src="~/Scripts/common/app.GridViewModel.js" type="text/javascript"></script>
+    <script type="text/javascript">
+    (function (app) {
+        app.EditGrid = function () {
+            var self = this;
+            self.locationDescriptions = @Html.Raw(Json.Encode(@Model.LocationDescs));
+
+
+            self.ItemLocationCodes = ko.observable('');
+            self.filterExcelLocationCodeTpo = self.ItemLocationCodes();
+
+            self.NewCodeLocationChange = function() {
+                for (var i = 0; i < self.locationDescriptions.length; i++) {
+                    if (self.locationDescriptions[i].LocationCode == self.newData.LocationCode()) {
+                        self.newData.LocationName = self.locationDescriptions[i].LocationName;
+                        console.log(self.newData.LocationName);
+                        $('#spLocationDescription').html(self.newData.LocationName);
+                        break;
+                    }
+                }
+            }.bind(this);
+
+            self.getDefaultLocationDescription = function() {
+                var result ="";
+                for (var i = 0; i < self.locationDescriptions.length; i++) {
+                    if (self.locationDescriptions[i].LocationCode == $("#dllLocationCode").val()) {
+                        result = self.locationDescriptions[i].LocationName;
+                        break;
+                    }
+                }
+                return result;
+            };
+
+
+            self.newData = {
+                LocationCode:ko.observable(''),
+                TPORank:ko.observableArray([]),
+                VendorNumber:ko.observable(''),
+                VendorName:ko.observable(''),
+                BankType:ko.observable(''),
+                BankAccountNumber:ko.observable(''),
+                BankAccountName:ko.observable(''),
+                BankBranch:ko.observable(''),
+                Owner:ko.observable(''),
+                Established:ko.observable(''),
+                LocationName:self.getDefaultLocationDescription()
+            };
+
+            //description: init gridViewTpo
+            self.gridViewTpo = new app.GridViewModel({
+                Criteria: { PageSize: 10, PageIndex: 1, SortExpression: "UpdatedDate", SortOrder: "DESC", LocationCode: self.ItemLocationCodes },
+                DataSourceUrl:  @Html.BaseUrl("MasterTPOInfo/GetMasterTpo"),
+                InlineEdit: true,
+                InsertRowFocusedControlIndex: 1
+            });
+
+            // Field Validations
+            self.gridViewTpo.applyValidationRules = function (entity) {
+                
+                self.RemoveNotification();
+                
+                entity.LocationCode.extend({
+                    required: {
+                        message: "<strong>Location Code</strong> cannot be empty!"
+                    }
+                });
+            };
+            // Reset Fields for Insert Row TPO
+            self.gridViewTpo.resetDefault = function (viewModel) {
+                viewModel.LocationCode('');
+                viewModel.TPORank('');
+                viewModel.VendorNumber('');
+                viewModel.VendorName('');
+                viewModel.BankType('');
+                viewModel.BankAccountNumber('');
+                viewModel.BankAccountName('');
+                viewModel.BankBranch('');
+                viewModel.Owner('');
+                viewModel.Established('');
+                $('#establishedInsertDatePicker').val('');
+            };
+
+            //description: save bulk data TPO
+            self.saveData = function () {
+                if (self.gridViewTpo.editingRowIndex() !== -1)
+                    return;
+
+                var datas = {
+                    "New": self.gridViewTpo.listNewItems(),
+                    "Edit": self.gridViewTpo.listEditItems()
+                };
+
+                datas = JSON.stringify(datas);
+                $.ajax({
+                    url:  @Html.BaseUrl("MasterTPOInfo/SaveTpos"),
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: datas,
+                        dataType: 'json',
+                        success: function (data) {
+                            console.log(data);
+                            if (data.New) {
+                                $.each(data.New, function (k, value) {
+                                    if (value)
+                                        SKTIS.Helper.ResponseNotification(value, "Insert Master TPO Info", value.LocationCode + " - " + value.TPORank);
+                                });
+                            }
+
+                            if (data.Edit) {
+                                $.each(data.Edit, function (k, value) {
+                                    if (value)
+                                        SKTIS.Helper.ResponseNotification(value, "Edit Master TPO Info", value.LocationCode + " - " + value.TPORank);
+                                });
+                            }
+
+                            //self.gridViewTpo.reload();
+                            self.gridViewTpo.sort('UpdatedDate', 'DESC');
+                            self.gridViewTpo.listNewItems.removeAll();
+                            self.gridViewTpo.listEditItems.removeAll();
+                        }
+                    });
+                };
+
+                self.generateExcel = function(formElement) {
+                    $(formElement).find("input[name=locationCode]").val(self.filterExcelLocationCodeTpo());
+                    return true;
+                };
+
+
+                //description: load data Location
+                self.search = function () {
+
+                    $('.empty-row-message').html('<div class="loader"></div>'); // Reset New and Edit row
+                    // Check whether New or Edit data is existing and not saved to database yet (on Ajax Action)
+                    if (SKTIS.Checker.modifiedDataExistsForAjax([self.gridViewTpo.listNewItems, self.gridViewTpo.listEditItems]) == true) {
+                        return;
+                    }else{
+                        self.gridViewTpo.listNewItems.removeAll();
+                        self.gridViewTpo.listEditItems.removeAll();
+                    }
+
+                    self.filterExcelLocationCodeTpo = self.ItemLocationCodes;
+
+                    self.gridViewTpo.search({}, function (response) {
+                        if (response.status == 'KO') {
+                            SKTIS.Helper.Notification(response.message,'error');
+                            $('.empty-row-message').html(response.message);
+                        }else if (response.status == 'Empty') {
+
+                            self.RemoveNotification();
+
+                            //SKTIS.Helper.Notification(response.message,'warning');
+                            $('.empty-row-message').html('@CommonLabel.lblDataEmpty');
+                        }
+                    });
+
+                    self.RemoveNotification = function() {
+                        if ($('#noty_top_layout_container').length > 0) {
+                            $('#noty_top_layout_container').remove();
+                        }
+                    };
+                };
+                self.search();
+
+                // Check whether New or Edit data is existing and not saved to database yet (on Request action)
+                SKTIS.Checker.modifiedDataExists([self.gridViewTpo.listNewItems, self.gridViewTpo.listEditItems]);
+            };
+            ko.applyBindings(new app.EditGrid());
+        })(app = this.app || {});
+    </script>
+}

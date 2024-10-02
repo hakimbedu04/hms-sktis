@@ -1,0 +1,1302 @@
+﻿@model SKTISWebsite.Models.ExePlantWorkerBalancing.InitExePlantWorkerBalancing
+@using HMS.SKTIS.Application.Resources
+@using SKTISWebsite.Helper
+@{ Html.SetPageTitle(" Worker Balancing"); }
+
+<div class="col-lg-12">
+    <div class="tabs" role="tabpanel">
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs" role="tablist" id="workerbalancing">
+            <li role="presentation" class="active"><a href="#balancing" aria-controls="home" role="tab" data-toggle="tab">Line Balancing</a></li>
+            <li role="presentation"><a href="#balancingload" aria-controls="profile" role="tab" data-toggle="tab">Load Balancing</a></li>
+        </ul>
+
+        <div class="tab-content">
+            <!-- Begin of Tab Balancing Process -->
+            <div role="tabpanel" class="tab-pane fade in active" id="balancing">
+                <div class="col-lg-6">
+                    <div class="row">
+                        <label class="form-label col-lg-4">
+                            Location
+                        </label>
+                        <div class="col-lg-2 offset-right">
+                            @Html.DropDownList("filterLocationBalancingProcess", new SelectList(Model.PLNTChildLocationLookupList, "LocationCode", "LocationCompat"),
+                                        new
+                                        {
+                                            @class = "selectpicker show-tick form-control",
+                                            data_live_search = true,
+                                            data_bind = "value:$root.filterLocationBalancingProcess, event : { change: $root.onfilterLocationBalancingProcessChange }"
+                                        })
+                        </div>
+                        <div class="col-lg-3">
+                            <input type="text" class="form-control" id="lineBalancingLocationNameFilter" data-bind="value:$root.filterLocationNameBalancingProcess" readonly>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label class="form-label col-lg-4">
+                            Unit
+                        </label>
+                        <div class="col-lg-5">
+                            <select class="selectpicker show-tick form-control" id="filterUnitBalancingProcess"
+                                    data-live-search="true"
+                                    data-bind="selectPicker: $root.filterUnitBalancingProcess, optionsText: 'Text', optionsValue : 'Value', selectPickerOptions: { optionsArray: $root.filterUnitBalancingProcessDataSource }"></select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label class="form-label col-lg-4">
+                            Shift
+                        </label>
+                        <div class="col-lg-5">
+                            <select class="selectpicker show-tick form-control" id="filterShiftBalancingProcess"
+                                    data-live-search="true"
+                                    data-bind="selectPicker: $root.filterShiftBalancingProcess, optionsText: 'Text', optionsValue : 'Value', selectPickerOptions: { optionsArray: $root.filterShiftBalancingProcessDataSource }"></select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label class="form-label col-lg-4">
+                            Brand
+                        </label>
+                        <div class="col-lg-5">
+                            <select class="selectpicker show-tick form-control" id="filterBrandCodeBalancingProcess"
+                                    data-live-search="true"
+                                    data-bind="selectPicker: $root.filterBrandCodeBalancingProcess, optionsText: 'Text', optionsValue : 'Value', selectPickerOptions: { optionsArray: $root.filterBrandCodeBalancingProcessDataSource }"></select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-12">
+                    <div class="row">
+                        <div class="action-btn">
+                            <button id="btnView" type="button" class="btn btn-primary" data-bind="click:$root.viewLineBalancing">View</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-12">
+                    <div class="row">
+                        <div id="divBalancingProcessPerUnit">
+                            <div id="GridBalancingProcessPerUnit"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- End of Tab Balancing Process -->
+            <!-- Begin of Tab List Employee -->
+            <div role="tabpanel" class="tab-pane fade" id="balancingload">
+                <div class=" col-lg-6">
+                    <div class="row">
+                        <label class="form-label col-lg-4">
+                            Location
+                        </label>
+                        <div class="col-lg-2 offset-right">
+                            @Html.DropDownList("ddlFilterLocationCode", new SelectList(Model.PLNTChildLocationLookupList, "LocationCode", "LocationCompat"),
+                            new
+                            {
+                                @class = "selectpicker show-tick form-control",
+                                id = "ddlFilterLocationCode",
+                                data_live_search = "true",
+                                data_bind = "value:$root.filterLocationCode, event : { change : $root.onLocationCodeChange}"
+                            })
+                        </div>
+                        <div class="col-lg-3">
+                            <input type="text" class="form-control" readonly="readonly" data-bind="value:$root.filterLocationName">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label class="form-label col-lg-4">
+                            Unit
+                        </label>
+                        <div class="col-lg-5">
+                            <select class="selectpicker show-tick form-control" id="ddlUnitCodeFilter"
+                                    data-live-search="true"
+                                    data-bind="selectPicker: $root.filterUnitCode, optionsText: 'Text', optionsValue : 'Value', selectPickerOptions: { optionsArray: $root.unitCodeSelectList }, event : {change : $root.onUnitAndProcessSelectedChange}"></select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label class="form-label col-lg-4">
+                            Shift
+                        </label>
+                        <div class="col-lg-5">
+                            <select class="selectpicker show-tick form-control" id="ddlShiftFilter"
+                                    data-live-search="true"
+                                    data-bind="selectPicker: $root.filterShift, optionsText: 'Text', optionsValue : 'Value', selectPickerOptions: { optionsArray: $root.shiftSelectList }"></select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label class="form-label col-lg-4">
+                            Brand
+                        </label>
+                        <div class="col-lg-5">
+                            <select class="selectpicker show-tick form-control" id="ddlbrandFilter"
+                                    data-live-search="true"
+                                    data-bind="selectPicker: $root.filterbrandcode, optionsText: 'Text', optionsValue : 'Value', selectPickerOptions: { optionsArray: $root.brandSelectList }"></select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="col-lg-12">
+                            <div class="row">
+                                <div class="action-btn">
+                                    <button type="button" class="btn btn-primary" data-bind="click:$root.viewDatapage">@CommonLabel.btnView</button>
+                                    <!-- <button type="button" class="btn btn-primary" data-bind="click:$root.saveALLMultiSkill">Save</button>-->
+                                    <button type="button" class="btn btn-primary" data-bind="click:$root.saveData">Save</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tabs" role="tabpanel">
+                            <!-- Nav tabs -->
+                            <ul class="nav nav-tabs" role="tablist" id="multisingle">
+                                <li role="presentation" class="active"><a href="#multiskill" role="tab" data-toggle="tab">Multiskill</a></li>
+                                <li role="presentation"><a href="#singleskill" role="tab" data-toggle="tab">Singleskill</a></li>
+                            </ul>
+
+                            <div class="tab-content">
+                                <!-- Begin of Tab Balancing Process -->
+                                <div role="tabpanel" class="tab-pane fade in active" id="multiskill" data-bind="with: gridView">
+                                    <!-- Multiskill Table -->
+                                    <div class="table-overflow">
+                                        <table class="table table-striped ">
+                                            <thead>
+                                                <tr>
+                                                    <th class="check-head"></th>
+                                                    <th colspan="5" class="row-head">Multiskill Source</th>
+                                                    <th colspan="3" class="row-head">Destination</th>
+                                                </tr>
+                                                <tr class="head">
+                                                    <th class="column-check"></th>
+                                                    <th class="">Process</th>
+                                                    <th class="">Group</th>
+                                                    <th class="">ID</th>
+                                                    <th class="">Name</th>
+                                                    <th class="">Process</th>
+                                                    <th class="check-head">Unit</th>
+                                                    <th class="check-head">Group</th>
+                                                    <th class="check-head"></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody data-bind="foreach: listDataItems">
+                                                @*insert template*@
+                                                <tr data-bind="if:$data.statfrom() == false">
+                                                    <td class="column-check">
+                                                        <input type="checkbox" name="check" data-bind="value: $data.Checkbox,event : {change : $root.multicheckboxOnChange($data)}">
+                                                    </td>
+                                                    <td><span data-bind="text:$data.SourceProcess"></span></td>
+                                                    <td class="right"><span data-bind="text:$data.SourceGroupcode"></span></td>
+                                                    <td class="right"><span data-bind="text:$data.EmployeeID"></span></td>
+                                                    <td><span data-bind="text:$data.EmployeeMix"></span></td>
+                                                    <td><span data-bind="text:$data.DestinationProcess"></span></td>
+                                                    <td class="current">
+                                                        <select class="selectpicker show-tick form-control" id="ddlMultiUnitCodeFilter"
+                                                                data-live-search="true"
+                                                                data-bind="selectPicker: $data.UnitCodeDestination,  value: $data.UnitCodeDestination, optionsText: 'Text', optionsValue : 'Value', selectPickerOptions: { optionsArray: $root.unitCodeSelectList }"></select>
+                                                    </td>
+
+                                                    <td class="current">
+                                                        <span id="lblGroupCodeDestText" data-bind="text: $data.GroupCodeDestination"></span>
+                                                    </td>
+                                                    <td class="current center-btn">
+                                                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#groupCodePopUpDestInsert" data-bind="click:$root.getGroupPopUpInsert.bind($parent, $data, $index())">..</button>
+                                                        <!-- Choose Group Modal -->
+                                                        <!-- End Choose Group Modal -->
+                                                    </td>
+                                                </tr>
+                                                @*insert template*@
+                                                <tr data-bind="if:$data.statfrom() == true">
+                                                    <td class="column-check">
+                                                        <input type="checkbox" name="check" checked="checked" data-bind="  value: $data.Checkbox">
+                                                    </td>
+                                                    <td><span data-bind="text:$data.SourceProcess"></span></td>
+                                                    <td class="right"><span data-bind="text:$data.SourceGroupcode"></span></td>
+                                                    <td class="right"><span data-bind="text:$data.EmployeeID"></span></td>
+                                                    <td><span data-bind="text:$data.EmployeeMix"></span></td>
+                                                    <td><span data-bind="text:$data.DestinationProcess"></span></td>
+                                                    <td><span data-bind="text:$data.UnitCodeDestination"></span></td>
+                                                    <td><span data-bind="text:$data.GroupCodeDestination"></span></td>
+                                                </tr>
+                                            </tbody>
+                                            <tbody data-bind="visible: !listDataItems().length">
+                                                <tr>
+                                                    <td colspan="9" class="empty-row-message"><div class="loader"></div></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    <!-- End Multiskill Table -->
+
+                                </div>
+                                <div role="tabpanel" class="tab-pane fade" id="singleskill" data-bind="with: gridviewSingle">
+                                    <div class="col-lg-6">
+                                        <div class="row">
+                                            <div class="row">
+                                                <label class="form-label col-lg-4">
+                                                    Process
+                                                </label>
+                                                <div class="col-lg-5">
+                                                    <select class="selectpicker show-tick form-control" id="ddlProcessGroupFilter"
+                                                            data-live-search="true"
+                                                            data-bind="selectPicker: $root.SingleProcessGroup, optionsText: 'Text', optionsValue : 'Value', selectPickerOptions: { optionsArray: $root.SingleProcessGroupSelectList }, event : {change : $root.onSingleProcessGroupSelectedChange}"></select>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <label class="form-label col-lg-4">
+                                                    Group
+                                                </label>
+                                                <div class="col-lg-5">
+                                                    <select class="selectpicker show-tick form-control" id="ddlSingleGroupCodeFilter"
+                                                            data-live-search="true"
+                                                            data-bind="selectPicker: $root.SingleGroupCode, optionsText: 'Text', optionsValue : 'Value', selectPickerOptions: { optionsArray: $root.groupCodeSingleSelectList }"></select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12">
+                                        <div class="row">
+                                            <div class="action-btn">
+                                                <button type="button" class="btn btn-primary" data-bind="click:$root.searchGridViewSingle">View</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Singleskill Table -->
+                                    <div class="table-overflow">
+                                        <table class="table table-striped ">
+                                            <thead>
+                                                <tr>
+                                                    <th class="check-head"></th>
+                                                    <th colspan="2" class="row-head">Singleskill Source</th>
+                                                    <th colspan="3" class="row-head">Destination</th>
+                                                </tr>
+                                                <tr class="head">
+                                                    <th class="column-check"></th>
+                                                    <th class="widthsmall global-head">ID</th>
+                                                    <th class="widthsmall global-head">Name</th>
+                                                    <th class="global-head">Unit</th>
+                                                    <th class="global-head">Group</th>
+                                                    <th></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody data-bind="foreach: listDataItems">
+                                                @*insert template*@
+                                                <tr data-bind="if:$data.statfrom() == false">
+                                                    <td class="column-check">
+                                                        <input type="checkbox" name="check" data-bind="checked : $data.Checkbox,event : {change : $root.singlecheckboxOnChange($data)}">
+                                                    </td>
+                                                    <td class="right"><span data-bind="text:$data.EmployeeID"></span></td>
+                                                    <td><span data-bind="text:$data.EmployeeMix"></span></td>
+                                                    <td class="current">
+                                                        <select class="selectpicker show-tick form-control" id="ddlSingleUnitCodeDestFilter"
+                                                                data-live-search="true"
+                                                                data-bind="selectPicker: $data.UnitCodeDestination,  value: $data.UnitCodeDestination, optionsText: 'Text', optionsValue : 'Value', selectPickerOptions: { optionsArray: $root.unitCodeSelectList}"></select>
+                                                    </td>
+                                                    <td class="current">
+                                                        <span id="lblsingleGroupCodeDestText" data-bind="text: $data.GroupCodeDestination"></span>
+                                                    </td>
+                                                    <td class="current center-btn">
+                                                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#singlegroupCodePopUpDestInsert" data-bind="click:$root.singlegetGroupPopUpInsert.bind($parent, $data, $index())">..</button>
+                                                        <!-- Choose Group Modal -->
+                                                        <!-- End Choose Group Modal -->
+                                                    </td>
+                                                </tr>
+                                                <tr data-bind="if:$data.statfrom() == true">
+                                                    <td class="column-check">
+                                                        <input type="checkbox" name="check" checked="checked" data-bind="  value: $data.Checkbox">
+                                                    </td>
+                                                    <td class="right"><span data-bind="text:$data.EmployeeID"></span></td>
+                                                    <td><span data-bind="text:$data.EmployeeMix"></span></td>
+                                                    <td><span data-bind="text:$data.UnitCodeDestination"></span></td>
+                                                    <td><span data-bind="text:$data.GroupCodeDestination"></span></td>
+                                                </tr>
+                                            </tbody>
+                                            <tbody data-bind="visible: !listDataItems().length">
+                                                <tr>
+                                                    <td colspan="12" class="empty-row-message"><div class="loader"></div></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+
+                                    <div class="row" data-bind="if: (listDataItems() != null && listDataItems().length !== 0)">
+                                        @Html.Partial("GridViewFooter")
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Insert -->
+<div class="modal fade choose-group-8" id="groupCodePopUpDestInsert" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Choose Destination Group</h4>
+            </div>
+            <div class="modal-body">
+                <div class="table-overflow no-margin">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr class="head">
+                                <th class="column-check"></th>
+                                <th>Group</th>
+                                <th>Allocation</th>
+                                <th>Attendance</th>
+                            </tr>
+                        </thead>
+                        <tbody data-bind='foreach: itemListGroupCodePopUp'>
+                            <tr>
+                                <td class="column-check"><input type="radio" name="group" data-bind="text: GroupCode" checked="checked"></td>
+                                <td><span data-bind="text: GroupCode"></span></td>
+                                <td><span data-bind="text: Allocation"></span></td>
+                                <td><span data-bind="text: Attendance"></span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-lg-12">
+                    <div class="row">
+                        <div class="action-btn">
+                            <button type="button" class="btn btn-primary pull-right" data-dismiss="modal" data-bind="click:$root.chooseDestinationGroup">Choose</button>
+                            <button type="button" class="btn btn-primary pull-right" data-dismiss="modal">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade choose-group-8" id="singlegroupCodePopUpDestInsert" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Choose Destination Group</h4>
+            </div>
+            <div class="modal-body">
+                <div class="table-overflow no-margin">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr class="head">
+                                <th class="column-check"></th>
+                                <th>Group</th>
+                                <th>Allocation</th>
+                                <th>Attendance</th>
+                            </tr>
+                        </thead>
+                        <tbody data-bind='foreach: singleitemListGroupCodePopUp'>
+                            <tr>
+                                <td class="column-check"><input type="radio" name="group" data-bind="text: GroupCode" checked="checked"></td>
+                                <td><span data-bind="text: GroupCode"></span></td>
+                                <td><span data-bind="text: Allocation"></span></td>
+                                <td><span data-bind="text: Attendance"></span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-lg-12">
+                    <div class="row">
+                        <div class="action-btn">
+                            <button type="button" class="btn btn-primary pull-right" data-dismiss="modal" data-bind="click:$root.singlechooseDestinationGroup">Choose</button>
+                            <button type="button" class="btn btn-primary pull-right" data-dismiss="modal">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script src="~/Scripts/app/globalfunctions.js" type="text/javascript"></script>
+    <script src="~/Scripts/common/app.GridViewModel.js" type="text/javascript"></script>
+    <script src="~/Scripts/common/app.Extenders.js" type="text/javascript"></script>
+    <script type="text/javascript">
+
+
+    (function(app) {
+        app.EditGrid = function() {
+            var self = this;
+            //====================================LINE BALANCING PROCESS======================================
+
+            //======== filter variable - balancing process ======
+            self.filterLocationBalancingProcess = ko.observable($('#filterLocationBalancingProcess').val());
+            self.filterLocationNameBalancingProcess = ko.observable('');
+            self.filterUnitBalancingProcess = ko.observable('');
+            self.filterShiftBalancingProcess = ko.observable('');
+            self.filterBrandCodeBalancingProcess = ko.observable('');
+
+
+            //======== event handler on change - balancing process ======
+            self.onfilterLocationBalancingProcessChange = function() {
+                //self.GetLocationNameBalancingProcess();
+                //self.GetFilterUnitBalancingProcessSelectList();
+                //self.GetFilterShiftBalancingProcessSelectList();
+                //self.GetFilterBrandCodeBalancingProcessSelectList();
+                //$('option:selected', $("#filterLocationBalancingProcess")).text(self.filterLocationBalancingProcess());
+
+                if (self.isLoading() && self.firstLoad) return;
+
+                self.isLoading(true);
+
+                async.series([
+                    function(cb) {
+                        self.GetLocationNameBalancingProcess(cb);
+                    },
+                    function(cb) {
+                        self.GetFilterUnitBalancingProcessSelectList(cb);
+                    },
+                    function(cb) {
+                        self.GetFilterShiftBalancingProcessSelectList(cb);
+                    },
+                    function(cb) {
+                        self.GetFilterBrandCodeBalancingProcessSelectList(cb);
+                        //$('option:selected', $("#filterLocationBalancingProcess")).text(self.filterLocationBalancingProcess());
+                    }
+                ], function() {
+                    self.isLoading(false);
+                });
+
+            };
+
+            //======== method declaration - balancing process ======
+            self.GetLocationNameBalancingProcess = function(cb) {
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantWorkerBalancing/GetLocationName"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: { locationCode: self.filterLocationBalancingProcess() },
+                    dataType: 'json',
+                    success: function(data) {
+                        self.filterLocationNameBalancingProcess(data.LocationName);
+                    }
+                }).done(function() {
+                    if (typeof cb != 'undefined') cb();
+                });
+            };
+
+            self.filterUnitBalancingProcessDataSource = ko.observableArray([]);
+            self.GetFilterUnitBalancingProcessSelectList = function(cb) {
+                $('#filterUnitBalancingProcess').find('option').remove();
+                $('#filterUnitBalancingProcess').selectpicker('refresh');
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantWorkerBalancing/GetUnits"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: { locationCode: self.filterLocationBalancingProcess() },
+                    dataType: 'json',
+                    success: function(data) {
+                        self.filterUnitBalancingProcessDataSource(data);
+                    }
+                }).done(function() {
+                    if (typeof cb != 'undefined') cb();
+                });
+            };
+
+            self.filterShiftBalancingProcessDataSource = ko.observableArray([]);
+            self.GetFilterShiftBalancingProcessSelectList = function(cb) {
+                $('#filterShiftBalancingProcess').find('option').remove();
+                $('#filterShiftBalancingProcess').selectpicker('refresh');
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantWorkerBalancing/GetShifts"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: { locationCode: self.filterLocationBalancingProcess() },
+                    dataType: 'json',
+                    success: function(data) {
+                        self.filterShiftBalancingProcessDataSource(data);
+                    }
+                }).done(function() {
+                    if (typeof cb != 'undefined') cb();
+                });
+            };
+
+            self.filterBrandCodeBalancingProcessDataSource = ko.observableArray();
+            self.GetFilterBrandCodeBalancingProcessSelectList = function(cb) {
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantWorkerBalancing/GetBrandCodes"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: { locationCode: self.filterLocationBalancingProcess(), unitCode: self.filterUnitBalancingProcess() },
+                    dataType: 'json',
+                    success: function(data) {
+                        var model = [];
+                        $.each(data, function(index, value) {
+                            model.push({ "Text": value, "Value": value });
+                        });
+                        $('#filterBrandCodeBalancingProcess').find('option').remove();
+                        $('#filterBrandCodeBalancingProcess').selectpicker('refresh');
+                        self.filterBrandCodeBalancingProcessDataSource(model);
+                    }
+                }).done(function() {
+                    if (typeof cb != 'undefined') cb();
+                });
+            };
+
+            self.viewLineBalancing = function() {
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantWorkerBalancing/GetProcessBalancingPerUnit"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: { locationCode: self.filterLocationBalancingProcess(), unitCode: self.filterUnitBalancingProcess(), shift: self.filterShiftBalancingProcess(), brandCode: self.filterBrandCodeBalancingProcess() },
+                    success: function(data) {
+                        $("#GridBalancingProcessPerUnit").html('');
+                        $("#GridBalancingProcessPerUnit").html(data);
+                    }
+                });
+            };
+
+            //======== initial call ======
+            //self.onfilterLocationBalancingProcessChange();
+
+            //===============================VARIABLES==================================
+            //Knockout Variables
+            //LineBalancing
+            //please add code line balancin here ( variable)
+
+            //load balancing
+            //multiskill
+            self.itemLocations = @Html.Raw(Json.Encode(@Model.PLNTChildLocationLookupList));
+            self.filterLocationCode = ko.observable($("#ddlFilterLocationCode").val());
+            self.filterLocationName = ko.observable();
+            self.filterUnitCode = ko.observable('');
+            self.filterUnitCodeDest = ko.observable('');
+            self.filterShift = ko.observable($("#ddlShiftFilter").val());
+            self.filterGroupCodeDest = ko.observable('');
+            self.firstLoad = true;
+            self.isLoading = ko.observable(false);
+            self.itemLocationsLine = @Html.Raw(Json.Encode(@Model.PLNTChildLocationLookupList));
+            self.filterLocationCodeLine = ko.observable($("#ddlFilterLocationCodeLine").val());
+            self.filterLocationNameLine = ko.observable();
+            self.filterUnitCodeLine = ko.observable('');
+            self.filterShiftLine = ko.observable($("#ddlShiftFilterLine").val());
+            //List Data Source
+            self.UnitCodeDestination = ko.observable('');
+            self.brandSelectList = ko.observableArray([]);
+            self.filterbrandcode = ko.observableArray('');
+            //singleskill
+            self.SingleProcessGroup = ko.observableArray('');
+            self.unitCodeSingleSelectList = ko.observableArray([]);
+            self.groupCodeSingleSelectList = ko.observableArray([]);
+            self.tabSelected = ko.observable('');
+
+            //================= List Group Code Pop Up ================//
+            self.itemListGroupCodePopUp = ko.observableArray([]);
+            self.editIndexRow = ko.observable(0);
+            self.singleitemListGroupCodePopUp = ko.observableArray([]);
+            self.singleeditIndexRow = ko.observable(0);
+            //===============================EVENT HANDLER==================================
+            self.SingleGroupCode = ko.observable('');
+            //fot tab line
+            ////please add code line balancin here (eventhandler)
+
+            //for tab load balancing
+            //Multiskill
+            //Filter Location Code Event Handler
+            self.onLocationCodeChange = function() {
+                //self.getLocationNameFilter();
+                //self.getShiftSelectList();
+                //self.getBrandCodes( self.getUnitCodeSelectListByLocation());
+                //$('option:selected', $("#ddlFilterLocationCode")).text(self.filterLocationCode());
+
+                if (self.isLoading() && self.firstLoad) return;
+
+                self.isLoading(true);
+
+                async.series([
+                    function(cb) {
+                        self.getLocationNameFilter(cb);
+                    },
+                    function(cb) {
+                        self.getShiftSelectList(cb);
+                    },
+                    function(cb) {
+                        self.getUnitCodeSelectListByLocation(cb);
+                    },
+                    function(cb) {
+                        self.getBrandCodes(cb);
+                    }
+                ], function() {
+                    //$('option:selected', $("#ddlFilterLocationCode")).text(self.filterLocationCode());
+                    self.isLoading(false);
+                });
+            };
+
+            self.getLocationNameFilter = function(cb) {
+                for (var i = 0; i < self.itemLocations.length; i++) {
+                    if (self.itemLocations[i].LocationCode == self.filterLocationCode()) {
+                        self.filterLocationName(self.itemLocations[i].LocationName);
+                        if (typeof cb != 'undefined') cb();
+                        break;
+                    }
+                }
+            };
+            //prepare unitCode selectlist data
+            self.unitCodeSelectList = ko.observableArray([]);
+            self.getUnitCodeSelectListByLocation = function(cb) {
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantWorkerBalancing/GetUnitCodeSelectListByLocationCode"),
+                    type: 'GET',
+                    async : false,
+                    contentType: 'application/json',
+                    data: { locationCode: self.filterLocationCode() },
+                    dataType: 'json',
+                    success: function(data) {
+                        //console.log("check unitcodedest",data);
+                        $('#ddlUnitCodeFilter').find('option').remove();
+                        $('#ddlUnitCodeFilter').selectpicker('refresh');
+
+                        var unitCodeModel = [];
+                        $.each(data, function(index, value) {
+                            unitCodeModel.push({ "Text": value.Text, "Value": value.Value });
+                        });
+                        self.unitCodeSelectList(unitCodeModel);
+                        //set default
+                        if(self.unitCodeSelectList().length>0){
+                            self.filterUnitCode(self.unitCodeSelectList()[0].Value);
+                            self.filterUnitCodeDest =(self.unitCodeSelectList()[0].Value);
+                        }
+
+                    }
+                }).done(function() {
+                    if (typeof cb != 'undefined') cb();
+                });
+            };
+
+
+            @*self.getMultiSkillData = function() {
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantWorkerBalancing/GetWorkerBalancingMultiSkill"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: { PageSize: 10, PageIndex: 1, SortExpression: "", SortOrder: "", locationCode:self.filterLocationCode(),unitCode:self.filterUnitCode()
+                    },
+                    dataType: 'json',
+                    success: function(data) {
+
+                    }
+                });
+            };*@
+
+
+            self.shiftSelectList = ko.observableArray([]);
+            self.getShiftSelectList = function(cb) {
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantWorkerBalancing/GetShiftByLocationCode"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: { locationCode: self.filterLocationCode() },
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#ddlShiftFilter').find('option').remove();
+                        $('#ddlShiftFilter').selectpicker('refresh');
+                        var ShiftModel = [];
+                        $.each(data, function(index, value) {
+                            ShiftModel.push({ "Text": value.Text, "Value": value.Text });
+                        });
+                        self.shiftSelectList(ShiftModel);
+                        self.filterShift(ShiftModel[0].Text);
+                    }
+                }).done(function() {
+                    if (typeof cb != 'undefined') cb();
+                });
+            };
+
+            self.getBrandCodes = function(cb) {
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantWorkerBalancing/GetBrandEntryVerification"),
+                    type: 'GET',
+                    async : false,
+                    contentType: 'application/json',
+                    data: { locationCode: self.filterLocationCode(), unitCode: self.filterUnitCode()},
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#ddlbrandFilter').find('option').remove();
+                        $('#ddlbrandFilter').selectpicker('refresh');
+                        var brandModel = [];
+                        $.each(data, function(index, value) {
+                            brandModel.push({ "Text": value, "Value": value });
+                        });
+                        self.brandSelectList(brandModel);
+                        if(self.brandSelectList.length>0){
+                            self.filterbrandcode(self.brandSelectList()[0].Text);
+                        }
+
+                    }
+                }).done(function() {
+                    if (typeof cb != 'undefined') cb();
+                });
+            };
+            self.groupCodeDestSelectList= ko.observableArray([]);
+            self.unitcodemultidestchange = function(data){
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantWorkerBalancing/GetGroupCodeByLocationUnit"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: { locationCode: self.filterLocationCode(), unitCode: self.filterUnitCodeDest,process:data.DestinationProcess},
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#ddlgroupcodefilter').find('option').remove();
+                        $('#ddlgroupcodefilter').selectpicker('refresh');
+                        var groupModel = [];
+                        $.each(data, function(index, value) {
+                            groupModel.push({ "Text": value.Text, "Value": value.Value });
+                        });
+                        self.groupCodeDestSelectList(groupModel);
+                        if(self.groupCodeDestSelectList().length>0){
+                            self.filterGroupCodeDest(self.groupCodeDestSelectList()[0].Text);
+                        }
+                    }
+                });
+            }
+
+            self.gridView = new app.GridViewModel({
+                Criteria: {
+                    PageSize: 10, PageIndex: 1, SortExpression: "EmployeeID", SortOrder: "ASC",
+                    SourceLocationCode: self.filterLocationCode,
+                    SourceUnitCode:self.filterUnitCode
+                },
+                DataSourceUrl: @Html.BaseUrl("ExePlantWorkerBalancing/GetWorkerBalancingMultiSkill"),
+                InlineEdit: true,
+                InsertRowFocusedControlIndex: 1
+            });
+
+            self.gridviewSingle = new app.GridViewModel({
+                Criteria: {
+                    PageSize: 10, PageIndex: 1, SortExpression: "", SortOrder: "",
+                    LocationCode: self.filterLocationCode,
+                    UnitCodeSource:self.filterUnitCode,
+                    ProcessGroup:self.SingleProcessGroup,
+                    GroupCode:self.SingleGroupCode
+                },
+                DataSourceUrl: @Html.BaseUrl("ExePlantWorkerBalancing/GetWorkerBalancingSingleSkill"),
+                InlineEdit: true,
+                InsertRowFocusedControlIndex: 1
+            }
+            );
+
+            self.search = function() {
+                $('.empty-row-message').html('<div class="loader"></div>'); // Reset New and Edit row
+                // Check whether New or Edit data is existing and not saved to database yet (on Ajax Action)
+                if (SKTIS.Checker.modifiedDataExistsForAjax([self.gridView.listNewItems, self.gridView.listEditItems]) == true) {
+                    return;
+                } else {
+                    self.gridView.listNewItems.removeAll();
+                    self.gridView.listEditItems.removeAll();
+                }
+
+                self.gridView.search({}, function(response) {
+                    if (response.status == 'KO') {
+                        SKTIS.Helper.Notification(response.message, 'error');
+                        $('.empty-row-message').html(response.message);
+                    } else if (response.status == 'Empty') {
+
+                        //self.RemoveNotification();
+
+                        // SKTIS.Helper.Notification(response.message,'warning');
+                        $('.empty-row-message').html('@CommonLabel.lblDataEmpty');
+                    }
+
+                    if (!self.firstLoad || !self.isLoading()){
+                        //self.loadHistory();
+                        //self.loadFlow();
+                    }
+
+                });
+
+
+
+                self.RemoveNotification = function() {
+                    if ($('#noty_top_layout_container').length > 0) {
+                        $('#noty_top_layout_container').remove();
+                    }
+                };
+
+            };
+
+            // TRANSACTION HISTORY AND FLOW
+            self.historyGridView = new app.GridViewModel({
+                Criteria: {
+                    PageSize: 10,
+                    PageIndex: 1,
+                    SortExpression: "UpdatedDate",
+                    SortOrder: "DESC",
+                    code_1: 'EBL',
+                    code_2: self.filterLocationCode,
+                    code_3: self.filterShift,
+                    code_4: self.filterUnitCode,
+                    code_5: '%',
+                    code_6: self.filterbrandcode
+                },
+                DataSourceUrl: @Html.BaseUrl("ExePlantWorkerBalancing/GetHistory"),
+                InlineEdit: true,
+                InsertRowFocusedControlIndex: 1
+            });
+            self.flowGridView = new app.GridViewModel({
+                Criteria: {
+                    PageSize: 10,
+                    PageIndex: 1,
+                    SortExpression: "IDFlow",
+                    SortOrder: "ASC",
+                    FunctionName: 'WorkerBalancing'
+                },
+                DataSourceUrl: @Html.BaseUrl("ExePlantWorkerBalancing/GetFlow"),
+                InlineEdit: true,
+                InsertRowFocusedControlIndex: 1
+            });
+
+            self.loadHistory = function(cb){
+                self.historyGridView.search({}, function (response) {
+                    if (response.status == 'KO') {
+                        SKTIS.Helper.Notification(response.message,'error');
+                        $('.empty-row-message').html(response.message);
+                    }else if (response.status == 'Empty') {
+
+                        //self.RemoveNotification();
+
+                        //SKTIS.Helper.Notification(response.message,'warning');
+                        $('.empty-row-message').html('@CommonLabel.lblDataEmpty');
+                    }
+
+                    if (typeof cb != 'undefined') cb();
+                });
+            };
+            self.loadFlow = function(cb){
+                self.flowGridView.search({}, function (response) {
+                    if (response.status == 'KO') {
+                        SKTIS.Helper.Notification(response.message,'error');
+                        $('.empty-row-message').html(response.message);
+                    }else if (response.status == 'Empty') {
+
+                        //self.RemoveNotification();
+
+                        //SKTIS.Helper.Notification(response.message,'warning');
+                        $('.empty-row-message').html('@CommonLabel.lblDataEmpty');
+                    }
+
+                    if (typeof cb != 'undefined') cb();
+                });
+            };
+            // END OF TRANSACTION HISTORY AND FLOW
+
+            self.saveALLMultiSkill = function(){
+                if (self.gridView.editingRowIndex() !== -1)
+                    return;
+                var count=0,checked=0;
+                for(var i=0;i<self.gridView.listDataItems().length;i++)
+                {
+                    if(self.gridView.listDataItems()[i].statfrom()==false){
+                        checked= checked+1;
+                    }
+                    if(self.gridView.listDataItems()[i].statfrom()==false && self.gridView.listDataItems()[i].Checkbox==false){
+                        count = count+1;
+                    }
+                }
+                if (checked === count) {
+                    SKTIS.Helper.Notification("<strong>Please</strong> checked at least one data that could be edit", 'error');
+                    return;
+                }
+                console.log('testing count',checked+" "+count);
+
+                var datas = {
+                    "parameters": { "LocationCode": self.filterLocationCode(), "UnitCode": self.filterUnitCode(), "TransactionDate": moment().format("DD/MM/YYYY"), "Shift": self.filterShift(), "Brand": self.filterbrandcode(),"kpsyear":moment().format("YYYY")}
+                    ,"edit": ko.mapping.toJS(self.gridView.listDataItems())
+                };
+                console.log('parameter',datas);
+                datas = JSON.stringify(datas);
+
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantWorkerBalancing/SaveAllPlantWorkerMulti"),
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: datas,
+                    dataType: 'json',
+                    success: function(data) {
+                        if (data.Edit) {
+                            $.each(data.Edit, function(k, value) {
+                                console.log("check data insert",value.ResponseType);
+                                if (value.ResponseType != null)
+                                    SKTIS.Helper.ResponseNotification(value, "Insert Worker Balancing MultiSkill", " - " + value.EmployeeID+" - ");
+                            });
+                        }
+                        self.search();
+                    }
+                });
+            };
+
+
+            //singleskill function
+
+            self.SingleProcessGroupSelectList = ko.observableArray([]);
+            self.getSingleProcessGroup = function(cb){
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantWorkerBalancing/GetProcessGroupByLocation"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: { locationCode: self.filterLocationCode()},
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#ddlProcessGroupFilter').find('option').remove();
+                        $('#ddlProcessGroupFilter').selectpicker('refresh');
+                        var processModel = [];
+                        $.each(data, function(index, value) {
+                            processModel.push({ "Text": value.Text, "Value": value.Value });
+                        });
+                        self.SingleProcessGroupSelectList(processModel);
+                        if(self.SingleProcessGroupSelectList().length>0){
+                            self.SingleProcessGroup(self.SingleProcessGroupSelectList()[0].Text);
+                        }
+                    }
+                }).done(function() {
+                    if (typeof cb != 'undefined') cb();
+                });
+            }
+
+            self.groupCodeSingleSelectList = ko.observableArray([]);
+            self.onSingleProcessGroupSelectedChange = function() {
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantWorkerBalancing/GetGroupCodeByLocationUnit"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: { locationCode: self.filterLocationCode(), unitCode: self.filterUnitCode,process:self.SingleProcessGroup()},
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#ddlSingleGroupCodeFilter').find('option').remove();
+                        $('#ddlSingleGroupCodeFilter').selectpicker('refresh');
+                        var groupModel = [];
+                        $.each(data, function(index, value) {
+                            groupModel.push({ "Text": value.Text, "Value": value.Value });
+                        });
+                        self.groupCodeSingleSelectList(groupModel);
+                        if(self.groupCodeSingleSelectList().length>0){
+                            self.SingleGroupCode(self.groupCodeSingleSelectList()[0].Text);
+                        }
+                    }
+                });
+            };
+
+            self.searchGridViewSingle = function() {
+                $('.empty-row-message').html('<div class="loader"></div>'); // Reset New and Edit row
+                // Check whether New or Edit data is existing and not saved to database yet (on Ajax Action)
+                if (SKTIS.Checker.modifiedDataExistsForAjax([self.gridviewSingle.listNewItems, self.gridviewSingle.listEditItems]) == true) {
+                    return;
+                } else {
+                    self.gridviewSingle.listNewItems.removeAll();
+                    self.gridviewSingle.listEditItems.removeAll();
+                }
+
+                self.gridviewSingle.search({}, function(response) {
+                    if (response.status == 'KO') {
+                        SKTIS.Helper.Notification(response.message, 'error');
+                        $('.empty-row-message').html(response.message);
+                    } else if (response.status == 'Empty') {
+
+                        //self.RemoveNotification();
+
+                        // SKTIS.Helper.Notification(response.message,'warning');
+                        $('.empty-row-message').html('@CommonLabel.lblDataEmpty');
+                    }
+                });
+                self.RemoveNotification = function() {
+                    if ($('#noty_top_layout_container').length > 0) {
+                        $('#noty_top_layout_container').remove();
+                    }
+                };
+
+            };
+            self.singlecheckboxOnChange = function(data){
+                //console.log(data.Checkbox);
+                if(data.Checkbox == true)
+                {
+                    data.Checkbox= true;
+                }else if (data.Checkbox == false)
+                {
+                    data.Checkbox= false;
+                }else{
+                    data.Checkbox= false;
+                }
+            };
+            self.multicheckboxOnChange = function(data){
+                //console.log(data.Checkbox);
+                if(data.Checkbox == true)
+                {
+                    data.Checkbox= false;
+                }else if (data.Checkbox == false)
+                {
+                    data.Checkbox= true;
+                }else{
+                    data.Checkbox= false;
+                }
+            };
+            self.saveALLSingleSkill = function(){
+                if (self.gridviewSingle.editingRowIndex() !== -1)
+                    return;
+                var counts=0;
+                var checkeds=0;
+
+                //console.log('count length',self.gridviewSingle.listDataItems().length);
+                for(var i=0;i<self.gridviewSingle.listDataItems().length;i++)
+                {
+                    if(self.gridviewSingle.listDataItems()[i].statfrom()==false){
+                        checkeds++;
+                        console.log('checked',checkeds);
+                    }
+
+                    if(self.gridviewSingle.listDataItems()[i].statfrom()==false && self.gridviewSingle.listDataItems()[i].Checkbox == false ){
+                        counts++;
+                        console.log('checked',counts);
+                    }
+                }
+                if (checkeds === counts) {
+                    SKTIS.Helper.Notification("<strong>Please</strong> checked at least one data that could be edit", 'error');
+                    return;
+                }
+                console.log('testing count',checkeds+" "+counts);
+                var datas = {
+                    "parameters": { "LocationCode": self.filterLocationCode(), "UnitCode": self.filterUnitCode(), "TransactionDate": moment().format("DD/MM/YYYY"), "Shift": self.filterShift(), "Brand": self.filterbrandcode(),"kpsyear":moment().format("YYYY")}
+                    ,"edit": ko.mapping.toJS(self.gridviewSingle.listDataItems())
+                };
+                console.log('parameter',datas);
+                datas = JSON.stringify(datas);
+
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantWorkerBalancing/SaveAllPlantWorkerSingle"),
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: datas,
+                    dataType: 'json',
+                    success: function(data) {
+                        if (data.Edit) {
+                            $.each(data.Edit, function(k, value) {
+
+                                if (value.ResponseType != null)
+                                    SKTIS.Helper.ResponseNotification(value, "Insert Worker Balancing SingleSkill", " - " + value.EmployeeID+" - ");
+                            }
+
+                            );
+                        }
+                        self.searchGridViewSingle();
+                    }
+                });
+            };
+            //end singleskill
+            //savefunction
+            self.saveData = function(){
+                console.log("save data",self.tabSelected);
+                if(self.tabSelected == "#multiskill"){
+                    self.saveALLMultiSkill();
+                    console.log("save data","Multiskill");
+                }
+                else if(self.tabSelected == "#singleskill"){
+                    self.saveALLSingleSkill();
+                    console.log("save data","Singleskill");
+                }
+            };
+            self.viewDatapage = function(cb){
+                console.log("view data",self.tabSelected);
+                if(self.tabSelected == "#multiskill"){
+                    self.getSingleProcessGroup(self.search());
+                }
+                else{
+                    //self.getSingleProcessGroup();
+                    //self.searchGridViewSingle();
+                    async.series([
+                    function(cb) {
+                        self.getSingleProcessGroup(cb);
+                    }
+                    //,function(cb) {}
+                    ], function() {
+                        self.searchGridViewSingle();
+                        self.isLoading(false);
+                    });
+                }
+                if (typeof cb == 'function') cb();
+            };
+            self.checkTabLoad = function(){
+                $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+                    //show selected tab / active
+                    self.tabSelected = $(e.target).attr('href');
+                    if(self.tabSelected == "#balancingload"){
+                        self.tabSelected = "#multiskill";
+                        if (self.firstLoad){
+                            self.viewDatapage();
+                        }
+                    }
+                    if(self.tabSelected == "#singleskill"){
+                        //self.viewDatapage();
+                        //self.searchGridViewSingle();
+                        async.series([
+                        function(cb) {
+                            self.viewDatapage(cb);
+                        }
+                        //,function(cb) {}
+                        ], function() {
+                            self.searchGridViewSingle();
+                            self.isLoading(false);
+                        });
+                    }
+                    console.log ("selected",self.tabSelected);
+                    self.RefreshFilterLocation();
+                });
+            }
+            //
+            function mappingCheckbox(data) {
+                ko.mapping.fromJS(data, {}, this);
+                this.Checkbox = ko.observable(data.statfrom);
+            }
+            self.gridView.mapping = {
+                create: function(options) {
+                    return new mappingCheckbox(options.data);
+                },
+                create: function(options) {
+                    return new assignment(options.data);
+                }
+
+            };
+
+            self.gridviewSingle.mapping = {
+                create: function(options) {
+                    return new mappingCheckbox(options.data);
+                },
+                create: function(options) {
+                    return new assignment(options.data);
+                }
+            };
+
+            function assignment(data) {
+                ko.mapping.fromJS(data, {}, this);
+
+                this.EmployeeMix = ko.computed({
+                    read: function() {
+                        var employeeNumber = this.EmployeeNumber();
+                        var lastTwoNumber = employeeNumber.slice(-2);
+                        return lastTwoNumber + " - " + this.EmployeeName();
+                    },
+                    write: function(value) {
+                        //update your self.chosenAge().population value here
+                    },
+                    owner: this
+                }, this);
+            }
+            //function getgroupcodedestination
+            //Function Get Group Code Pop Up
+            self.getGroupPopUpInsert = function(event, index) {
+                self.editIndexRow(index);
+                var inputCriteria = {
+                    LocationCode: self.filterLocationCode(),
+                    UnitCode: event.UnitCodeDestination,
+                    BrandCode: (typeof self.filterbrandcode() == 'undefined' ? "" : self.filterbrandcode()),
+                    ProcessCode: (typeof event.DestinationProcess == 'undefined' ? "" : event.DestinationProcess),
+                    Date:moment().format("DD/MM/YYYY"),
+                   // KPSYear: self.filterYear(),
+                    //KPSWeek: self.filterWeek(),
+                    Shift: self.filterShift()
+                };
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantWorkerBalancing/GetGroupCodePopUp"),
+                    type: "GET",
+                    data:  inputCriteria,
+                    dataType: "json",
+                    traditional: true,
+                    contentType: "application/json;",
+                    success: function(data) {
+                        var list = [];
+                        $.each(data, function(index, value) {
+                            list.push({
+                                "GroupCode": value.GroupCode,
+                                "Allocation": value.Allocation,
+                                "Attendance": value.Attendance
+                            });
+                        });
+                        self.itemListGroupCodePopUp(list);
+
+                    }
+                });
+            };
+            //Function choose pop up group code edit
+            self.chooseDestinationGroup = function(data) {
+                $("input[name=group]:radio").each(function() {
+                    if($(this).is(":checked")) {
+                        self.gridView.listDataItems()[self.editIndexRow()].GroupCodeDestination($(this).text());
+                        return;
+                    }
+                });
+            }
+            //pop up for singleskill
+            self.singlegetGroupPopUpInsert = function(event, index) {
+                self.editIndexRow(index);
+                var inputCriteria = {
+                    LocationCode: self.filterLocationCode(),
+                    UnitCode: event.UnitCodeDestination,
+                    BrandCode: (typeof self.filterbrandcode() == 'undefined' ? "" : self.filterbrandcode()),
+                    ProcessCode: (typeof self.SingleProcessGroup() == 'undefined' ? "" : self.SingleProcessGroup()),
+                    Date:moment().format("DD/MM/YYYY"),
+                    // KPSYear: self.filterYear(),
+                    //KPSWeek: self.filterWeek(),
+                    Shift: self.filterShift()
+                };
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantWorkerBalancing/GetGroupCodePopUp"),
+                    type: "GET",
+                    data:  inputCriteria,
+                    dataType: "json",
+                    traditional: true,
+                    contentType: "application/json;",
+                    success: function(data) {
+                        var list = [];
+                        $.each(data, function(index, value) {
+                            list.push({
+                                "GroupCode": value.GroupCode,
+                                "Allocation": value.Allocation,
+                                "Attendance": value.Attendance
+                            });
+                        });
+                        self.singleitemListGroupCodePopUp(list);
+                    }
+                });
+            };
+            //Function choose pop up group code edit
+            self.singlechooseDestinationGroup = function(data) {
+                $("input[name=group]:radio").each(function() {
+                    if($(this).is(":checked")) {
+                        self.gridviewSingle.listDataItems()[self.editIndexRow()].GroupCodeDestination($(this).text());
+                        return;
+                    }
+                });
+            }
+
+            self.RefreshFilterLocation = function() {
+                $('#ddlFilterLocationCode').selectpicker('refresh');
+                $('#ddlFilterLocationCode').change();
+            }
+
+            //$(document).ready(function(){
+            //    self.searchGridViewSingle(self.getSingleProcessGroup(self.search(self.onLocationCodeChange())));
+            //    $('#filterLocationBalancingProcess').selectpicker('refresh');
+            //    $('#filterLocationBalancingProcess').change();
+            //});
+
+            $(document).ready(function(){
+
+                $('#filterLocationBalancingProcess').selectpicker('refresh');
+                $('#filterLocationBalancingProcess').change();
+
+                //self.searchGridViewSingle(self.getSingleProcessGroup(self.search(self.onLocationCodeChange())));
+            });
+
+            self.checkTabLoad();
+        };
+        ko.applyBindings(new app.EditGrid());
+
+
+    } )(app = this.app || {});
+
+    </script>
+}

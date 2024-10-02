@@ -1,0 +1,617 @@
+﻿@using HMS.SKTIS.Application.Resources
+@using HMS.SKTIS.Application.Resources.Views.MasterGenBrandGroup
+@using SKTISWebsite.Helper
+@model SKTISWebsite.Models.MasterGenBrandGroup.IndexMasterBrandGroupViewModel
+
+@{Html.SetPageTitle(@MasterGenBrandGroup.PageTitle);}
+<div class="col-lg-12" data-bind="with: gridView">
+    <div class="col-lg-6">
+        <div class="row">
+            <label class="form-label col-lg-4">@MasterGenBrandGroup.lblFilterBrandFamily</label>
+            <div class="col-lg-5">
+                @Html.DropDownList("ddlFilterBrandFamily", Model.BrandFamily, @CommonLabel.ddlSelectAll, new Dictionary<string, object>
+                {
+                    { "data-bind", "value:$root.BrandFamily, event: {change: $root.onBrandFamilyChange}" },
+                    { "class", "selectpicker show-tick form-control" },
+                    { "data-live-search", "true"}
+                })
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-4">
+                @MasterGenBrandGroup.lblFilterBrandGroupCode
+            </label>
+            <div class="col-lg-5">
+                <select class="selectpicker show-tick form-control" id="ddlFilterBrandGroupCode"
+                        data-live-search="true"
+                        data-bind="selectPicker: $root.filterBrandGroupCode, optionsText: 'Text', optionsValue : 'Value', selectPickerOptions: { optionsArray: $root.brandGroupCodeSelectList }, event : { change : $root.onBrandGroupCodeChange }"></select>
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-4">
+                @MasterGenBrandGroup.lblFilterPack
+            </label>
+            <div class="col-lg-5">
+                @Html.DropDownList("ddlFilterPackType", Model.PackType, @CommonLabel.ddlSelectAll, new Dictionary<string, object>
+                {
+                    { "data-bind", "value:$root.PackType" },
+                    { "class", "selectpicker show-tick form-control" },
+                    { "data-live-search", "true"}
+                })
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-4">
+                @MasterGenBrandGroup.lblFilterClass
+            </label>
+            <div class="col-lg-5">
+                @Html.DropDownList("ddlFilterClassType", Model.ClassType, @CommonLabel.ddlSelectAll, new Dictionary<string, object>
+                {
+                    { "data-bind", "value:$root.ClassType" },
+                    { "class", "selectpicker show-tick form-control" },
+                    { "data-live-search", "true"}
+                })
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="action-btn">
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.View.ToString())) { 
+                <button type="button" class="btn btn-primary" data-bind="click: $root.search">@CommonLabel.btnView</button>
+                }
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.Save.ToString())) { 
+                <button type="button" class="btn btn-primary" data-bind="click: $root.saveData">@CommonLabel.btnSave</button>
+                }
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.Excel.ToString())) { 
+                    using (Html.BeginForm("GenerateExcel", "MasterGenBrandGroup", FormMethod.Post, new { @data_bind = "submit: $root.generateExcel" }))
+                    {
+                        <input type="hidden" name="BrandFamily" />
+                        <input type="hidden" name="BrandGroupCode" />
+                        <input type="hidden" name="Pack" />
+                        <input type="hidden" name="Class" />
+                        <button type="submit" class="btn btn-primary">@CommonLabel.btnExcel</button>
+                    }
+                }
+                @Html.Partial("GridViewPageSizeSelector")
+            </div>
+        </div>
+    </div>
+    <div id="master-brand-group">
+        <div class="table-overflow">
+            <table class="table table-striped">
+                <thead>
+                    <tr class="head">
+                        <th data-bind="click:sortBy.bind($data,'BrandFamily'), css:sortCss('BrandFamily', $data.sortExpression, $data.sortOrder())" class="widthsmall">@MasterGenBrandGroup.lblTitleBrandFamily</th>
+                        <th data-bind="click:sortBy.bind($data,'PackType'), css:sortCss('PackType', $data.sortExpression, $data.sortOrder())" class="widthsmall">@MasterGenBrandGroup.lblTitlePackType</th>
+                        <th data-bind="click:sortBy.bind($data,'ClassType'), css:sortCss('ClassType', $data.sortExpression, $data.sortOrder())" class="widthsmall">@MasterGenBrandGroup.lblTitleClassType</th>
+                        <th data-bind="click:sortBy.bind($data,'StickPerPack'), css:sortCss('StickPerPack', $data.sortExpression, $data.sortOrder())">@MasterGenBrandGroup.lblTitleStick</th>
+                        <th data-bind="click:sortBy.bind($data,'PackPerSlof'), css:sortCss('PackPerSlof', $data.sortExpression, $data.sortOrder())">@MasterGenBrandGroup.lblTitlePack</th>
+                        <th data-bind="click:sortBy.bind($data,'SlofPerBal'), css:sortCss('SlofPerBal', $data.sortExpression, $data.sortOrder())">@MasterGenBrandGroup.lblTitleSlof</th>
+                        <th data-bind="click:sortBy.bind($data,'BalPerBox'), css:sortCss('BalPerBox', $data.sortExpression, $data.sortOrder())">@MasterGenBrandGroup.lblTitleBal</th>
+                        <th data-bind="click:sortBy.bind($data,'BrandGroupCode'), css:sortCss('BrandGroupCode', $data.sortExpression, $data.sortOrder())">@MasterGenBrandGroup.lblTitleBrandGroupCode</th>
+                        <th data-bind="click:sortBy.bind($data,'SKTBrandCode'), css:sortCss('SKTBrandCode', $data.sortExpression, $data.sortOrder())">@MasterGenBrandGroup.lblTitleSKTBrandCode</th>
+                        <th data-bind="click:sortBy.bind($data,'Description'), css:sortCss('Description', $data.sortExpression, $data.sortOrder())">@MasterGenBrandGroup.lblTitleDescription</th>
+                        <th data-bind="click:sortBy.bind($data,'CigarreteWeight'), css:sortCss('CigarreteWeight', $data.sortExpression, $data.sortOrder())">@MasterGenBrandGroup.lblTitleCigarette</th>
+                        <th data-bind="click:sortBy.bind($data,'EmpPackage'), css:sortCss('EmpPackage', $data.sortExpression, $data.sortOrder())">EmpPackage</th>
+                        <th data-bind="click:sortBy.bind($data,'StickPerSlof'), css:sortCss('StickPerSlof', $data.sortExpression, $data.sortOrder())">@MasterGenBrandGroup.lblTitleSlofW</th>
+                        <th data-bind="click:sortBy.bind($data,'StickPerBal'), css:sortCss('StickPerBal', $data.sortExpression, $data.sortOrder())">@MasterGenBrandGroup.lblTitleBalW</th>
+                        <th data-bind="click:sortBy.bind($data,'StickPerBox'), css:sortCss('StickPerBox', $data.sortExpression, $data.sortOrder())">@MasterGenBrandGroup.lblTitleStickW</th>
+                        <th data-bind="click:sortBy.bind($data,'StatusActive'), css:sortCss('StatusActive', $data.sortExpression, $data.sortOrder())">@MasterGenBrandGroup.lblTitleStatusActive</th>
+                        <th data-bind="click:sortBy.bind($data,'Remark'), css:sortCss('Remark', $data.sortExpression, $data.sortOrder())">@MasterGenBrandGroup.lblTitleRemark</th>
+                        <th data-bind="click:sortBy.bind($data,'UpdatedBy'), css:sortCss('UpdatedBy', $data.sortExpression, $data.sortOrder())">@MasterGenBrandGroup.lblTitleUpdatedBy</th>
+                        <th data-bind="click:sortBy.bind($data,'UpdatedDate'), css:sortCss('UpdatedDate', $data.sortExpression, $data.sortOrder())">@MasterGenBrandGroup.lblTitleUpdatedDate</th>
+                    </tr>
+                    <tr class="insertRow" data-bind="inlineAddProccess:[$data, $root.newData]">
+                        <th>
+                            @Html.DropDownListFor(m => Model.BrandFamily, Model.BrandFamily, new Dictionary<string, object>
+                            {
+                                { "data-bind", "value:$root.newData.BrandFamily" },
+                                { "class", "selectpicker show-tick form-control" },
+                                { "data-live-search", "true"}
+                            })
+                        </th>
+                        <th>
+                            @Html.DropDownListFor(m => Model.PackType, Model.PackType, new Dictionary<string, object>
+                            {
+                                { "data-bind", "value:$root.newData.PackType" },
+                                { "class", "selectpicker show-tick form-control" },
+                                { "data-live-search", "true"}
+                            })
+                        </th>
+                        <th>
+                            @Html.DropDownListFor(m => Model.ClassType, Model.ClassType, new Dictionary<string, object>
+                            {
+                                { "data-bind", "value:$root.newData.ClassType" },
+                                { "class", "selectpicker show-tick form-control" },
+                                { "data-live-search", "true"}
+                            })
+                        </th>
+                        <th><input data-bind="value:$root.newData.StickPerPack, valueUpdate: 'afterkeydown'" class="form-control transparent" type="number" data-sktis-validation="number" min="1" /></th>
+                        <th><input data-bind="value:$root.newData.PackPerSlof, valueUpdate: 'afterkeydown'" class="form-control transparent" type="number" data-sktis-validation="number" min="1" /></th>
+                        <th><input data-bind="value:$root.newData.SlofPerBal, valueUpdate: 'afterkeydown'" class="form-control transparent" type="number" data-sktis-validation="number" min="1" /></th>
+                        <th><input data-bind="value:$root.newData.BalPerBox, valueUpdate: 'afterkeydown'" class="form-control transparent" type="number" data-sktis-validation="number" min="1" /></th>
+                        <th><span data-bind="text:$root.createKey"></span></th>
+                        <th><input data-bind="value:$root.newData.SKTBrandCode, valueUpdate: 'afterkeydown'" class="form-control transparent" /></th>
+                        <th><input data-bind="value:$root.newData.Description, valueUpdate: 'afterkeydown'" class="form-control transparent" /></th>
+                        <th><input data-bind="value:$root.newData.CigarreteWeight, valueUpdate: 'afterkeydown', decimal:$root.newData.CigarreteWeight" class="form-control transparent" /></th>
+                        <th><input data-bind="value:$root.newData.EmpPackage, valueUpdate: 'afterkeydown', decimal:$root.newData.EmpPackage" class="form-control transparent" /></th>
+                        <th><span data-bind="text:$root.CreateStickPerSlof"></span></th>
+                        <th><span data-bind="text:$root.CreateStickPerBal"></span></th>
+                        <th><span data-bind="text:$root.CreateStickPerBox"></span></th>
+                        <th class="center"><input type="checkbox" data-bind="checked:$root.newData.StatusActive" /></th>
+                        <th><input data-bind="value:$root.newData.Remark, valueUpdate: 'afterkeydown'" class="form-control transparent" /></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody data-bind="foreach: listDataItems">
+                    @*item template*@
+                    <tr data-bind="if: ($parent.editingRowIndex() !== $index()),
+                                   click: $parent.editInline3.bind($data,$index())">
+                        <td><span data-bind="text: $data.BrandFamily"></span></td>
+                        <td><span data-bind="text: $data.PackType"></span></td>
+                        <td><span data-bind="text: $data.ClassType"></span></td>
+                        <td><span data-bind="text: $data.StickPerPack"></span></td>
+                        <td><span data-bind="text: $data.PackPerSlof"></span></td>
+                        <td><span data-bind="text: $data.SlofPerBal"></span></td>
+                        <td><span data-bind="text: $data.BalPerBox"></span></td>
+                        <td>
+                            <span data-bind="text: $data.BrandGroupCode"></span>
+                        </td>
+                        <td class="current"><span data-bind="text: $data.SKTBrandCode"></span></td>
+                        <td class="current"><span data-bind="text: $data.Description"></span></td>
+                        <td class="current"><span data-bind="text: $data.CigarreteWeight"></span></td>
+                        <td class="current"><span data-bind="text: $data.EmpPackage"></span></td>
+                        <td>
+                            <span data-bind="decimal:$data.StickPerSlof"></span>
+                        </td>
+                        <td>
+                            <span data-bind="decimal:$data.StickPerBal"></span>
+                        </td>
+                        <td>
+                            <span data-bind="decimal:$data.StickPerBox"></span>
+                        </td>
+                        <td class="current center"><input type="checkbox" data-bind="checked: $data.StatusActive, enable:false" /></td>
+                        <td class="current"><span data-bind="text: $data.Remark"></span></td>
+                        <td><span data-bind="text: $data.UpdatedBy"></span></td>
+                        <td><span data-bind="text: $data.UpdatedDate"></span></td>
+                    </tr>
+                    @*edit template*@
+                    <tr data-bind="validationOptions: {insertMessages: false, showTooltip:true, decorateInputElement: true, errorElementClass: 'input-error'}, inlineProccess:[$parent,$data],
+                                   if:($parent.editingRowIndex() === $index()),
+                                   click: $parent.selectRow.bind($data, $index())">
+                        <td>
+                            <span data-bind="text: $data.BrandFamily"></span>
+                        </td>
+                        <td>
+                            <span data-bind="text: $data.PackType"></span>
+                        </td>
+                        <td>
+                            <span data-bind="text: $data.ClassType"></span>
+                        </td>
+                        <td>
+                            <span data-bind="text: $data.StickPerPack"></span>
+                        </td>
+                        <td>
+                            <span data-bind="text: $data.PackPerSlof"></span>
+                        </td>
+                        <td>
+                            <span data-bind="text: $data.SlofPerBal"></span>
+                        </td>
+                        <td>
+                            <span data-bind="text: $data.BalPerBox"></span>
+                        </td>
+                        <td>
+                            <span data-bind="text: $data.BrandGroupCode"></span>
+                        </td>
+                        <td class="current">
+                            <input data-bind="value: $data.SKTBrandCode, valueUpdate: 'afterkeydown'" class="form-control transparent" />
+                        </td>
+                        <td class="current">
+                            <input data-bind="value: $data.Description, valueUpdate: 'afterkeydown'" class="form-control transparent" />
+                        </td>
+                        <td class="current">
+                            <input data-bind="value: $data.CigarreteWeight, valueUpdate: 'afterkeydown'" class="form-control transparent" />
+                        </td>
+                        <td class="current">
+                            <input data-bind="value: $data.EmpPackage, valueUpdate: 'afterkeydown'" class="form-control transparent" />
+                        </td>
+                        <td>
+                            <span data-bind="decimal: $data.StickPerSlof"></span>
+                        </td>
+                        <td>
+                            <span data-bind="decimal: $data.StickPerBal"></span>
+                        </td>
+                        <td>
+                            <span data-bind="decimal: $data.StickPerBox"></span>
+                        </td>
+                        <td class="current center"><input type="checkbox" data-bind="checked:$data.StatusActive" /></td>
+                        <td class="current"><input data-bind="value: $data.Remark, valueUpdate: 'afterkeydown'" class="form-control transparent" /></td>
+                        <td><span data-bind="text: $data.UpdatedBy"></span></td>
+                        <td><span data-bind="text: $data.UpdatedDate"></span></td>
+                    </tr>
+                </tbody>
+                <tbody data-bind="visible: !listDataItems().length">
+                    <tr>
+                        <td colspan="18" class="empty-row-message"><div class="loader"></div></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div data-bind="if: (listDataItems() != null && listDataItems().length !== 0)">
+            @Html.Partial("GridViewFooter")
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script src="~/Scripts/common/app.GridViewModel.js" type="text/javascript"></script>
+    <script type="text/javascript">
+    (function (app) {
+        app.EditGrid = function () {
+            var self = this;
+
+            // description: filter
+            self.BrandFamily = ko.observableArray([]);
+            self.filterBrandGroupCode = ko.observableArray([]);
+            self.PackType = ko.observableArray([]);
+            self.ClassType = ko.observableArray([]);
+            self.brandGroupCodeSelectList = ko.observableArray([]);
+
+            // object new data
+            self.newData =
+            {
+                BrandFamily: ko.observableArray([]),
+                PackType: ko.observableArray([]),
+                ClassType: ko.observableArray([]),
+                StickPerPack: ko.observable(''),
+                PackPerSlof: ko.observable(''),
+                SlofPerBal: ko.observable(''),
+                BalPerBox: ko.observable(''),
+                BrandGroupCode: ko.observable(''),
+                SKTBrandCode: ko.observable(''),
+                Description: ko.observable(''),
+                CigarreteWeight: ko.observable(''),
+                StickPerSlof: ko.observable(''),
+                StickPerBal: ko.observable(''),
+                StickPerBox: ko.observable(''),
+                StatusActive: ko.observable(true),
+                Remark: ko.observable(''),
+                EmpPackage: ko.observable('')
+            };
+
+            ko.bindingHandlers.numeric = {
+                init: function (element, valueAccessor) {
+                    $(element).on("keydown", function (event) {
+                        // Allow: backspace, delete, tab, escape, and enter
+                        if (event.keyCode == 46 || event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 27 || event.keyCode == 13 ||
+                            // Allow: Ctrl+A
+                            (event.keyCode == 65 && event.ctrlKey === true) ||
+                            // Allow: . ,
+                            (event.keyCode == 188 || event.keyCode == 190 || event.keyCode == 110) ||
+                            // Allow: home, end, left, right
+                            (event.keyCode >= 35 && event.keyCode <= 39)) {
+                            // let it happen, don't do anything
+                            return;
+                        }
+                        else {
+                            // Ensure that it is a number and stop the keypress
+                            if (event.shiftKey || (event.keyCode < 48 || event.keyCode > 57) && (event.keyCode < 96 || event.keyCode > 105)) {
+                                event.preventDefault();
+                            }
+                        }
+                    });
+                }
+            };
+            
+            // ko computed
+            // Insert row
+
+            self.createKey = ko.computed(function () {
+                var convertPack = (typeof self.newData.PackType() == "string") ? self.newData.PackType()[0].toUpperCase() : '';
+                var convertClass = (typeof self.newData.ClassType() == "string") ? self.newData.ClassType()[0].toUpperCase() : '';
+                var convertStickPerPack = '';
+                var convertPackPerSlof = '';
+
+                if (self.newData.StickPerPack() !== null) {
+                    convertStickPerPack = self.newData.StickPerPack();
+                }
+
+                if (self.newData.PackPerSlof() !== null) {
+                    convertPackPerSlof = self.newData.PackPerSlof();
+                }
+
+                self.newData.BrandGroupCode = self.newData.BrandFamily() + convertStickPerPack + convertPack + convertClass + '-' + convertPackPerSlof;
+
+                return self.newData.BrandFamily() + convertStickPerPack + convertPack + convertClass + '-' + convertPackPerSlof;
+            }, self);
+            
+            self.CreateStickPerSlof = ko.computed(function () {
+                var valueStickPerPack = 0;
+                var valuePackPerSlof = 0;
+
+                if (self.newData.StickPerPack() != '') {
+                    valueStickPerPack = self.newData.StickPerPack();
+                }
+
+                if (self.newData.PackPerSlof() != '') {
+                    valuePackPerSlof = self.newData.PackPerSlof();
+                }
+
+                self.newData.StickPerSlof = valueStickPerPack * valuePackPerSlof;
+
+                return valueStickPerPack.toString() * valuePackPerSlof.toString();
+
+            }, self);
+
+            self.CreateStickPerBal = ko.computed(function () {
+                var valueStickPerSlof = 0;
+                var valueSlofPerBal = 0;
+
+                if (self.newData.StickPerSlof != '') {
+                    valueStickPerSlof = self.newData.StickPerSlof;
+                }
+
+                if (self.newData.SlofPerBal() != '') {
+                    valueSlofPerBal = self.newData.SlofPerBal();
+                }
+
+                self.newData.StickPerBal = valueStickPerSlof * valueSlofPerBal;
+
+                return valueStickPerSlof * valueSlofPerBal;
+
+            }, self);
+
+            self.CreateStickPerBox = ko.computed(function () {
+                var valueStickPerBal = 0;
+                var valueBalPerBox = 0;
+
+                if (self.newData.StickPerBal != '') {
+                    valueStickPerBal = self.newData.StickPerBal;
+                }
+
+                if (self.newData.BalPerBox() != '') {
+                    valueBalPerBox = self.newData.BalPerBox();
+                }
+
+                self.newData.StickPerBox = valueStickPerBal * valueBalPerBox;
+
+                return valueStickPerBal * valueBalPerBox;
+
+            }, self);
+
+            // Events
+            self.onBrandFamilyChange = function(){
+                self.getBrandGroupByFamily();
+            };
+
+            // Methods
+            self.getBrandGroupByFamily = function() {
+                $.ajax({
+                    url: @Html.BaseUrl("MasterGenBrandGroup/GetBrandGroupByFamily"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: { BrandFamily: self.BrandFamily() },
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#ddlFilterBrandGroupCode').find('option').remove();
+                        $('#ddlFilterBrandGroupCode').selectpicker('refresh');
+                        var brandGroupModel = [];
+                        brandGroupModel.push({ "Text": '@CommonLabel.ddlSelectAll', "Value": "" });
+                        $.each(data, function(index, value) {
+                            brandGroupModel.push({ "Text": value.BrandGroupCode, "Value": value.BrandGroupCode });
+                        });
+                        self.brandGroupCodeSelectList(brandGroupModel);
+                    }
+                });
+            };
+            
+            // description: init grid
+            self.gridView = new app.GridViewModel({
+                Criteria:
+                {
+                    PageSize: 10,
+                    PageIndex: 1,
+                    SortExpression: "UpdatedDate",
+                    SortOrder: "DESC",
+                    BrandFamily: self.BrandFamily,
+                    BrandGroupCode: self.filterBrandGroupCode,
+                    PackType: self.PackType,
+                    ClassType: self.ClassType
+                },
+                DataSourceUrl: @Html.BaseUrl("MasterGenBrandGroup/Get"),
+                InlineEdit: true
+            });
+
+            // Reset Fields for Insert Row
+            self.gridView.resetDefault = function (viewModel) {
+                viewModel.BrandFamily([]);
+                viewModel.PackType([]);
+                viewModel.ClassType([]);
+                viewModel.StickPerPack('');
+                viewModel.PackPerSlof('');
+                viewModel.SlofPerBal('');
+                viewModel.BalPerBox('');
+                viewModel.SKTBrandCode('');
+                //viewModel.BrandGroupCode('');
+                viewModel.Description('');
+                viewModel.CigarreteWeight('');
+                viewModel.EmpPackage('');
+                //viewModel.StickPerSlof('');
+                //viewModel.StickPerBal('');
+                //viewModel.StickPerBox('');
+                viewModel.StatusActive(true);
+                viewModel.Remark('');
+            };
+
+
+            // description: validations
+            self.gridView.applyValidationRules = function (entity) {
+
+                self.RemoveNotification();
+
+                entity.StickPerPack.extend({
+                    required: {
+                        message: "<strong>Stick / Pack</strong> cannot be empty!"
+                    },
+                    number: {
+                        message: "<strong>Stick / Pack</strong> must be number!"
+                    }
+                });
+                entity.PackPerSlof.extend({
+                    required: {
+                        message: "<strong>Pack / Slof</strong> cannot be empty!"
+                    },
+                    number: {
+                        message: "<strong>Pack / Slof</strong> must be number!"
+                    }
+                });
+                entity.SlofPerBal.extend({
+                    required: {
+                        message: "<strong>Slof / Bal</strong> cannot be empty!"
+                    },
+                    number: {
+                        message: "<strong>Slof / Bal</strong> must be number!"
+                    }
+                });
+                entity.BalPerBox.extend({
+                    required: {
+                        message: "<strong>Bal / Box</strong> cannot be empty!"
+                    },
+                    number: {
+                        message: "<strong>Bal / Box</strong> must be number!"
+                    }
+                });
+                entity.SKTBrandCode.extend({
+                    required: {
+                        message: "<strong>SKT Brand Code</strong> cannot be empty!"
+                    }
+                });
+                entity.Remark.extend({
+                    required: {
+                        message: "<strong>Remark</strong> cannot be empty!",
+                        onlyIf: function() {
+                            return entity.StatusActive() === false;
+                        }
+                    }
+                });
+                entity.Description.extend({
+                    required: {
+                        message: "<strong>Description</strong> cannot be empty!"
+                    }
+                });
+                entity.CigarreteWeight.extend({
+                    required: {
+                        message: "<strong>Cigarrete Weight</strong> cannot be empty!"
+                    }
+                });
+                entity.EmpPackage.extend({
+                    required: {
+                        message: "<strong>EmpPackage</strong> cannot be empty!"
+                    }
+                });
+     
+                //khusus untuk server sampoerna harus ubah , jadi .
+                entity.CigarreteWeight(entity.CigarreteWeight().toString().replace(',','.'));
+                $('button').get(0).focus();
+
+            };
+
+            // description: save bulk data
+            self.saveData = function () {
+                if (self.gridView.editingRowIndex() !== -1)
+                    return;
+
+                var datas =
+                {
+                    "New": self.gridView.listNewItems(),
+                    "Edit": self.gridView.listEditItems()
+                };
+
+                datas = JSON.stringify(datas);
+
+                $.ajax({
+                    url: @Html.BaseUrl("MasterGenBrandGroup/Save"),
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: datas,
+                        dataType: 'json',
+                        success: function (data) {
+                            if (data.New) {
+                                $.each(data.New, function (k, value) {
+                                    if (value) {
+                                        SKTIS.Helper.ResponseNotification(value, "Insert Brand Group", value.BrandFamily + " - " + value.PackType + " - " + value.ClassType);
+                                    }
+                                });
+                            }
+
+                            if (data.Edit) {
+
+                                $.each(data.Edit, function (k, value) {
+                                    if (value) {
+                                        SKTIS.Helper.ResponseNotification(value, "Edit Brand Group", value.BrandFamily + " - " + value.PackType + " - " + value.ClassType);
+                                    }
+                                });
+                            }
+
+                            //self.gridView.reload();
+                            self.gridView.sort('UpdatedDate', 'DESC');
+                            self.gridView.listNewItems.removeAll();
+                            self.gridView.listEditItems.removeAll();
+                        }
+                    });
+                };
+
+                self.generateExcel = function (formElement) {
+                    $(formElement).find("input[name=BrandFamily]").val(self.BrandFamily());
+                    $(formElement).find("input[name=BrandGroupCode]").val(self.filterBrandGroupCode());
+                    $(formElement).find("input[name=Pack]").val(self.PackType());
+                    $(formElement).find("input[name=Class]").val(self.ClassType());
+                    return true;
+                };
+
+                // description: load data
+                self.search = function () {
+
+                    $('.empty-row-message').html('<div class="loader"></div>'); // Reset New and Edit row
+                    // Check whether New or Edit data is existing and not saved to database yet (on Ajax Action)
+                    if (SKTIS.Checker.modifiedDataExistsForAjax([self.gridView.listNewItems, self.gridView.listEditItems]) == true) {
+                        return;
+                    }else{
+                        self.gridView.listNewItems.removeAll();
+                        self.gridView.listEditItems.removeAll();
+                    }
+
+                    self.gridView.search({}, function (response) {
+                        if (response.status == 'KO') {
+                            SKTIS.Helper.Notification(response.message,'error');
+                            $('.empty-row-message').html(response.message);
+                        }else if (response.status == 'Empty') {
+
+                            self.RemoveNotification();
+
+                            //SKTIS.Helper.Notification(response.message,'warning');
+                            $('.empty-row-message').html('@CommonLabel.lblDataEmpty');
+                        }
+                    });
+
+                    self.RemoveNotification = function() {
+                        if ($('#noty_top_layout_container').length > 0) {
+                            $('#noty_top_layout_container').remove();
+                        }
+                    };
+                };
+                self.search();
+
+                // Check whether New or Edit data is existing and not saved to database yet (on Request action)
+                SKTIS.Checker.modifiedDataExists([self.gridView.listNewItems, self.gridView.listEditItems]);
+
+                // Init Method
+                self.getBrandGroupByFamily();
+            };
+            ko.applyBindings(new app.EditGrid());
+        })(app = this.app || {});
+    </script>
+}

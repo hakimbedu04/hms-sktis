@@ -1,0 +1,28 @@
+HistoricalCapacityGroup1 = ProcessWorkHours1 != 0 ? HistoricalCapacityWorker1 / ProcessWorkHours1 : 0
+HistoricalCapacityGroup2 = ProcessWorkHours2 != 0 ? HistoricalCapacityWorker2 / ProcessWorkHours2 : 0
+HistoricalCapacityGroup3 = ProcessWorkHours3 != 0 ? HistoricalCapacityWorker3 / ProcessWorkHours3 : 0
+HistoricalCapacityGroup4 = ProcessWorkHours4 != 0 ? HistoricalCapacityWorker4 / ProcessWorkHours4 : 0
+HistoricalCapacityGroup5 = ProcessWorkHours5 != 0 ? HistoricalCapacityWorker5 / ProcessWorkHours5 : 0
+HistoricalCapacityGroup6 = ProcessWorkHours6 != 0 ? HistoricalCapacityWorker6 / ProcessWorkHours6 : 0
+HistoricalCapacityGroup7 = ProcessWorkHours7 != 0 ? HistoricalCapacityWorker7 / ProcessWorkHours7 : 0
+
+
+
+
+
+Bobot1 = HistoricalCapacityGroup1 * PercentAttendance1 * ProcessWorkHours1
+Bobot2 = HistoricalCapacityGroup2 * PercentAttendance2 * ProcessWorkHours2
+Bobot3 = HistoricalCapacityGroup3 * PercentAttendance3 * ProcessWorkHours3
+Bobot4 = HistoricalCapacityGroup4 * PercentAttendance4 * ProcessWorkHours4
+Bobot5 = HistoricalCapacityGroup5 * PercentAttendance5 * ProcessWorkHours5
+Bobot6 = HistoricalCapacityGroup6 * PercentAttendance6 * ProcessWorkHours6
+Bobot7 = HistoricalCapacityGroup7 * PercentAttendance7 * ProcessWorkHours7
+
+
+TargetSystem1 = (Bobot1 / TotalBobot) * WPPValue
+TargetSystem2 = (Bobot2 / TotalBobot) * WPPValue
+TargetSystem3 = (Bobot3 / TotalBobot) * WPPValue
+TargetSystem4 = (Bobot4 / TotalBobot) * WPPValue
+TargetSystem5 = (Bobot5 / TotalBobot) * WPPValue
+TargetSystem6 = (Bobot6 / TotalBobot) * WPPValue
+TargetSystem7 = (Bobot7 / TotalBobot) * WPPValue

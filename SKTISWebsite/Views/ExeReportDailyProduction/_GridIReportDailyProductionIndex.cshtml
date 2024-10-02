@@ -1,0 +1,367 @@
+﻿@using DocumentFormat.OpenXml.Office.CustomUI
+@using DocumentFormat.OpenXml.Wordprocessing
+@using Microsoft.Ajax.Utilities
+@model SKTISWebsite.Models.ExeReportDailyProductionAchievement.ExeReportDailyProdAchievementFinalViewModel
+@using System.Web.UI.WebControls
+@using HMS.SKTIS.Application.Resources
+@using SKTISWebsite.Helper
+
+<div class="table-overflow" id="GridIndexReportDaily">
+    <table class="table table-condensed">
+        <thead>
+            <tr class="head">
+                <th rowspan="2">Brand Group Code</th>
+                <th rowspan="2">Brand Code </th>
+                <th rowspan="2">Location</th>
+                <th>Monday</th>
+                <th>Tuesday</th>
+                <th>Wednesday</th>
+                <th>Thursday</th>
+                <th>Friday</th>
+                <th>Saturday</th>
+                <th>Sunday</th>
+                <th rowspan="2">Total</th>
+                <th rowspan="2">Planning</th>
+                <th colspan="2">Variance</th>
+                <th rowspan="2">Reliabilty (%)</th>
+                <th rowspan="2">Package</th>
+                <th rowspan="2">Theoritical WH Eqv.</th>
+            </tr>
+            <tr class="head">
+                <th><span id="dt1"></span></th>
+                <th><span id="dt2"></span></th>
+                <th><span id="dt3"></span></th>
+                <th><span id="dt4"></span></th>
+                <th><span id="dt5"></span></th>
+                <th><span id="dt6"></span></th>
+                <th><span id="dt7"></span></th>
+                <th>Stick</th>
+                <th>(%)</th>
+            </tr>
+        </thead>
+        @if (!Model.ListPerSKTBrandCode.Any())
+        {
+            <tbody>
+                <tr>
+                    <td colspan="13" align="left">Data is not found</td>
+                </tr>
+                <tr class="total">
+                    <td colspan="3" class="center">Total</td>
+                    <td class="right">0</td>
+                    <td class="right">0</td>
+                    <td class="right">0</td>
+                    <td class="right">0</td>
+                    <td class="right">0</td>
+                    <td class="right">0</td>
+                    <td class="right">0</td>
+                    <td class="right">0</td>
+                    <td class="right">0</td>
+                    <td class="right">0</td>
+                </tr>
+            </tbody>
+        }
+        else
+        {
+            foreach (var itemSKTBrandCode in Model.ListPerSKTBrandCode)
+            {
+                <tbody>
+                    <tr>
+                    @{
+                        var index = 0;
+                        var rowspanSKTBrandCode = itemSKTBrandCode.CountSKTBrandCode + (itemSKTBrandCode.ListPerSKTBrandCode.Count() * 2);
+                    }
+                    <td rowspan="@rowspanSKTBrandCode" style="background-color: white">@itemSKTBrandCode.SKTBrandCode</td>
+                    @foreach (var itemBrandCode in itemSKTBrandCode.ListPerSKTBrandCode)
+                    {
+                        var rowspanBrandCode = itemBrandCode.CountBrandCode + 1;
+                        
+                        <td rowspan="@rowspanBrandCode">@itemBrandCode.BrandCode</td>
+                        @Html.Raw("</tr>");
+                        foreach (var item in itemBrandCode.ListPerBrandCode)
+                        {
+                            var txtColor = "black";
+                            switch (@item.ParentLocationCode)
+                            {
+                                case "PLNT":
+                                    txtColor = "black";
+                                    break;
+                                case "REG1":
+                                    txtColor = "blue";
+                                    break;
+                                case "REG2":
+                                    txtColor = "green";
+                                    break;
+                                case "REG3":
+                                    txtColor = "magenta";
+                                    break;
+                                case "REG4":
+                                    txtColor = "red";
+                                    break;
+                            }
+                            
+                            <tr style="background-color: white" id="totalRow">
+                                <td style="color: @txtColor">@item.ABBR</td>
+                                <td style="color: @txtColor" class="right">@item.Monday</td>
+                                <td style="color: @txtColor" class="right">@item.Tuesday</td>
+                                <td style="color: @txtColor" class="right">@item.Wednesday</td>
+                                <td style="color: @txtColor" class="right">@item.Thursday</td>
+                                <td style="color: @txtColor" class="right">@item.Friday</td>
+                                <td style="color: @txtColor" class="right">@item.Saturday</td>
+                                <td style="color: @txtColor" class="right">@item.Sunday</td>
+                                <td style="color: @txtColor" class="right" style="color: @txtColor">@item.Total</td>
+                                <td style="color: @txtColor" class="right">@item.Planning</td>
+                                <td style="color: @txtColor" class="right">@item.VarianceStick</td>
+                                <td style="color: @txtColor" class="right">@item.VariancePercent</td>
+                                <td style="color: @txtColor" class="right">@item.ReliabilityPercent</td>
+                                <td style="color: @txtColor" class="right">@item.Package</td>
+                                <td style="color: @txtColor" class="right">@item.TWHEqv</td>
+                            </tr>
+                        }
+                        <tr class="total">
+                            <td colspan="2" class="center">Sub Total</td>
+                            <td class="right">@itemBrandCode.SubTotalMonday</td>
+                            <td class="right">@itemBrandCode.SubTotalTuesday</td>
+                            <td class="right">@itemBrandCode.SubTotalWednesday</td>
+                            <td class="right">@itemBrandCode.SubTotalThursday</td>
+                            <td class="right">@itemBrandCode.SubTotalFriday</td>
+                            <td class="right">@itemBrandCode.SubTotalSaturday</td>
+                            <td class="right">@itemBrandCode.SubTotalSunday</td>
+                            <td class="right">@itemBrandCode.SubTotalTotal</td>
+                            <td class="right">@itemBrandCode.SubTotalPlanning</td>
+                            <td class="right">@itemBrandCode.SubTotalVarianceStick</td>
+                            <td class="right">@itemBrandCode.SubTotalVariancePercent</td>
+                            <td class="right">@itemBrandCode.SubTotalReliabilityPercent</td>
+                            <td class="right">@itemBrandCode.SubTotalPackage</td>
+                            <td class="right">@itemBrandCode.SubTotalTWHEqv</td>
+                        </tr>
+                        index++;
+                    }
+                    <tr class="total">
+                        <td colspan="3" class="center">Total/Day</td>
+                        <td class="right">@itemSKTBrandCode.TotalMonday</td>
+                        <td class="right">@itemSKTBrandCode.TotalTuesday</td>
+                        <td class="right">@itemSKTBrandCode.TotalWednesday</td>
+                        <td class="right">@itemSKTBrandCode.TotalThursday</td>
+                        <td class="right">@itemSKTBrandCode.TotalFriday</td>
+                        <td class="right">@itemSKTBrandCode.TotalSaturday</td>
+                        <td class="right">@itemSKTBrandCode.TotalSunday</td>
+                        <td class="right">@itemSKTBrandCode.TotalTotal</td>
+                        <td class="right">@itemSKTBrandCode.TotalPlanning</td>
+                        <td class="right">@itemSKTBrandCode.TotalVarianceStick</td>
+                        <td class="right">@itemSKTBrandCode.TotalVariancePercent</td>
+                        <td class="right">@itemSKTBrandCode.TotalReliabilityPercent</td>
+                        <td class="right">@itemSKTBrandCode.TotalPackage</td>
+                        <td class="right">@itemSKTBrandCode.TotalTWHEqv</td>
+                    </tr>
+                    <tr class="total">
+                        <td class="bolder" rowspan="2" colspan="2">Total Cumulative</td>
+                        <td class="bolder">Stick</td>
+                        <td class="right">@itemSKTBrandCode.CumulativeTotalMonday</td>
+                        <td class="right">@itemSKTBrandCode.CumulativeTotalTuesday</td>
+                        <td class="right">@itemSKTBrandCode.CumulativeTotalWednesday</td>
+                        <td class="right">@itemSKTBrandCode.CumulativeTotalThursday</td>
+                        <td class="right">@itemSKTBrandCode.CumulativeTotalFriday</td>
+                        <td class="right">@itemSKTBrandCode.CumulativeTotalSaturday</td>
+                        <td class="right">@itemSKTBrandCode.CumulativeTotalSunday</td>
+                    </tr>
+                    <tr class="total">
+                        <td class="bolder">%</td>
+                        <td class="right">@itemSKTBrandCode.CumulativePercentTotalMonday</td>
+                        <td class="right">@itemSKTBrandCode.CumulativePercentTotalTuesday</td>
+                        <td class="right">@itemSKTBrandCode.CumulativePercentTotalWednesday</td>
+                        <td class="right">@itemSKTBrandCode.CumulativePercentTotalThursday</td>
+                        <td class="right">@itemSKTBrandCode.CumulativePercentTotalFriday</td>
+                        <td class="right">@itemSKTBrandCode.CumulativePercentTotalSaturday</td>
+                        <td class="right">@itemSKTBrandCode.CumulativePercentTotalSunday</td>
+                    </tr>
+                </tbody>
+            }
+
+            <tr class="total">
+                <td colspan="3">Total Hand-rolled</td>
+                <td class="right">@Model.TotalMondayHandRolled</td>
+                <td class="right">@Model.TotalTuesdayHandRolled</td>
+                <td class="right">@Model.TotalWednesdayHandRolled</td>
+                <td class="right">@Model.TotalThursdayHandRolled</td>
+                <td class="right">@Model.TotalFridayHandRolled</td>
+                <td class="right">@Model.TotalSaturdayHandRolled</td>
+                <td class="right">@Model.TotalSundayHandRolled</td>
+                <td class="right">@Model.TotalTotalHandRolled</td>
+                <td class="right">@Model.TotalPlanningHandRolled</td>
+                <td class="right">@Model.TotalVarianceStickHandRolled</td>
+                <td class="right">@Model.TotalVariancePercentHandRolled</td>
+                <td class="right">@Model.TotalReliabilityPercentHandRolled</td>
+                <td class="right">@Model.TotalPackageHandRolled</td>
+                <td class="right">@Model.TotalTWHEqvHandRolled</td>
+            </tr>
+
+            <tr class="total">
+                <td colspan="2" rowspan="2" class="bolder">Total Cumulative All</td>
+                <td class="bolder">Stick</td>
+                <td class="right">@Html.DisplayFor(itemModel => Model.TotalAllCumulativeStickMonday)</td>
+                <td class="right">@Html.DisplayFor(itemModel => Model.TotalAllCumulativeStickTuesday)</td>
+                <td class="right">@Html.DisplayFor(itemModel => Model.TotalAllCumulativeStickWednesday)</td>
+                <td class="right">@Html.DisplayFor(itemModel => Model.TotalAllCumulativeStickThursday)</td>
+                <td class="right">@Html.DisplayFor(itemModel => Model.TotalAllCumulativeStickFriday)</td>
+                <td class="right">@Html.DisplayFor(itemModel => Model.TotalAllCumulativeStickSaturday)</td>
+                <td class="right">@Html.DisplayFor(itemModel => Model.TotalAllCumulativeStickSunday)</td>
+            </tr>
+
+            <tr class="total">
+                <td class="bolder">%</td>
+                <td class="right">@Html.DisplayFor(itemModel => Model.TotalAllCumulativePercentMonday)</td>
+                <td class="right">@Html.DisplayFor(itemModel => Model.TotalAllCumulativePercentTuesday)</td>
+                <td class="right">@Html.DisplayFor(itemModel => Model.TotalAllCumulativePercentWednesday)</td>
+                <td class="right">@Html.DisplayFor(itemModel => Model.TotalAllCumulativePercentThursday)</td>
+                <td class="right">@Html.DisplayFor(itemModel => Model.TotalAllCumulativePercentFriday)</td>
+                <td class="right">@Html.DisplayFor(itemModel => Model.TotalAllCumulativePercentSaturday)</td>
+                <td class="right">@Html.DisplayFor(itemModel => Model.TotalAllCumulativePercentSunday)</td>
+            </tr>
+        }
+
+        @*<tbody>
+            @foreach (var itemSKTBrandCode in Model)
+            {
+                var rowspanBrandGroup = (itemSKTBrandCode.CountSKTBrandCode * 2) + 1;
+                <tr class="white">
+                    <td rowspan="@rowspanBrandGroup">@Html.DisplayFor(model => itemSKTBrandCode.SKTBrandCode) </td>
+                </tr>
+                foreach (var itemDetail in itemSKTBrandCode.ListPerSKTBrandCode)
+                {
+                    <tr class="white">
+                        <td>@Html.DisplayFor(itemModel => itemDetail.BrandCode)</td>
+                        <td class="left">@Html.DisplayFor(itemModel => itemDetail.ABBR)</td>
+                        <td class="right">@Html.DisplayFor(itemModel => itemDetail.mon)</td>
+                        <td class="right">@Html.DisplayFor(itemModel => itemDetail.ProductionTuesday)</td>
+                        <td class="right">@Html.DisplayFor(itemModel => itemDetail.ProductionWednesday)</td>
+                        <td class="right">@Html.DisplayFor(itemModel => itemDetail.ProductionThursday)</td>
+                        <td class="right">@Html.DisplayFor(itemModel => itemDetail.ProductionFriday)</td>
+                        <td class="right">@Html.DisplayFor(itemModel => itemDetail.ProductionSaturday)</td>
+                        <td class="right">@Html.DisplayFor(itemModel => itemDetail.ProductionSunday)</td>
+                        <td class="right">@Html.DisplayFor(itemModel => itemDetail.TotalAllDay)</td>
+                        <td class="right">@Html.DisplayFor(itemModel => itemDetail.SumTpkValue)</td>
+                        <td class="right">@Html.DisplayFor(itemModel => itemDetail.VarianceStick)</td>
+                        <td class="right">@Html.DisplayFor(itemModel => itemDetail.VariancePersen)</td>
+                        <td class="right">@Html.DisplayFor(itemModel => itemDetail.Realiability)</td>
+                        <td class="right">@Html.DisplayFor(itemModel => itemDetail.Package)</td>
+                        <td class="right"></td>
+                    </tr>
+                    <tr class="total">
+                        <td class="bolder" colspan="2">Sub Total</td>
+                        <td class="right">@Html.DisplayFor(itemModel => itemDetail.ProductionMonday)</td>
+                        <td class="right">@Html.DisplayFor(itemModel => itemDetail.ProductionTuesday)</td>
+                        <td class="right">@Html.DisplayFor(itemModel => itemDetail.ProductionWednesday)</td>
+                        <td class="right">@Html.DisplayFor(itemModel => itemDetail.ProductionThursday)</td>
+                        <td class="right">@Html.DisplayFor(itemModel => itemDetail.ProductionFriday)</td>
+                        <td class="right">@Html.DisplayFor(itemModel => itemDetail.ProductionSaturday)</td>
+                        <td class="right">@Html.DisplayFor(itemModel => itemDetail.ProductionSunday)</td>
+                        <td class="right">@Html.DisplayFor(itemModel => itemDetail.TotalAllDay)</td>
+                        <td class="right">@Html.DisplayFor(itemModel => itemDetail.SumTpkValue)</td>
+                        <td class="right">@Html.DisplayFor(itemModel => itemDetail.VarianceStick)</td>
+                        <td class="right">@Html.DisplayFor(itemModel => itemDetail.VariancePersen)</td>
+                        <td class="right">@Html.DisplayFor(itemModel => itemDetail.Realiability)</td>
+                        <td class="right">@Html.DisplayFor(itemModel => itemDetail.Package)</td>
+                        <td class="right"></td>
+                    </tr>
+                }
+                <tr class="total">
+                    <td class="bolder" colspan="3">Total/Day</td>
+                    <td class="right">@Html.DisplayFor(itemModel => item.TotalMonday)</td>
+                    <td class="right">@Html.DisplayFor(itemModel => item.TotalTuesday)</td>
+                    <td class="right">@Html.DisplayFor(itemModel => item.TotalWednesday)</td>
+                    <td class="right">@Html.DisplayFor(itemModel => item.TotalThursday)</td>
+                    <td class="right">@Html.DisplayFor(itemModel => item.TotalFriday)</td>
+                    <td class="right">@Html.DisplayFor(itemModel => item.TotalSaturday)</td>
+                    <td class="right">@Html.DisplayFor(itemModel => item.TotalSunday)</td>
+                    <td class="right">@Html.DisplayFor(itemModel => item.SumTotalAllDay)</td>
+                    <td class="right">@Html.DisplayFor(itemModel => item.SumAllTpkValue)</td>
+                    <td class="right">@Html.DisplayFor(itemModel => item.SumAllVarianStick)</td>
+                    <td class="right">@Html.DisplayFor(itemModel => item.SumAllVarianPercen)</td>
+                    <td class="right">@Html.DisplayFor(itemModel => item.SumAllReliabilty)</td>
+                    <td class="right">@Html.DisplayFor(itemModel => item.SumAllPackage)</td>
+                    <td class="right"></td>
+                </tr>
+
+                <tr class="total">
+                    <td class="bolder" rowspan="2" colspan="2">Total Cumulative</td>
+                    <td class="bolder">Stick</td>
+                    <td class="right">@Html.DisplayFor(itemModel => item.StickCumulativeMonday)</td>
+                    <td class="right">@Html.DisplayFor(itemModel => item.StickCumulativeTuesday)</td>
+                    <td class="right">@Html.DisplayFor(itemModel => item.StickCumulativeWednesday)</td>
+                    <td class="right">@Html.DisplayFor(itemModel => item.StickCumulativeThursday)</td>
+                    <td class="right">@Html.DisplayFor(itemModel => item.StickCumulativeFriday)</td>
+                    <td class="right">@Html.DisplayFor(itemModel => item.StickCumulativeSaturday)</td>
+                    <td class="right">@Html.DisplayFor(itemModel => item.StickCumulativeSunday)</td>
+                    <td class="right">@Html.DisplayFor(itemModel => item.SumTotalAllDay)</td>
+                    <td class="right">@Html.DisplayFor(itemModel => item.SumAllTpkValue)</td>
+                    <td class="right">@Html.DisplayFor(itemModel => item.SumAllVarianStick)</td>
+                    <td class="right">@Html.DisplayFor(itemModel => item.SumAllVarianPercen)</td>
+                    <td class="right">@Html.DisplayFor(itemModel => item.SumAllReliabilty)</td>
+                    <td class="right">@Html.DisplayFor(itemModel => item.SumAllPackage)</td>
+                    <td class="right"></td>
+                </tr>
+
+                <tr class="total">
+                    <td class="bolder">%</td>
+                    <td class="right bolder">@Html.DisplayFor(itemModel => item.CumulativeMonday)</td>
+                    <td class="right bolder">@Html.DisplayFor(itemModel => item.CumulativeTuesday)</td>
+                    <td class="right bolder">@Html.DisplayFor(itemModel => item.CumulativeWednesday)</td>
+                    <td class="right bolder">@Html.DisplayFor(itemModel => item.CumulativeThursday)</td>
+                    <td class="right bolder">@Html.DisplayFor(itemModel => item.CumulativeFriday)</td>
+                    <td class="right bolder">@Html.DisplayFor(itemModel => item.CumulativeSaturday)</td>
+                    <td class="right bolder">@Html.DisplayFor(itemModel => item.CumulativeSunday)</td>
+                    <td class="right bolder">@Html.DisplayFor(itemModel => item.TotalAllCumulative)</td>
+                    <td class="right"></td>
+                    <td class="right"></td>
+                    <td class="right"></td>
+                    <td class="right"></td>
+                    <td class="right"></td>
+                    <td class="right"></td>
+                </tr>
+
+            }
+
+            <tr class="total">
+                <td colspan="3" class="bolder">Total Hand-rolled</td>
+                <td class="right">@Html.DisplayFor(itemModel => Model.TotalHandRoleMonday)</td>
+                <td class="right">@Html.DisplayFor(itemModel => Model.TotalHandRoleTuesday)</td>
+                <td class="right">@Html.DisplayFor(itemModel => Model.TotalHandrRoleWednesday)</td>
+                <td class="right">@Html.DisplayFor(itemModel => Model.TotalHandrRoleThursday)</td>
+                <td class="right">@Html.DisplayFor(itemModel => Model.TotalHandrRoleFriday)</td>
+                <td class="right">@Html.DisplayFor(itemModel => Model.TotalHandrRoleSaturday)</td>
+                <td class="right">@Html.DisplayFor(itemModel => Model.TotalHandrRoleSunday)</td>
+                <td class="right bolder">@Html.DisplayFor(itemModel => Model.SumAllTotalHandRole)</td>
+                <td class="right bolder">@Html.DisplayFor(itemModel => Model.SumAllTotalHandRolePlanning)</td>
+                <td class="right bolder">@Html.DisplayFor(itemModel => Model.SumAllTotalHandRoleVarianceStick)</td>
+                <td class="right bolder">@Html.DisplayFor(itemModel => Model.SumAllTotalHandRoleVariancePercen)</td>
+                <td class="right bolder">@Html.DisplayFor(itemModel => Model.SumAllTotalHandRoleReliability)</td>
+                <td class="right bolder">@string.Format("{0:N2}", Model.SumAllTotalHandRolePackage )</td>
+                <td class="right bolder"></td>
+            </tr>
+
+            <tr class="total">
+                <td colspan="2" rowspan="2" class="bolder">Total Cumulative All</td>
+                <td class="bolder">Stick</td>
+                <td class="right">@Html.DisplayFor(itemModel => Model.TotalAllCumulativeStickMonday)</td>
+                <td class="right">@Html.DisplayFor(itemModel => Model.TotalAllCumulativeStickTuesday)</td>
+                <td class="right">@Html.DisplayFor(itemModel => Model.TotalAllCumulativeStickWednesday)</td>
+                <td class="right">@Html.DisplayFor(itemModel => Model.TotalAllCumulativeStickThursday)</td>
+                <td class="right">@Html.DisplayFor(itemModel => Model.TotalAllCumulativeStickFriday)</td>
+                <td class="right">@Html.DisplayFor(itemModel => Model.TotalAllCumulativeStickSaturday)</td>
+                <td class="right">@Html.DisplayFor(itemModel => Model.TotalAllCumulativeStickSunday)</td>
+            </tr>
+
+            <tr class="total">
+                <td class="bolder">%</td>
+                <td class="right">@Html.DisplayFor(itemModel => Model.TotalAllCumulativePercentMonday)</td>
+                <td class="right">@Html.DisplayFor(itemModel => Model.TotalAllCumulativePercentTuesday)</td>
+                <td class="right">@Html.DisplayFor(itemModel => Model.TotalAllCumulativePercentWednesday)</td>
+                <td class="right">@Html.DisplayFor(itemModel => Model.TotalAllCumulativePercentThursday)</td>
+                <td class="right">@Html.DisplayFor(itemModel => Model.TotalAllCumulativePercentFriday)</td>
+                <td class="right">@Html.DisplayFor(itemModel => Model.TotalAllCumulativePercentSaturday)</td>
+                <td class="right">@Html.DisplayFor(itemModel => Model.TotalAllCumulativePercentSunday)</td>
+            </tr>
+
+        </tbody>*@
+    </table>    
+</div>

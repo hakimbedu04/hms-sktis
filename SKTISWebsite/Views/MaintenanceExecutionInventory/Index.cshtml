@@ -1,0 +1,277 @@
+﻿@model SKTISWebsite.Models.MaintenanceExecutionInventory.InitMaintenanceExecutionInventoryViewModel
+@using HMS.SKTIS.Application.Resources
+@using SKTISWebsite.Helper
+@{ Html.SetPageTitle("Inventory"); }
+<div class="col-lg-12" data-bind="with: gridView">
+    <div class="col-lg-6">
+        <div class="row">
+            <label class="form-label col-lg-3">
+                Location
+            </label>
+            <div class="col-lg-3">
+                @*@Html.DropDownList("ddlFilterSourceLocation", new SelectList(Model.LocationLookupList, "LocationCode", "LocationCode"),
+                    new
+                    {
+                        @class = "selectpicker show-tick form-control",
+                        id = "ddlFilterSourceLocation",
+                        data_live_search = "true",
+                        data_bind = "value:$root.filterLocation, event : { change : $root.onSourceLocationChange }",
+                        data_size = "15"
+                    })*@
+
+                <select id="ddlFilterSourceLocation"
+                        class="selectpicker show-tick form-control"
+                        data-live-search="true"
+                        data-bind="enable: !$root.isBusy(), selectPicker:$root.filterLocation, optionsText: 'LocationCode', optionsValue : 'LocationCode', optionsAfterRender: locationDesc, selectPickerOptions: { optionsArray: $root.menuItemLocations}, event : { change : $root.onSourceLocationChange}"></select>
+
+            </div>
+            <div class="col-lg-4">
+                <input type="text" class="form-control" readonly="readonly" data-bind="value:$root.filterSourceLocationName">
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-3">
+                Item Type
+            </label>
+            <div class="col-lg-3">
+                @Html.DropDownList("dllItemTypes", Model.ItemTypes, new Dictionary<string, object>
+                {
+                    {"data-bind", "selectPicker: $root.filterItemTypes"},
+                    {"class", "selectpicker show-tick form-controlt"}, {"data-live-search", "true"}, {"disabled","disabled"}
+                })
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-3">
+                Date
+            </label>
+            <div class="col-lg-3">
+                <div id="filterDate" class='input-group date time' data-bind="dateTimePicker: $root.filterDate, value: $root.filterDate, dateTimePickerOptions: {widgetPositioning: {vertical: 'bottom'}, ignoreReadonly: true}">
+                    <input id="filterDate" class="form-control" readonly="readonly" />
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="action-btn">
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.View.ToString()))
+                {
+                    <button type="button" class="btn btn-primary" data-bind="enable: !$root.isBusy(), click:$root.search">@CommonLabel.btnView</button>
+                }
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.Excel.ToString())) { 
+                    using (Html.BeginForm("GenerateExcel", "MaintenanceExecutionInventory", FormMethod.Post, new { @data_bind = "submit: $root.generateExcel" }))
+                    {
+                        <input type="hidden" name="locationCode">
+                        <input type="hidden" name="itemType">
+                        <input type="hidden" name="date">
+                        <input type="hidden" name="sortExpression">
+                        <input type="hidden" name="sortOrder">
+                        <button type="submit" class="btn btn-primary" data-bind="enable: !$root.isBusy()">@CommonLabel.btnExcel</button>
+                    }
+                }
+                @Html.Partial("GridViewPageSizeSelector")
+            </div>
+        </div>
+    </div>
+    <div class="table-overflow">
+        <table class="table table-striped-default">
+            <thead>
+                <tr class="head">
+                    <th rowspan="2" data-bind="click:sortBy.bind($data,'ItemCode'), css:sortCss('ItemCode', $data.sortExpression(), $data.sortOrder())">Item Code</th>
+                    <th rowspan="2" data-bind="click:sortBy.bind($data,'ItemDescription'), css:sortCss('ItemDescription', $data.sortExpression(), $data.sortOrder())">Item Description</th>
+                    <th colspan="4">In Transit</th>
+                    <th colspan="4">QI</th>
+                    <th colspan="4">Ready</th>
+                    <th colspan="4">Used</th>
+                    <th colspan="4">Repair</th>
+                    <th colspan="4">BS</th>
+                </tr>
+                <tr class="head">
+                    <th data-bind="click:sortBy.bind($data,'StawIT', $root.callbacktest), css:sortCss('StawIT', $data.sortExpression(), $data.sortOrder())">Staw</th>
+                    <th data-bind="click:sortBy.bind($data,'InIT'), css:sortCss('InIT', $data.sortExpression(), $data.sortOrder())">In</th>
+                    <th data-bind="click:sortBy.bind($data,'OutIT'), css:sortCss('OutIT', $data.sortExpression(), $data.sortOrder())">Out</th>
+                    <th data-bind="click:sortBy.bind($data,'StackIT'), css:sortCss('StackIT', $data.sortExpression(), $data.sortOrder())">Stak</th>
+                    <th data-bind="click:sortBy.bind($data,'StawQI'), css:sortCss('StawQI', $data.sortExpression(), $data.sortOrder())">Staw</th>
+                    <th data-bind="click:sortBy.bind($data,'InQI'), css:sortCss('InQI', $data.sortExpression(), $data.sortOrder())">In</th>
+                    <th data-bind="click:sortBy.bind($data,'OutQI'), css:sortCss('OutQI', $data.sortExpression(), $data.sortOrder())">Out</th>
+                    <th data-bind="click:sortBy.bind($data,'StackQI'), css:sortCss('StackQI', $data.sortExpression(), $data.sortOrder())">Stak</th>
+                    <th data-bind="click:sortBy.bind($data,'StawReady'), css:sortCss('StawReady', $data.sortExpression(), $data.sortOrder())">Staw</th>
+                    <th data-bind="click:sortBy.bind($data,'InReady'), css:sortCss('InReady', $data.sortExpression(), $data.sortOrder())">In</th>
+                    <th data-bind="click:sortBy.bind($data,'OutReady'), css:sortCss('OutReady', $data.sortExpression(), $data.sortOrder())">Out</th>
+                    <th data-bind="click:sortBy.bind($data,'StackReady'), css:sortCss('StackReady', $data.sortExpression(), $data.sortOrder())">Stak</th>
+                    <th data-bind="click:sortBy.bind($data,'StawUO'), css:sortCss('StawUO', $data.sortExpression(), $data.sortOrder())">Staw</th>
+                    <th data-bind="click:sortBy.bind($data,'InUO'), css:sortCss('InUO', $data.sortExpression(), $data.sortOrder())">In</th>
+                    <th data-bind="click:sortBy.bind($data,'OutUO'), css:sortCss('OutUO', $data.sortExpression(), $data.sortOrder())">Out</th>
+                    <th data-bind="click:sortBy.bind($data,'StackUO'), css:sortCss('StackUO', $data.sortExpression(), $data.sortOrder())">Stak</th>
+                    <th data-bind="click:sortBy.bind($data,'StawOR'), css:sortCss('StawOR', $data.sortExpression(), $data.sortOrder())">Staw</th>
+                    <th data-bind="click:sortBy.bind($data,'InOR'), css:sortCss('InOR', $data.sortExpression(), $data.sortOrder())">In</th>
+                    <th data-bind="click:sortBy.bind($data,'OutOR'), css:sortCss('OutOR', $data.sortExpression(), $data.sortOrder())">Out</th>
+                    <th data-bind="click:sortBy.bind($data,'StackOR'), css:sortCss('StackOR', $data.sortExpression(), $data.sortOrder())">Stak</th>
+                    <th data-bind="click:sortBy.bind($data,'StawBS'), css:sortCss('StawBS', $data.sortExpression(), $data.sortOrder())">Staw</th>
+                    <th data-bind="click:sortBy.bind($data,'InBS'), css:sortCss('InBS', $data.sortExpression(), $data.sortOrder())">In</th>
+                    <th data-bind="click:sortBy.bind($data,'OutBS'), css:sortCss('OutBS', $data.sortExpression(), $data.sortOrder())">Out</th>
+                    <th data-bind="click:sortBy.bind($data,'StackBS'), css:sortCss('StackBS', $data.sortExpression(), $data.sortOrder())">Stak</th>
+                </tr>
+            </thead>
+            <tbody data-bind="foreach: listDataItems">
+                <tr>
+                    <td><span data-bind="text:$data.ItemCode"></span></td>
+                    <td><span data-bind="text:$data.ItemDescription"></span></td>
+                    <td class="right"><span data-bind="decimal:$data.StawIT"></span></td>
+                    <td class="right"><span data-bind="decimal:$data.InIT"></span></td>
+                    <td class="right"><span data-bind="decimal:$data.OutIT"></span></td>
+                    <td class="right"><span data-bind="decimal:$data.StackIT"></span></td>
+                    <td class="right"><span data-bind="decimal:$data.StawQI"></span></td>
+                    <td class="right"><span data-bind="decimal:$data.InQI"></span></td>
+                    <td class="right"><span data-bind="decimal:$data.OutQI"></span></td>
+                    <td class="right"><span data-bind="decimal:$data.StackQI"></span></td>
+                    <td class="right"><span data-bind="decimal:$data.StawReady"></span></td>
+                    <td class="right"><span data-bind="decimal:$data.InReady"></span></td>
+                    <td class="right"><span data-bind="decimal:$data.OutReady"></span></td>
+                    <td class="right"><span data-bind="decimal:$data.StackReady"></span></td>
+                    <td class="right"><span data-bind="decimal:$data.StawOU"></span></td>
+                    <td class="right"><span data-bind="decimal:$data.InOU"></span></td>
+                    <td class="right"><span data-bind="decimal:$data.OutOU"></span></td>
+                    <td class="right"><span data-bind="decimal:$data.StackOU"></span></td>
+                    <td class="right"><span data-bind="decimal:$data.StawOR"></span></td>
+                    <td class="right"><span data-bind="decimal:$data.InOR"></span></td>
+                    <td class="right"><span data-bind="decimal:$data.OutOR"></span></td>
+                    <td class="right"><span data-bind="decimal:$data.StackOR"></span></td>
+                    <td class="right"><span data-bind="decimal:$data.StawBS"></span></td>
+                    <td class="right"><span data-bind="decimal:$data.InBS"></span></td>
+                    <td class="right"><span data-bind="decimal:$data.OutBS"></span></td>
+                    <td class="right"><span data-bind="decimal:$data.StackBS"></span></td>
+                </tr>
+            </tbody>
+            <tbody data-bind="visible: !listDataItems().length">
+                <tr>
+                    <td colspan="26" class="empty-row-message">
+                        <div class="loader"></div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div data-bind="if: (listDataItems() != null && listDataItems().length !== 0)">
+        @Html.Partial("GridViewFooter")
+    </div>
+</div>
+@section Scripts
+{
+    <script src="~/Scripts/app/globalfunctions.js" type="text/javascript"></script>
+    <script src="~/Scripts/common/app.GridViewModel.js" type="text/javascript"></script>
+    <script type="text/javascript">
+    (function(app) {
+        app.EditGrid = function() {
+            var self = this;
+            self.itemLocations = @Html.Raw(Json.Encode(Model.LocationLookupList));
+
+            self.menuItemLocations = ko.observableArray(@Html.Raw(Json.Encode(@Model.LocationLookupList)));
+            self.filterLocation = ko.observable('@Model.DefaultLocation');
+            self.filterSourceLocationName = ko.observable();
+            self.filterItemTypes = ko.observable($("#dllItemTypes").val());
+            self.filterDate = ko.observable('@Model.CurrentDate');
+
+            self.isBusy = ko.observable(true);
+            $(document).ajaxComplete(function () {
+                if ($.active <= 1) {
+                    self.isBusy(false);
+                    $("#dllItemTypes").removeAttr("disabled");
+                    $('#dllItemTypes').selectpicker('refresh');
+                }
+            });
+
+            $(document).ajaxStart(function () {
+                if (!self.isBusy()){
+                    self.isBusy(true);
+                    $("#dllItemTypes").attr("disabled", "disabled");
+                    $('#dllItemTypes').selectpicker('refresh');
+                }
+            });
+                //get location name by location code
+                function getLocationNameFilter(locationCode) {
+                    for (var i = 0; i < self.itemLocations.length; i++) {
+                        if (self.itemLocations[i].LocationCode == locationCode) {
+                            return self.itemLocations[i].LocationName;
+                        }
+                    }
+                    return '';
+                };
+
+                self.onSourceLocationChange = function() {
+                    self.filterSourceLocationName(getLocationNameFilter(self.filterLocation()));
+                };
+
+                self.callbacktest = function(response) {
+                    if (response.status == 'OK') {
+                        console.log(response);
+                    }
+                }
+
+                // Gridview Initialization
+                self.gridView = new app.GridViewModel({
+                    Criteria: {
+                        PageSize: 10,
+                        PageIndex: 1,
+                        SortExpression: "ItemCode",
+                        SortOrder: "DESC",
+                        LocationCode: self.filterLocation,
+                        ItemType: self.filterItemTypes,
+                        Date: self.filterDate
+                    },
+                    DataSourceUrl: @Html.BaseUrl("MaintenanceExecutionInventory/GetMaintenanceExecutionInventory"),
+                InlineEdit: true,
+                InsertRowFocusedControlIndex: 0
+            });
+
+            self.generateExcel = function(formElement) {
+                $(formElement).find("input[name=locationCode]").val(self.filterLocation());
+                $(formElement).find("input[name=itemType]").val(self.filterItemTypes());
+                $(formElement).find("input[name=date]").val(self.filterDate());
+                //console.log(this.sortExpression());
+                //console.log(this.sortOrder());
+                $(formElement).find("input[name=sortExpression]").val(this.sortExpression());
+                $(formElement).find("input[name=sortOrder]").val(this.sortOrder());
+              
+                return true;
+            };
+
+            // Load Data
+            self.search = function() {
+                $('.empty-row-message').html('<div class="loader"></div>'); // Reset New and Edit row
+                // Check whether New or Edit data is existing and not saved to database yet (on Ajax Action)
+                if (SKTIS.Checker.modifiedDataExistsForAjax([self.gridView.listNewItems, self.gridView.listEditItems]) == true) {
+                    return;
+                } else {
+                    self.gridView.listNewItems.removeAll();
+                    self.gridView.listEditItems.removeAll();
+                }
+
+                self.gridView.search({}, function(response) {
+                    if (response.status == 'KO') {
+                        SKTIS.Helper.Notification(response.message, 'error');
+                        $('.empty-row-message').html(response.message);
+                    } else if (response.status == 'Empty') {
+
+                        //SKTIS.Helper.Notification(response.message,'warning');
+                        $('.empty-row-message').html('@CommonLabel.lblDataEmpty');
+                    }
+                });
+            };
+
+            self.onSourceLocationChange();
+            self.search();
+
+            // Check whether New or Edit data is existing and not saved to database yet (on Request action)
+            SKTIS.Checker.modifiedDataExists([self.gridView.listNewItems, self.gridView.listEditItems]);
+
+        };
+        ko.applyBindings(new app.EditGrid());
+    })(app = this.app || {});
+
+    </script>
+}

@@ -1,0 +1,638 @@
+﻿@using HMS.SKTIS.Application.Resources
+@using SKTISWebsite.Helper
+@model SKTISWebsite.Models.ExeProductAdjustment.InitExeProductAdjustment
+@{ Html.SetPageTitle("Product Adjustment"); }
+<div class="col-lg-12" data-bind="with: gridView">
+    <div class="col-lg-6">
+        <div class="row">
+            <label class="form-label col-lg-4">
+                Location
+            </label>
+            <div class="col-lg-2 offset-right">
+                @*@Html.DropDownList("filterLocationCode", new SelectList(Model.LocationSelectList, "LocationCode", "LocationCode"),
+                new
+                {
+                    @class = "selectpicker show-tick form-control",
+                    id = "filterLocationCode",
+                    data_live_search = "true",
+                    data_bind = "selectPicker: $root.filterLocationCode, event: { change: $root.LocationCodeSelectListChange}",
+                    data_size = "15"
+                })*@
+                <select id="filterLocationCode"
+                        class="selectpicker show-tick form-control"
+                        data-live-search="true"
+                        data-bind="enable:!$root.isBusy(), selectPicker:$root.filterLocationCode, optionsText: 'LocationCode', optionsValue : 'LocationCode', optionsAfterRender: locationDesc, selectPickerOptions: { optionsArray: $root.itemLocations }, event : { change : $root.LocationCodeSelectListChange}"></select>
+            </div>
+            <div class="col-lg-4">
+                <input type="text" class="form-control" readonly="readonly" data-bind="value:$root.filterSourceLocationName">
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-4">
+                Unit
+            </label>
+            <div class="col-lg-6">
+                <select id="filterUnit" class="selectpicker show-tick form-control" data-live-search="true"
+                        data-bind="enable:!$root.isBusy(), selectPicker: $root.filterUnit, event: { change: $root.UnitSelectListChange}, optionsText: 'Value', optionsValue : 'Text',
+                                   selectPickerOptions: { optionsArray: $root.filterUnitDataSource }"></select>
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-4">
+                Shift
+            </label>
+            <div class="col-lg-6">
+                <select id="filterShift" class="selectpicker show-tick form-control" data-live-search="true"
+                        data-bind="enable:!$root.isBusy(), selectPicker: $root.filterShift, event: { change: $root.ShiftSelectListChange}, optionsText: 'Value', optionsValue : 'Text',
+                                   selectPickerOptions: { optionsArray: $root.filterShiftDataSource }"></select>
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-4">
+                Brand
+            </label>
+            <div class="col-lg-6">
+                <select id="filterBrand" class="selectpicker show-tick form-control" data-live-search="true"
+                        data-bind="enable:!$root.isBusy(), selectPicker: $root.filterBrand,  event: { change: $root.BrandCodeSelectListChange}, optionsText: 'Value', optionsValue : 'Text',
+                                   selectPickerOptions: { optionsArray: $root.filterBrandDataSource }"></select>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="row">
+            <label class="form-label col-lg-3">
+                KPS Year
+            </label>
+            <div class="col-lg-6">
+                @Html.DropDownList("filterYear", Model.YearSelectList, new
+                {
+                    @class = "selectpicker show-tick form-control",
+                    data_live_search = "true",
+                    data_bind = "enable:!$root.isBusy(), selectPicker: $root.filterYear, event: { change: $root.YearSelectListChange}",
+                })
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-3">
+                KPS Week
+            </label>
+            <div class="col-lg-6">
+                <select id="filterWeek" class="selectpicker show-tick form-control" data-live-search="true"
+                        data-bind="enable:!$root.isBusy(), selectPicker: $root.filterWeek, event: { change: $root.WeekSelectListChange}, optionsText: 'Value', optionsValue : 'Text',
+                                   selectPickerOptions: { optionsArray: $root.filterWeekDataSource }"></select>
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-3">
+                Date
+            </label>
+            <div class="col-lg-6">
+                <select id="filterProductionDate" class="selectpicker show-tick form-control" data-live-search="true"
+                        data-bind="enable:!$root.isBusy(), selectPicker: $root.filterProductionDate, event: { change: $root.ProductionDateSelectListChange }, optionsText: 'Value', optionsValue : 'Text',
+                                   selectPickerOptions: { optionsArray: $root.filterProductionDateDataSource }"></select>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="action-btn">
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.View.ToString()))
+                {
+                    <button type="button" class="btn btn-primary" data-bind="click: $root.search, enable: !$root.isBusy()">View</button>
+                }
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.Save.ToString()))
+                {
+                    <button type="button" class="btn btn-primary" data-bind="click: $root.save, enable: !$root.isBusy()">Save</button>
+                }
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.Excel.ToString()))
+                {
+                    using (Html.BeginForm("GenerateExcel", "ExeProductAdjustment", FormMethod.Post))
+                    {
+                        <input type="hidden" name="LocationCode" data-bind="value: $root.filterLocationCode">
+                        <input type="hidden" name="UnitCode" data-bind="value: $root.filterUnit">
+                        <input type="hidden" name="Shift" data-bind="value: $root.filterShift">
+                        <input type="hidden" name="BrandCode" data-bind="value: $root.filterBrand">
+                        <input type="hidden" name="ProductionDate" data-bind="value: $root.filterProductionDate">
+                        <input type="hidden" name="KpsYear" data-bind="value: $root.filterYear">
+                        <input type="hidden" name="KpsWeek" data-bind="value: $root.filterWeek">
+                        <button type="submit" class="btn btn-primary" data-bind="enable: !$root.isBusy()">Excel</button>
+                    }
+                }
+                
+                @Html.Partial("GridViewPageSizeSelector")
+            </div>
+        </div>
+    </div>
+    <div class="table-overflow">
+        <table class="table-overflow table table-striped">
+            <thead>
+                <tr>
+                    <th>Adjustment Type</th>
+                    <th class="widthsmall">Quantity</th>
+                    <th class="twentyfive">Remark</th>
+                </tr>
+                <tr class="insertRow" data-bind="click: cancelInline.bind(),inlineAddProccess:[$data, $root.newData]">
+                    <th>
+                        <select id="ddlAdjustmentType" class="selectpicker show-tick form-control" data-live-search="true"
+                                data-bind="selectPicker: $root.newData.AdjustmentType, optionsText: 'Value', optionsValue : 'Text', selectPickerOptions: { optionsArray: $root.AdjustmentTypeSourceSelectList, container: 'body' }"></select>
+                    </th>
+                    <th class="widthsmall">
+                        <input data-bind="value:$root.newData.AdjustmentValue, valueUpdate: 'afterkeydown'" class="form-control transparent" type="number" data-sktis-validation="integer" />
+                    </th>
+                    <th class="twentyfive">
+                        <input data-bind="value:$root.newData.AdjustmentRemark, valueUpdate: 'afterkeydown'" class="form-control transparent" />
+                    </th>
+                </tr>
+            </thead>
+            <tbody data-bind="foreach: listDataItems">
+                <tr data-bind="if: ($parent.editingRowIndex() !== $index()),
+                                   click: $parent.editInline3.bind($data,$index())">
+                    <td><span data-bind="text:$data.AdjustmentType"></span></td>
+                    <td class="current"><span data-bind="decimal:$data.AdjustmentValue"></span></td>
+                    <td class="current"><span data-bind="text:$data.AdjustmentRemark"></span></td>
+                </tr>
+                <tr data-bind="validationOptions: {insertMessages: false, showTooltip:true, decorateInputElement: true, errorElementClass: 'input-error'}, inlineProccess:[$parent,$data],
+                                   if:($parent.editingRowIndex() === $index()),
+                                   click: $parent.selectRow.bind($data, $index())">
+                    <td><span data-bind="text:$data.AdjustmentType"></span></td>
+                    <td class="current"><input data-bind="value:$data.AdjustmentValue, valueUpdate: 'afterkeydown'" class="form-control transparent" type="number" data-sktis-validation="integer" /></td>
+                    <td class="current"><input data-bind="value:$data.AdjustmentRemark,tabToNext:[$parent,$data], valueUpdate: 'afterkeydown'" class="form-control transparent" /></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script src="~/Scripts/app/globalfunctions.js" type="text/javascript"></script>
+    <script src="~/Scripts/common/app.GridViewModel.js" type="text/javascript"></script>
+    <script type="text/javascript">
+    (function (app) {
+        app.EditGrid = function () {
+            var self = this;
+
+            self.filterLocationCode = ko.observable('@Model.DefaultLocation');
+            self.filterYear = ko.observable('@Model.DefaultYear');
+            self.filterWeek = ko.observable('@Model.DefaultWeek');
+            self.filterUnit = ko.observable('');
+            self.filterShift = ko.observable('');
+            self.filterBrand = ko.observable('');
+            self.filterSourceLocationName = ko.observable();
+            self.filterProductionDate = ko.observable('@Model.DefaultProductionDate');
+            self.isLoading = ko.observable(true);
+            self.isFirstLoad = ko.observable(true);
+            self.isBusy = ko.observable(true);
+            
+            //================= busy button state ================//
+            $(document).ajaxComplete(function () {
+                if ($.active <= 1) {
+                    self.isBusy(false);
+                }
+            });
+
+            $(document).ajaxStart(function () {
+                if (!self.isBusy()) self.isBusy(true);
+            });
+            //================= busy button state ================//
+
+            @*self.itemLocations = @Html.Raw(Json.Encode(Model.LocationSelectList));*@
+            self.itemLocations = ko.observableArray(@Html.Raw(Json.Encode(@Model.LocationSelectList)));
+
+            //get location name by location code
+            function getLocationNameFilter(locationCode) {
+                for (var i = 0; i < self.itemLocations.length; i++) {
+                    if (self.itemLocations[i].LocationCode == locationCode) {
+                        return self.itemLocations[i].LocationName;
+                    }
+                }
+                return '';
+            };
+
+            // chain dropdown event handler
+            self.LocationCodeSelectListChange = function(cb) {
+                //$.get(self.getFilterUnitSelectList(), self.getFilterShiftSelectList()).done(function() {
+                //    self.getFilterBrandSelectList();
+                //});
+                self.itemLocations().map(function(v) {
+                    if (typeof v.LocationCode !== 'undefined' && v.LocationCode == self.filterLocationCode()) {
+                        self.filterSourceLocationName(v.LocationName);
+                    }
+                });
+
+                if (self.isLoading() || self.isFirstLoad()) {
+                    if (typeof cb == 'function') cb();
+                }
+
+                self.isLoading(true);
+                async.series([
+                    function(callback) {
+                        self.getFilterUnitSelectList(callback);
+                    },
+                    function(callback) {
+                        self.getFilterShiftSelectList(callback);
+                    },
+                    function(callback) {
+                        self.getFilterBrandSelectList(callback);
+                    }
+                ], function() {
+                    self.isLoading(false);
+                });
+                if (typeof cb == 'function') cb();
+            };
+
+            self.UnitSelectListChange = function() {
+                if (self.isLoading() || self.isFirstLoad()) return;
+                self.isLoading(true);
+                async.series([
+                    function(callback) {
+                        self.getFilterShiftSelectList(callback);
+                    },
+                    function(callback) {
+                        self.getFilterBrandSelectList(callback);
+                    }
+                ], function() {
+                    self.isLoading(false);
+                });
+            };
+
+            self.ShiftSelectListChange = function() {
+                if (self.isLoading() || self.isFirstLoad()) return;
+
+                self.isLoading(true);
+                async.series([
+                    function(callback) {
+                        self.getFilterBrandSelectList(callback);
+                    }
+                ], function() {
+                    self.isLoading(false);
+                });
+            };
+
+            self.YearSelectListChange = function() {
+                if (self.isLoading() || self.isFirstLoad()) return;
+                //$.get(self.getFilterWeekSelectList()).done(function() {
+                //    $.get(self.getFilterProductionDateSelectList()).done(function() {
+                //        self.getFilterBrandSelectList();
+                //    });
+                //});
+                self.getFilterWeekSelectList();
+            };
+
+            self.WeekSelectListChange = function() {
+                if (self.isLoading() || self.isFirstLoad()) return;
+
+                self.isLoading(true);
+                async.series([
+                    function(callback) {
+                        self.getFilterProductionDateSelectList(callback);
+                    },
+                    function(callback) {
+                        self.getFilterBrandSelectList(callback);
+                    }
+                ], function() {
+                    self.isLoading(false);
+                });
+
+            };
+
+            self.ProductionDateSelectListChange = function() {
+                if (self.isLoading() || self.isFirstLoad()) return;
+
+                self.getFilterBrandSelectList();
+            };
+
+            self.BrandCodeSelectListChange = function() {
+                if (self.isLoading() || self.isFirstLoad()) return;
+
+                self.getAdjustmentTypeSelectList();
+                
+            };
+
+            // bind dropdown
+            self.filterUnitDataSource = ko.observableArray([]);
+            self.getFilterUnitSelectList = function(cb) {
+                $('#filterUnit').find('option').remove();
+                $('#filterUnit').selectpicker('refresh');
+                $.ajax({
+                    url: @Html.BaseUrl("ExeProductAdjustment/GetUnitCodeSelectList"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: { locationCode : self.filterLocationCode() },
+                    dataType: 'json',
+                    cache: false,
+                    success: function(data) {
+                        self.filterUnitDataSource(data);
+                    },
+                    complete : function() {
+                        if (typeof cb == 'function') cb();
+                    }
+
+                });
+            };
+
+            self.filterShiftDataSource = ko.observableArray([]);
+            self.getFilterShiftSelectList = function(cb) {
+                $('#filterShift').find('option').remove();
+                $('#filterShift').selectpicker('refresh');
+                $.ajax({
+                    url: @Html.BaseUrl("ExeProductAdjustment/GetShiftSelectList"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: { locationCode : self.filterLocationCode() },
+                    dataType: 'json',
+                    cache: false,
+                    success: function(data) {
+                        //console.log(data);
+                        self.filterShiftDataSource(data);
+                    },
+                    complete : function() {
+                        if (typeof cb == 'function') cb();
+                    }
+
+                });
+            };
+
+            self.filterBrandDataSource = ko.observableArray([]);
+            self.getFilterBrandSelectList = function(cb) {
+                $('#filterBrand').find('option').remove();
+                $('#filterBrand').selectpicker('refresh');
+                if (self.filterProductionDate()) {
+                    $.ajax({
+                        url: @Html.BaseUrl("ExeProductAdjustment/GetBrandSelectList"),
+                        type: 'GET',
+                        async:false,
+                        contentType: 'application/json',
+                        data: {
+                            LocationCode : self.filterLocationCode(),
+                            Shift : self.filterShift(),
+                            KpsYear : self.filterYear(),
+                            KpsWeek : self.filterWeek(),
+                            UnitCode : self.filterUnit(),
+                            ProductionDate : moment(self.filterProductionDate(), "DD/MM/YYYY").format('YYYY/MM/DD')                       
+                        },
+                        dataType: 'json',
+                        cache: false,
+                        success: function(data) {                  
+                            if(data.length > 0)
+                                self.filterBrand(data[0].Value)
+                            else
+                                self.filterBrand('');
+                            self.filterBrandDataSource(data);
+                            self.getAdjustmentTypeSelectList(data);
+                            
+                        },
+                        complete : function() {
+                            if (typeof cb == 'function') cb();
+                        }
+
+                    });
+                }
+            };
+
+            self.filterWeekDataSource = ko.observableArray([]);
+            self.getFilterWeekSelectList = function(cb) {
+                $.ajax({
+                    url: @Html.BaseUrl("ExeProductAdjustment/GetWeekSelectList"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: { year : self.filterYear() },
+                    dataType: 'json',
+                    cache: false,
+                    success: function(data) {
+                        $('#filterWeek').find('option').remove();
+                        $('#filterWeek').selectpicker('refresh');
+                        var kpsWeekModel = [];
+                        $.each(data, function(index, value) {
+                            kpsWeekModel.push({ "Text": value, "Value": value });
+                        });
+                        self.filterWeekDataSource(kpsWeekModel);
+                        self.filterWeek('@Model.DefaultWeek');
+                    },
+                    complete : function() {
+                        if (typeof cb == 'function') cb();
+                    }
+
+                });
+            };
+
+            self.filterProductionDateDataSource = ko.observableArray([]);
+            self.getFilterProductionDateSelectList = function(cb) {
+                $('#filterProductionDate').find('option').remove();
+                $('#filterProductionDate').selectpicker('refresh');
+                $.ajax({
+                    url: @Html.BaseUrl("ExeProductAdjustment/GetProductionDateSelectList"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: { year : self.filterYear(), week : self.filterWeek() },
+                    dataType: 'json',
+                    cache: false,
+                    success: function(data) {
+                        self.filterProductionDateDataSource(data);
+                    },
+                    complete : function() {
+                        if (typeof cb == 'function') cb();
+                    }
+
+                });
+            };
+
+            self.AdjustmentTypeSourceSelectList = ko.observableArray([]);
+            self.BrandTempo = ko.observable('');
+            self.getAdjustmentTypeSelectList = function(cb){
+                self.BrandTempo(self.filterBrand());
+                $.ajax({
+                    url: @Html.BaseUrl("ExeProductAdjustment/GetAdjustmentTypeSelectList"),
+                    type: 'GET',
+                    data: { brandCode : self.BrandTempo()},
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    cache: false,
+                    success: function(data) {
+                        $('#ddlAdjustmentType').find('option').remove();
+                        $('#ddlAdjustmentType').selectpicker('refresh');
+                        var adjustment = [];
+                        $.each(data, function(index, value) {
+                            adjustment.push({ "Text": value.Text, "Value": value.Text });
+                        });
+                       self.AdjustmentTypeSourceSelectList(adjustment);
+                    },
+                    complete : function() {
+                        if (typeof cb == 'function') cb();
+                    }
+
+                });
+            };
+
+            self.newData = {
+                AdjustmentType: ko.observable(''),
+                AdjustmentValue: ko.observable(0),
+                AdjustmentRemark: ko.observable('')
+            };
+
+            // description : init grid
+            self.gridView = new app.GridViewModel({
+                Criteria:
+                {
+                    PageSize: 10,
+                    PageIndex: 1,
+                    SortExpression: "UpdatedDate",
+                    SortOrder: "DESC",
+                    LocationCode: self.filterLocationCode,
+                    UnitCode: self.filterUnit,
+                    Shift: self.filterShift,
+                    BrandCode: self.filterBrand,
+                    ProductionDate: self.filterProductionDate
+                },
+                cache: false,
+                DataSourceUrl: @Html.BaseUrl("ExeProductAdjustment/GetExeProductAdjustment"),
+                InlineEdit: true
+            });
+
+            // Reset Fields for Insert Row gridView
+            self.gridView.resetDefault = function(viewModel) {
+                viewModel.AdjustmentType('');
+                viewModel.AdjustmentValue(0);
+                viewModel.AdjustmentRemark('');
+            };
+
+            //description: validations
+            self.gridView.applyValidationRules = function(entity) {
+
+                self.RemoveNotification();
+
+                entity.AdjustmentValue.extend({
+                    required: {
+                        message: "<strong>Adjustment Type</strong> cannot be empty!"
+                    },
+                    number: {
+                        message: "<strong>Adjustment Type</strong> must be a number!"
+                    }
+                })
+
+            };
+
+
+            //description : function
+            self.save = function() {
+                if (self.gridView.editingRowIndex() !== -1)
+                    return;
+                var datas = {
+                    "Parameters": {
+                        "ProductionDate": self.filterProductionDate(),
+                        "LocationCode": self.filterLocationCode(),
+                        "UnitCode": self.filterUnit(),
+                        "Shift": self.filterShift(),
+                        "BrandCode": self.filterBrand(),
+                    },
+                    "new": self.gridView.listNewItems(),
+                    "edit": self.gridView.listEditItems()
+                };
+
+                datas = JSON.stringify(datas);
+                console.log(datas);
+                $.ajax({
+                    url: @Html.BaseUrl("ExeProductAdjustment/SaveProductAdjustment"),
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: datas,
+                    dataType: 'json',
+                    success: function(data) {
+                        console.log(data);
+                        if (data.New) {
+                            $.each(data.New, function(k, value) {
+                                if (value)
+                                    SKTIS.Helper.ResponseNotification(value, "Insert Product Adjustment", value.BrandCode);
+                            });
+                        }
+
+                        if (data.Edit) {
+                            $.each(data.Edit, function(k, value) {
+                                if (value)
+                                    SKTIS.Helper.ResponseNotification(value, "Edit Product Adjustment", value.BrandCode);
+                            });
+                        }
+
+                        self.gridView.sort('UpdatedDate', 'DESC');
+                        self.gridView.listNewItems.removeAll();
+                        self.gridView.listEditItems.removeAll();
+
+                    }
+                });
+            };
+
+            // Check whether New or Edit data is existing and not saved to database yet (on Request action)
+            SKTIS.Checker.modifiedDataExists([self.gridView.listNewItems, self.gridView.listEditItems]);
+
+            self.search = function() {
+                $('.empty-row-message').html('<div class="loader"></div>'); // Reset New and Edit row
+                // Check whether New or Edit data is existing and not saved to database yet (on Ajax Action)
+                if (SKTIS.Checker.modifiedDataExistsForAjax([self.gridView.listNewItems, self.gridView.listEditItems]) == true) {
+                    return;
+                } else {
+                    self.gridView.listNewItems.removeAll();
+                    self.gridView.listEditItems.removeAll();
+                }
+
+                //self.filterExcelListGroup = self.filterListGroup();
+                self.gridView.search({}, function(response) {
+                    if (response.status == 'KO') {
+                        SKTIS.Helper.Notification(response.message, 'error');
+                        $('.empty-row-message').html(response.message);
+                    } else if (response.status == 'Empty') {
+
+                        self.RemoveNotification();
+
+                        //SKTIS.Helper.Notification(response.message,'warning');
+                        $('.empty-row-message').html('@CommonLabel.lblDataEmpty');
+                    }
+                });
+
+                self.RemoveNotification = function() {
+                    if ($('#noty_top_layout_container').length > 0) {
+                        $('#noty_top_layout_container').remove();
+                    }
+                };
+            };
+
+            $(document).ready(function(){
+
+                self.init();
+
+            });
+
+            self.init = function() {
+                //Asynch setting
+                self.isLoading(true);
+                async.series([
+                    function(callback) {
+                        self.LocationCodeSelectListChange(callback);
+                    },
+                    function(callback){
+                        self.getFilterWeekSelectList(callback);
+                    },
+                    function(callback){
+                        self.getFilterProductionDateSelectList(callback);
+                    },
+                    function(callback) {
+                        self.getFilterUnitSelectList(callback);
+                    },
+                    function(callback) {
+                        self.getFilterShiftSelectList(callback);
+                    },
+                    function(callback) {
+                        self.getFilterBrandSelectList(callback);
+                    }
+                ], function() {
+                    self.isFirstLoad(false);
+                    self.isLoading(false);
+                });
+            };
+
+
+        };
+        ko.applyBindings(new app.EditGrid());
+    })(app = this.app || {});
+
+</script>
+}

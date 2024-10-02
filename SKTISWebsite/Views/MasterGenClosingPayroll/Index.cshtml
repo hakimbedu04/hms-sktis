@@ -1,0 +1,302 @@
+﻿@using HMS.SKTIS.Application.Resources
+@using SKTISWebsite.Helper
+@*@model SKTISWebsite.Models.MasterGenClosingPayroll.InitMasterGenClosingPayroll*@
+
+@{ Html.SetPageTitle("MasterClosingPayroll"); }
+
+<div class="col-lg-12" data-bind="with: gridView">
+    <div class="col-lg-6">
+        <div class="row">
+            <label class="form-label col-lg-4">
+                Year
+            </label>
+            <div class="col-lg-5">
+                @*@Html.DropDownList("filterYear", Model.YearSelectList, @CommonLabel.ddlSelectAll, new
+                {
+                    @class = "selectpicker show-tick form-control",
+                    data_live_search = "true",
+                    data_bind = "selectPicker: $root.filterYear",
+                })*@
+                <select id="filterYear" class="selectpicker show-tick form-control" data-live-search="true" 
+                        data-bind="selectPicker: $root.filterYear, optionsText: 'Text', optionsCaption: '@CommonLabel.ddlSelectAll',optionsValue : 'Value', selectPickerOptions: { optionsArray: $root.YearSelectListDataSource }"></select>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="action-btn">
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.View.ToString())) {
+                    <button type="button" class="btn btn-primary" data-bind="click: $root.search">View</button>
+                }
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.View.ToString())) {
+                    <button type="button" data-bind="click:$root.Delete" id="alert" class="btn btn-primary">Delete</button>
+                }
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.View.ToString())) {
+                <!-- Adding Data Process -->
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".choose-group-1">Add</button>
+                }
+                @Html.Partial("GridViewPageSizeSelector")
+                <!-- Choose Group Modal -->
+                <div class="modal fade choose-group-1" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+                    <div class="modal-dialog modal-sm">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title">Choose Date</h4>
+                            </div>
+                            <div class="modal-body">
+                                @using (Html.BeginForm("SaveMasterGenClosingPayroll", "MasterGenClosingPayroll", FormMethod.Post))
+                                {
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <div id="closingDatePicker" class='input-group date time' data-bind="dateTimePicker: $root.newDate, value:$root.newDate, dateTimePickerOptions: {widgetPositioning: {vertical: 'bottom'}, showClear: true, ignoreReadonly: true, useCurrent: false }">
+                                                <input readonly="true" type='text' class="form-control date-modal closing-date" id="txtDate" />
+                                                <span class="input-group-addon">
+                                                    <span class="glyphicon glyphicon-calendar"></span>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12">
+                                            <button data-bind="click: $root.saveData" type="button" class="btn btn-primary" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">Add</span></button>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- End Choose Group Modal -->
+                <!-- End Adding Data Process -->
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="table-overflow">
+                <table class="table table-striped">
+                    <thead>
+                    <tr class="head">
+                        <th style="width: 50px;"><input type="checkbox" id="checkboxAll"/></th>
+                        <th>Closing Date</th>
+                        <th class="widthdate">User Update</th>
+                        <th class="widthdate">Update Date</th>
+                    </tr>
+                    </thead>
+                    <tbody data-bind="foreach: listDataItems">
+                    @*<tr data-bind="
+                                   click: $parent.editInline3.bind($data,$index())">
+                            <td><input type="checkbox"></td>
+                            <td><span data-bind="text: $data.ClosingDate"></span></td>
+                        </tr>*@
+                    <tr data-bind="validationOptions: {insertMessages: false, showTooltip:true, decorateInputElement: true, errorElementClass: 'input-error'}, inlineProccess:[$parent,$data],
+                                   click: $parent.selectRow.bind($data, $index())">
+                        <td class="current center"><input type="checkbox" data-bind="checked: $data.Checkbox, disable:$root.checkDisable($data)"></td>
+                        <td><span data-bind="text: $data.ClosingDate"></span></td>
+                        <td><span data-bind="text:$data.UpdatedBy"></span></td>
+                        <td><span data-bind="text:$data.UpdatedDate"></span></td>
+                    </tr>
+                    @*<tr>
+                                <td><input type="checkbox" name=""></td>
+                                <td>
+                                    <div class='input-group date time insidetable'>
+                                        <input type='text' class="form-control" />
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                    </div>
+                                    <input type="text" name="" class="form-control break-top hidden">
+                                </td>
+                            </tr>*@
+                    </tbody>
+                </table>
+            </div>
+            <div data-bind="if: (listDataItems() != null && listDataItems().length !== 0)">
+                @Html.Partial("GridViewFooter")
+            </div>
+        </div>
+    </div>
+
+
+
+</div>
+
+@section Scripts
+{
+    <script src="~/Scripts/common/app.GridViewModel.js" type="text/javascript"></script>
+    <script type="text/javascript">
+
+        (function(app) {
+            app.EditGrid = function() {
+                var self = this;
+
+                self.filterYear = ko.observable('');
+                self.newDate = ko.observable('');
+                self.listCheckbox = ko.observableArray([]);
+
+                self.YearSelectListDataSource = ko.observableArray([]);
+                self.getYearSelectList = function() {
+                    $('#filterYear').find("option[value!='']").remove();
+                    $('#filterYear').selectpicker('refresh');
+                    $.ajax({
+                        url: @Html.BaseUrl("MasterGenClosingPayroll/GetYearSelectList"),
+                        type: 'GET',
+                        contentType: 'application/json',
+                        dataType: 'json',
+                        success: function(data) {
+                            
+                            // need to refresh knockout variable
+                            self.filterYear('');
+                            
+                            self.YearSelectListDataSource(data);
+                        }
+                    });
+                };
+
+                self.today = moment(moment().format("DD/MM/YYYY"), 'DD/MM/YYYY');
+                self.checkDisable = function(data) {
+                    var closingDate = moment(data.ClosingDate(), 'DD/MM/YYYY');
+                    var diff = closingDate.diff(self.today);
+                    //console.log(diff);
+                    return diff < 0 ? true : false;
+                }
+
+                self.Delete = function() {
+                    $('#checkboxAll').prop('checked', false);
+
+
+                    $.ajax({
+                        url: @Html.BaseUrl("MasterGenClosingPayroll/DeleteMasterGenClosingPayroll"),
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: ko.toJSON(self.gridView.listDataItems()),
+                        dataType: 'json',
+                        success: function(data) {
+                            $.each(data, function(index, value) {
+                                console.log(value);
+                                console.log(value.Checkbox);
+                                console.log(value.ResponseType);
+                                if (value.Checkbox == true && value.ResponseType == 'Success') {
+                                    SKTIS.Helper.Notification(value.Message, 'success');
+                                } else if (value.Checkbox == true && value.ResponseType == 'Error') {
+                                    SKTIS.Helper.Notification(value.Message, 'error');
+                                }
+                            });
+                            
+                            //$.get(self.getYearSelectList()).done(function() {
+                                self.search();
+                            //});
+                            
+                        }
+                    });
+                };
+
+
+                self.saveData = function() {
+                    var obj = {
+                        ClosingDate: $('#txtDate').val()
+                    };
+                    var date = JSON.stringify(obj);
+                    $.ajax({
+                        url: @Html.BaseUrl("MasterGenClosingPayroll/SaveMasterGenClosingPayroll"),
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: date,
+                        dataType: 'json',
+                        success: function(data) {
+                            console.log(data);
+                            if (data.ResponseType == 'Success') {
+                                SKTIS.Helper.Notification(data.Message, 'success');
+                            } else {
+                                SKTIS.Helper.Notification(data.Message, 'error');
+                            }
+                            $.get(self.getYearSelectList()).done(function() {
+                                self.search();
+                            });
+                            $('#txtDate').val('');
+                        }
+                    });
+                };
+
+                // description : init grid
+                self.gridView = new app.GridViewModel({
+                    Criteria:
+                    {
+                        PageSize: 10,
+                        PageIndex: 1,
+                        Year: self.filterYear
+                    },
+                    DataSourceUrl: @Html.BaseUrl("MasterGenClosingPayroll/Get"),
+                    InlineEdit: true
+                });
+
+                function MappingCheckbox(data) {
+                    ko.mapping.fromJS(data, {}, this);
+                    this.Checkbox = ko.observable(false);
+                }
+
+                self.gridView.mapping = {
+                    create: function(options) {
+                        return new MappingCheckbox(options.data);
+                    }
+                };
+
+                //description: load data
+                self.search = function() {
+
+                    $('.empty-row-message').html('<div class="loader"></div>'); // Reset New and Edit row
+                    // Check whether New or Edit data is existing and not saved to database yet (on Ajax Action)
+                    if (SKTIS.Checker.modifiedDataExistsForAjax([self.gridView.listNewItems, self.gridView.listEditItems]) == true) {
+                        return;
+                    } else {
+                        self.gridView.listNewItems.removeAll();
+                        self.gridView.listEditItems.removeAll();
+                    }
+
+                    self.gridView.search({}, function(response) {
+                        if (response.status == 'KO') {
+                            SKTIS.Helper.Notification(response.message, 'error');
+                            $('.empty-row-message').html(response.message);
+                        } else if (response.status == 'Empty') {
+
+                            //self.RemoveNotification();
+
+                            //SKTIS.Helper.Notification(response.message,'warning');
+                            $('.empty-row-message').html('@CommonLabel.lblDataEmpty');
+                        }
+                    });
+
+                };
+
+                self.getYearSelectList();
+                self.search();
+
+                $('#checkboxAll').change(function(e) {
+                    if (this.checked) {
+                        $('table tbody tr input:checkbox').prop('checked', true);
+                        $('table tbody tr input:checkbox').change();
+                    } else {
+                        $('table tbody tr input:checkbox').prop('checked', false);
+
+                    }
+
+                });
+
+                $(document).on('change','table tbody tr input[type=checkbox]',function() {
+                    var thisChk = $(this);
+                    var context1 = ko.dataFor(this);
+                    //console.log(thisChk.prop('checked'));
+                    context1.Checkbox(thisChk.prop('checked'));
+                });
+                
+                $(document).ready(function() {
+                    $('#closingDatePicker').data("DateTimePicker").options({
+                        minDate: moment().subtract(1, 'days')
+                    });
+                });
+
+            };
+            ko.applyBindings(new app.EditGrid());
+        })(app = this.app || {});
+
+</script>
+}

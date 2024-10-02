@@ -1,0 +1,869 @@
+﻿@model SKTISWebsite.Models.EquipmentRepairPlant.InitEquipmentRepairPlantViewModel
+@using HMS.SKTIS.Application.Resources
+@using SKTISWebsite.Helper
+@{ Html.SetPageTitle("Equipment Repair Plant"); }
+<div data-bind="with: gridView" class="col-lg-12">
+    <div class="col-lg-6">
+        <div class="row">
+            <label class="form-label col-lg-4">
+                Location
+            </label>
+            <div class="col-lg-3">
+                @*@Html.DropDownList("ddlFilterLocation", new SelectList(Model.PLNTChildLocationLookupList, "LocationCode", "LocationCode"),
+                new
+                {
+                    @class = "selectpicker show-tick form-control",
+                    id = "ddlFilterLocation",
+                    data_live_search = "true",
+                    data_bind = "value:$root.filterLocation, event : { change : $root.onLocationChange }"
+                })*@
+
+                <select id="ddlFilterLocation"
+                        class="selectpicker show-tick form-control"
+                        data-live-search="true"
+                        data-bind="enable: !$root.isBusy(), selectPicker:$root.filterLocation, optionsText: 'LocationCode', optionsValue : 'LocationCode', optionsAfterRender: locationDesc, selectPickerOptions: { optionsArray: $root.menuItemLocations }, event : { change : $root.onLocationChange}"></select>
+
+            </div>
+            <div class="col-lg-5">
+                <input type="text" class="form-control" readonly="readonly" data-bind="value:$root.filterLocationName">
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-4">
+                Item
+            </label>
+            <div class="col-lg-3">
+                <select id="ddlFilterItemCode" class="show-tick form-control" data-live-search="true"
+                        data-bind="enable: !$root.isBusy(), selectPicker: $root.filterItemCode, optionsText: 'ItemCompact', optionsValue : 'ItemCode',
+                        selectPickerOptions: { optionsArray: $root.itemCodes }, optionsAfterRender : $root.afterRender, event: { change: $root.onItemCodeChange }"></select>
+            </div>
+            <div class="col-lg-5">
+                <input type="text" class="form-control" readonly="readonly" data-bind="value:$root.filterItemDescription">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-4">
+                <label class="form-label nopadding">
+                    Transaction Date
+                </label>
+            </div>
+            <div class="col-lg-3">
+                <div id="dtpTransactionDate" class="input-group date notime">
+                    @Html.TextBoxFor(model => model.DefaultTransactionDate, new { @class = "form-control", data_date_format = "DD/MM/YYYY" })
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="action-btn">
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.View.ToString()))
+                {
+                    <button type="button" class="btn btn-primary" data-bind="enable: !$root.isBusy(), click:$root.search">@CommonLabel.btnView</button>
+                }
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.Save.ToString()))
+                {
+                    <button type="button" class="btn btn-primary" data-bind="enable: !$root.isBusy(), click:$root.saveData">@CommonLabel.btnSave</button>
+                }
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.Excel.ToString())) { 
+                    using (Html.BeginForm("GenerateExcel", "EquipmentRepairPlant", FormMethod.Post, new { @data_bind = "submit: $root.generateExcel" }))
+                    {
+                        <input type="hidden" name="locationCode">
+                        <input type="hidden" name="itemCode">
+                        <input type="hidden" name="transactionDate">
+                        <button type="submit" class="btn btn-primary" data-bind="enable: !$root.isBusy()">@CommonLabel.btnExcel</button>
+                    }
+                }
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.Usage.ToString()))
+                {
+                    <button class="btn btn-primary" data-toggle="modal" data-target="#dataModal" data-bind="click:$root.ShowUsagePopup, enable: (listDataItems() != null && listDataItems().length !== 0 && !$root.isBusy())">Usage (Spare Parts)</button>
+                }
+                @Html.Partial("GridViewPageSizeSelector")
+            </div>
+        </div>
+    </div>
+    <div class="table-overflow">
+        <table class="table table-striped">
+            <thead>
+                <tr class="head">
+                    <th class="widthsmall">Unit</th>
+                    <th>Previous Outstanding</th>
+                    <th>Repair Request</th>
+                    <th>Completion</th>
+                    <th>Outstanding</th>
+                    <th>Bad Stock</th>
+                    <th>Taken By Unit</th>
+                </tr>
+                <tr class="insertRow" data-bind="click: cancelInline.bind(),inlineAddProccess:[$data, $root.newData]">
+                    <th>
+                        <select id="ddlInsertUnitCode" class="show-tick form-control" data-live-search="true"
+                                data-bind="selectPicker: $root.newData.UnitCode,
+                                optionsText: 'Text',
+                                optionsValue : 'Value',
+                                selectPickerOptions: { optionsArray: $root.unitCodes, container: 'body' },
+                                event: { change: $root.onUnitCodeChange }"></select>
+                    </th>
+                    <th><span data-bind="text:$root.newData.PreviousOutstanding"></span></th>
+                    <th><input type="number" data-sktis-validation="number" data-bind="value:$root.newData.QtyRepairRequest, valueUpdate: 'afterkeydown'" class="form-control transparent" /></th>
+                    <th><input type="number" data-sktis-validation="number" data-bind="value:$root.newData.QtyCompletion, valueUpdate: 'afterkeydown'" class="form-control transparent" /></th>
+                    <th><span data-bind="text:$root.outstandingValue"></span></th>
+                    <th><input type="number" data-sktis-validation="number" data-bind="value:$root.newData.QtyBadStock, valueUpdate: 'afterkeydown'" class="form-control transparent" /></th>
+                    <th><input type="number" data-sktis-validation="number" data-bind="value:$root.newData.QtyTakenByUnit, valueUpdate: 'afterkeydown'" class="form-control transparent" /></th>
+                </tr>
+            </thead>
+            <tbody data-bind="foreach: listDataItems">
+                @*item template*@
+                <tr data-bind="if: ($parent.editingRowIndex() !== $index() && !$root.ValidateDateIsPast($data.UpdatedDate)),
+                                   click: $parent.editInline3.bind($data,$index())">
+                    <td><span data-bind="text:$data.UnitCode"></span></td>
+                    <td><span data-bind="decimal:$data.PreviousOutstanding"></span></td>
+                    <td class="current"><span data-bind="decimal:$data.QtyRepairRequest"></span></td>
+                    <td class="current"><span data-bind="decimal:$data.QtyCompletion"></span></td>
+                    <td><span data-bind="decimal:$data.QtyOutstanding"></span></td>
+                    <td class="current"><span data-bind="decimal:$data.QtyBadStock"></span></td>
+                    <td class="current"><span data-bind="decimal:$data.QtyTakenByUnit"></span></td>
+                </tr>
+                <tr data-bind="if: ($parent.editingRowIndex() !== $index() && $root.ValidateDateIsPast($data.UpdatedDate)),
+                                   click: $parent.editInline3.bind($data,$index())">
+                    <td><span data-bind="text:$data.UnitCode"></span></td>
+                    <td><span data-bind="decimal:$data.PreviousOutstanding"></span></td>
+                    <td><span data-bind="decimal:$data.QtyRepairRequest"></span></td>
+                    <td><span data-bind="decimal:$data.QtyCompletion"></span></td>
+                    <td><span data-bind="decimal:$data.QtyOutstanding"></span></td>
+                    <td><span data-bind="decimal:$data.QtyBadStock"></span></td>
+                    <td><span data-bind="decimal:$data.QtyTakenByUnit"></span></td>
+                </tr>
+                @*edit template*@
+                <tr data-bind="validationOptions: {insertMessages: false, showTooltip:true, decorateInputElement: true, errorElementClass: 'input-error'}, inlineProccess:[$parent,$data],
+                                   if:($parent.editingRowIndex() === $index() && !$root.ValidateDateIsPast($data.UpdatedDate)),
+                                   click: $parent.selectRow.bind($data, $index()),
+                                    event: {keydown:$parent.keydown}">
+                    <td><span data-bind="text:$data.UnitCode"></span></td>
+                    <td><span data-bind="decimal:$data.PreviousOutstanding"></span></td>
+                    <td class="current"><input class="form-control transparent" type="number" data-sktis-validation="number" data-bind="value:$data.QtyRepairRequest, valueUpdate:'afterkeydown'" /></td>
+                    <td class="current"><input class="form-control transparent" type="number" data-sktis-validation="number" data-bind="value:$data.QtyCompletion, valueUpdate:'afterkeydown'" /></td>
+                    <td><span data-bind="decimal:$data.QtyOutstanding"></span></td>
+                    <td class="current"><input class="form-control transparent" type="number" data-sktis-validation="number" data-bind="value:$data.QtyBadStock, valueUpdate:'afterkeydown'" /></td>
+                    <td class="current"><input class="form-control transparent" type="number" data-sktis-validation="number" data-bind="value:$data.QtyTakenByUnit,tabToNext:[$parent,$data], valueUpdate:'afterkeydown'" /></td>
+                </tr>
+                <tr data-bind="validationOptions: {insertMessages: false, showTooltip:true, decorateInputElement: true, errorElementClass: 'input-error'}, inlineProccess:[$parent,$data],
+                                   if:($parent.editingRowIndex() === $index() && $root.ValidateDateIsPast($data.UpdatedDate)),
+                                   click: $parent.selectRow.bind($data, $index()),
+                                    event: {keydown:$parent.keydown}">
+                    <td><span data-bind="text:$data.UnitCode"></span></td>
+                    <td><span data-bind="decimal:$data.PreviousOutstanding"></span></td>
+                    <td><span data-bind="decimal:$data.QtyRepairRequest"></span></td>
+                    <td><span data-bind="decimal:$data.QtyCompletion"></span></td>
+                    <td><span data-bind="decimal:$data.QtyOutstanding"></span></td>
+                    <td><span data-bind="decimal:$data.QtyBadStock"></span></td>
+                    <td><span data-bind="decimal:$data.QtyTakenByUnit"></span></td>
+                </tr>
+            </tbody>
+            <tbody data-bind="visible: !listDataItems().length">
+                <tr>
+                    <td colspan="7" class="empty-row-message">
+                        <div class="loader"></div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div data-bind="if: (listDataItems() != null && listDataItems().length !== 0)">
+        @Html.Partial("GridViewFooter")
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="dataModal" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Item Selection</h4>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="totalCompletion" name="totalCompletion" data-bind="value: $root.totalCompletion" />
+                    <table class="table table-striped-default" id="ws">
+                        <thead>
+                            <tr class="head">
+                                <th>Item Code</th>
+                                <th>Description</th>
+                                <th>UOM</th>
+                                <th>Quantity Convert</th>
+                                <th>Quantity</th>
+                            </tr>
+                        </thead>
+                        <tbody data-bind="foreach: $root.sparepartsUsage">
+                            <tr>
+                                <td><span data-bind="text: $data.ItemCode"></span></td>
+                                <td><span data-bind="text: $data.ItemDescription"></span></td>
+                                <td><span data-bind="text: $data.UOM"></span></td>
+                                <td><span data-bind="text: $data.QtyConvert"></span></td>
+                                <td class="current"><input class="form-control transparent right" data-bind="value: $data.Quantity" type="number" data-sktis-validation="number" min="0"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" data-bind="event: {click: $root.InsertSparepartsUsage}">Save</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Modal -->
+</div>
+@section Scripts
+{
+    <script src="~/Scripts/common/app.GridViewModel.js" type="text/javascript"></script>
+    <script src="~/Scripts/app/globalfunctions.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        (function(app) {
+            app.EditGrid = function() {
+                var self = this;
+
+                // Filter
+                self.menuItemLocations = ko.observableArray(@Html.Raw(Json.Encode(@Model.PLNTChildLocationLookupList)));
+                self.itemLocations = ko.observableArray(@Html.Raw(Json.Encode(Model.PLNTChildLocationLookupList)));
+                self.itemCodes = ko.observableArray();
+                self.unitCodes = ko.observableArray();
+
+                self.filterLocation = ko.observable('@Model.DefaultLocation');
+                self.filterLocationName = ko.observable();
+                self.filterItemCode = ko.observable('@Model.DefaultItemCode');
+                self.filterItemDescription = ko.observable();
+                self.filterItemCompact = ko.observable();
+                self.filterTransactionDate = ko.observable($('#dtpTransactionDate input').val());
+
+                self.filterExcelLocation = self.filterLocation();
+                self.filterExcelItemCode = self.filterItemCode();
+                self.filterExcelTransactionDate = self.filterTransactionDate();
+                self.totalCompletion = ko.observable();
+                self.defaultTotalCompletion = ko.observable();
+
+                //get location name by location code
+                function getLocationNameFilter(locationCode) {
+                    for (var i = 0; i < self.itemLocations.length; i++) {
+                        if (self.itemLocations[i].LocationCode == locationCode) {
+                            return self.itemLocations[i].LocationName;
+                        }
+                    }
+                    return '';
+                };
+
+
+                //================= busy button state ================//
+                self.isBusy = ko.observable(true);
+
+                $(document).ajaxComplete(function () {
+                    if ($.active <= 1) {
+                        self.isBusy(false);
+                    }
+                });
+
+                $(document).ajaxStart(function () {
+                    if (!self.isBusy()) self.isBusy(true);
+                });
+                //================= busy button state ================//
+
+                function getPrevOutstandingValue() {
+                    $.ajax({
+                        url: @Html.BaseUrl("EquipmentRepairPlant/GetInventoryStock"),
+                        type: 'GET',
+                        contentType: 'application/json',
+                        data: { inventoryDate: self.filterTransactionDate(), itemCode: self.filterItemCode(), locationCode: self.filterLocation(), unitCode: self.newData.UnitCode() },
+                        dataType: 'json',
+                        success: function(data) {
+                            //console.log(data);
+                            if (data != null) {
+                                self.newData.PreviousOutstanding(data.BeginningStock);
+                            } else {
+                                self.newData.PreviousOutstanding(0);
+                            }
+                        },error: function(jqXHR,textStatus,errorThrown){
+                            self.newData.PreviousOutstanding(0);
+                        }
+                    });
+                };
+
+                //get itemcode by location
+                function getItemCodeSelectList() {
+                    $.ajax({
+                        url: @Html.BaseUrl("EquipmentRepairPlant/GetItemCodeSelectList"),
+                        type: 'GET',
+                        contentType: 'application/json',
+                        data: { locationCode: self.filterLocation() },
+                        dataType: 'json',
+                        success: function(data) {
+                            //console.log(data);
+                            $('#ddlFilterItemCode').find('option').remove();
+                            $('#ddlFilterItemCode').selectpicker('refresh');
+                            var listItemCode = [];
+                            $.each(data, function(index, value) {
+                                listItemCode.push({ 
+                                    ItemCode: value.ItemCode,
+                                    ItemDescription: value.ItemDescription,
+                                    ItemCompact: value.ItemDescription + ' - ' + value.ItemCode,
+                                    UOM: value.UOM
+                                });
+                            });
+                            
+                            //sorting
+                            for (var j = 0; j < listItemCode.length; j++) {
+                                for (var i = j; i < listItemCode.length; i++) {
+                                    if (listItemCode[i].ItemDescription<listItemCode[j].ItemDescription){
+                                        var temp = listItemCode[i];
+                                        listItemCode[i] = listItemCode[j];
+                                        listItemCode[j] = temp;
+                                    }
+                                
+                                }
+                            }
+
+                            self.itemCodes(listItemCode);
+
+                        }
+                    });
+                };
+
+                //get units by location
+                function getUnitCodeSelectList() {
+                    $.ajax({
+                        //url: @Html.BaseUrl("EquipmentRepairPlant/GetUnitCodeSelectList"), // old GET request
+                        url: @Html.BaseUrl("EquipmentRepairPlant/GetUnitCodeSelectListByTransactionDate"), // new POST request
+                        type: 'POST',
+                        contentType: 'application/json',
+                        //data: { locationCode: self.filterLocation() },
+                        data: ko.toJSON({
+                            SortExpression: "UnitCode",
+                            SortOrder: "ASC",
+                            LocationCode: self.filterLocation,
+                            TransactionDate: self.filterTransactionDate,
+                            ItemCode: self.filterItemCode
+                        }),
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#ddlInsertUnitCode').find('option').remove();
+                            $('#ddlInsertUnitCode').selectpicker('refresh');
+                            self.unitCodes(data);
+                            if (self.unitCodes().length > 0) {
+                                self.newData.UnitCode(self.unitCodes()[0].Text);
+                            } else {
+                                self.newData.UnitCode('');
+                            }
+                        }
+                    });
+                };
+
+                self.onLocationChange = function() {
+                    //console.log(self.filterLocation());
+                    //self.filterLocationName(getLocationNameFilter(self.filterLocation()));
+                    self.menuItemLocations().map(function(v) {
+                        if (typeof v.LocationCode !== 'undefined' && v.LocationCode == self.filterLocation()) {
+                            self.filterLocationName(v.LocationName);
+                        }
+                    });
+
+                    if (typeof cb == 'function') cb();
+                    getItemCodeSelectList();
+                    //getUnitCodeSelectList();
+                };
+
+                self.afterRender = function(options, item)
+                {
+                    if (typeof(item) === 'undefined') return;
+
+                    $(options).attr('title', item.ItemCode);
+                } 
+
+                //get item description and uom
+                self.onItemCodeChange = function() {
+                    for (var i = 0; i < self.itemCodes().length; i++) {
+                        if (self.itemCodes()[i].ItemCode == self.filterItemCode()) {
+                            self.filterItemDescription(self.itemCodes()[i].ItemDescription);
+                            break;
+                        }
+                    }
+                    getPrevOutstandingValue();
+
+
+                    // Check whether New or Edit data is existing and not saved to database yet (on Ajax Action)
+                    if (SKTIS.Checker.modifiedDataExistsForAjax([self.gridView.listNewItems, self.gridView.listEditItems]) == true) {
+                        return;
+                    } else {
+                        self.gridView.listNewItems.removeAll();
+                        self.gridView.listEditItems.removeAll();
+                    }
+
+                    self.gridView.search({}, function(response) {
+                        if (response.status == 'KO') {
+                            SKTIS.Helper.Notification(response.message, 'error');
+                            $('.empty-row-message').html(response.message);
+                        } else if (response.status == 'Empty') {
+
+                            self.RemoveNotification();
+
+                            //SKTIS.Helper.Notification(response.message,'warning');
+                            $('.empty-row-message').html('@CommonLabel.lblDataEmpty');
+                        }
+                        self.defaultTotalCompletion(self.getLatestTotalCompletion());
+                        getUnitCodeSelectList();
+                    });
+
+                    self.RemoveNotification = function() {
+                        if ($('#noty_top_layout_container').length > 0) {
+                            $('#noty_top_layout_container').remove();
+                        }
+                    };
+
+                };
+
+                self.onUnitCodeChange = function(){
+                    getPrevOutstandingValue();
+                };
+
+                $('#dtpTransactionDate').on('dp.change', function(e) {
+                    self.filterTransactionDate($('#dtpTransactionDate input').val());
+                    getPrevOutstandingValue();
+                });
+
+                //Get Sparepart Usage
+                self.sparepartsUsage = ko.observableArray([]);
+
+                self.ShowUsagePopup = function() {
+                    $('.modal').modal('show');
+                    self.getSparepartsUsage();
+                };
+
+                self.sparepartsUsageMapping = function(ItemCode,ItemDescription,QtyConvert,Quantity,UOM){
+                    this.ItemCode = ko.observable(ItemCode);
+                    this.ItemDescription = ko.observable(ItemDescription);
+                    this.QtyConvert = ko.observable(QtyConvert);
+                    this.Quantity = ko.observable(Quantity);
+                    this.UOM = ko.observable(UOM);
+                    this.CalculatedQuantity = ko.observable(Quantity);
+                    //this.CalculatedQuantity= ko.pureComputed({
+                    //    read: function () {
+                    //        var multiplyedByTotalCompletion = (self.totalCompletion()==0) ? this.Quantity() : this.Quantity() * self.totalCompletion();
+                    //        //this.tempCalculatedQuantity(multiplyedByTotalCompletion);
+                    //        return multiplyedByTotalCompletion;
+                    //    },
+                    //    write: function (value) {
+                    //        this.tempCalculatedQuantity(value);
+                    //    },
+                    //    owner: this
+                    //});
+                    //this.tempCalculatedQuantity = ko.observable((self.totalCompletion()==0) ? this.Quantity() : this.Quantity() * self.totalCompletion());
+                };
+                self.sparepartsUsageEditMapping = function(ItemCode,ItemDescription,QtyConvert,Quantity,UOM){
+                    this.ItemCode = ko.observable(ItemCode);
+                    this.ItemDescription = ko.observable(ItemDescription);
+                    this.QtyConvert = ko.observable(QtyConvert);
+                    this.Quantity = ko.observable(Quantity);
+                    this.UOM = ko.observable(UOM);
+                    this.CalculatedQuantity = ko.observable(Quantity);
+                    //this.CalculatedQuantity= ko.pureComputed({
+                    //    read: function () {
+                    //        return this.Quantity();
+                    //    },
+                    //    write: function (value) {
+                    //        this.tempCalculatedQuantity(value);
+                    //    },
+                    //    owner: this
+                    //});
+                    //this.tempCalculatedQuantity = ko.observable(this.Quantity());
+                };
+                //self.sparepartsUsageMapping = {
+                //    ItemCode : ko.observable(),
+                //    ItemDescription : ko.observable(),
+                //    Quantity : ko.observable(),
+                //    UOM : ko.observable(),
+                //    CalculatedQuantity: ko.pureComputed({
+                //        read: function () {
+                //            return this.Quantity() * self.totalCompletion();
+                //        },
+                //        write: function (value) {
+                //            this.Quantity(value);
+                //        },
+                //        owner: this
+                //    })
+                //};
+
+                self.getSparepartsUsage = function() {
+                    self.sparepartsUsage([]);
+                    $.ajax({
+                        url: @Html.BaseUrl("EquipmentRepairPlant/GetSparepartsUsage"),
+                        type: "POST",
+                        data: JSON.stringify({ TransactionDate: $('#dtpTransactionDate').data('DateTimePicker').date(), LocationCode: self.filterLocation(), ItemSourceCode: self.filterItemCode() }),
+                        dataType: "json",
+                        traditional: true,
+                        contentType: "application/json; charset=utf-8",
+                        success: function(data) {
+                            SKTIS.Helper.Log(data);
+                            if(self.defaultTotalCompletion() != self.getLatestTotalCompletion()){
+                                var mappedSparepart = ko.utils.arrayMap(data,function(sparepart){
+                                    return new self.sparepartsUsageMapping(sparepart.ItemCode,sparepart.ItemDescription,sparepart.QtyConvert,sparepart.Quantity,sparepart.UOM);
+                                });
+                                //var mappedSparepart = ko.mapping.fromJS(data, self.sparepartsUsageMapping);
+                                $.each(mappedSparepart,function(index,sparepart){
+                                    self.sparepartsUsage.push(sparepart);
+                                });
+                            }else{
+                                var mappedSparepart = ko.utils.arrayMap(data,function(sparepart){
+                                    return new self.sparepartsUsageEditMapping(sparepart.ItemCode,sparepart.ItemDescription,sparepart.QtyConvert,sparepart.Quantity,sparepart.UOM);
+                                });
+                                $.each(mappedSparepart,function(index,sparepart){
+                                    self.sparepartsUsage.push(sparepart);
+                                });
+                            }
+                            SKTIS.Helper.Log(self.sparepartsUsage());
+                        }
+                    });
+                };
+
+                // New data
+                self.newData = {
+                    //TransactionDate: self.filterTransactionDate(),
+                    //LocationCode: self.filterLocation(),
+                    //ItemCode: self.filterItemCode(),
+                    UnitCode: ko.observable(''),
+                    PreviousOutstanding: ko.observable(0),
+                    QtyRepairRequest: ko.observable(0),
+                    QtyCompletion: ko.observable(0),
+                    QtyOutstanding: ko.observable(0),
+                    QtyBadStock: ko.observable(0),
+                    QtyTakenByUnit: ko.observable(0),
+                    Message: ko.observable(null)
+                };
+
+                self.outstandingValue = ko.computed(function() {
+                    var valuePrevOutstanding = parseToInt(self.newData.PreviousOutstanding());
+                    var valueRepair = parseToInt(self.newData.QtyRepairRequest());
+                    var valueCompletion = parseToInt(self.newData.QtyCompletion());
+                    var valueBadStock = parseToInt(self.newData.QtyBadStock());
+
+                    var result = valuePrevOutstanding + valueRepair - valueCompletion - valueBadStock;
+                    self.newData.QtyOutstanding(result);
+
+                    return result;
+                }, self);
+
+                function equipmentRepair(data) {
+                    ko.mapping.fromJS(data, {}, this);
+
+                    //calculate total target manual
+                    this.QtyOutstanding = ko.computed({
+                        read: function() {
+                            var result = parseInt(this.PreviousOutstanding()) + parseInt(this.QtyRepairRequest())
+                                - parseToFloat(this.QtyCompletion()) - parseToFloat(this.QtyBadStock());
+                            return result;
+                        },
+                        write: function(value) {
+                            // alert(value);
+                        }
+                    }, this);
+                };
+
+                // Gridview Initialization
+                self.gridView = new app.GridViewModel({
+                    Criteria: {
+                        PageSize: 10,
+                        PageIndex: 1,
+                        SortExpression: "UpdatedDate",
+                        SortOrder: "DESC",
+                        LocationCode: self.filterLocation,
+                        TransactionDate: self.filterTransactionDate,
+                        ItemCode: self.filterItemCode
+                    },
+                    DataSourceUrl: @Html.BaseUrl("EquipmentRepairPlant/GetEquipmentRepairs"),
+                    InlineEdit: true,
+                    InsertRowFocusedControlIndex: 0
+                });
+
+                //custom mapping knockout
+                self.gridView.mapping = {
+                    create: function(options) {
+                        return new equipmentRepair(options.data);
+                    }
+                };
+
+                // Field Validations
+                self.gridView.applyValidationRules = function(entity) {
+                    self.RemoveNotification();
+                    entity.Message(null);
+
+                    entity.QtyRepairRequest.extend({
+                        required: {
+                            message: "<strong>Repair Request</strong> cannot be empty!"
+                        },
+                        number: {
+                            message: "<strong>Repair Request</strong> must be a number!"
+                        }
+                    });
+
+                    entity.QtyOutstanding.extend({
+                        min: {
+                            params: 0,
+                            message: "<strong>Outstanding</strong> cannot smaller than 0 or have a minus value!"
+                        }
+                    });
+
+                    entity.QtyCompletion.extend({
+                        required: {
+                            message: "<strong>Completion</strong> cannot be empty!"
+                        },
+                        number: {
+                            message: "<strong>Completion</strong> must be a number!"
+                        }
+                        //max: {
+                        //    params:entity.QtyTransfer(),
+                        //    message: "<strong>Receive Quantity</strong> cannot larger than Transfer Quantity (" + entity.QtyTransfer() + ")!"
+                        //}
+                    });
+                    entity.QtyBadStock.extend({
+                        required: {
+                            message: "<strong>Bad Stock</strong> cannot be empty!"
+                        },
+                        number: {
+                            message: "<strong>Bad Stock</strong> must be a number!"
+                        }
+                    });
+                    entity.QtyTakenByUnit.extend({
+                        required: {
+                            message: "<strong>Taken By Unit</strong> cannot be empty!"
+                        },
+                        number: {
+                            message: "<strong>Taken By Unit</strong> must be a number!"
+                        }
+                    });
+
+                    entity.Message("true");
+                };
+
+                // Remove Value in Dropdownlist after Insert
+                self.gridView.onAfterInsert = function(insertedData) {
+                    $.each(self.unitCodes(), function(index, value) {
+                        if (typeof value != 'undefined') {
+                            //console.log(value.Value + "==" + insertedData.UnitCode());
+                            if (value.Value == insertedData.UnitCode()) {
+                                self.unitCodes.remove(function(value) {
+                                    return value.Value == insertedData.UnitCode();
+                                });
+                            }
+                        }
+                    });
+                    if (self.unitCodes().length < 1) {
+                        $('#ddlInsertUnitCode').find('option').remove();
+                        $('#ddlInsertUnitCode').selectpicker('refresh');
+                    };
+                };
+
+                // Reset Fields for Insert Row
+                self.gridView.resetDefault = function(viewModel) {
+                    viewModel.QtyRepairRequest(0);
+                    viewModel.QtyCompletion(0);
+                    viewModel.QtyBadStock(0);
+                    viewModel.QtyTakenByUnit(0);
+                    viewModel.Message(null); //used for triggering edited row
+                };
+
+                self.ValidateDateIsPast= function(date) {
+                    if(ko.utils.unwrapObservable(date) === '' || typeof ko.utils.unwrapObservable(date) === 'undefined') return false;
+                    //console.log("validate is past " + ko.utils.unwrapObservable(date));
+                    return moment(moment(ko.utils.unwrapObservable(date), 'DD/MM/YYYY').format('YYYY-MM-DD')).isBefore(moment().format('YYYY-MM-DD'));
+                };
+
+                // Generate Excel
+                self.generateExcel = function(formElement) {
+                    $(formElement).find("input[name=locationCode]").val(self.filterExcelLocation);
+                    $(formElement).find("input[name=itemCode]").val(self.filterExcelItemCode);
+                    $(formElement).find("input[name=transactionDate]").val(self.filterExcelTransactionDate);
+                    return true;
+                };
+
+                self.InsertSparepartsUsage = function() {
+
+                    //console.log(self.equipmentItemDestinations());
+
+                    //var detailValue = [];
+                    //var valueDetail = [];
+                    //var list = [];
+                    //var itemCodeSource = "";
+                    //$.each(self.equipmentItemDestinations(), function(index, value) {
+                    //    if (value.QtyConvert == '') {
+                    //        value.QtyConvert = null;
+                    //    } else {
+                    //        value.QtyConvert = parseInt(value.QtyConvert);
+                    //    }
+                    //    valueDetail = {
+                    //        "ItemCodeSource": value.ItemCodeSource,
+                    //        "ItemCode": value.ItemCode,
+                    //        "ItemDescription": value.ItemDescription,
+                    //        "QtyConvert": value.QtyConvert
+                    //    };
+                    //    itemCodeSource = value.ItemCodeSource;
+                    //    list.push(valueDetail);
+                    //});
+                    //detailValue = { "ItemCodeSource": itemCodeSource, Items: list };
+
+                    //if (self.DetailValue().length > 0) {
+                    //    $.each(self.DetailValue(), function(index, value) {
+                    //        if (typeof value != 'undefined') {
+                    //            if (value.ItemCodeSource == itemCodeSource) {
+                    //                self.DetailValue.remove(value);
+                    //            }
+                    //        }
+                    //    });
+                    //}
+
+                    //self.DetailValue.push(detailValue);
+                };
+
+                // Save Action
+                self.saveData = function() {
+                    if (self.gridView.editingRowIndex() !== -1)
+                        return;
+
+                    if (self.filterTransactionDate() == '') {
+                        SKTIS.Helper.Notification('<strong>Transaction Date</strong> cannot be empty!', 'warning');
+                        return;
+                    }
+                    // Prevent Edited new Row data for triggering Edited message
+                    // Primary Key : ListGroup, ListDetail (need to compare both of arrays using unique key[s])
+                    //var newItemLength = self.gridView.listNewItems().length;
+                    //$.each(self.gridView.listNewItems(),function(k,v){
+                    //    var shouldBeAsNew = ko.utils.arrayFirst(self.gridView.listEditItems(),function(editItem){
+                    //        if(editItem){
+                    //            return editItem['ItemCode'] == v['ItemCode'];
+                    //        }
+                    //    });
+                    //    if(shouldBeAsNew){
+                    //        self.gridView.listNewItems()[k] = shouldBeAsNew;
+                    //    }
+                    //    self.gridView.listEditItems.remove(function(data) {
+                    //        if(data){
+                    //            return data['ItemCode'] == v['ItemCode'];
+                    //        }
+                    //    });
+                    //});
+
+                    var datas = {
+                        "Parameters": {
+                            "LocationCode": self.filterLocation(),
+                            "ItemCode": self.filterItemCode(),
+                            "TransactionDate": self.filterTransactionDate()
+                        },
+                        "edit": ko.mapping.toJS(self.gridView.listDataItems()),
+                        "Sparepart": ko.mapping.toJS(self.sparepartsUsage())
+                    };
+
+                    datas = JSON.stringify(datas);
+                    //console.log(datas);
+                    //return;
+                    $.ajax({
+                        url: @Html.BaseUrl("EquipmentRepairPlant/SaveAllEquipmentRepair"),
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: datas,
+                        dataType: 'json',
+                        success: function(data) {
+                            //console.log(data);
+                            if (data.New) {
+                                $.each(data.New, function(k, value) {
+                                    if (value)
+                                        SKTIS.Helper.ResponseNotification(value, "Insert Equipment Repair",
+                                            value.TransactionDate + " - " + value.UnitCode + " - " + value.LocationCode + " - " + value.ItemCode);
+                                });
+                            }
+
+                            if (data.Edit) {
+                                $.each(data.Edit, function(k, value) {
+                                    if (value.ResponseType != null)
+                                        SKTIS.Helper.ResponseNotification(value, "Edit Equipment Repair",
+                                            value.TransactionDate + " - " + value.UnitCode + " - " + value.LocationCode + " - " + value.ItemCode);
+                                });
+                            }
+
+                            self.gridView.sort('UpdatedDate', 'DESC');
+                            self.gridView.listNewItems.removeAll();
+                            self.gridView.listEditItems.removeAll();
+
+                        }
+                    });
+                };
+
+                // Load Data
+                self.search = function() {
+                    $('.empty-row-message').html('<div class="loader"></div>'); // Reset New and Edit row
+                    // Check whether New or Edit data is existing and not saved to database yet (on Ajax Action)
+                    if (SKTIS.Checker.modifiedDataExistsForAjax([self.gridView.listNewItems, self.gridView.listEditItems]) == true) {
+                        return;
+                    } else {
+                        self.gridView.listNewItems.removeAll();
+                        self.gridView.listEditItems.removeAll();
+                    }
+
+                    self.filterExcelLocation = self.filterLocation();
+                    self.filterExcelItemCode = self.filterItemCode();
+                    self.filterExcelTransactionDate = self.filterTransactionDate();
+
+                    self.gridView.search({}, function(response) {
+                        if (response.status == 'KO') {
+                            SKTIS.Helper.Notification(response.message, 'error');
+                            $('.empty-row-message').html(response.message);
+                        } else if (response.status == 'Empty') {
+
+                            self.RemoveNotification();
+
+                            //SKTIS.Helper.Notification(response.message,'warning');
+                            $('.empty-row-message').html('@CommonLabel.lblDataEmpty');
+                        }
+                        self.defaultTotalCompletion(self.getLatestTotalCompletion());
+                        getUnitCodeSelectList();
+                    });
+
+                    self.RemoveNotification = function() {
+                        if ($('#noty_top_layout_container').length > 0) {
+                            $('#noty_top_layout_container').remove();
+                        }
+                    };
+                };
+
+                self.getLatestTotalCompletion = function(){
+                    var defaultTotalCompletion = 0;
+                    $.each(self.gridView.listDataItems(),function(k,v){
+                        defaultTotalCompletion += parseInt(ko.utils.unwrapObservable(v.QtyCompletion));
+                    });
+                    return defaultTotalCompletion;
+                };
+
+                self.onLocationChange();
+                self.search();
+
+                // Check whether New or Edit data is existing and not saved to database yet (on Request action)
+                SKTIS.Checker.modifiedDataExists([self.gridView.listNewItems, self.gridView.listEditItems]);
+
+                $(document).ready(function(){
+                    console.log('1');
+                    $('#dataModal').on('show.bs.modal',function(){
+                        console.log('2');
+                        var totalCompletion = 0;
+                        $.each(self.gridView.listDataItems(),function(index,value){
+                            totalCompletion += parseInt(ko.utils.unwrapObservable(value.QtyCompletion));
+                        });
+                        self.totalCompletion(totalCompletion);
+                    });
+
+                    $('#dtpTransactionDate').data("DateTimePicker").options({
+                        maxDate: moment()
+                    });
+                });
+
+            };
+            ko.applyBindings(new app.EditGrid());
+        })(app = this.app || {});
+
+    </script>
+}

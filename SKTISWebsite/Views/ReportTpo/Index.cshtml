@@ -1,0 +1,183 @@
+﻿@using SKTISWebsite.Helper
+<div class="col-lg-12" data-bind="with: gridView">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="action-btn">
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".choose-group-1">Add</button>
+                <!-- Choose Group Modal -->
+                <div class="modal fade choose-group-1" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+                    <div class="modal-dialog modal-md">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title">Add New Reports</h4>
+                            </div>
+                            <div class="modal-body">
+                                <div class="col-sm-12">
+                                    <label class="form-label col-lg-2">
+                                        Report Name
+                                    </label>
+                                    <div class="col-lg-5">
+                                        <input type="text" class="form-control" data-bind="value: $root.reportName">
+                                    </div>
+                                </div>
+                                <div class="col-sm-12">
+                                    <label class="form-label col-lg-2">
+                                        Report Url
+                                    </label>
+                                    <div class="col-lg-9">
+                                        <input type="text" class="form-control" data-bind="value: $root.reportUrl">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <div class="col-sm-12">
+                                    <div class="pull-right">
+                                        <button type="button" class="btn btn-primary" data-dismiss="modal" aria-label="Close">Cancel</button>
+                                        <button type="button" class="btn btn-primary" data-dismiss="modal" aria-label="Close" data-bind="click: $root.save">Save</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- End Choose Group Modal -->
+                <button type="button" class="btn btn-primary" data-bind="click: $root.delete">Delete</button>
+            </div>
+        </div>
+    </div>
+    <div class="table-overflow">
+        <table class="table table-striped">
+            <thead>
+                <tr class="head">
+                    <th class="check-head">
+                        <input type="checkbox" id="checkboxAll" />
+                        <input type="hidden" data-bind="value: $data.Id" />
+                    </th>
+                    <th>Report Name</th>
+                    <th class="check-head"></th>
+                </tr>
+            </thead>
+            <tbody data-bind="foreach: listDataItems">
+                <tr>
+                    <td><input type="checkbox" data-bind="checked: $data.Checkbox"></td>
+                    <td><span data-bind="text: $data.ReportName"></span></td>
+                    <td><a class="btn btn-primary" data-bind="click: $root.execute">Execute</a></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script src="~/Scripts/common/app.GridViewModel.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        (function (app) {
+            app.EditGrid = function () {
+                var self = this;
+
+                self.reportName = ko.observable('');
+                self.reportUrl = ko.observable('');
+
+                self.execute = function(e) {
+                    window.document.location = @Html.BaseUrl("ReportTpo") + "/ViewReport/" + e.Id();
+                };
+
+                self.gridView = new app.GridViewModel({
+                    Criteria:
+                    {
+                        PageSize: 10,
+                        PageIndex: 1
+                    },
+                    InlineEdit: true,
+                    DataSourceUrl: @Html.BaseUrl("ReportTpo/GetReportTpo"),
+                });
+
+                self.gridView.applyValidationRules = function(entity) {
+
+                };
+
+                self.search = function() {
+                    self.gridView.search({});
+                };
+
+                self.save = function() {
+                    $.ajax({
+                        url: @Html.BaseUrl("ReportTpo/Insert"),
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data:
+                        JSON.stringify({
+                            "ReportName": self.reportName(),
+                            "ReportUrl": self.reportUrl()
+                        }),
+                        dataType: 'json',
+                        success: function (data) {
+                            SKTIS.Helper.ResponseNotification(data, "Insert Report Tpo", data.ReportName);
+                            self.search();
+                            self.reportName('');
+                            self.reportUrl('');
+                        }
+                    });
+                };
+
+                self.delete = function() {
+
+                    console.log(JSON.stringify(ko.mapping.toJS(self.gridView.listDataItems())));
+
+                    $.ajax({
+                        url: @Html.BaseUrl("ReportTpo/Delete"),
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify(ko.mapping.toJS(self.gridView.listDataItems())),
+                        dataType: 'json',
+                        success: function (datas) {
+                            $('#checkboxAll').prop('checked', false);
+                            self.search();
+                            console.log(datas);
+                            $.each(datas, function (index, value) {
+                                if (value.ResponseType != null) {
+                                    SKTIS.Helper.ResponseNotification(value, "Delete Report Tpo", value.ReportName);
+                                }
+                            });
+                        }
+                    });
+                };
+
+                function mappingCheckbox(data) {
+                    ko.mapping.fromJS(data, {}, this);
+                    this.Checkbox = ko.observable(false);
+                }
+
+                self.gridView.mapping = {
+                    create: function(options) {
+                        return new mappingCheckbox(options.data);
+                    }
+                };
+
+                $('#checkboxAll').change(function(e) {
+                    if (this.checked) {
+                        $('table tbody tr input:checkbox').prop('checked', true);
+                        $('table tbody tr input:checkbox').change();
+                    } else {
+                        $('table tbody tr input:checkbox').prop('checked', false);
+                        $('table tbody tr input:checkbox').change();
+
+                    }
+                });
+
+                $(document).on('change','table tbody tr input[type=checkbox]',function() {
+                    var thisChk = $(this);
+                    var context1 = ko.dataFor(this);
+                    //console.log(thisChk.prop('checked'));
+                    context1.Checkbox(thisChk.prop('checked'));
+                });
+
+                self.search();
+
+            };
+            ko.applyBindings(new app.EditGrid());
+        })(app = this.app || {});
+    </script>
+}

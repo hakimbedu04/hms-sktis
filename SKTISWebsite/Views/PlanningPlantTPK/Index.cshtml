@@ -1,0 +1,3412 @@
+﻿@model SKTISWebsite.Models.PlanningPlantTPK.InitPlantTPKViewModel
+@using HMS.SKTIS.Application.Resources
+@using SKTISWebsite.Helper
+@{ Html.SetPageTitle(" Target Production Groups (TPK)"); }
+<style>
+    .red-text {
+        color: #f00 !important;
+    }
+</style>
+<div data-bind="with: gridView" class="col-lg-12">
+    <div class="col-lg-6">
+        <div class="row">
+            <label class="form-label col-lg-4">
+                Location
+            </label>
+            <div class="col-lg-2">
+                @*@Html.DropDownList("ddlFilterLocationCode", new SelectList(Model.PLNTChildLocationLookupList, "LocationCode", "LocationCode"),
+                new
+                {
+                    @class = "selectpicker show-tick form-control",
+                    id = "ddlFilterLocationCode",
+                    data_live_search = "true",
+                    data_bind = "value:$root.filterLocationCode, event : { change : $root.onLocationCodeChange}"
+                })*@
+                <select class="selectpicker show-tick form-control" data-live-search="true" id="ddlFilterLocationCode"
+                        data-bind="selectPicker: $root.filterLocationCode, optionsText: 'LocationCompat', optionsValue : 'LocationCode', optionsAfterRender : $root.afterRender, selectPickerOptions: { optionsArray: $root.ListLocation }, event : { change : $root.onLocationCodeChange}"></select>
+            </div>
+            <div class="col-lg-3">
+                <input type="text" class="form-control" readonly="readonly" data-bind="value:$root.filterLocationName">
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-4">
+                Unit
+            </label>
+            <div class="col-lg-5">
+                <select id="ddlFilterUnitCode" class="show-tick form-control" data-live-search="true"
+                        data-bind="selectPicker: $root.filterUnitCode, optionsText: 'Text', optionsValue : 'Value',
+                        selectPickerOptions: { optionsArray: $root.UnitCodeSelectList }"></select>
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-4">
+                Brand
+            </label>
+            <div class="col-lg-5">
+                <select id="ddlFilterBrandCode" class="show-tick form-control" data-live-search="true"
+                        data-bind="selectPicker: $root.filterBrandCode, optionsText: 'Text', optionsValue : 'Value',
+                        selectPickerOptions: { optionsArray: $root.BrandCodeSelectList }"></select>
+            </div>
+        </div>
+        <div id="shiftFilter" class="row">
+            <label class="form-label col-lg-4">
+                Shift
+            </label>
+            <div class="col-lg-2">
+                <select class="selectpicker show-tick form-control" id="ddlShift"
+                        data-live-search="true"
+                        data-bind="selectPicker: $root.filterShift, optionsText: 'Text', optionsValue : 'Value', selectPickerOptions: { optionsArray: $root.shiftSelectList }"></select>
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-4">
+                TPK No.
+            </label>
+            <div class="col-lg-7">
+                <span data-bind="text: $root.TPKNumber"></span>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="row">
+            <label class="form-label col-lg-4">
+                KPS Year
+            </label>
+            <div class="col-lg-4">
+                @Html.DropDownList("ddlFilterKPSYear", Model.YearSelectList,
+                new
+                {
+                    @class = "selectpicker show-tick form-control",
+                    id = "ddlFilterKPSYear",
+                    data_live_search = "true",
+                    data_bind = "value:$root.filterKPSYear, event : { change : $root.onKPSYearChange }"
+                })
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-4">
+                KPS Week
+            </label>
+            <div class="col-lg-4">
+                <select id="ddlKPSWeekFilter" class="show-tick form-control" data-live-search="true"
+                        data-bind="selectPicker: $root.filterKPSWeek, optionsText: 'Text', optionsValue : 'Value',
+                        selectPickerOptions: { optionsArray: $root.KPSWeekSelectList }, event: { change: $root.onKPSWeekChange}"></select>
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-4">
+                <input type="checkbox" data-bind="checked: $root.isFilterCurrentDayForward, enable: $root.filterCurrenDayEnabled, click: $root.onCurrentDayForwardChange($root.isFilterCurrentDayForward)">
+                Current Day Forward
+            </label>
+            <div class="col-lg-4">
+                <div id="filterCurrentDayForward" class='input-group date time' data-bind="dateTimePicker: $root.filterCurrentDayForward, value: $root.filterCurrentDayForward, dateTimePickerOptions: {widgetPositioning: {vertical: 'bottom'}, showClear: true, ignoreReadonly: true}">
+                    <input id="dtFilterFrom" class="form-control" readonly="readonly" />
+                    <span class="input-group-addon" data-bind="visible: $root.filterCurrenDayEnabled">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-12">
+        <div class="row">
+            <div class="action-btn">
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.View.ToString()))
+                {
+                    <button type="button" class="btn btn-primary" data-bind="click:$root.search">@CommonLabel.btnView</button>
+                }
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.Save.ToString()))
+                {
+                    @*<button type="button" class="btn btn-primary" data-bind="click:$root.saveData,enable: $root.saveEnabled,event:{click:$root.SavedButton}">@CommonLabel.btnSave</button>*@
+                    <button type="button" class="btn btn-primary" data-bind="click:$root.saveData,enable: $root.saveEnabled">@CommonLabel.btnSave</button>
+                }
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.WIPStock.ToString()))
+                {
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#WipStock">WIP Stock</button>
+                }
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.JKProses.ToString()))
+                {
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#jkprocess">JK Process</button>
+                }
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.Excel.ToString()))
+                {
+                    using (Html.BeginForm("GenerateExcel", "PlanningPlantTPK", FormMethod.Post, new { @data_bind = "submit: $root.generateExcel" }))
+                    {
+                        <input type="hidden" name="locationCode">
+                        <input type="hidden" name="unitCode">
+                        <input type="hidden" name="brandCode">
+                        <input type="hidden" name="year">
+                        <input type="hidden" name="week">
+                        <input type="hidden" name="shift">
+                        <button type="submit" class="btn btn-primary">@CommonLabel.btnExcel</button>
+                    }
+                }
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.Submit.ToString()))
+                {
+                    <button type="button" class="btn btn-success" data-bind="click:$root.submitData,enable: $root.submitEnabled">Submit</button>
+                }
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.Calculate.ToString()))
+                {
+                    <button class="btn btn-success" type="button" data-bind="click:$root.CalculateData, enable:$root.ButtonCalculate">Calculate</button>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="table-overflow">
+        <table class="table table-striped sticktable">
+            <thead>
+                <tr class="head">
+                    <th colspan="5" class="thfixed">Day</th>
+                    <th colspan="5">Monday</th>
+                    <th colspan="5">Tuesday</th>
+                    <th colspan="5">Wednesday</th>
+                    <th colspan="5">Thursday</th>
+                    <th colspan="5">Friday</th>
+                    <th colspan="5">Saturday</th>
+                    <th colspan="5">Sunday</th>
+                    <th colspan="2" rowspan="2">Total</th>
+                </tr>
+                <tr class="head">
+                    <th colspan="5" class="thfixed">Date</th>
+                    <th colspan="5"><span data-bind="text:$root.mondayDate"></span></th>
+                    <th colspan="5"><span data-bind="text:$root.tuesdayDate"></span></th>
+                    <th colspan="5"><span data-bind="text:$root.wednesdayDate"></span></th>
+                    <th colspan="5"><span data-bind="text:$root.thursdayDate"></span></th>
+                    <th colspan="5"><span data-bind="text:$root.fridayDate"></span></th>
+                    <th colspan="5"><span data-bind="text:$root.saturdayDate"></span></th>
+                    <th colspan="5"><span data-bind="text:$root.sundayDate"></span></th>
+                </tr>
+                <tr class="head">
+                    <th colspan="5" class="thfixed">Work Hours</th>
+                    <th colspan="5"><span data-bind="text:$root.workHoursMon"></span></th>
+                    <th colspan="5"><span data-bind="text:$root.workHoursTue"></span></th>
+                    <th colspan="5"><span data-bind="text:$root.workHoursWed"></span></th>
+                    <th colspan="5"><span data-bind="text:$root.workHoursThu"></span></th>
+                    <th colspan="5"><span data-bind="text:$root.workHoursFri"></span></th>
+                    <th colspan="5"><span data-bind="text:$root.workHoursSat"></span></th>
+                    <th colspan="5"><span data-bind="text:$root.workHoursSun"></span></th>
+                    <th colspan="2"><span data-bind="text:$root.totalWorkHours"></span></th>
+                </tr>
+                <tr class="head">
+                    <th rowspan="2" class="thfixed rotate-90"><div><span>Process</span></div></th>
+                    <th rowspan="2" class="thfixed rotate-90"><div><span>Group</span></div></th>
+                    <th rowspan="2" class="thfixed rotate-90"><div><span>Registered</span></div></th>
+                    <th rowspan="2" class="thfixed rotate-90"><div><span>Avaialble</span></div></th>
+                    <th rowspan="2" class="thfixed rotate-90"><div><span>Allocation</span></div></th>
+                    <th rowspan="2" class="rotate-90"><div><span>% Attendance</span></div></th>
+                    <th colspan="2">Historical Capacity</th>
+                    @*<th rowspan="2" class="rotate-90"><div><span>WIP</span></div></th>*@
+                    <th colspan="2">Target<br />(stick/d)</th>
+                    <th rowspan="2" class="rotate-90"><div><span>% Attendance</span></div></th>
+                    <th colspan="2">Historical Capacity</th>
+                    @*<th rowspan="2" class="rotate-90"><div><span>WIP</span></div></th>*@
+                    <th colspan="2">Target<br />(stick/d)</th>
+                    <th rowspan="2" class="rotate-90"><div><span>% Attendance</span></div></th>
+                    <th colspan="2">Historical Capacity</th>
+                    @*<th rowspan="2" class="rotate-90"><div><span>WIP</span></div></th>*@
+                    <th colspan="2">Target<br />(stick/d)</th>
+                    <th rowspan="2" class="rotate-90"><div><span>% Attendance</span></div></th>
+                    <th colspan="2">Historical Capacity</th>
+                    @*<th rowspan="2" class="rotate-90"><div><span>WIP</span></div></th>*@
+                    <th colspan="2">Target<br />(stick/d)</th>
+                    <th rowspan="2" class="rotate-90"><div><span>% Attendance</span></div></th>
+                    <th colspan="2">Historical Capacity</th>
+                    @*<th rowspan="2" class="rotate-90"><div><span>WIP</span></div></th>*@
+                    <th colspan="2">Target<br />(stick/d)</th>
+                    <th rowspan="2" class="rotate-90"><div><span>% Attendance</span></div></th>
+                    <th colspan="2">Historical Capacity</th>
+                    @*<th rowspan="2" class="rotate-90"><div><span>WIP</span></div></th>*@
+                    <th colspan="2">Target<br />(stick/d)</th>
+                    <th rowspan="2" class="rotate-90"><div><span>% Attendance</span></div></th>
+                    <th colspan="2">Historical Capacity</th>
+                    @*<th rowspan="2" class="rotate-90"><div><span>WIP</span></div></th>*@
+                    <th colspan="2">Target<br />(stick/d)</th>
+                    <th colspan="2">Target</th>
+                </tr>
+                <tr class="head">
+                    <th class="rotate-90"><div><span>Worker</span></div></th>
+                    <th class="rotate-90"><div><span>Group</span></div></th>
+                    <th class="rotate-90"><div><span>System</span></div></th>
+                    <th class="rotate-90"><div><span>Manual</span></div></th>
+                    <th class="rotate-90"><div><span>Worker</span></div></th>
+                    <th class="rotate-90"><div><span>Group</span></div></th>
+                    <th class="rotate-90"><div><span>System</span></div></th>
+                    <th class="rotate-90"><div><span>Manual</span></div></th>
+                    <th class="rotate-90"><div><span>Worker</span></div></th>
+                    <th class="rotate-90"><div><span>Group</span></div></th>
+                    <th class="rotate-90"><div><span>System</span></div></th>
+                    <th class="rotate-90"><div><span>Manual</span></div></th>
+                    <th class="rotate-90"><div><span>Worker</span></div></th>
+                    <th class="rotate-90"><div><span>Group</span></div></th>
+                    <th class="rotate-90"><div><span>System</span></div></th>
+                    <th class="rotate-90"><div><span>Manual</span></div></th>
+                    <th class="rotate-90"><div><span>Worker</span></div></th>
+                    <th class="rotate-90"><div><span>Group</span></div></th>
+                    <th class="rotate-90"><div><span>System</span></div></th>
+                    <th class="rotate-90"><div><span>Manual</span></div></th>
+                    <th class="rotate-90"><div><span>Worker</span></div></th>
+                    <th class="rotate-90"><div><span>Group</span></div></th>
+                    <th class="rotate-90"><div><span>System</span></div></th>
+                    <th class="rotate-90"><div><span>Manual</span></div></th>
+                    <th class="rotate-90"><div><span>Worker</span></div></th>
+                    <th class="rotate-90"><div><span>Group</span></div></th>
+                    <th class="rotate-90"><div><span>System</span></div></th>
+                    <th class="rotate-90"><div><span>Manual</span></div></th>
+                    <th class="rotate-90"><div><span>System</span></div></th>
+                    <th class="rotate-90"><div><span>Manual</span></div></th>
+                </tr>
+                <tr class="insertRow" data-bind="click: cancelInline.bind(),inlineAddProccess:[$data, $root.newData]" style="display: none">
+                    <th colspan="49">
+                        <input type="text" />
+                    </th>
+                </tr>
+            </thead>
+            <tbody data-bind="foreach: listDataItems, visible: listDataItems().length">
+                <!-- ko foreach: $data.PlantTPK -->
+                @*item template*@
+                <tr>
+                    <!-- ko if: $index() == 0 -->
+                    <td><span data-bind="text:$parent.ProcessGroup"></span></td>
+                    <!-- /ko -->
+                    <!-- ko if: $index() != 0 -->
+                    <td></td>
+                    <!-- /ko -->
+                    <td data-toggle="modal" data-target="#WorkerBrand" class="right" data-bind="text:$data.GroupCode, click:$root.ShowWorkerBrandAssignment.bind($parent,$data)"></td>
+                    <td class="right"><span data-bind="decimal:$data.WorkerRegister"></span></td>
+                    <td class="right"><span data-bind="decimal:$data.WorkerAvailable"></span></td>
+                    <td class="current right">
+                        <input type="text" class="form-control transparent right" data-bind="value:$data.Allocation, event:{change:$root.EditedRowCalculate.bind($parent,$data), click:$root.confirmSave, keydown:$root.EditKeyDown}" data-sktis-validation="decimal">
+                    </td>
+                    @*Monday*@
+                    <td class="right">
+                        <span data-bind="decimal:$data.PercentAttendance1"></span>
+                    </td>
+                    <td class="right"><span data-bind="decimal:$data.HistoricalCapacityWorker1"></span></td>
+                    <td class="right"><span data-bind="decimal:$data.HistoricalCapacityGroup1"></span></td>
+                    @*<td class="right"><span data-bind="text:$data.WIP1"></span></td>*@
+                    <td class="right"><span data-bind="decimal:$data.TargetSystem1"></span></td>
+                    <!-- ko if: $root.mondayEditable() == true -->
+                    <td class="current right">
+                        <input type="text" class="form-control transparent right" data-bind="value:$data.TargetManualMon, event:{change:$root.EditedRow.bind($parent,$data), click:$root.confirmCalculate, keydown:$root.EditKeyDown}, css:{ 'red-text' : $data.TargetManualMon() != $data.TargetSystem1() }" data-sktis-validation="decimal" />
+                    </td>
+                    <!-- /ko -->
+                    <!-- ko if: $root.mondayEditable() == false -->
+                    <td>
+                        <span data-bind="decimal: $data.TargetManualMon"></span>
+                    </td>
+                    <!-- /ko -->
+                    @*Tuesday*@
+                    <td class="right">
+                        <span data-bind="decimal:$data.PercentAttendance2"></span>
+                    </td>
+                    <td class="right"><span data-bind="decimal:$data.HistoricalCapacityWorker2"></span></td>
+                    <td class="right"><span data-bind="decimal:$data.HistoricalCapacityGroup2"></span></td>
+                    @*<td class="right"><span data-bind="text:$data.WIP2"></span></td>*@
+                    <td class="right"><span data-bind="decimal:$data.TargetSystem2"></span></td>
+                    <!-- ko if: $root.tuesdayEditable() == true -->
+                    <td class="current right">
+                        <input type="text" class="form-control transparent right" data-bind="value:$data.TargetManualTue, event:{change:$root.EditedRow.bind($parent,$data), click:$root.confirmCalculate, keydown:$root.EditKeyDown}, css:{ 'red-text' : $data.TargetManualTue() != $data.TargetSystem2() }" data-sktis-validation="decimal" />
+                    </td>
+                    <!-- /ko -->
+                    <!-- ko if: $root.tuesdayEditable() == false -->
+                    <td>
+                        <span data-bind="decimal: $data.TargetManualTue"></span>
+                    </td>
+                    <!-- /ko -->
+                    @*Wednesday*@
+                    <td class="right">
+                        <span data-bind="decimal:$data.PercentAttendance3"></span>
+                    </td>
+                    <td class="right"><span data-bind="decimal:$data.HistoricalCapacityWorker3"></span></td>
+                    <td class="right"><span data-bind="decimal:$data.HistoricalCapacityGroup3"></span></td>
+                    @*<td class="right"><span data-bind="text:$data.WIP3"></span></td>*@
+                    <td class="right"><span data-bind="decimal:$data.TargetSystem3"></span></td>
+                    <!-- ko if: $root.wednesdayEditable() == true -->
+                    <td class="current right">
+                        <input type="text" class="form-control transparent right" data-bind="value:$data.TargetManualWed, event:{change:$root.EditedRow.bind($parent,$data), click:$root.confirmCalculate, keydown:$root.EditKeyDown}, css:{ 'red-text' : $data.TargetManualWed() != $data.TargetSystem3() }" data-sktis-validation="decimal" />
+                    </td>
+                    <!-- /ko -->
+                    <!-- ko if: $root.wednesdayEditable() == false -->
+                    <td>
+                        <span data-bind="decimal: $data.TargetManualWed"></span>
+                    </td>
+                    <!-- /ko -->
+                    @*Thursday*@
+                    <td class="right">
+                        <span data-bind="decimal:$data.PercentAttendance4"></span>
+                    </td>
+                    <td class="right"><span data-bind="decimal:$data.HistoricalCapacityWorker4"></span></td>
+                    <td class="right"><span data-bind="decimal:$data.HistoricalCapacityGroup4"></span></td>
+                    @*<td class="right"><span data-bind="text:$data.WIP4"></span></td>*@
+                    <td class="right"><span data-bind="decimal:$data.TargetSystem4"></span></td>
+                    <!-- ko if: $root.thursdayEditable() == true -->
+                    <td class="current right">
+                        <input type="text" class="form-control transparent right" data-bind="value:$data.TargetManualThu, event:{change:$root.EditedRow.bind($parent,$data), click:$root.confirmCalculate, keydown:$root.EditKeyDown}, css:{ 'red-text' : $data.TargetManualThu() != $data.TargetSystem4() }" data-sktis-validation="decimal" />
+                    </td>
+                    <!-- /ko -->
+                    <!-- ko if: $root.thursdayEditable() == false -->
+                    <td>
+                        <span data-bind="decimal: $data.TargetManualThu"></span>
+                    </td>
+                    <!-- /ko -->
+                    @*Friday*@
+                    <td class="right">
+                        <span data-bind="decimal:$data.PercentAttendance5"></span>
+                    </td>
+                    <td class="right"><span data-bind="decimal:$data.HistoricalCapacityWorker5"></span></td>
+                    <td class="right"><span data-bind="decimal:$data.HistoricalCapacityGroup5"></span></td>
+                    @*<td class="right"><span data-bind="text:$data.WIP5"></span></td>*@
+                    <td class="right"><span data-bind="decimal:$data.TargetSystem5"></span></td>
+                    <!-- ko if: $root.fridayEditable() == true -->
+                    <td class="current right">
+                        <input type="text" class="form-control transparent right" data-bind="value:$data.TargetManualFri, event:{change:$root.EditedRow.bind($parent,$data), click:$root.confirmCalculate, keydown:$root.EditKeyDown}, css:{ 'red-text' : $data.TargetManualFri() != $data.TargetSystem5() }" data-sktis-validation="decimal" />
+                    </td>
+                    <!-- /ko -->
+                    <!-- ko if: $root.fridayEditable() == false -->
+                    <td>
+                        <span data-bind="decimal: $data.TargetManualFri"></span>
+                    </td>
+                    <!-- /ko -->
+                    @*Saturday*@
+                    <td class="right">
+                        <span data-bind="decimal:$data.PercentAttendance6"></span>
+                    </td>
+                    <td class="right"><span data-bind="decimal:$data.HistoricalCapacityWorker6"></span></td>
+                    <td class="right"><span data-bind="decimal:$data.HistoricalCapacityGroup6"></span></td>
+                    @*<td class="right"><span data-bind="text:$data.WIP6"></span></td>*@
+                    <td class="right"><span data-bind="decimal:$data.TargetSystem6"></span></td>
+                    <!-- ko if: $root.saturdayEditable() == true -->
+                    <td class="current right">
+                        <input type="text" class="form-control transparent right" data-bind="value:$data.TargetManualSat, event:{change:$root.EditedRow.bind($parent,$data), click:$root.confirmCalculate, keydown:$root.EditKeyDown}, css:{ 'red-text' : $data.TargetManualSat() != $data.TargetSystem6() }" data-sktis-validation="decimal" />
+                    </td>
+                    <!-- /ko -->
+                    <!-- ko if: $root.saturdayEditable() == false -->
+                    <td>
+                        <span data-bind="decimal: $data.TargetManualSat"></span>
+                    </td>
+                    <!-- /ko -->
+                    @*Sunday*@
+                    <td class="right">
+                        <span data-bind="decimal:$data.PercentAttendance7"></span>
+                    </td>
+                    <td class="right"><span data-bind="decimal:$data.HistoricalCapacityWorker7"></span></td>
+                    <td class="right"><span data-bind="decimal:$data.HistoricalCapacityGroup7"></span></td>
+                    @*<td class="right"><span data-bind="text:$data.WIP7"></span></td>*@
+                    <td class="right"><span data-bind="decimal:$data.TargetSystem7"></span></td>
+                    <!-- ko if: $root.sundayEditable() == true -->
+                    <td class="current right">
+                        <input type="text" class="form-control transparent right" data-bind="value:$data.TargetManualSun, event:{change:$root.EditedRow.bind($parent,$data), click:$root.confirmCalculate, keydown:$root.EditKeyDown}, css:{ 'red-text' : $data.TargetManualSun() != $data.TargetSystem7() }" data-sktis-validation="decimal" />
+                    </td>
+                    <!-- /ko -->
+                    <!-- ko if: $root.sundayEditable() == false -->
+                    <td>
+                        <span data-bind="decimal: $data.TargetManualSun"></span>
+                    </td>
+                    <!-- /ko -->
+
+                    <td class="right"><span data-bind="decimal:$data.TotalTargetSystem"></span></td>
+                    <td class="right"><span data-bind="decimal:$data.TotalTargetManual, css:{ 'red-text' : $data.TotalTargetManual() != $data.TotalTargetSystem() }"></span></td>
+                </tr>
+                <!-- /ko -->
+                <tr class="total">
+                    <td class="right">Total</td>
+                    <td class="right" data-bind="decimal: $data.TotalRow"></td>
+                    <td class="right" data-bind="decimal: $data.SubTotalWorkerRegister, precision:0"></td>
+                    <td class="right" data-bind="decimal: $data.SubTotalWorkerAvailable, precision:0"></td>
+                    <td class="right" data-bind="decimal: $data.SubTotal"></td>
+                    @*<td></td>*@
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td class="right" data-bind="decimal: $data.SubTotalSytem1"></td>
+                    <td class="right" data-bind="decimal: $data.SubTotalManual1, css:{ 'red-text' : $data.SubTotalSytem1() != $data.SubTotalManual1() }"></td>
+                    @*<td></td>*@
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td class="right" data-bind="decimal: $data.SubTotalSytem2"></td>
+                    <td class="right" data-bind="decimal: $data.SubTotalManual2, css:{ 'red-text' : $data.SubTotalSytem2() != $data.SubTotalManual2() }"></td>
+                    @*<td></td>*@
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td class="right" data-bind="decimal: $data.SubTotalSytem3"></td>
+                    <td class="right" data-bind="decimal: $data.SubTotalManual3, css:{ 'red-text' : $data.SubTotalSytem3() != $data.SubTotalManual3() }"></td>
+                    @*<td></td>*@
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td class="right" data-bind="decimal: $data.SubTotalSytem4"></td>
+                    <td class="right" data-bind="decimal: $data.SubTotalManual4, css:{ 'red-text' : $data.SubTotalSytem4() != $data.SubTotalManual4() }"></td>
+                    @*<td></td>*@
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td class="right" data-bind="decimal: $data.SubTotalSytem5"></td>
+                    <td class="right" data-bind="decimal: $data.SubTotalManual5, css:{ 'red-text' : $data.SubTotalSytem5() != $data.SubTotalManual5() }"></td>
+                    @*<td></td>*@
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td class="right" data-bind="decimal: $data.SubTotalSytem6"></td>
+                    <td class="right" data-bind="decimal: $data.SubTotalManual6, css:{ 'red-text' : $data.SubTotalSytem6() != $data.SubTotalManual6() }"></td>
+                    @*<td></td>*@
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td class="right" data-bind="decimal: $data.SubTotalSytem7"></td>
+                    <td class="right" data-bind="decimal: $data.SubTotalManual7, css:{ 'red-text' : $data.SubTotalSytem7() != $data.SubTotalManual7() }"></td>
+                    <td class="right" data-bind="decimal: $data.TargetSystemTotal"></td>
+                    <td class="right" data-bind="decimal: $data.TargetManualTotal, css:{ 'red-text' : $data.TargetManualTotal() != $data.TargetSystemTotal() }"></td>
+                </tr>
+            </tbody>
+            <tbody data-bind="visible: !listDataItems().length">
+                <tr>
+                    <td colspan="49" class="empty-row-message"><div class="loader"></div></td>
+                </tr>
+            </tbody>
+            <tfoot data-bind="visible: listDataItems().length">
+                <!-- Total BOX -->
+                <!-- ko foreach: CustomResults -->
+                <tr class="total">
+                    <td class="right">Total Box</td>
+                    <td class="right"></td>
+                    <td class="right"></td>
+                    <td class="right"></td>
+                    <td class="right"></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    @*<td></td>*@
+                    <td class="right" data-bind="decimal: $data.TargetSystem1"></td>
+                    <td class="right" data-bind="decimal: $data.TargetManual1"></td>
+                    @*<td></td>*@
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td class="right" data-bind="decimal: $data.TargetSystem2"></td>
+                    <td class="right" data-bind="decimal: $data.TargetManual2"></td>
+                    @*<td></td>*@
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td class="right" data-bind="decimal: $data.TargetSystem3"></td>
+                    <td class="right" data-bind="decimal: $data.TargetManual3"></td>
+                    @*<td></td>*@
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td class="right" data-bind="decimal: $data.TargetSystem4"></td>
+                    <td class="right" data-bind="decimal: $data.TargetManual4"></td>
+                    @*<td></td>*@
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td class="right" data-bind="decimal: $data.TargetSystem5"></td>
+                    <td class="right" data-bind="decimal: $data.TargetManual5"></td>
+                    @*<td></td>*@
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td class="right" data-bind="decimal: $data.TargetSystem6"></td>
+                    <td class="right" data-bind="decimal: $data.TargetManual6"></td>
+                    @*<td></td>*@
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td class="right" data-bind="decimal: $data.TargetSystem7"></td>
+                    <td class="right" data-bind="decimal: $data.TargetManual7"></td>
+                    <td class="right" data-bind="decimal: $data.TotalTargetSystem"></td>
+                    <td class="right" data-bind="decimal: $data.TotalTargetManual"></td>
+                </tr>
+                <!-- /ko -->
+            </tfoot>
+        </table>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="WipStock" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">WIP Stock</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="table-overflow">
+                        <table class="table table-striped" id="wips">
+                            <thead>
+                                <tr class="head">
+                                    <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                                    <th>Previous</th>
+                                    <th>Monday</th>
+                                    <th>Tuesday</th>
+                                    <th>Wednesday</th>
+                                    <th>Thursday</th>
+                                    <th>Friday</th>
+                                    <th>Saturday</th>
+                                    <th>Sunday</th>
+                                </tr>
+                            </thead>
+                            <tbody data-bind="foreach: listDataItems">
+                                <!-- ko if: $data.ShowInWIPStock -->
+                                <tr>
+                                    <td class="head"><span data-bind="text:$data.ProcessGroup"></span></td>
+                                    <td class="right"><span data-bind="decimal:$data.WIPPreviousValue"></span></td>
+                                    <!-- ko if: $root.mondayEditable() == true -->
+                                    <td class="current right"><input type="text" class="form-control transparent right" data-bind="value:$data.WIPStock1, event:{change:$root.EditedHeaderCalculate.bind($parent,$data)}" data-sktis-validation="decimal"></td>
+                                    <!-- /ko -->
+                                    <!-- ko if: $root.mondayEditable() == false -->
+                                    <td class="right"><span data-bind="decimal:$data.WIPStock1"></span></td>
+                                    <!-- /ko -->
+                                    <!-- ko if: $root.tuesdayEditable() == true -->
+                                    <td class="current right"><input type="text" class="form-control transparent right" data-bind="value:$data.WIPStock2, event:{change:$root.EditedHeaderCalculate.bind($parent,$data)}" data-sktis-validation="decimal"></td>
+                                    <!-- /ko -->
+                                    <!-- ko if: $root.tuesdayEditable() == false -->
+                                    <td class="right"><span data-bind="decimal:$data.WIPStock2"></span></td>
+                                    <!-- /ko -->
+                                    <!-- ko if: $root.wednesdayEditable() == true -->
+                                    <td class="current right"><input type="text" class="form-control transparent right" data-bind="value:$data.WIPStock3, event:{change:$root.EditedHeaderCalculate.bind($parent,$data)}" data-sktis-validation="decimal"></td>
+                                    <!-- /ko -->
+                                    <!-- ko if: $root.wednesdayEditable() == false -->
+                                    <td class="right"><span data-bind="decimal:$data.WIPStock3"></span></td>
+                                    <!-- /ko -->
+                                    <!-- ko if: $root.thursdayEditable() == true -->
+                                    <td class="current right"><input type="text" class="form-control transparent right" data-bind="value:$data.WIPStock4, event:{change:$root.EditedHeaderCalculate.bind($parent,$data)}" data-sktis-validation="decimal"></td>
+                                    <!-- /ko -->
+                                    <!-- ko if: $root.thursdayEditable() == false -->
+                                    <td class="right"><span data-bind="decimal:$data.WIPStock4"></span></td>
+                                    <!-- /ko -->
+                                    <!-- ko if: $root.fridayEditable() == true -->
+                                    <td class="current right"><input type="text" class="form-control transparent right" data-bind="value:$data.WIPStock5, event:{change:$root.EditedHeaderCalculate.bind($parent,$data)}" data-sktis-validation="decimal"></td>
+                                    <!-- /ko -->
+                                    <!-- ko if: $root.fridayEditable() == false -->
+                                    <td class="right"><span data-bind="decimal:$data.WIPStock5"></span></td>
+                                    <!-- /ko -->
+                                    <!-- ko if: $root.saturdayEditable() == true -->
+                                    <td class="current right"><input type="text" class="form-control transparent right" data-bind="value:$data.WIPStock6, event:{change:$root.EditedHeaderCalculate.bind($parent,$data)}" data-sktis-validation="decimal"></td>
+                                    <!-- /ko -->
+                                    <!-- ko if: $root.saturdayEditable() == false -->
+                                    <td class="right"><span data-bind="decimal:$data.WIPStock6"></span></td>
+                                    <!-- /ko -->
+                                    <!-- ko if: $root.sundayEditable() == true -->
+                                    <td class="current right"><input type="text" class="form-control transparent right" data-bind="value:$data.WIPStock7, event:{change:$root.EditedHeaderCalculate.bind($parent,$data)}" data-sktis-validation="decimal"></td>
+                                    <!-- /ko -->
+                                    <!-- ko if: $root.sundayEditable() == false -->
+                                    <td class="right"><span data-bind="decimal:$data.WIPStock7"></span></td>
+                                    <!-- /ko -->
+
+                                </tr>
+                                <!-- /ko -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" data-bind="enable: $root.WIPEnabled, click:$root.saveWIPStock">Save</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal" data-bind="click:$root.closeWIPStock">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Modal -->
+    <!-- Modal -->
+    <div class="modal fade" id="jkprocess" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">JK Process</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="table-overflow">
+                        <table class="table table-striped" id="wips">
+                            <thead>
+                                <tr class="head">
+                                    <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                                    <th>Monday</th>
+                                    <th>Tuesday</th>
+                                    <th>Wednesday</th>
+                                    <th>Thursday</th>
+                                    <th>Friday</th>
+                                    <th>Saturday</th>
+                                    <th>Sunday</th>
+                                </tr>
+                            </thead>
+                            <tbody data-bind="foreach: listDataItems">
+                                <tr>
+                                    <td class="head"><span data-bind="text:$data.ProcessGroup"></span></td>
+
+                                    <!-- ko if: $root.mondayEditable() == true -->
+                                    <td class="current right"><input type="text" class="form-control transparent right" data-bind="value:$data.JKProcess1, event:{click:$root.confirmSave}" data-sktis-validation="decimal"></td>
+                                    <!-- /ko -->
+                                    <!-- ko if: $root.mondayEditable() == false -->
+                                    <td class="right"><span data-bind="decimal:$data.JKProcess1"></span></td>
+                                    <!-- /ko -->
+                                    <!-- ko if: $root.tuesdayEditable() == true -->
+                                    <td class="current right"><input type="text" class="form-control transparent right" data-bind="value:$data.JKProcess2, event:{click:$root.confirmSave}" data-sktis-validation="decimal"></td>
+                                    <!-- /ko -->
+                                    <!-- ko if: $root.tuesdayEditable() == false -->
+                                    <td class="right"><span data-bind="decimal:$data.JKProcess2"></span></td>
+                                    <!-- /ko -->
+                                    <!-- ko if: $root.wednesdayEditable() == true -->
+                                    <td class="current right"><input type="text" class="form-control transparent right" data-bind="value:$data.JKProcess3, event:{click:$root.confirmSave}" data-sktis-validation="decimal"></td>
+                                    <!-- /ko -->
+                                    <!-- ko if: $root.wednesdayEditable() == false -->
+                                    <td class="right"><span data-bind="decimal:$data.JKProcess3"></span></td>
+                                    <!-- /ko -->
+                                    <!-- ko if: $root.thursdayEditable() == true -->
+                                    <td class="current right"><input type="text" class="form-control transparent right" data-bind="value:$data.JKProcess4, event:{click:$root.confirmSave}" data-sktis-validation="decimal"></td>
+                                    <!-- /ko -->
+                                    <!-- ko if: $root.thursdayEditable() == false -->
+                                    <td class="right"><span data-bind="decimal:$data.JKProcess4"></span></td>
+                                    <!-- /ko -->
+                                    <!-- ko if: $root.fridayEditable() == true -->
+                                    <td class="current right"><input type="text" class="form-control transparent right" data-bind="value:$data.JKProcess5, event:{click:$root.confirmSave}" data-sktis-validation="decimal"></td>
+                                    <!-- /ko -->
+                                    <!-- ko if: $root.fridayEditable() == false -->
+                                    <td class="right"><span data-bind="decimal:$data.JKProcess5"></span></td>
+                                    <!-- /ko -->
+                                    <!-- ko if: $root.saturdayEditable() == true -->
+                                    <td class="current right"><input type="text" class="form-control transparent right" data-bind="value:$data.JKProcess6, event:{click:$root.confirmSave}" data-sktis-validation="decimal"></td>
+                                    <!-- /ko -->
+                                    <!-- ko if: $root.saturdayEditable() == false -->
+                                    <td class="right"><span data-bind="decimal:$data.JKProcess6"></span></td>
+                                    <!-- /ko -->
+                                    <!-- ko if: $root.sundayEditable() == true -->
+                                    <td class="current right"><input type="text" class="form-control transparent right" data-bind="value:$data.JKProcess7, event:{click:$root.confirmSave}" data-sktis-validation="decimal"></td>
+                                    <!-- /ko -->
+                                    <!-- ko if: $root.sundayEditable() == false -->
+                                    <td class="right"><span data-bind="decimal:$data.JKProcess7"></span></td>
+                                    <!-- /ko -->
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-bind="enable: $root.JKEnabled, click:$root.saveJKProcess">Save</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal" data-bind="click:$root.closeJKProcess">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Modal -->
+    @Html.Partial("TransactionHistory")
+
+</div>
+<!-- Modal -->
+<div class="modal fade" id="WorkerBrand" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Worker Brand Assignment</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <label class="form-label col-lg-12">
+                        Employee Number
+                    </label>
+                    <div class="col-lg-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <div class="checkbox nomargin">
+                                    <label><input type="checkbox" data-bind="click: $root.selectAll, checked: $root.allSelected" name="check_all">Check All</label>
+                                </div>
+                            </div>
+                            <div class="panel-body scrolled" data-bind="foreach: workerBrandAssignmentDetails">
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" data-bind="checked: Status, click: $root.checkedAllorNot" name="checked" class="idRow">
+                                        <span data-bind="text: EmployeeNumber"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="btnsaveWorkerBrandAssignment" type="button" class="btn btn-default" data-dismiss="modal" data-bind="click: $root.saveWorkerBrandAssignment">Save</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Modal -->
+@section Scripts
+{
+    <script src="~/Scripts/app/globalfunctions.js" type="text/javascript"></script>
+    <script src="~/Scripts/common/app.GridViewModel.js" type="text/javascript"></script>
+    <script src="~/Scripts/common/app.Extenders.js" type="text/javascript"></script>
+    <script type="text/javascript">
+    (function(app) {
+        app.EditGrid = function() {
+            var self = this;
+            //Filter
+            self.isAlreadySubmitted = ko.observable(false);
+            self.firstInitFromUrl = ko.observable(false);
+            self.submitEnabled = ko.observable(true);
+            self.saveEnabled = ko.observable(true);
+            self.WIPEnabled = ko.observable(true);
+            self.JKEnabled = ko.observable(true);
+            self.EditedTargetManual = ko.observable(false);
+            self.EditedCanculation = ko.observable(false);
+
+            self.itemLocations = @Html.Raw(Json.Encode(@Model.PLNTChildLocationLookupList));
+            self.filterLocationCode = ko.observable($("#ddlFilterLocationCode").val());
+            self.filterLocationName = ko.observable();
+            self.filterUnitCode = ko.observable(@Model.DefaultUnitCode);
+            self.filterBrandCode = ko.observable('@Model.DefaultBrandCode');
+            self.filterKPSYear = ko.observable(@Model.DefaultYear);
+            self.filterKPSWeek = ko.observable(@Model.DefaultWeek);
+            self.UnitCodeSelectList = ko.observableArray([]);
+            self.BrandCodeSelectList = ko.observableArray([]);
+            self.KPSWeekSelectList = ko.observableArray([]);
+            self.stickPerBox = ko.observable(0);
+            self.ButtonCalculate = ko.observable(false);
+
+            self.filterShift = ko.observable(1);
+            self.shiftSelectList = ko.observableArray();
+
+            //target manual per day
+            self.totalTargetManualTPUMon = ko.observable(0);
+            self.totalTargetManualTPUTue = ko.observable(0);
+            self.totalTargetManualTPUWed = ko.observable(0);
+            self.totalTargetManualTPUThu = ko.observable(0);
+            self.totalTargetManualTPUFri = ko.observable(0);
+            self.totalTargetManualTPUSat = ko.observable(0);
+            self.totalTargetManualTPUSun = ko.observable(0);
+
+            self.filterCurrentDayForward = ko.observable('@Model.TodayDate');
+            self.isFilterCurrentDayForward = ko.observable(false);
+            self.filterCurrenDayEnabled = ko.observable(true);
+
+            self.onCurrentDayForwardChange = function(item) {
+                if (self.filterCurrenDayEnabled() == true && item() == true){
+                    var date = self.filterCurrentDayForward();
+                    var day = moment(date, "DD/MM/YYYY").weekday();
+                    switch(day)
+                    {
+                        case 0:
+                            self.mondayEditable(false);
+                            self.tuesdayEditable(false);
+                            self.wednesdayEditable(false);
+                            self.thursdayEditable(false);
+                            self.fridayEditable(false);
+                            self.saturdayEditable(false);
+                            self.sundayEditable(false);
+                            break;
+                        case 1:
+                            self.mondayEditable(true);
+                            self.tuesdayEditable(true);
+                            self.wednesdayEditable(true);
+                            self.thursdayEditable(true);
+                            self.fridayEditable(true);
+                            self.saturdayEditable(true);
+                            self.sundayEditable(true);
+                            break;
+                        case 2:
+                            self.mondayEditable(false);
+                            self.tuesdayEditable(true);
+                            self.wednesdayEditable(true);
+                            self.thursdayEditable(true);
+                            self.fridayEditable(true);
+                            self.saturdayEditable(true);
+                            self.sundayEditable(true);
+                            break;
+                        case 3:
+                            self.mondayEditable(false);
+                            self.tuesdayEditable(false);
+                            self.wednesdayEditable(true);
+                            self.thursdayEditable(true);
+                            self.fridayEditable(true);
+                            self.saturdayEditable(true);
+                            self.sundayEditable(true);
+                            break;
+                        case 4:
+                            self.mondayEditable(false);
+                            self.tuesdayEditable(false);
+                            self.wednesdayEditable(false);
+                            self.thursdayEditable(true);
+                            self.fridayEditable(true);
+                            self.saturdayEditable(true);
+                            self.sundayEditable(true);
+                            break;
+                        case 5:
+                            self.mondayEditable(false);
+                            self.tuesdayEditable(false);
+                            self.wednesdayEditable(false);
+                            self.thursdayEditable(false);
+                            self.fridayEditable(true);
+                            self.saturdayEditable(true);
+                            self.sundayEditable(true);
+                            break;
+                        case 6:
+                            self.mondayEditable(false);
+                            self.tuesdayEditable(false);
+                            self.wednesdayEditable(false);
+                            self.thursdayEditable(false);
+                            self.fridayEditable(false);
+                            self.saturdayEditable(true);
+                            self.sundayEditable(true);
+                            break;
+                    }
+                }
+                else if(self.filterCurrenDayEnabled() == true && item() == false){
+                    self.mondayEditable(true);
+                    self.tuesdayEditable(true);
+                    self.wednesdayEditable(true);
+                    self.thursdayEditable(true);
+                    self.fridayEditable(true);
+                    self.saturdayEditable(true);
+                    self.sundayEditable(true);
+                }
+                //return true;
+            }
+
+            self.setDateRange = function() {
+                $.ajax({
+                    url: @Html.BaseUrl("PlanningPlantTPK/GetDateByYearWeek"),
+                    type: 'GET',
+                    cache: false,
+                    contentType: 'application/json',
+                    data: { year: self.filterKPSYear(), week: self.filterKPSWeek() },
+                    dataType: 'json',
+                    success: function(data) {
+                        if((self.filterKPSWeek() > @Model.DefaultWeek) || (self.filterKPSWeek() < @Model.DefaultWeek)){
+                            $('#filterCurrentDayForward').data("DateTimePicker").options({
+                                //date: moment(data.StartDate),
+                                maxDate: moment(data.EndDate),
+                                minDate: moment(data.StartDate),
+                            });
+                        } else if((self.filterKPSWeek() === @Model.DefaultWeek)) {
+                            if(moment(moment(data.EndDate).format('YYYY-MM-DD')) > moment(moment(data.TodayDate).format('YYYY-MM-DD')))
+                            {
+                                $('#filterCurrentDayForward').data("DateTimePicker").options({
+                                    //date: moment(data.StartDate),
+                                    maxDate: moment(data.EndDate),
+                                    minDate: moment(data.TodayDate),
+                                });
+                            }
+                        }
+                        if ((self.filterKPSWeek() === @Model.DefaultWeek)){
+                            if(moment(moment(data.EndDate).format('YYYY-MM-DD')).isSame(moment().format('YYYY-MM-DD')))
+                                self.filterCurrentDayForward(moment(data.EndDate).format("DD/MM/YYYY"));
+                            else
+                                self.filterCurrentDayForward('@Model.TodayDate');
+                        }else{
+                            self.filterCurrentDayForward(moment(data.StartDate).format("DD/MM/YYYY"));
+                        };
+                    }
+                });
+                //$('#filterCurrentDayForward').data("DateTimePicker").options({
+                //    minDate: moment().add(1, 'days').toDate()
+                //});
+            };
+            $(document).ready(function() {
+                //self.setDateRange();
+                //self.getBrandCodeList;
+            });
+
+            // State
+            self.KPSWeekReady = ko.observable(false);
+
+            //global value
+            self.TPKNumber = ko.computed(function() {
+                return 'TPK/' + self.filterLocationCode() + '/' + self.filterBrandCode() + '/'
+                    + self.filterUnitCode() + '/' + self.filterKPSYear() + '/' + self.filterKPSWeek() + '/' + (self.filterShift()?self.filterShift():1);
+            });
+
+            //excel
+            self.filterExcelLocationCode = self.filterLocationCode();
+            self.filterExcelBrandCode = self.filterBrandCode();
+            self.filterExcelUnitCode = self.filterUnitCode();
+            self.filterExcelKPSYear = self.filterKPSYear();
+            self.filterExcelKPSWeek = self.filterKPSWeek();
+            self.filterExcelShift = self.filterShift();
+
+            //event on location dropdown change
+            self.onLocationCodeChange = function() {
+                self.getLocationNameFilter();
+                self.getUnitCodeList();
+                self.getBrandCodeList();
+                self.getShift();
+            };
+
+            self.getShift = function(){
+                $.ajax({
+                    url: @Html.BaseUrl("PlanningPlantTPK/GetShift"),
+                    type: 'GET',
+                    async: false,
+                    cache: false,
+                    contentType: 'application/json',
+                    data: {
+                        locationCode: self.filterLocationCode()
+                    },
+                    dataType: 'json',
+                    success: function(data) {
+                        //console.log(data.length);
+                        if(data.length > 1){
+                            $('#shiftFilter').show();
+                            $('#ddlShift').find('option').remove();
+                            self.shiftSelectList(data);
+                            self.filterShift(data[0].Value);
+                            $('#ddlShift').selectpicker('refresh');
+                        }else{
+                            self.filterShift(1);
+                            $('#shiftFilter').hide();
+                        }
+
+                        if(self.firstInitFromUrl()){
+                            self.filterShift('@Model.Param4Shift');
+                        }
+                    }
+                });
+            };
+
+            //get location name by location code
+            self.getLocationNameFilter = function() {
+                for (var i = 0; i < self.itemLocations.length; i++) {
+                    if (self.itemLocations[i].LocationCode == self.filterLocationCode()) {
+                        self.filterLocationName(self.itemLocations[i].LocationName);
+                        break;
+                    }
+                }
+            };
+
+            self.onKPSYearChange = function() {
+                if ( self.KPSWeekReady() )
+                {
+                    self.getBrandCodeList();
+                }
+                self.getKPSWeekList();
+            }
+
+            self.onKPSWeekChange = function()
+            {
+                if ( self.KPSWeekReady() )
+                    self.getBrandCodeList();
+                self.setDateRange();
+            }
+
+            //get brand group code by location
+            self.getBrandCodeList = function() {
+                $.ajax({
+                    url: @Html.BaseUrl("PlanningPlantTPK/GetBrandCodeByLocationYearWeek"),
+                    type: 'GET',
+                    async: false,
+                    cache: false,
+                    contentType: 'application/json',
+                    data: {
+                        locationCode: self.filterLocationCode(),
+                        KPSYear: self.filterKPSYear,
+                        KPSWeek: self.filterKPSWeek
+                    },
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#ddlFilterBrandCode').find('option').remove();
+                        $('#ddlFilterBrandCode').selectpicker('refresh');
+                        var brandCodeModel = [];
+                        $.each(data, function(index, value) {
+                            brandCodeModel.push({ "Text": value, "Value": value });
+                        });
+                        self.BrandCodeSelectList(brandCodeModel);
+
+                        if(self.firstInitFromUrl()){
+                            self.filterBrandCode('@Model.Param3BrandCode');
+                        }else{
+                            if(self.BrandCodeSelectList().length > 0)
+                            {
+                                self.filterBrandCode(self.BrandCodeSelectList()[0].Value);
+                                self.GetMasterGenBrandCodeByBrandCode();
+                            }
+                            else
+                            {
+                                self.filterBrandCode('');
+                            }
+                        }
+
+                    }
+                });
+            };
+
+            //get shift by location
+            self.getUnitCodeList = function() {
+                $.ajax({
+                    url: @Html.BaseUrl("PlanningPlantTPK/GetUnitCodeByLocationCode"),
+                    type: 'GET',
+                    async: false,
+                    cache: false,
+                    contentType: 'application/json',
+                    data: { locationCode: self.filterLocationCode() },
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#ddlFilterUnitCode').find('option').remove();
+                        $('#ddlFilterUnitCode').selectpicker('refresh');
+                        var unitCodeModel = [];
+                        $.each(data, function(index, value) {
+                            unitCodeModel.push({ "Text": value.Text, "Value": value.Value });
+                        });
+                        self.UnitCodeSelectList(unitCodeModel);
+
+                        //set default
+                        self.filterUnitCode(self.UnitCodeSelectList()[0].Value);
+                        //console.log(self.firstInitFromUrl());
+                        if(self.firstInitFromUrl()){
+                            //console.log("XXX");
+                            self.filterUnitCode('@Model.Param2UnitCode');
+                        }
+                    }
+                });
+            };
+
+            //get kpsweek by year
+            self.getKPSWeekList = function(cb) {
+                $.ajax({
+                    url: @Html.BaseUrl("PlanningPlantTPK/GetKPSWeek"),
+                    type: 'GET',
+                    cache: false,
+                    contentType: 'application/json',
+                    data: { year: self.filterKPSYear() },
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#ddlKPSWeekFilter').find('option').remove();
+                        $('#ddlKPSWeekFilter').selectpicker('refresh');
+                        var kpsWeekModel = [];
+                        $.each(data, function(index, value) {
+                            kpsWeekModel.push({ "Text": value, "Value": value });
+                        });
+                        self.KPSWeekSelectList(kpsWeekModel);
+                        self.KPSWeekReady(true);
+
+                        if(self.firstInitFromUrl()){
+                            self.filterKPSWeek('@Model.Param6KPSWeek');
+                        }else{
+                            //set default
+                            self.filterKPSWeek(@Model.DefaultWeek);
+                        }
+
+                        if (typeof cb == 'function') cb();
+                    }
+                });
+            };
+
+            //get total target tpu
+            self.GetTotalTargetManualTPU = function() {
+                $.ajax({
+                    url: @Html.BaseUrl("PlanningPlantTPK/GetTargetManualTPU"),
+                    type: 'GET',
+                    cache: false,
+                    contentType: 'application/json',
+                    data: {
+                        locationCode: self.filterLocationCode,
+                        brandCode: self.filterBrandCode,
+                        unitCode: self.filterUnitCode,
+                        year: self.filterKPSYear,
+                        week: self.filterKPSWeek
+                    },
+                    dataType: 'json',
+                    success: function(data) {
+                        if (data != null) {
+                            self.totalTargetManualTPUMon(data.TargetManual1);
+                            self.totalTargetManualTPUTue(data.TargetManual2);
+                            self.totalTargetManualTPUWed(data.TargetManual3);
+                            self.totalTargetManualTPUThu(data.TargetManual4);
+                            self.totalTargetManualTPUFri(data.TargetManual5);
+                            self.totalTargetManualTPUSat(data.TargetManual6);
+                            self.totalTargetManualTPUSun(data.TargetManual7);
+                        }
+
+                    }
+                });
+            };
+
+            self.workerBrandAssignmentDetails = ko.observableArray([]);
+            self.ShowWorkerBrandAssignment = function(event) {
+                var filter = {
+                    "groupCode": event.GroupCode(),
+                    "processSettingsCode": event.ProcessGroup(),
+                    "year": self.filterKPSYear(),
+                    "week": self.filterKPSWeek(),
+                    "unitCode": self.filterUnitCode(),
+                    "locationCode": self.filterLocationCode(),
+                    "brandCode": self.filterBrandCode(),
+                    "tPkPlantStartProdDate": event.TPKPlantStartProductionDate(),
+                    "shift": self.filterShift()
+                };
+                $.ajax({
+                    url: @Html.BaseUrl("PlanningPlantTPK/GetWorkerBrandAssigments"),
+                    type: 'POST',
+                    cache: false,
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    data: JSON.stringify(filter),
+                    success: function(data) {
+                        self.allSelected(true);
+                        var list = [];
+                        $.each(data, function(index, value) {
+                            // define observable status
+                            var status = ko.observable(value.Status);
+                            list.push({
+                                "EmployeeNumber": value.EmployeeNumber,
+                                "Status": status,
+                                "KPSYear": self.filterKPSYear(),
+                                "KPSWeek": self.filterKPSWeek(),
+                                "ProcessGroup": event.ProcessGroup(),
+                                "UnitCode": self.filterUnitCode(),
+                                "LocationCode": self.filterLocationCode(),
+                                "BrandCode": self.filterBrandCode(),
+                                "GroupCode": event.GroupCode(),
+                                "Shift": self.filterShift(),
+                                "TPKPlantStartProductionDate": event.TPKPlantStartProductionDate(),
+                                "EmployeeID": value.EmployeeID
+                            });
+                        });
+                        self.workerBrandAssignmentDetails(list);
+                        self.checkedAllorNot();
+                        //console.log(self.workerBrandAssignmentDetails());
+                    }
+                });
+            };
+
+            self.confirmSave = function(){
+                if(!self.EditedTargetManual())
+                    return;
+                if(confirm("Save All Target Manual?")){
+                    self.saveData();
+                }else{
+                    self.search();
+                    self.EditedTargetManual(false);
+                }
+            }
+
+            self.confirmCalculate = function(){
+                if(!self.EditedCanculation())
+                    return;
+                if(confirm("Do you want Calculate?")){
+                    self.CalculateData();
+                }else{
+                    self.search();
+                    self.EditedCanculation(false);
+                }
+            }
+
+            self.EditedRow = function(event) {
+                self.EditedTargetManual(true);
+                self.saveEnabled(true);
+                self.submitEnabled(false);
+                //event.Message('true');
+            }
+
+            self.EditedRowCalculate = function(event) {
+                self.EditedCanculation(true);
+                self.ButtonCalculate(true);
+                $.each(self.historyGridView.listDataItems(), function(i, item) {
+                    if(item.action() == 'Submit'){
+                        self.isAlreadySubmitted(true);
+                    }
+                });
+                if(self.isAlreadySubmitted()){
+                    self.filterCurrenDayEnabled(true);
+                    self.isFilterCurrentDayForward(true);
+                }
+                self.saveEnabled(false);
+                self.submitEnabled(false);
+                //event.Message('true');
+            };
+
+            self.EditedHeaderCalculate = function(event) {
+                self.ButtonCalculate(false);
+            };
+
+            self.saveWorkerBrandAssignment = function() {
+                var datas = ko.toJSON(self.workerBrandAssignmentDetails());
+                $.ajax({
+                    url: @Html.BaseUrl("PlanningPlantTPK/SaveWorkerBrandAssignment"),
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: datas,
+                    dataType: 'json',
+                    success: function(data) {
+                        //SKTIS.Helper.ResponseNotification(value, "Save TPK", value.ProcessGroup);
+                        console.log('Worker Brand Assignment Success');
+                    }
+                });
+            };
+
+            // observe variable jang togle all checked
+            self.allSelected = ko.observable('');
+
+            // pungsi buat toggle all checked atau unchecked
+            self.selectAll = function() {
+                var all = self.allSelected();
+                ko.utils.arrayForEach(self.workerBrandAssignmentDetails(), function(item) {
+                    item.Status(!all);
+                });
+                return true;
+            };
+
+            // Child check's will affect the parent Check All control
+            self.checkedAllorNot = function(){
+                var check = true;
+                ko.utils.arrayForEach(self.workerBrandAssignmentDetails(), function(item) {
+                    check = check && item.Status();
+                });
+                if(check)
+                    self.allSelected(true);
+                else
+                    self.allSelected(false);
+                return true;
+            };
+
+            // Gridview Initialization
+            self.gridView = new app.GridViewModel({
+                Criteria: {
+                    PageSize: 10,
+                    PageIndex: 1,
+                    SortExpression: "ProcessGroup",
+                    SortOrder: "DESC",
+                    LocationCode: self.filterLocationCode,
+                    BrandCode: self.filterBrandCode,
+                    UnitCode: self.filterUnitCode,
+                    KPSYear: self.filterKPSYear,
+                    KPSWeek: self.filterKPSWeek,
+                    Shift: self.filterShift
+                },
+                DataSourceUrl: @Html.BaseUrl("PlanningPlantTPK/GetPlantTPKs"),
+                InlineEdit: true,
+                InsertRowFocusedControlIndex: 0
+
+            });
+
+            function planTPK(data) {
+                selfModel = this;
+                ko.mapping.fromJS(data, {}, selfModel);
+            };
+
+            //calculate historical capacity group
+            function getHistoricalCapacityGroup(workerAlocation, capacityWorker) {
+                var result = parseToFloat(workerAlocation) * parseToFloat(capacityWorker);
+                return result;
+            };
+
+            //get target system by bobot
+            function getTargetSystemByBobot(bobot, totalBobot, totalTarget) {
+                return parseToFloat((bobot / totalBobot) * totalTarget);
+            };
+
+            //get total bobot system per day
+            function getTotalBobotSystemAllGroupInOneDay(bobotFieldName, processName) {
+                var result = 0;
+
+                var process = ko.utils.arrayFirst(self.gridView.listDataItems(), function(item) {
+                    return item.ProcessGroup().toLowerCase() === processName;
+                });
+
+                if (process != null) {
+                    $.each(process.PlantTPK, function(k, value) {
+                        result += parseToFloat(value[bobotFieldName]());
+                    });
+                };
+
+                return result;
+            }
+
+            //calculate target system and manual
+            function setTarget() {
+                return;
+                if (self.gridView.listDataItems().length < 1)
+                    return;
+
+                //get total bobot system ROLLING all group per day
+                var totalBobotSystemAllGroupMon = getTotalBobotSystemAllGroupInOneDay('bobotPerGroup1', SKTIS.Constant.ProcessGroup.ROLLING);
+                var totalBobotSystemAllGroupTue = getTotalBobotSystemAllGroupInOneDay('bobotPerGroup2', SKTIS.Constant.ProcessGroup.ROLLING);
+                var totalBobotSystemAllGroupWed = getTotalBobotSystemAllGroupInOneDay('bobotPerGroup3', SKTIS.Constant.ProcessGroup.ROLLING);
+                var totalBobotSystemAllGroupThu = getTotalBobotSystemAllGroupInOneDay('bobotPerGroup4', SKTIS.Constant.ProcessGroup.ROLLING);
+                var totalBobotSystemAllGroupFri = getTotalBobotSystemAllGroupInOneDay('bobotPerGroup5', SKTIS.Constant.ProcessGroup.ROLLING);
+                var totalBobotSystemAllGroupSat = getTotalBobotSystemAllGroupInOneDay('bobotPerGroup6', SKTIS.Constant.ProcessGroup.ROLLING);
+                var totalBobotSystemAllGroupSun = getTotalBobotSystemAllGroupInOneDay('bobotPerGroup7', SKTIS.Constant.ProcessGroup.ROLLING);
+
+                //rolling
+                var rolling = ko.utils.arrayFirst(self.gridView.listDataItems(), function(item) {
+                    return item.ProcessGroup().toLowerCase() === SKTIS.Constant.ProcessGroup.ROLLING;
+                });
+
+                var totalTargetSystemRollingMon = 0;
+                var totalTargetSystemRollingTue = 0;
+                var totalTargetSystemRollingWed = 0;
+                var totalTargetSystemRollingThu = 0;
+                var totalTargetSystemRollingFri = 0;
+                var totalTargetSystemRollingSat = 0;
+                var totalTargetSystemRollingSun = 0;
+
+                if (rolling != null) {
+                    //calculate target system rolling
+                    $.each(rolling.PlantTPK, function(k, value) {
+                        var targetSystemMon = getTargetSystemByBobot(value.bobotPerGroup1(), totalBobotSystemAllGroupMon, self.totalTargetManualTPUMon());
+                        value.TargetSystem1(targetSystemMon);
+                        value.TargetManual1(targetSystemMon);
+                        totalTargetSystemRollingMon += targetSystemMon;
+
+                        var targetSystemTue = getTargetSystemByBobot(value.bobotPerGroup2(), totalBobotSystemAllGroupTue, self.totalTargetManualTPUTue());
+                        value.TargetSystem2(targetSystemTue);
+                        value.TargetManual2(targetSystemTue);
+                        totalTargetSystemRollingTue += targetSystemTue;
+
+                        var targetSystemWed = getTargetSystemByBobot(value.bobotPerGroup3(), totalBobotSystemAllGroupWed, self.totalTargetManualTPUWed());
+                        value.TargetSystem3(targetSystemWed);
+                        value.TargetManual3(targetSystemWed);
+                        totalTargetSystemRollingWed += targetSystemWed;
+
+                        var targetSystemThu = getTargetSystemByBobot(value.bobotPerGroup4(), totalBobotSystemAllGroupThu, self.totalTargetManualTPUThu());
+                        value.TargetSystem4(targetSystemThu);
+                        value.TargetManual4(targetSystemThu);
+                        totalTargetSystemRollingThu += targetSystemThu;
+
+                        var targetSystemFri = getTargetSystemByBobot(value.bobotPerGroup5(), totalBobotSystemAllGroupFri, self.totalTargetManualTPUFri());
+                        value.TargetSystem5(targetSystemFri);
+                        value.TargetManual5(targetSystemFri);
+                        totalTargetSystemRollingFri += targetSystemFri;
+
+                        var targetSystemSat = getTargetSystemByBobot(value.bobotPerGroup6(), totalBobotSystemAllGroupSat, self.totalTargetManualTPUSat());
+                        value.TargetSystem6(targetSystemSat);
+                        value.TargetManual6(targetSystemSat);
+                        totalTargetSystemRollingSat += targetSystemSat;
+
+                        var targetSystemSun = getTargetSystemByBobot(value.bobotPerGroup7(), totalBobotSystemAllGroupSun, self.totalTargetManualTPUSun());
+                        value.TargetSystem7(targetSystemSun);
+                        value.TargetManual7(targetSystemSun);
+                        totalTargetSystemRollingSun += targetSystemSun;
+                    });
+                };
+
+                var processBesidesRolling = ko.utils.arrayFilter(self.gridView.listDataItems(), function(item) {
+                    return item.ProcessGroup().toLowerCase() !== SKTIS.Constant.ProcessGroup.ROLLING;
+                });
+
+                if (processBesidesRolling.length > 0) {
+                    $.each(processBesidesRolling, function(k, item) {
+
+                        //get total bobot system all group per day per process
+                        totalBobotSystemAllGroupMon = getTotalBobotSystemAllGroupInOneDay('bobotPerGroup1', item.ProcessGroup().toLowerCase());
+                        totalBobotSystemAllGroupTue = getTotalBobotSystemAllGroupInOneDay('bobotPerGroup2', item.ProcessGroup().toLowerCase());
+                        totalBobotSystemAllGroupWed = getTotalBobotSystemAllGroupInOneDay('bobotPerGroup3', item.ProcessGroup().toLowerCase());
+                        totalBobotSystemAllGroupThu = getTotalBobotSystemAllGroupInOneDay('bobotPerGroup4', item.ProcessGroup().toLowerCase());
+                        totalBobotSystemAllGroupFri = getTotalBobotSystemAllGroupInOneDay('bobotPerGroup5', item.ProcessGroup().toLowerCase());
+                        totalBobotSystemAllGroupSat = getTotalBobotSystemAllGroupInOneDay('bobotPerGroup6', item.ProcessGroup().toLowerCase());
+                        totalBobotSystemAllGroupSun = getTotalBobotSystemAllGroupInOneDay('bobotPerGroup7', item.ProcessGroup().toLowerCase());
+
+                        $.each(item.PlantTPK, function(k, value) {
+                            var targetSystemMon = getTargetSystemByBobot(value.bobotPerGroup1(), totalBobotSystemAllGroupMon, totalTargetSystemRollingMon);
+                            value.TargetSystem1(targetSystemMon);
+                            value.TargetManual1(targetSystemMon);
+
+                            var targetSystemTue = getTargetSystemByBobot(value.bobotPerGroup2(), totalBobotSystemAllGroupTue, totalTargetSystemRollingTue);
+                            value.TargetSystem2(targetSystemTue);
+                            value.TargetManual2(targetSystemTue);
+
+                            var targetSystemWed = getTargetSystemByBobot(value.bobotPerGroup3(), totalBobotSystemAllGroupWed, totalTargetSystemRollingWed);
+                            value.TargetSystem3(targetSystemWed);
+                            value.TargetManual3(targetSystemWed);
+
+                            var targetSystemThu = getTargetSystemByBobot(value.bobotPerGroup4(), totalBobotSystemAllGroupThu, totalTargetSystemRollingThu);
+                            value.TargetSystem4(targetSystemThu);
+                            value.TargetManual4(targetSystemThu);
+
+                            var targetSystemFri = getTargetSystemByBobot(value.bobotPerGroup5(), totalBobotSystemAllGroupFri, totalTargetSystemRollingFri);
+                            value.TargetSystem5(targetSystemFri);
+                            value.TargetManual5(targetSystemFri);
+
+                            var targetSystemSat = getTargetSystemByBobot(value.bobotPerGroup6(), totalBobotSystemAllGroupSat, totalTargetSystemRollingSat);
+                            value.TargetSystem6(targetSystemSat);
+                            value.TargetManual6(targetSystemSat);
+
+                            var targetSystemSun = getTargetSystemByBobot(value.bobotPerGroup7(), totalBobotSystemAllGroupSun, totalTargetSystemRollingSun);
+                            value.TargetSystem7(targetSystemSun);
+                            value.TargetManual7(targetSystemSun);
+                        });
+                    });
+                };
+            };
+
+            function recalculateAllTarget() {
+                return;
+                if (self.gridView.listDataItems().length < 1)
+                    return;
+                //get total bobot system ROLLING all group per day
+                var totalBobotSystemAllGroupMon = getTotalBobotSystemAllGroupInOneDay('bobotPerGroup1', SKTIS.Constant.ProcessGroup.ROLLING);
+                var totalBobotSystemAllGroupTue = getTotalBobotSystemAllGroupInOneDay('bobotPerGroup2', SKTIS.Constant.ProcessGroup.ROLLING);
+                var totalBobotSystemAllGroupWed = getTotalBobotSystemAllGroupInOneDay('bobotPerGroup3', SKTIS.Constant.ProcessGroup.ROLLING);
+                var totalBobotSystemAllGroupThu = getTotalBobotSystemAllGroupInOneDay('bobotPerGroup4', SKTIS.Constant.ProcessGroup.ROLLING);
+                var totalBobotSystemAllGroupFri = getTotalBobotSystemAllGroupInOneDay('bobotPerGroup5', SKTIS.Constant.ProcessGroup.ROLLING);
+                var totalBobotSystemAllGroupSat = getTotalBobotSystemAllGroupInOneDay('bobotPerGroup6', SKTIS.Constant.ProcessGroup.ROLLING);
+                var totalBobotSystemAllGroupSun = getTotalBobotSystemAllGroupInOneDay('bobotPerGroup7', SKTIS.Constant.ProcessGroup.ROLLING);
+
+                //rolling
+                var rolling = ko.utils.arrayFirst(self.gridView.listDataItems(), function(item) {
+                    return item.ProcessGroup().toLowerCase() === SKTIS.Constant.ProcessGroup.ROLLING;
+                });
+
+                var totalTargetSystemRollingMon = 0;
+                var totalTargetSystemRollingTue = 0;
+                var totalTargetSystemRollingWed = 0;
+                var totalTargetSystemRollingThu = 0;
+                var totalTargetSystemRollingFri = 0;
+                var totalTargetSystemRollingSat = 0;
+                var totalTargetSystemRollingSun = 0;
+
+                if (rolling != null) {
+                    //calculate target system rolling
+                    $.each(rolling.PlantTPK, function(k, value) {
+                        var targetSystemMon = getTargetSystemByBobot(value.TargetManual1(), totalBobotSystemAllGroupMon, self.totalTargetManualTPUMon());
+                        value.TargetSystem1(targetSystemMon);
+                        value.TargetManual1(targetSystemMon);
+                        totalTargetSystemRollingMon += targetSystemMon;
+
+                        var targetSystemTue = getTargetSystemByBobot(value.TargetManual2(), totalBobotSystemAllGroupTue, self.totalTargetManualTPUTue());
+                        value.TargetSystem2(targetSystemTue);
+                        value.TargetManual2(targetSystemTue);
+                        totalTargetSystemRollingTue += targetSystemTue;
+
+                        var targetSystemWed = getTargetSystemByBobot(value.TargetManual3(), totalBobotSystemAllGroupWed, self.totalTargetManualTPUWed());
+                        value.TargetSystem3(targetSystemWed);
+                        value.TargetManual3(targetSystemWed);
+                        totalTargetSystemRollingWed += targetSystemWed;
+
+                        var targetSystemThu = getTargetSystemByBobot(value.TargetManual4(), totalBobotSystemAllGroupThu, self.totalTargetManualTPUThu());
+                        value.TargetSystem4(targetSystemThu);
+                        value.TargetManual4(targetSystemThu);
+                        totalTargetSystemRollingThu += targetSystemThu;
+
+                        var targetSystemFri = getTargetSystemByBobot(value.TargetManual4(), totalBobotSystemAllGroupFri, self.totalTargetManualTPUFri());
+                        value.TargetSystem5(targetSystemFri);
+                        value.TargetManual5(targetSystemFri);
+                        totalTargetSystemRollingFri += targetSystemFri;
+
+                        var targetSystemSat = getTargetSystemByBobot(value.TargetManual6(), totalBobotSystemAllGroupSat, self.totalTargetManualTPUSat());
+                        value.TargetSystem6(targetSystemSat);
+                        value.TargetManual6(targetSystemSat);
+                        totalTargetSystemRollingSat += targetSystemSat;
+
+                        var targetSystemSun = getTargetSystemByBobot(value.TargetManual7(), totalBobotSystemAllGroupSun, self.totalTargetManualTPUSun());
+                        value.TargetSystem7(targetSystemSun);
+                        value.TargetManual7(targetSystemSun);
+                        totalTargetSystemRollingSun += targetSystemSun;
+                    });
+                };
+
+                var processBesidesRolling = ko.utils.arrayFilter(self.gridView.listDataItems(), function(item) {
+                    return item.ProcessGroup().toLowerCase() !== SKTIS.Constant.ProcessGroup.ROLLING;
+                });
+
+                if (processBesidesRolling.length > 0) {
+                    $.each(processBesidesRolling, function(k, item) {
+
+                        //get total bobot system all group per day per process
+                        totalBobotSystemAllGroupMon = getTotalBobotSystemAllGroupInOneDay('bobotPerGroup1', item.ProcessGroup().toLowerCase());
+                        totalBobotSystemAllGroupTue = getTotalBobotSystemAllGroupInOneDay('bobotPerGroup2', item.ProcessGroup().toLowerCase());
+                        totalBobotSystemAllGroupWed = getTotalBobotSystemAllGroupInOneDay('bobotPerGroup3', item.ProcessGroup().toLowerCase());
+                        totalBobotSystemAllGroupThu = getTotalBobotSystemAllGroupInOneDay('bobotPerGroup4', item.ProcessGroup().toLowerCase());
+                        totalBobotSystemAllGroupFri = getTotalBobotSystemAllGroupInOneDay('bobotPerGroup5', item.ProcessGroup().toLowerCase());
+                        totalBobotSystemAllGroupSat = getTotalBobotSystemAllGroupInOneDay('bobotPerGroup6', item.ProcessGroup().toLowerCase());
+                        totalBobotSystemAllGroupSun = getTotalBobotSystemAllGroupInOneDay('bobotPerGroup7', item.ProcessGroup().toLowerCase());
+
+                        $.each(item.PlantTPK, function(k, value) {
+                            var targetSystemMon = getTargetSystemByBobot(value.TargetManual1(), totalBobotSystemAllGroupMon, totalTargetSystemRollingMon);
+                            value.TargetSystem1(targetSystemMon);
+                            value.TargetManual1(targetSystemMon);
+
+                            var targetSystemTue = getTargetSystemByBobot(value.TargetManual2(), totalBobotSystemAllGroupTue, totalTargetSystemRollingTue);
+                            value.TargetSystem2(targetSystemTue);
+                            value.TargetManual2(targetSystemTue);
+
+                            var targetSystemWed = getTargetSystemByBobot(value.TargetManual3(), totalBobotSystemAllGroupWed, totalTargetSystemRollingWed);
+                            value.TargetSystem3(targetSystemWed);
+                            value.TargetManual3(targetSystemWed);
+
+                            var targetSystemThu = getTargetSystemByBobot(value.TargetManual4(), totalBobotSystemAllGroupThu, totalTargetSystemRollingThu);
+                            value.TargetSystem4(targetSystemThu);
+                            value.TargetManual4(targetSystemThu);
+
+                            var targetSystemFri = getTargetSystemByBobot(value.TargetManual5(), totalBobotSystemAllGroupFri, totalTargetSystemRollingFri);
+                            value.TargetSystem5(targetSystemFri);
+                            value.TargetManual5(targetSystemFri);
+
+                            var targetSystemSat = getTargetSystemByBobot(value.TargetManual6(), totalBobotSystemAllGroupSat, totalTargetSystemRollingSat);
+                            value.TargetSystem6(targetSystemSat);
+                            value.TargetManual6(targetSystemSat);
+
+                            var targetSystemSun = getTargetSystemByBobot(value.TargetManual7(), totalBobotSystemAllGroupSun, totalTargetSystemRollingSun);
+                            value.TargetSystem7(targetSystemSun);
+                            value.TargetManual7(targetSystemSun);
+                        });
+                    });
+                };
+            };
+
+            function planTPKChild(data) {
+                ko.mapping.fromJS(data, {}, this);
+
+                //data
+                var targetsystem1Value = ko.isObservable(data.TargetSystem1) ? data.TargetSystem1() : data.TargetSystem1;
+                var targetsystem2Value = ko.isObservable(data.TargetSystem2) ? data.TargetSystem2() : data.TargetSystem2;
+                var targetsystem3Value = ko.isObservable(data.TargetSystem3) ? data.TargetSystem3() : data.TargetSystem3;
+                var targetsystem4Value = ko.isObservable(data.TargetSystem4) ? data.TargetSystem4() : data.TargetSystem4;
+                var targetsystem5Value = ko.isObservable(data.TargetSystem5) ? data.TargetSystem5() : data.TargetSystem5;
+                var targetsystem6Value = ko.isObservable(data.TargetSystem6) ? data.TargetSystem6() : data.TargetSystem6;
+                var targetsystem7Value = ko.isObservable(data.TargetSystem7) ? data.TargetSystem7() : data.TargetSystem7;
+
+                var targetmanual1Value = ko.isObservable(data.TargetManual1) ? data.TargetManual1() : data.TargetManual1;
+                var targetmanual2Value = ko.isObservable(data.TargetManual2) ? data.TargetManual2() : data.TargetManual2;
+                var targetmanual3Value = ko.isObservable(data.TargetManual3) ? data.TargetManual3() : data.TargetManual3;
+                var targetmanual4Value = ko.isObservable(data.TargetManual4) ? data.TargetManual4() : data.TargetManual4;
+                var targetmanual5Value = ko.isObservable(data.TargetManual5) ? data.TargetManual5() : data.TargetManual5;
+                var targetmanual6Value = ko.isObservable(data.TargetManual6) ? data.TargetManual6() : data.TargetManual6;
+                var targetmanual7Value = ko.isObservable(data.TargetManual7) ? data.TargetManual7() : data.TargetManual7;
+
+                var historicalCapacityWorker1Value = ko.isObservable(data.HistoricalCapacityWorker1) ? data.HistoricalCapacityWorker1() : data.HistoricalCapacityWorker1;
+                var historicalCapacityWorker2Value = ko.isObservable(data.HistoricalCapacityWorker2) ? data.HistoricalCapacityWorker2() : data.HistoricalCapacityWorker2;
+                var historicalCapacityWorker3Value = ko.isObservable(data.HistoricalCapacityWorker3) ? data.HistoricalCapacityWorker3() : data.HistoricalCapacityWorker3;
+                var historicalCapacityWorker4Value = ko.isObservable(data.HistoricalCapacityWorker4) ? data.HistoricalCapacityWorker4() : data.HistoricalCapacityWorker4;
+                var historicalCapacityWorker5Value = ko.isObservable(data.HistoricalCapacityWorker5) ? data.HistoricalCapacityWorker5() : data.HistoricalCapacityWorker5;
+                var historicalCapacityWorker6Value = ko.isObservable(data.HistoricalCapacityWorker6) ? data.HistoricalCapacityWorker6() : data.HistoricalCapacityWorker6;
+                var historicalCapacityWorker7Value = ko.isObservable(data.HistoricalCapacityWorker7) ? data.HistoricalCapacityWorker7() : data.HistoricalCapacityWorker7;
+
+                //rounded value
+                this.TargetSystem1 = ko.observable(Math.round(targetsystem1Value));
+                this.TargetSystem2 = ko.observable(Math.round(targetsystem2Value));
+                this.TargetSystem3 = ko.observable(Math.round(targetsystem3Value));
+                this.TargetSystem4 = ko.observable(Math.round(targetsystem4Value));
+                this.TargetSystem5 = ko.observable(Math.round(targetsystem5Value));
+                this.TargetSystem6 = ko.observable(Math.round(targetsystem6Value));
+                this.TargetSystem7 = ko.observable(Math.round(targetsystem7Value));
+
+                //this.TargetSystem1 = ko.observable(targetsystem1Value).extend({ numeric: 0 });
+                //this.TargetSystem2 = ko.observable(targetsystem2Value).extend({ numeric: 0 });
+                //this.TargetSystem3 = ko.observable(targetsystem3Value).extend({ numeric: 0 });
+                //this.TargetSystem4 = ko.observable(targetsystem4Value).extend({ numeric: 0 });
+                //this.TargetSystem5 = ko.observable(targetsystem5Value).extend({ numeric: 0 });
+                //this.TargetSystem6 = ko.observable(targetsystem6Value).extend({ numeric: 0 });
+                //this.TargetSystem7 = ko.observable(targetsystem7Value).extend({ numeric: 0 });
+
+                this.TargetManual1 = ko.observable(targetmanual1Value).extend({ numeric: 0 });
+                this.TargetManual2 = ko.observable(targetmanual2Value).extend({ numeric: 0 });
+                this.TargetManual3 = ko.observable(targetmanual3Value).extend({ numeric: 0 });
+                this.TargetManual4 = ko.observable(targetmanual4Value).extend({ numeric: 0 });
+                this.TargetManual5 = ko.observable(targetmanual5Value).extend({ numeric: 0 });
+                this.TargetManual6 = ko.observable(targetmanual6Value).extend({ numeric: 0 });
+                this.TargetManual7 = ko.observable(targetmanual7Value).extend({ numeric: 0 });
+
+                //2 digit behind comma value
+                this.HistoricalCapacityWorker1 = ko.observable(historicalCapacityWorker1Value).extend({ numeric: 2 });
+                this.HistoricalCapacityWorker2 = ko.observable(historicalCapacityWorker2Value).extend({ numeric: 2 });
+                this.HistoricalCapacityWorker3 = ko.observable(historicalCapacityWorker3Value).extend({ numeric: 2 });
+                this.HistoricalCapacityWorker4 = ko.observable(historicalCapacityWorker4Value).extend({ numeric: 2 });
+                this.HistoricalCapacityWorker5 = ko.observable(historicalCapacityWorker5Value).extend({ numeric: 2 });
+                this.HistoricalCapacityWorker6 = ko.observable(historicalCapacityWorker6Value).extend({ numeric: 2 });
+                this.HistoricalCapacityWorker7 = ko.observable(historicalCapacityWorker7Value).extend({ numeric: 2 });
+
+                this.WorkerAlocationFirstLoad = ko.observable(this.WorkerAllocation());
+
+                //calculate historical capacity group
+                /* this.HistoricalCapacityGroup1 = ko.pureComputed({
+                     read: function() {
+                         var formattedResult = ko.observable(getHistoricalCapacityGroup(this.WorkerAlocationFirstLoad(), this.HistoricalCapacityWorker1())).extend({ numeric: 2 });
+                         return formattedResult();
+                     },
+                     write: function(value) {
+
+                      }
+                  }, this);
+
+                 this.HistoricalCapacityGroup2 = ko.pureComputed({
+                     read: function() {
+                         var formattedResult = ko.observable(getHistoricalCapacityGroup(this.WorkerAlocationFirstLoad(), this.HistoricalCapacityWorker2())).extend({ numeric: 2 });
+                         return formattedResult();
+                     },
+                     write: function(value) {
+
+                     }
+                 }, this);
+
+                  this.HistoricalCapacityGroup3 = ko.pureComputed({
+                      read: function() {
+                          var formattedResult = ko.observable(getHistoricalCapacityGroup(this.WorkerAlocationFirstLoad(), this.HistoricalCapacityWorker3())).extend({ numeric: 2 });
+                          return formattedResult();
+                      },
+                      write: function(value) {
+
+                      }
+                  }, this);
+
+                  this.HistoricalCapacityGroup4 = ko.pureComputed({
+                      read: function() {
+                          var formattedResult = ko.observable(getHistoricalCapacityGroup(this.WorkerAlocationFirstLoad(), this.HistoricalCapacityWorker4())).extend({ numeric: 2 });
+                          return formattedResult();
+                      },
+                      write: function(value) {
+
+                      }
+                  }, this);
+
+                  this.HistoricalCapacityGroup5 = ko.pureComputed({
+                      read: function() {
+                          var formattedResult = ko.observable(getHistoricalCapacityGroup(this.WorkerAlocationFirstLoad(), this.HistoricalCapacityWorker5())).extend({ numeric: 2 });
+                          return formattedResult();
+                      },
+                      write: function(value) {
+
+                      }
+                  }, this);
+
+                  this.HistoricalCapacityGroup6 = ko.pureComputed({
+                      read: function() {
+                          var formattedResult = ko.observable(getHistoricalCapacityGroup(this.WorkerAlocationFirstLoad(), this.HistoricalCapacityWorker6())).extend({ numeric: 2 });
+                          return formattedResult();
+                      },
+                      write: function(value) {
+
+                      }
+                  }, this);
+
+                  this.HistoricalCapacityGroup7 = ko.pureComputed({
+                      read: function() {
+                          var formattedResult = ko.observable(getHistoricalCapacityGroup(this.WorkerAlocationFirstLoad(), this.HistoricalCapacityWorker7())).extend({ numeric: 2 });
+                          return formattedResult();
+                      },
+                      write: function(value) {
+
+                      }
+                  }, this);*/
+
+                //calculate bobot per group
+                this.bobotPerGroup1 = ko.pureComputed({
+                    read: function() {
+                        var result = parseToFloat(this.HistoricalCapacityGroup1()) * parseToFloat(this.PercentAttendance1()) * parseToFloat(this.ProcessWorkHours1());
+                        var formattedResult = ko.observable(result).extend({ numeric: 2 });
+                        return formattedResult();
+                    },
+                    write: function(value) {
+
+                    }
+                }, this);
+
+                this.bobotPerGroup2 = ko.pureComputed({
+                    read: function() {
+                        var result = parseToFloat(this.HistoricalCapacityGroup2()) * parseToFloat(this.PercentAttendance2()) * parseToFloat(this.ProcessWorkHours2());
+                        var formattedResult = ko.observable(result).extend({ numeric: 2 });
+                        return formattedResult();
+
+                    },
+                    write: function(value) {
+
+                    }
+                }, this);
+
+                this.bobotPerGroup3 = ko.pureComputed({
+                    read: function() {
+                        var result = parseToFloat(this.HistoricalCapacityGroup3()) * parseToFloat(this.PercentAttendance3()) * parseToFloat(this.ProcessWorkHours3());
+                        var formattedResult = ko.observable(result).extend({ numeric: 2 });
+                        return formattedResult();
+                    },
+                    write: function(value) {
+
+                    }
+                }, this);
+
+                this.bobotPerGroup4 = ko.pureComputed({
+                    read: function() {
+                        var result = parseToFloat(this.HistoricalCapacityGroup4()) * parseToFloat(this.PercentAttendance4()) * parseToFloat(this.ProcessWorkHours4());
+                        var formattedResult = ko.observable(result).extend({ numeric: 2 });
+                        return formattedResult();
+                    },
+                    write: function(value) {
+
+                    }
+                }, this);
+
+                this.bobotPerGroup5 = ko.pureComputed({
+                    read: function() {
+                        var result = parseToFloat(this.HistoricalCapacityGroup5()) * parseToFloat(this.PercentAttendance5()) * parseToFloat(this.ProcessWorkHours5());
+                        var formattedResult = ko.observable(result).extend({ numeric: 2 });
+                        return formattedResult();
+                    },
+                    write: function(value) {
+
+                    }
+                }, this);
+
+                this.bobotPerGroup6 = ko.pureComputed({
+                    read: function() {
+                        var result = parseToFloat(this.HistoricalCapacityGroup6()) * parseToFloat(this.PercentAttendance6()) * parseToFloat(this.ProcessWorkHours6());
+                        var formattedResult = ko.observable(result).extend({ numeric: 2 });
+                        return formattedResult();
+                    },
+                    write: function(value) {
+
+                    }
+                }, this);
+
+                this.bobotPerGroup7 = ko.pureComputed({
+                    read: function() {
+                        var result = parseToFloat(this.HistoricalCapacityGroup7()) * parseToFloat(this.PercentAttendance7()) * parseToFloat(this.ProcessWorkHours7());
+                        var formattedResult = ko.observable(result).extend({ numeric: 2 });
+                        return formattedResult();
+                    },
+                    write: function(value) {
+
+                    }
+                }, this);
+
+                //Computed Hitorical Capacity Unit
+                this.HistoricalCapacityGroup1 = ko.pureComputed({
+                    read: function() {
+                        return(this.Allocation() * this.HistoricalCapacityWorker1()).toFixed(2);
+                    },
+                    write: function(value) {
+
+                    }
+                }, this);
+
+                this.HistoricalCapacityGroup2 = ko.pureComputed({
+                    read: function() {
+                        return(this.Allocation() * this.HistoricalCapacityWorker2()).toFixed(2);
+                    },
+                    write: function(value) {
+
+                    }
+                }, this);
+
+                this.HistoricalCapacityGroup3 = ko.pureComputed({
+                    read: function() {
+                        return(this.Allocation() * this.HistoricalCapacityWorker3()).toFixed(2);
+                    },
+                    write: function(value) {
+
+                    }
+                }, this);
+
+                this.HistoricalCapacityGroup4 = ko.pureComputed({
+                    read: function() {
+                        return(this.Allocation() * this.HistoricalCapacityWorker4()).toFixed(2);
+                    },
+                    write: function(value) {
+
+                    }
+                }, this);
+
+                this.HistoricalCapacityGroup5 = ko.pureComputed({
+                    read: function() {
+                        return(this.Allocation() * this.HistoricalCapacityWorker5()).toFixed(2);
+                    },
+                    write: function(value) {
+
+                    }
+                }, this);
+
+                this.HistoricalCapacityGroup6 = ko.pureComputed({
+                    read: function() {
+                        return(this.Allocation() * this.HistoricalCapacityWorker6()).toFixed(2);
+                    },
+                    write: function(value) {
+
+                    }
+                }, this);
+
+                this.HistoricalCapacityGroup7 = ko.pureComputed({
+                    read: function() {
+                        return(this.Allocation() * this.HistoricalCapacityWorker7()).toFixed(2);
+                    },
+                    write: function(value) {
+
+                    }
+                }, this);
+
+                //Allocation
+                this.Allocation = ko.computed({
+                    read: function() {
+                        return this.WorkerAllocation();
+                    },
+                    write: function(value) {
+                        this.WorkerAllocation(parseToFloat(value));
+                        if (value != '') {
+                            setTarget();
+                        }
+                        return value;
+                    }
+                }, this);
+
+                //target manual
+                this.TargetManualMon = ko.computed({
+                    read: function() {
+                        return this.TargetManual1();
+                    },
+                    write: function(value) {
+                        this.TargetManual1(parseToFloat(value));
+                        if (value != '') {
+                            recalculateAllTarget();
+                        }
+                        return value;
+                    }
+                }, this);
+
+                this.TargetManualTue = ko.computed({
+                    read: function() {
+                        return this.TargetManual2();
+                    },
+                    write: function(value) {
+                        this.TargetManual2(parseToFloat(value));
+                        if (value != '') {
+                            recalculateAllTarget();
+                        }
+                        return value;
+                    }
+                }, this);
+
+                this.TargetManualWed = ko.computed({
+                    read: function() {
+                        return this.TargetManual3();
+                    },
+                    write: function(value) {
+                        this.TargetManual3(parseToFloat(value));
+                        if (value != '') {
+                            recalculateAllTarget();
+                        }
+                        return value;
+                    }
+                }, this);
+
+                this.TargetManualThu = ko.computed({
+                    read: function() {
+                        return this.TargetManual4();
+                    },
+                    write: function(value) {
+                        this.TargetManual4(parseToFloat(value));
+                        if (value != '') {
+                            recalculateAllTarget();
+                        }
+                        return value;
+                    }
+                }, this);
+
+                this.TargetManualFri = ko.computed({
+                    read: function() {
+                        return this.TargetManual5();
+                    },
+                    write: function(value) {
+                        this.TargetManual5(parseToFloat(value));
+                        if (value != '') {
+                            recalculateAllTarget();
+                        }
+                        return value;
+                    }
+                }, this);
+
+                this.TargetManualSat = ko.computed({
+                    read: function() {
+                        return this.TargetManual6();
+                    },
+                    write: function(value) {
+                        this.TargetManual6(parseToFloat(value));
+                        if (value != '') {
+                            recalculateAllTarget();
+                        }
+                        return value;
+                    }
+                }, this);
+
+                this.TargetManualSun = ko.computed({
+                    read: function() {
+                        return this.TargetManual7();
+                    },
+                    write: function(value) {
+                        this.TargetManual7(parseToFloat(value));
+                        if (value != '') {
+                            recalculateAllTarget();
+                        }
+                        return value;
+                    }
+                }, this);
+
+                this.TotalTargetSystem = ko.pureComputed({
+                    read: function() {
+                        return parseToFloat(this.TargetSystem1()) + parseToFloat(this.TargetSystem2())
+                            + parseToFloat(this.TargetSystem3()) + parseToFloat(this.TargetSystem4())
+                            + parseToFloat(this.TargetSystem5()) + parseToFloat(this.TargetSystem6())
+                            + parseToFloat(this.TargetSystem7());
+                    },
+                    write: function(value) {
+
+                    }
+                }, this);
+
+                this.TotalTargetManual = ko.pureComputed({
+                    read: function() {
+                        return parseToFloat(this.TargetManual1()) + parseToFloat(this.TargetManual2())
+                            + parseToFloat(this.TargetManual3()) + parseToFloat(this.TargetManual4())
+                            + parseToFloat(this.TargetManual5()) + parseToFloat(this.TargetManual6())
+                            + parseToFloat(this.TargetManual7());
+                    },
+                    write: function(value) {
+
+                    }
+                }, this);
+            };
+
+            //custom mapping knockout
+            self.gridView.mapping = {
+                create: function(options) {
+                    var parent = new planTPK(options.data);
+                    parent.PlantTPK = ko.utils.arrayMap(parent.PlantTPK() || [], function(item) {
+                        return new planTPKChild(item);
+                    });
+
+                    parent.TotalRow = ko.pureComputed(function() {
+                        var totalRow = 0;
+                        $.each(parent.PlantTPK, function(k, v) {
+                            totalRow += 1;
+                        });
+                        return totalRow;
+                    }).extend({ notify: 'always' });
+
+                    parent.SubTotalWorkerRegister = ko.pureComputed(function() {
+                        var subTotal = 0;
+                        $.each(parent.PlantTPK, function(k, v) {
+                            subTotal += parseToFloat(v.WorkerRegister());
+                        });
+                        return subTotal;
+                    }).extend({ notify: 'always' });
+
+                    parent.SubTotalWorkerAvailable = ko.pureComputed(function() {
+                        var subTotal = 0;
+                        $.each(parent.PlantTPK, function(k, v) {
+                            subTotal += parseToFloat(v.WorkerAvailable());
+                        });
+                        return subTotal;
+                    }).extend({ notify: 'always' });
+
+                    parent.SubTotal = ko.pureComputed(function() {
+                        var subTotal = 0;
+                        $.each(parent.PlantTPK, function(k, v) {
+                            subTotal += parseToFloat(v.WorkerAllocation());
+                        });
+                        return subTotal;
+                    }).extend({ notify: 'always' });
+
+                    parent.SubTotalSytem1 = ko.pureComputed(function() {
+                        var subTotalSytem1 = 0;
+                        $.each(parent.PlantTPK, function(k, v) {
+                            subTotalSytem1 += parseToFloat(v.TargetSystem1());
+                        });
+                        return subTotalSytem1;
+                    }).extend({ notify: 'always' });
+
+                    parent.SubTotalManual1 = ko.pureComputed(function() {
+                        var subTotalManual1 = 0;
+                        $.each(parent.PlantTPK, function(k, v) {
+                            subTotalManual1 += parseToFloat(v.TargetManual1());
+                        });
+                        return subTotalManual1;
+                    }).extend({ notify: 'always' });
+
+                    parent.SubTotalSytem2 = ko.pureComputed(function() {
+                        var subTotalSytem2 = 0;
+                        $.each(parent.PlantTPK, function(k, v) {
+                            subTotalSytem2 += parseToFloat(v.TargetSystem2());
+                        });
+                        return subTotalSytem2;
+                    }).extend({ notify: 'always' });
+
+                    parent.SubTotalManual2 = ko.pureComputed(function() {
+                        var subTotalManual2 = 0;
+                        $.each(parent.PlantTPK, function(k, v) {
+                            subTotalManual2 += parseToFloat(v.TargetManual2());
+                        });
+                        return subTotalManual2;
+                    }).extend({ notify: 'always' });
+
+                    parent.SubTotalSytem3 = ko.pureComputed(function() {
+                        var subTotalSytem3 = 0;
+                        $.each(parent.PlantTPK, function(k, v) {
+                            subTotalSytem3 += parseToFloat(v.TargetSystem3());
+                        });
+                        return subTotalSytem3;
+                    }).extend({ notify: 'always' });
+
+                    parent.SubTotalManual3 = ko.pureComputed(function() {
+                        var subTotalManual3 = 0;
+                        $.each(parent.PlantTPK, function(k, v) {
+                            subTotalManual3 += parseToFloat(v.TargetManual3());
+                        });
+                        return subTotalManual3;
+                    }).extend({ notify: 'always' });
+
+                    parent.SubTotalSytem4 = ko.pureComputed(function() {
+                        var subTotalSytem4 = 0;
+                        $.each(parent.PlantTPK, function(k, v) {
+                            subTotalSytem4 += parseToFloat(v.TargetSystem4());
+                        });
+                        return subTotalSytem4;
+                    }).extend({ notify: 'always' });
+
+                    parent.SubTotalManual4 = ko.pureComputed(function() {
+                        var subTotalManual4 = 0;
+                        $.each(parent.PlantTPK, function(k, v) {
+                            subTotalManual4 += parseToFloat(v.TargetManual4());
+                        });
+                        return subTotalManual4;
+                    }).extend({ notify: 'always' });
+
+                    parent.SubTotalSytem5 = ko.pureComputed(function() {
+                        var subTotalSytem5 = 0;
+                        $.each(parent.PlantTPK, function(k, v) {
+                            subTotalSytem5 += parseToFloat(v.TargetSystem5());
+                        });
+                        return subTotalSytem5;
+                    }).extend({ notify: 'always' });
+
+                    parent.SubTotalManual5 = ko.pureComputed(function() {
+                        var subTotalManual5 = 0;
+                        $.each(parent.PlantTPK, function(k, v) {
+                            subTotalManual5 += parseToFloat(v.TargetManual5());
+                        });
+                        return subTotalManual5;
+                    }).extend({ notify: 'always' });
+
+                    parent.SubTotalSytem6 = ko.pureComputed(function() {
+                        var subTotalSytem6 = 0;
+                        $.each(parent.PlantTPK, function(k, v) {
+                            subTotalSytem6 += parseToFloat(v.TargetSystem6());
+                        });
+                        return subTotalSytem6;
+                    }).extend({ notify: 'always' });
+
+                    parent.SubTotalManual6 = ko.pureComputed(function() {
+                        var subTotalManual6 = 0;
+                        $.each(parent.PlantTPK, function(k, v) {
+                            subTotalManual6 += parseToFloat(v.TargetManual6());
+                        });
+                        return subTotalManual6;
+                    }).extend({ notify: 'always' });
+
+                    parent.SubTotalSytem7 = ko.pureComputed(function() {
+                        var subTotalSytem7 = 0;
+                        $.each(parent.PlantTPK, function(k, v) {
+                            subTotalSytem7 += parseToFloat(v.TargetSystem7());
+                        });
+                        return subTotalSytem7;
+                    }).extend({ notify: 'always' });
+
+                    parent.SubTotalManual7 = ko.pureComputed(function() {
+                        var subTotalManual7 = 0;
+                        $.each(parent.PlantTPK, function(k, v) {
+                            subTotalManual7 += parseToFloat(v.TargetManual7());
+                        });
+                        return subTotalManual7;
+                    }).extend({ notify: 'always' });
+
+                    // Target Total
+                    parent.TargetSystemTotal = ko.pureComputed(function() {
+                        var targetSystemTotal = 0;
+                        targetSystemTotal += parent.SubTotalSytem1();
+                        targetSystemTotal += parent.SubTotalSytem2();
+                        targetSystemTotal += parent.SubTotalSytem3();
+                        targetSystemTotal += parent.SubTotalSytem4();
+                        targetSystemTotal += parent.SubTotalSytem5();
+                        targetSystemTotal += parent.SubTotalSytem6();
+                        targetSystemTotal += parent.SubTotalSytem7();
+                        return targetSystemTotal;
+                    });
+
+                    parent.TargetManualTotal = ko.pureComputed(function() {
+                        var targetManualTotal = 0;
+                        targetManualTotal += parent.SubTotalManual1();
+                        targetManualTotal += parent.SubTotalManual2();
+                        targetManualTotal += parent.SubTotalManual3();
+                        targetManualTotal += parent.SubTotalManual4();
+                        targetManualTotal += parent.SubTotalManual5();
+                        targetManualTotal += parent.SubTotalManual6();
+                        targetManualTotal += parent.SubTotalManual7();
+                        return targetManualTotal;
+                    });
+
+                    return parent;
+                }
+            };
+
+            // Field Validations
+            self.gridView.applyValidationRules = function(entity) {
+                //Remove notification that existing before
+                self.RemoveNotification();
+            };
+
+            // Computed production date on header
+            self.GetMasterGenBrandCodeByBrandCode = function() {
+                $.ajax({
+                    url: @Html.BaseUrl("PlanningPlantTPK/GetMasterGenBrandCodeByBrandCode"),
+                    type: 'GET',
+                    cache: false,
+                    contentType: 'application/json',
+                    data: { brandCode: self.filterBrandCode },
+                    dataType: 'json',
+                    success: function(data) {
+                        //console.log(data);
+                        self.stickPerBox(data);
+                    }
+                });
+            };
+
+            function getTotalBox(fieldName) {
+                return ko.computed({
+                    read: function() {
+                        var total = 0;
+                        ko.utils.arrayForEach(self.gridView.listDataItems(), function(item) {
+                            var field = ko.isObservable(item[fieldName]) ? item[fieldName]() : item[fieldName];
+                            var value = parseFloat(field);
+                            if (!isNaN(value)) {
+                                total += value;
+                                //if(fieldName == "TargetSystemTotal")
+                                //    console.log(total);
+                            }
+                        });
+                        //return Math.round(parseToFloat(total));
+                        return Math.round(parseFloat(total) / parseFloat(self.stickPerBox()));
+                    },
+                    write: function(value) {
+                        //alert(value);
+                    }
+                });
+            };
+
+            self.totalTargetSystemBox1 = getTotalBox('SubTotalSytem1');
+            self.totalTargetSystemBox2 = getTotalBox('SubTotalSytem2');
+            self.totalTargetSystemBox3 = getTotalBox('SubTotalSytem3');
+            self.totalTargetSystemBox4 = getTotalBox('SubTotalSytem4');
+            self.totalTargetSystemBox5 = getTotalBox('SubTotalSytem5');
+            self.totalTargetSystemBox6 = getTotalBox('SubTotalSytem6');
+            self.totalTargetSystemBox7 = getTotalBox('SubTotalSytem7');
+
+            self.totalTargetManualBox1 = getTotalBox('SubTotalManual1');
+            self.totalTargetManualBox2 = getTotalBox('SubTotalManual2');
+            self.totalTargetManualBox3 = getTotalBox('SubTotalManual3');
+            self.totalTargetManualBox4 = getTotalBox('SubTotalManual4');
+            self.totalTargetManualBox5 = getTotalBox('SubTotalManual5');
+            self.totalTargetManualBox6 = getTotalBox('SubTotalManual6');
+            self.totalTargetManualBox7 = getTotalBox('SubTotalManual7');
+
+            self.totalTargetSystemBox = getTotalBox('TargetSystemTotal');
+            self.totalTargetManualBox = getTotalBox('TargetManualTotal');
+
+            //get production date header
+            function getProductionDate(days) {
+                return ko.computed(function() {
+                    if (self.mondayDate() != null) {
+                        var firstDay = moment(self.mondayDate(), "DD/MM/YYYY");
+
+                        self.DisableDays(firstDay,days);
+
+                        return moment(firstDay).add(days, 'days').format("DD/MM/YYYY");
+                    }
+                    return '';
+                });
+            };
+
+            // Computed production date on header
+            self.getProductionStartDate = function() {
+                $.ajax({
+                    url: @Html.BaseUrl("PlanningPlantTPK/GetProductionStartDate"),
+                    type: 'GET',
+                    cache: false,
+                    contentType: 'application/json',
+                    data: { year: self.filterKPSYear(), week: self.filterKPSWeek(), locationCode : self.filterLocationCode(), brandCode : self.filterBrandCode(),
+                        unitCode : self.filterUnitCode() },
+                    dataType: 'json',
+                    success: function(data) {
+                        self.mondayDate(data.startDate);
+                        self.alreadySubmit(data.alreadySubmit);
+                        self.mondayEditable(!data.isSubmit);
+                        if(data.alreadySubmit){
+                            var submitDate = moment(data.startEnableDate, "DD/MM/YYYY");
+                            var EditableDate = submitDate.diff(moment(data.startDate, "DD/MM/YYYY")) >= 0 ? false : true;
+                            self.mondayEditable(EditableDate);
+                            self.startEnableDate(data.startEnableDate);
+                        }
+                    }
+                });
+            };
+
+            self.mondayDate = ko.observable();
+            self.startEnableDate = ko.observable();
+            self.alreadySubmit = ko.observable();
+            self.tuesdayDate = getProductionDate(1);
+            self.wednesdayDate = getProductionDate(2);
+            self.thursdayDate = getProductionDate(3);
+            self.fridayDate = getProductionDate(4);
+            self.saturdayDate = getProductionDate(5);
+            self.sundayDate = getProductionDate(6);
+
+            // Computed Days Disabled
+            self.mondayEditable = ko.observable(false);
+            self.tuesdayEditable = ko.observable(false);
+            self.wednesdayEditable = ko.observable(false);
+            self.thursdayEditable = ko.observable(false);
+            self.fridayEditable = ko.observable(false);
+            self.saturdayEditable = ko.observable(false);
+            self.sundayEditable = ko.observable(false);
+
+            self.DisableDays = function(firstDay,days){
+                var today = moment(self.startEnableDate(),"DD/MM/YYYY"); // Force for date only, extend 1 day for minimal editable day
+                var productionDate = moment(firstDay).add(days, 'days');
+                var EditableDate = today.diff(productionDate) > 0 ? false : true;
+
+                if(!self.alreadySubmit()){
+                    EditableDate = true;
+                }
+
+                // Check for Disable Day
+                // No checking condition for monday, because the minimal locked date is : current day + 1 day
+                switch(days){
+                    case 1:
+                        // tuesday
+                        self.tuesdayEditable(EditableDate);
+                        break;
+                    case 2:
+                        // wednesday
+                        self.wednesdayEditable(EditableDate);
+                        break;
+                    case 3:
+                        // thursday
+                        self.thursdayEditable(EditableDate);
+                        break;
+                    case 4:
+                        // friday
+                        self.fridayEditable(EditableDate);
+                        break;
+                    case 5:
+                        // saturday
+                        self.saturdayEditable(EditableDate);
+                        break;
+                    case 6:
+                        // sunday
+                        self.sundayEditable(EditableDate);
+                        break;
+                }
+                // End of Check
+            }
+
+            // Get workhours
+            self.workHoursMon = ko.observable(0);
+            self.workHoursTue = ko.observable(0);
+            self.workHoursWed = ko.observable(0);
+            self.workHoursThu = ko.observable(0);
+            self.workHoursFri = ko.observable(0);
+            self.workHoursSat = ko.observable(0);
+            self.workHoursSun = ko.observable(0);
+            self.totalWorkHours = ko.observable(0);
+
+            self.getWorkHours = function() {
+                if (self.gridView.listDataItems().length > 0) {
+                    var firstProcessGroup = self.gridView.listDataItems()[0];
+                    var firstTpk = firstProcessGroup.PlantTPK[0];
+                    if (firstTpk != null) {
+                        self.workHoursMon(firstTpk.ProcessWorkHours1());
+                        self.workHoursTue(firstTpk.ProcessWorkHours2());
+                        self.workHoursWed(firstTpk.ProcessWorkHours3());
+                        self.workHoursThu(firstTpk.ProcessWorkHours4());
+                        self.workHoursFri(firstTpk.ProcessWorkHours5());
+                        self.workHoursSat(firstTpk.ProcessWorkHours6());
+                        self.workHoursSun(firstTpk.ProcessWorkHours7());
+                        self.totalWorkHours(firstTpk.TotalWorkhours());
+                    }
+                }
+            };
+
+            // Generate excel
+            self.generateExcel = function(formElement) {
+                $(formElement).find("input[name=locationCode]").val(self.filterExcelLocationCode);
+                $(formElement).find("input[name=brandCode]").val(self.filterExcelBrandCode);
+                $(formElement).find("input[name=unitCode]").val(self.filterExcelUnitCode);
+                $(formElement).find("input[name=year]").val(self.filterExcelKPSYear);
+                $(formElement).find("input[name=week]").val(self.filterExcelKPSWeek);
+                $(formElement).find("input[name=shift]").val(self.filterExcelShift);
+                return true;
+            };
+
+            var currentDate = new Date()
+            var day = currentDate.getDate()
+            var month = currentDate.getMonth() + 1
+            var year = currentDate.getFullYear()
+
+            self.SavedButton =  function() {
+                //hakim
+                // based on ticket http://tp.voxteneo.co.id/entity/10462 point 1 & 2
+                //EBL/ID21/%/2021/%/FA010783.18/2016/39/%
+                var param1 = 'EBL/' + self.filterLocationCode() + '/1/' + self.filterUnitCode() 
+                var param2 = self.filterBrandCode() + '/' + self.filterKPSYear() + '/' + self.filterKPSWeek() +'/';
+                var valid = false;
+                if((week(year, month, day)-1) <= self.filterKPSWeek()){
+                    valid = true;
+                }
+                $.ajax({
+                    url: @Html.BaseUrl("PlanningPlantTPK/ValidateSubmittedEntry"),
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ 'param1': param1, 'param2': param2}),
+                    dataType: 'json',
+                    success: function(data) {
+                        //console.log(data.notification.Message);
+                        //console.log(data+' / '+valid);
+                        if((!data.isAlreadySubmitted) && (valid == true)){
+                            self.submitEnabled(true);
+                        }else{
+                            self.submitEnabled(false);
+                            //SKTIS.Helper.Notification(data.notification.Message);
+                            SKTIS.Helper.Notification(data.notification.Message);
+                        }
+                    }
+                });
+            }
+
+            function week(year,month,day) {
+                function serial(days) { return 86400000*days; }
+                function dateserial(year,month,day) { return (new Date(year,month-1,day).valueOf()); }
+                function weekday(date) { return (new Date(date)).getDay()+1; }
+                function yearserial(date) { return (new Date(date)).getFullYear(); }
+                var date = year instanceof Date ? year.valueOf() : typeof year === "string" ? new Date(year).valueOf() : dateserial(year,month,day),
+                    date2 = dateserial(yearserial(date - serial(weekday(date-serial(1))) + serial(4)),1,3);
+                return ~~((date - date2 + serial(weekday(date2) + 5))/ serial(7));
+            }
+
+            // Save Action
+            self.saveData = function() {
+                if (self.gridView.editingRowIndex() !== -1)
+                    return;
+
+                //if (self.gridView.listEditItems().length < 1)
+                //    return;
+
+                //if (self.targetWPP() < self.totalTargetManual()) {
+                //    SKTIS.Helper.Notification('Total target manual (' + self.totalTargetManual() + ') cannot be larger than target wpp (' + self.targetWPP() + ')!', 'warning');
+                //    return;
+                //}
+                // Prevent Edited new Row data for triggering Edited message
+                // Primary Key : ListGroup, ListDetail (need to compare both of arrays using unique key[s])
+                //var newItemLength = self.gridView.listNewItems().length;
+                //$.each(self.gridView.listNewItems(),function(k,v){
+                //    var shouldBeAsNew = ko.utils.arrayFirst(self.gridView.listEditItems(),function(editItem){
+                //        if(editItem){
+                //            return editItem['ItemCode'] == v['ItemCode'];
+                //        }
+                //    });
+                //    if(shouldBeAsNew){
+                //        self.gridView.listNewItems()[k] = shouldBeAsNew;
+                //    }
+                //    self.gridView.listEditItems.remove(function(data) {
+                //        if(data){
+                //            return data['ItemCode'] == v['ItemCode'];
+                //        }
+                //    });
+                //});
+                self.ButtonCalculate(false);
+                var datas = {
+                    "Parameters": {
+                        "LocationCode": self.filterLocationCode(),
+                        "UnitCode": self.filterUnitCode(),
+                        'BrandCode': self.filterBrandCode(),
+                        'KPSYear': self.filterKPSYear(),
+                        'KPSWeek': self.filterKPSWeek(),
+                        'Shift': self.filterShift()?self.filterShift():1
+                    },
+                    "edit": ko.mapping.toJS(self.gridView.listDataItems())
+                };
+
+                datas = JSON.stringify(datas);
+
+                $.ajax({
+                    url: @Html.BaseUrl("PlanningPlantTPK/SaveAllPlanTPKs"),
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: datas,
+                    dataType: 'json',
+                    success: function(data) {
+                        var dataChange = false;
+                        if (data.Edit) {
+                            $.each(data.Edit, function(k, value) {
+                                if (value.ResponseType != null) {
+                                    dataChange = true;
+                                    self.gridView.listDataItems()[k].Message('');
+                                    SKTIS.Helper.ResponseNotification(value, "Save TPK",
+                                        value.ProcessGroup);
+                                }
+                            });
+                        }
+
+                        if(!self.EditedTargetManual()){
+                            self.saveEnabled(false);
+                            self.submitEnabled(true);
+                            //self.SavedButton();
+                        }else{
+                            self.saveEnabled(false);
+                            self.submitEnabled(false);
+                            self.EditedTargetManual(false);
+                            //self.SavedButton();
+                        }
+                        //if (!dataChange) {
+                        //    SKTIS.Helper.Notification("No data has edited!");
+                        //} else {
+                        //    self.search();
+                        //}
+
+                        self.gridView.listNewItems.removeAll();
+                        self.gridView.listEditItems.removeAll();
+
+                    }
+                });
+            };
+
+            function getWIPDeviation(prevValue, currentValue) {
+                return currentValue - prevValue;
+            };
+
+            function getBobotSystem(capacityGroup, percentAttendance, jkProcess) {
+                return capacityGroup * percentAttendance * jkProcess;
+            };
+
+            //function getBobotManual(targetManual, allocation, jkProcess) {
+            //    return targetManual * allocation * jkProcess;
+            //};
+
+            function recalculateWIP(i, targetManual, wipDeviation, totalPergroup, selisihwip) {
+                // OLD ONE
+                //recalculateWIP(capacityGroup, percentAttendance, jkProcess, wipDeviation
+                //var bobot = getBobotSystem(capacityGroup, percentAttendance, jkProcess);
+                //var result = bobot * wipDeviation;
+                var result = 0;
+                if(totalPergroup > 0) {
+                    result = (targetManual/totalPergroup * wipDeviation);
+                    if(i == 1 && typeof selisihwip != 'undefined') {
+                        result = result + (wipDeviation - selisihwip);
+                    }
+
+                }
+
+                return Math.round(result);
+            };
+
+            function recalculateTargetOnWIPChange(target, subTotalTarget, wipDeviation) {
+                //Old One
+                //var result = (target * (subTotalTarget + wipDeviation)) / subTotalTarget;
+                var result = target + wipDeviation;
+                return parseToFloat(result);
+            };
+
+            //wip stock
+            self.tempWIPStocks = [];
+
+            $('#WipStock').on('shown.bs.modal', function() {
+                if (self.gridView.listDataItems().length < 1)
+                    return;
+
+                self.tempWIPStocks = [];
+
+                $.each(self.gridView.listDataItems(), function(k, value) {
+                    if (value.ShowInWIPStock()) {
+                        self.tempWIPStocks.push({
+                            "ProcessGroup": value.ProcessGroup().toLowerCase(),
+                            "WIPStock1": value.WIPStock1(),
+                            "WIPStock2": value.WIPStock2(),
+                            "WIPStock3": value.WIPStock3(),
+                            "WIPStock4": value.WIPStock4(),
+                            "WIPStock5": value.WIPStock5(),
+                            "WIPStock6": value.WIPStock6(),
+                            "WIPStock7": value.WIPStock7()
+                        });
+                    };
+                });
+            });
+
+            self.saveWIPStock = function() {
+                var datas = {
+                    "Parameters": {
+                        "LocationCode": self.filterLocationCode(),
+                        "UnitCode": self.filterUnitCode(),
+                        'BrandCode': self.filterBrandCode(),
+                        'KPSYear': self.filterKPSYear(),
+                        'KPSWeek': self.filterKPSWeek()
+                    },
+                    "edit": ko.mapping.toJS(self.gridView.listDataItems())
+                };
+
+                datas = JSON.stringify(datas);
+
+                $.ajax({
+                    url: @Html.BaseUrl("PlanningPlantTPK/SaveAllPlanTPKs"),
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: datas,
+                    dataType: 'json',
+                    success: function(data) {
+                        var dataChange = false;
+                        if (data.Edit) {
+                            self.CalculateData();
+                            SKTIS.Helper.ResponseNotification("Success", "Save and Calculate","WIP");
+                        }
+
+                    }
+                });
+                //Ini ga dipake
+                //console.log(self.gridView.listDataItems());
+                //if (self.gridView.listDataItems().length < 1)
+                //    return;
+                //var selisihWIPPackingMon = 0;
+                //var selisihWIPPackingTue = 0;
+                //var selisihWIPPackingWed = 0;
+                //var selisihWIPPackingThu = 0;
+                //var selisihWIPPackingFri = 0;
+                //var selisihWIPPackingSat = 0;
+                //var selisihWIPPackingSun = 0;
+
+                //var selisihWIPStickWrappingMon = 0;
+                //var selisihWIPStickWrappingTue = 0;
+                //var selisihWIPStickWrappingWed = 0;
+                //var selisihWIPStickWrappingThu = 0;
+                //var selisihWIPStickWrappingFri = 0;
+                //var selisihWIPStickWrappingSat = 0;
+                //var selisihWIPStickWrappingSun = 0;
+
+                //var selisihWIPCuttingMon = 0;
+                //var selisihWIPCuttingTue = 0;
+                //var selisihWIPCuttingWed = 0;
+                //var selisihWIPCuttingThu = 0;
+                //var selisihWIPCuttingFri = 0;
+                //var selisihWIPCuttingSat = 0;
+                //var selisihWIPCuttingSun = 0;
+
+                ////calculate packing
+                //var packing = ko.utils.arrayFirst(self.gridView.listDataItems(), function(item) {
+                //    return item.ProcessGroup().toLowerCase() === SKTIS.Constant.ProcessGroup.PACKING;
+                //});
+
+                //if (packing != null) {
+                //    //get selisih wip
+                //    selisihWIPPackingMon = getWIPDeviation(packing.WIPPreviousValue(), packing.WIPStock1());
+                //    selisihWIPPackingTue = getWIPDeviation(packing.WIPStock1(), packing.WIPStock2());
+                //    selisihWIPPackingWed = getWIPDeviation(packing.WIPStock2(), packing.WIPStock3());
+                //    selisihWIPPackingThu = getWIPDeviation(packing.WIPStock3(), packing.WIPStock4());
+                //    selisihWIPPackingFri = getWIPDeviation(packing.WIPStock4(), packing.WIPStock5());
+                //    selisihWIPPackingSat = getWIPDeviation(packing.WIPStock5(), packing.WIPStock6());
+                //    selisihWIPPackingSun = getWIPDeviation(packing.WIPStock6(), packing.WIPStock7());
+                //    //calculate
+                //    var i = 1;
+                //    var SubTotalManual1 = packing.SubTotalManual1();
+                //    var SubTotalManual2 = packing.SubTotalManual2();
+                //    var SubTotalManual3 = packing.SubTotalManual3();
+                //    var SubTotalManual4 = packing.SubTotalManual4();
+                //    var SubTotalManual5 = packing.SubTotalManual5();
+                //    var SubTotalManual6 = packing.SubTotalManual6();
+                //    var SubTotalManual7 = packing.SubTotalManual7();
+
+                //    var Twip1 = 0;
+                //    var Twip2 = 0;
+                //    var Twip3 = 0;
+                //    var Twip4 = 0;
+                //    var Twip5 = 0;
+                //    var Twip6 = 0;
+                //    var Twip7 = 0;
+                //    $.each(packing.PlantTPK, function(k, value) {
+                //        var wip1 = recalculateWIP(i, value.TargetManual1(), selisihWIPPackingMon, SubTotalManual1);
+                //        Twip1 += wip1;
+                //        var wip2 = recalculateWIP(i, value.TargetManual2(), selisihWIPPackingTue, SubTotalManual2);
+                //        Twip2 += wip2;
+                //        var wip3 = recalculateWIP(i, value.TargetManual3(), selisihWIPPackingWed, SubTotalManual3);
+                //        Twip3 += wip3;
+                //        var wip4 = recalculateWIP(i, value.TargetManual4(), selisihWIPPackingThu, SubTotalManual4);
+                //        Twip4 += wip4;
+                //        var wip5 = recalculateWIP(i, value.TargetManual5(), selisihWIPPackingFri, SubTotalManual5);
+                //        Twip5 += wip5;
+                //        var wip6 = recalculateWIP(i, value.TargetManual6(), selisihWIPPackingSat, SubTotalManual6);
+                //        Twip6 += wip6;
+                //        var wip7 = recalculateWIP(i, value.TargetManual7(), selisihWIPPackingSun, SubTotalManual7);
+                //        Twip7 += wip7;
+                //    });
+                //    $.each(packing.PlantTPK, function(k, value) {
+                //        //wip
+                //        value.WIP1(recalculateWIP(i, value.TargetManual1(), selisihWIPPackingMon, SubTotalManual1,Twip1));
+                //        value.WIP2(recalculateWIP(i, value.TargetManual2(), selisihWIPPackingTue, SubTotalManual2,Twip2));
+                //        value.WIP3(recalculateWIP(i, value.TargetManual3(), selisihWIPPackingWed, SubTotalManual3,Twip3));
+                //        value.WIP4(recalculateWIP(i, value.TargetManual4(), selisihWIPPackingThu, SubTotalManual4,Twip4));
+                //        value.WIP5(recalculateWIP(i, value.TargetManual5(), selisihWIPPackingFri, SubTotalManual5,Twip5));
+                //        value.WIP6(recalculateWIP(i, value.TargetManual6(), selisihWIPPackingSat, SubTotalManual6,Twip6));
+                //        value.WIP7(recalculateWIP(i, value.TargetManual7(), selisihWIPPackingSun, SubTotalManual7,Twip7));
+
+                //        //target system
+                //        value.TargetSystem1(recalculateTargetOnWIPChange(value.TargetSystem1(), packing.SubTotalSytem1(), value.WIP1()));
+                //        value.TargetSystem2(recalculateTargetOnWIPChange(value.TargetSystem2(), packing.SubTotalSytem2(), value.WIP2()));
+                //        value.TargetSystem3(recalculateTargetOnWIPChange(value.TargetSystem3(), packing.SubTotalSytem3(), value.WIP3()));
+                //        value.TargetSystem4(recalculateTargetOnWIPChange(value.TargetSystem4(), packing.SubTotalSytem4(), value.WIP4()));
+                //        value.TargetSystem5(recalculateTargetOnWIPChange(value.TargetSystem5(), packing.SubTotalSytem5(), value.WIP5()));
+                //        value.TargetSystem6(recalculateTargetOnWIPChange(value.TargetSystem6(), packing.SubTotalSytem6(), value.WIP6()));
+                //        value.TargetSystem7(recalculateTargetOnWIPChange(value.TargetSystem7(), packing.SubTotalSytem7(), value.WIP7()));
+
+                //        //target Manual mon
+                //        value.TargetManual1(recalculateTargetOnWIPChange(value.TargetManual1(), packing.SubTotalManual1(), value.WIP1()));
+                //        value.TargetManual2(recalculateTargetOnWIPChange(value.TargetManual2(), packing.SubTotalManual2(), value.WIP2()));
+                //        value.TargetManual3(recalculateTargetOnWIPChange(value.TargetManual3(), packing.SubTotalManual3(), value.WIP3()));
+                //        value.TargetManual4(recalculateTargetOnWIPChange(value.TargetManual4(), packing.SubTotalManual4(), value.WIP4()));
+                //        value.TargetManual5(recalculateTargetOnWIPChange(value.TargetManual5(), packing.SubTotalManual5(), value.WIP5()));
+                //        value.TargetManual6(recalculateTargetOnWIPChange(value.TargetManual6(), packing.SubTotalManual6(), value.WIP6()));
+                //        value.TargetManual7(recalculateTargetOnWIPChange(value.TargetManual7(), packing.SubTotalManual7(), value.WIP7()));
+                //        i ++;
+                //    });
+                //    SKTIS.Helper.ResponseNotification("Success", "Save TPK",packing.ProcessGroup());
+                //}
+
+                ////calculate stickwrapping
+                //var stickWrapping = ko.utils.arrayFirst(self.gridView.listDataItems(), function(item) {
+                //    return item.ProcessGroup().toLowerCase() === SKTIS.Constant.ProcessGroup.STICKWRAPPING;
+                //});
+
+                //if (stickWrapping != null) {
+                //    //get selisih wip
+                //    selisihWIPStickWrappingMon = getWIPDeviation(stickWrapping.WIPPreviousValue(), stickWrapping.WIPStock1());
+                //    selisihWIPStickWrappingTue = getWIPDeviation(stickWrapping.WIPStock1(), stickWrapping.WIPStock2());
+                //    selisihWIPStickWrappingWed = getWIPDeviation(stickWrapping.WIPStock2(), stickWrapping.WIPStock3());
+                //    selisihWIPStickWrappingThu = getWIPDeviation(stickWrapping.WIPStock3(), stickWrapping.WIPStock4());
+                //    selisihWIPStickWrappingFri = getWIPDeviation(stickWrapping.WIPStock4(), stickWrapping.WIPStock5());
+                //    selisihWIPStickWrappingSat = getWIPDeviation(stickWrapping.WIPStock5(), stickWrapping.WIPStock6());
+                //    selisihWIPStickWrappingSun = getWIPDeviation(stickWrapping.WIPStock6(), stickWrapping.WIPStock7());
+
+                //    //calculate
+                //    var i = 1;
+                //    var count = stickWrapping.PlantTPK.length;
+                //    var SubTotalManual1 = stickWrapping.SubTotalManual1();
+                //    var SubTotalManual2 = stickWrapping.SubTotalManual2();
+                //    var SubTotalManual3 = stickWrapping.SubTotalManual3();
+                //    var SubTotalManual4 = stickWrapping.SubTotalManual4();
+                //    var SubTotalManual5 = stickWrapping.SubTotalManual5();
+                //    var SubTotalManual6 = stickWrapping.SubTotalManual6();
+                //    var SubTotalManual7 = stickWrapping.SubTotalManual7();
+
+                //    var Twip1 = 0;
+                //    var Twip2 = 0;
+                //    var Twip3 = 0;
+                //    var Twip4 = 0;
+                //    var Twip5 = 0;
+                //    var Twip6 = 0;
+                //    var Twip7 = 0;
+                //    $.each(stickWrapping.PlantTPK, function(k, value) {
+                //        var wip1 = recalculateWIP(i, value.TargetManual1(), selisihWIPStickWrappingMon, SubTotalManual1);
+                //        Twip1 += wip1;
+                //        var wip2 = recalculateWIP(i, value.TargetManual2(), selisihWIPStickWrappingTue, SubTotalManual2);
+                //        Twip2 += wip2;
+                //        var wip3 = recalculateWIP(i, value.TargetManual3(), selisihWIPStickWrappingWed, SubTotalManual3);
+                //        Twip3 += wip3;
+                //        var wip4 = recalculateWIP(i, value.TargetManual4(), selisihWIPStickWrappingThu, SubTotalManual4);
+                //        Twip4 += wip4;
+                //        var wip5 = recalculateWIP(i, value.TargetManual5(), selisihWIPStickWrappingFri, SubTotalManual5);
+                //        Twip5 += wip5;
+                //        var wip6 = recalculateWIP(i, value.TargetManual6(), selisihWIPStickWrappingSat, SubTotalManual6);
+                //        Twip6 += wip6;
+                //        var wip7 = recalculateWIP(i, value.TargetManual7(), selisihWIPStickWrappingSun, SubTotalManual7);
+                //        Twip7 += wip7;
+                //    });
+                //    $.each(stickWrapping.PlantTPK, function(k, value) {
+                //        //wip
+                //        value.WIP1(recalculateWIP(i, value.TargetManual1(), selisihWIPStickWrappingMon,SubTotalManual1,Twip1));
+                //        value.WIP2(recalculateWIP(i, value.TargetManual2(), selisihWIPStickWrappingTue,SubTotalManual2,Twip2));
+                //        value.WIP3(recalculateWIP(i, value.TargetManual3(), selisihWIPStickWrappingWed,SubTotalManual3,Twip3));
+                //        value.WIP4(recalculateWIP(i, value.TargetManual4(), selisihWIPStickWrappingThu,SubTotalManual4,Twip4));
+                //        value.WIP5(recalculateWIP(i, value.TargetManual5(), selisihWIPStickWrappingFri,SubTotalManual5,Twip5));
+                //        value.WIP6(recalculateWIP(i, value.TargetManual6(), selisihWIPStickWrappingSat,SubTotalManual6,Twip6));
+                //        value.WIP7(recalculateWIP(i, value.TargetManual7(), selisihWIPStickWrappingSun,SubTotalManual7,Twip7));
+
+                //        //target system
+                //        value.TargetSystem1(recalculateTargetOnWIPChange(value.TargetSystem1(), stickWrapping.SubTotalSytem1(), value.WIP1()));
+                //        value.TargetSystem2(recalculateTargetOnWIPChange(value.TargetSystem2(), stickWrapping.SubTotalSytem2(), value.WIP2()));
+                //        value.TargetSystem3(recalculateTargetOnWIPChange(value.TargetSystem3(), stickWrapping.SubTotalSytem3(), value.WIP3()));
+                //        value.TargetSystem4(recalculateTargetOnWIPChange(value.TargetSystem4(), stickWrapping.SubTotalSytem4(), value.WIP4()));
+                //        value.TargetSystem5(recalculateTargetOnWIPChange(value.TargetSystem5(), stickWrapping.SubTotalSytem5(), value.WIP5()));
+                //        value.TargetSystem6(recalculateTargetOnWIPChange(value.TargetSystem6(), stickWrapping.SubTotalSytem6(), value.WIP6()));
+                //        value.TargetSystem7(recalculateTargetOnWIPChange(value.TargetSystem7(), stickWrapping.SubTotalSytem7(), value.WIP7()));
+
+                //        //target Manual mon
+                //        value.TargetManual1(recalculateTargetOnWIPChange(value.TargetManual1(), stickWrapping.SubTotalManual1(), value.WIP1()));
+                //        value.TargetManual2(recalculateTargetOnWIPChange(value.TargetManual2(), stickWrapping.SubTotalManual2(), value.WIP2()));
+                //        value.TargetManual3(recalculateTargetOnWIPChange(value.TargetManual3(), stickWrapping.SubTotalManual3(), value.WIP3()));
+                //        value.TargetManual4(recalculateTargetOnWIPChange(value.TargetManual4(), stickWrapping.SubTotalManual4(), value.WIP4()));
+                //        value.TargetManual5(recalculateTargetOnWIPChange(value.TargetManual5(), stickWrapping.SubTotalManual5(), value.WIP5()));
+                //        value.TargetManual6(recalculateTargetOnWIPChange(value.TargetManual6(), stickWrapping.SubTotalManual6(), value.WIP6()));
+                //        value.TargetManual7(recalculateTargetOnWIPChange(value.TargetManual7(), stickWrapping.SubTotalManual7(), value.WIP7()));
+
+                //        i++;
+                //    });
+                //    SKTIS.Helper.ResponseNotification("Success", "Save TPK",stickWrapping.ProcessGroup());
+                //}
+
+                ////calculate cutting and rolling
+                //var cuttingAndRolling = ko.utils.arrayFilter(self.gridView.listDataItems(), function(item) {
+                //    return item.ProcessGroup().toLowerCase() === SKTIS.Constant.ProcessGroup.CUTTING || item.ProcessGroup().toLowerCase() === SKTIS.Constant.ProcessGroup.ROLLING;
+                //});
+
+                //if (cuttingAndRolling.length > 0) {
+                //    var count = cuttingAndRolling[cuttingAndRolling.length - 1].PlantTPK.length;
+                //    $.each(cuttingAndRolling, function(k, item) {
+                //        if (item != null) {
+                //            //get selisih wip
+                //            // Old one
+                //            //selisihWIPCuttingMon = getWIPDeviation(item.WIPPreviousValue(), item.WIPStock1()) + (packing ? selisihWIPPackingMon : selisihWIPStickWrappingMon);
+                //            //selisihWIPCuttingTue = getWIPDeviation(item.WIPPreviousValue(), item.WIPStock2()) + (packing ? selisihWIPPackingTue : selisihWIPStickWrappingTue);
+                //            //selisihWIPCuttingWed = getWIPDeviation(item.WIPPreviousValue(), item.WIPStock3()) + (packing ? selisihWIPPackingWed : selisihWIPStickWrappingWed);
+                //            //selisihWIPCuttingThu = getWIPDeviation(item.WIPPreviousValue(), item.WIPStock4()) + (packing ? selisihWIPPackingThu : selisihWIPStickWrappingThu);
+                //            //selisihWIPCuttingFri = getWIPDeviation(item.WIPPreviousValue(), item.WIPStock5()) + (packing ? selisihWIPPackingFri : selisihWIPStickWrappingFri);
+                //            //selisihWIPCuttingSat = getWIPDeviation(item.WIPPreviousValue(), item.WIPStock6()) + (packing ? selisihWIPPackingSat : selisihWIPStickWrappingSat);
+                //            //selisihWIPCuttingSun = getWIPDeviation(item.WIPPreviousValue(), item.WIPStock7()) + (packing ? selisihWIPPackingSun : selisihWIPStickWrappingSun);
+                //            selisihWIPCuttingMon = getWIPDeviation(item.WIPPreviousValue(), item.WIPStock1());
+                //            selisihWIPCuttingTue = getWIPDeviation(item.WIPStock1(), item.WIPStock2());
+                //            selisihWIPCuttingWed = getWIPDeviation(item.WIPStock2(), item.WIPStock3());
+                //            selisihWIPCuttingThu = getWIPDeviation(item.WIPStock3(), item.WIPStock4());
+                //            selisihWIPCuttingFri = getWIPDeviation(item.WIPStock4(), item.WIPStock5());
+                //            selisihWIPCuttingSat = getWIPDeviation(item.WIPStock5(), item.WIPStock6());
+                //            selisihWIPCuttingSun = getWIPDeviation(item.WIPStock6(), item.WIPStock7());
+
+                //            //calculate
+                //            var i = 1;
+                //            var SubTotalManual1 = item.SubTotalManual1();
+                //            var SubTotalManual2 = item.SubTotalManual2();
+                //            var SubTotalManual3 = item.SubTotalManual3();
+                //            var SubTotalManual4 = item.SubTotalManual4();
+                //            var SubTotalManual5 = item.SubTotalManual5();
+                //            var SubTotalManual6 = item.SubTotalManual6();
+                //            var SubTotalManual7 = item.SubTotalManual7();
+
+                //            var Twip1 = 0;
+                //            var Twip2 = 0;
+                //            var Twip3 = 0;
+                //            var Twip4 = 0;
+                //            var Twip5 = 0;
+                //            var Twip6 = 0;
+                //            var Twip7 = 0;
+                //            $.each(item.PlantTPK, function(k, value) {
+                //                var wip1 = recalculateWIP(i, value.TargetManual1(), selisihWIPCuttingMon, SubTotalManual1);
+                //                Twip1 += wip1;
+                //                var wip2 = recalculateWIP(i, value.TargetManual2(), selisihWIPCuttingTue, SubTotalManual2);
+                //                Twip2 += wip2;
+                //                var wip3 = recalculateWIP(i, value.TargetManual3(), selisihWIPCuttingWed, SubTotalManual3);
+                //                Twip3 += wip3;
+                //                var wip4 = recalculateWIP(i, value.TargetManual4(), selisihWIPCuttingThu, SubTotalManual4);
+                //                Twip4 += wip4;
+                //                var wip5 = recalculateWIP(i, value.TargetManual5(), selisihWIPCuttingFri, SubTotalManual5);
+                //                Twip5 += wip5;
+                //                var wip6 = recalculateWIP(i, value.TargetManual6(), selisihWIPCuttingSat, SubTotalManual6);
+                //                Twip6 += wip6;
+                //                var wip7 = recalculateWIP(i, value.TargetManual7(), selisihWIPCuttingSun, SubTotalManual7);
+                //                Twip7 += wip7;
+                //            });
+                //            $.each(item.PlantTPK, function(k, value) {
+                //                //wip
+                //                value.WIP1(recalculateWIP(i, value.TargetManual1(), selisihWIPCuttingMon,SubTotalManual1,Twip1));
+                //                value.WIP2(recalculateWIP(i, value.TargetManual2(), selisihWIPCuttingTue,SubTotalManual2,Twip2));
+                //                value.WIP3(recalculateWIP(i, value.TargetManual3(), selisihWIPCuttingWed,SubTotalManual3,Twip3));
+                //                value.WIP4(recalculateWIP(i, value.TargetManual4(), selisihWIPCuttingThu,SubTotalManual4,Twip4));
+                //                value.WIP5(recalculateWIP(i, value.TargetManual5(), selisihWIPCuttingFri,SubTotalManual5,Twip5));
+                //                value.WIP6(recalculateWIP(i, value.TargetManual6(), selisihWIPCuttingSat,SubTotalManual6,Twip6));
+                //                value.WIP7(recalculateWIP(i, value.TargetManual7(), selisihWIPCuttingSun,SubTotalManual7,Twip7));
+
+                //                //target system
+                //                value.TargetSystem1(recalculateTargetOnWIPChange(value.TargetSystem1(), item.SubTotalSytem1(), value.WIP1()));
+                //                value.TargetSystem2(recalculateTargetOnWIPChange(value.TargetSystem2(), item.SubTotalSytem2(), value.WIP2()));
+                //                value.TargetSystem3(recalculateTargetOnWIPChange(value.TargetSystem3(), item.SubTotalSytem3(), value.WIP3()));
+                //                value.TargetSystem4(recalculateTargetOnWIPChange(value.TargetSystem4(), item.SubTotalSytem4(), value.WIP4()));
+                //                value.TargetSystem5(recalculateTargetOnWIPChange(value.TargetSystem5(), item.SubTotalSytem5(), value.WIP5()));
+                //                value.TargetSystem6(recalculateTargetOnWIPChange(value.TargetSystem6(), item.SubTotalSytem6(), value.WIP6()));
+                //                value.TargetSystem7(recalculateTargetOnWIPChange(value.TargetSystem7(), item.SubTotalSytem7(), value.WIP7()));
+
+                //                //target Manual mon
+                //                value.TargetManual1(recalculateTargetOnWIPChange(value.TargetManual1(), item.SubTotalManual1(), value.WIP1()));
+                //                value.TargetManual2(recalculateTargetOnWIPChange(value.TargetManual2(), item.SubTotalManual2(), value.WIP2()));
+                //                value.TargetManual3(recalculateTargetOnWIPChange(value.TargetManual3(), item.SubTotalManual3(), value.WIP3()));
+                //                value.TargetManual4(recalculateTargetOnWIPChange(value.TargetManual4(), item.SubTotalManual4(), value.WIP4()));
+                //                value.TargetManual5(recalculateTargetOnWIPChange(value.TargetManual5(), item.SubTotalManual5(), value.WIP5()));
+                //                value.TargetManual6(recalculateTargetOnWIPChange(value.TargetManual6(), item.SubTotalManual6(), value.WIP6()));
+                //                value.TargetManual7(recalculateTargetOnWIPChange(value.TargetManual7(), item.SubTotalManual7(), value.WIP7()));
+                //                i++;
+                //            });
+                //        }
+                //    });
+                //    SKTIS.Helper.ResponseNotification("Success", "Save TPK","CUTTING");
+                //};
+            };
+
+            self.closeWIPStock = function() {
+                if (self.gridView.listDataItems().length < 1)
+                    return;
+                $.each(self.tempWIPStocks, function(k, value) {
+                    var model = ko.utils.arrayFirst(self.gridView.listDataItems(), function(item) {
+                        return item.ProcessGroup().toLowerCase() === value.ProcessGroup;
+                    });
+
+                    if (model != null) {
+                        model.WIPStock1(value.WIPStock1);
+                        model.WIPStock2(value.WIPStock2);
+                        model.WIPStock3(value.WIPStock3);
+                        model.WIPStock4(value.WIPStock4);
+                        model.WIPStock5(value.WIPStock5);
+                        model.WIPStock6(value.WIPStock6);
+                        model.WIPStock7(value.WIPStock7);
+                    };
+                });
+            };
+
+
+            //jk process
+            self.tempJKProcess = [];
+
+            $('#jkprocess').on('shown.bs.modal', function() {
+                if (self.gridView.listDataItems().length < 1)
+                    return;
+
+                self.tempJKProcess = [];
+
+                $.each(self.gridView.listDataItems(), function(k, value) {
+                    self.tempJKProcess.push({
+                        "ProcessGroup": value.ProcessGroup().toLowerCase(),
+                        "JKProcess1": value.JKProcess1(),
+                        "JKProcess2": value.JKProcess2(),
+                        "JKProcess3": value.JKProcess3(),
+                        "JKProcess4": value.JKProcess4(),
+                        "JKProcess5": value.JKProcess5(),
+                        "JKProcess6": value.JKProcess6(),
+                        "JKProcess7": value.JKProcess7()
+                    });
+                });
+            });
+
+            self.saveJKProcess = function() {
+                if (self.gridView.listDataItems().length < 1)
+                    return;
+                var rolling = ko.utils.arrayFirst(self.gridView.listDataItems(), function(item) {
+                    return item.ProcessGroup().toLowerCase() === SKTIS.Constant.ProcessGroup.ROLLING;
+                });
+
+                var cutting = ko.utils.arrayFirst(self.gridView.listDataItems(), function(item) {
+                    return item.ProcessGroup().toLowerCase() === SKTIS.Constant.ProcessGroup.CUTTING;
+                });
+
+                if((rolling.JKProcess1() != cutting.JKProcess1()) || (rolling.JKProcess2() != cutting.JKProcess2()) || (rolling.JKProcess3() != cutting.JKProcess3()) || (rolling.JKProcess4() != cutting.JKProcess4()) || (rolling.JKProcess5() != cutting.JKProcess5()) || (rolling.JKProcess6() != cutting.JKProcess6()) || (rolling.JKProcess7() != cutting.JKProcess7())){
+                    window.alert("JK Value between Rolling and Cutting doesn't match");
+                }else{
+                    $("#jkprocess").modal("hide");
+                    $.each(self.gridView.listDataItems(), function(i, item) {
+                        $.each(item.PlantTPK, function(j, value) {
+                            value.ProcessWorkHours1(item.JKProcess1());
+                            value.ProcessWorkHours2(item.JKProcess2());
+                            value.ProcessWorkHours3(item.JKProcess3());
+                            value.ProcessWorkHours4(item.JKProcess4());
+                            value.ProcessWorkHours5(item.JKProcess5());
+                            value.ProcessWorkHours6(item.JKProcess6());
+                            value.ProcessWorkHours7(item.JKProcess7());
+                        });
+                    });
+                    setTarget();
+                    self.ButtonCalculate(true);
+                    $.each(self.historyGridView.listDataItems(), function(i, item) {
+                        if(item.action() == 'Submit'){
+                            self.isAlreadySubmitted(true);
+                        }
+                    });
+                    if(self.isAlreadySubmitted()){
+                        self.filterCurrenDayEnabled(true);
+                        self.isFilterCurrentDayForward(true);
+                    }
+                    self.EditedCanculation(true);
+                    self.saveEnabled(false);
+                    self.submitEnabled(false);
+                }
+            };
+
+            self.closeJKProcess = function() {
+                //if (self.gridView.listDataItems().length < 1)
+                //    return;
+                //$.each(self.tempJKProcess, function(k, value) {
+                //    var model = ko.utils.arrayFirst(self.gridView.listDataItems(), function(item) {
+                //        return item.ProcessGroup().toLowerCase() === value.ProcessGroup;
+                //    });
+
+                //    if (model != null) {
+                //        model.JKProcess1(value.JKProcess1);
+                //        model.JKProcess2(value.JKProcess2);
+                //        model.JKProcess3(value.JKProcess3);
+                //        model.JKProcess4(value.JKProcess4);
+                //        model.JKProcess5(value.JKProcess5);
+                //        model.JKProcess6(value.JKProcess6);
+                //        model.JKProcess7(value.JKProcess7);
+                //    };
+                //});
+            };
+
+
+            //Submit data
+            self.submitData = function() {
+                $.ajax({
+                    url: @Html.BaseUrl("PlanningPlantTPK/SubmitData"),
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ 'year': self.filterKPSYear(), 'week': self.filterKPSWeek(), 'locationCode': self.filterLocationCode(), 'brandCode': self.filterBrandCode(), 'unitCode': self.filterUnitCode(), 'shift': self.filterShift()?self.filterShift():1 }),
+                    dataType: 'json',
+                    success: function(data) {
+                        SKTIS.Helper.Notification(data);
+
+                        self.submitEnabled(false);
+                        self.saveEnabled(false);
+                        self.WIPEnabled(false);
+                        self.JKEnabled(false);
+
+
+                        self.getTransactionLog(function(data) {
+                            self.mondayEditable(data.Dates[0].IsActive);
+                            self.tuesdayEditable(data.Dates[1].IsActive);
+                            self.wednesdayEditable(data.Dates[2].IsActive);
+                            self.thursdayEditable(data.Dates[3].IsActive);
+                            self.fridayEditable(data.Dates[4].IsActive);
+                            self.saturdayEditable(data.Dates[5].IsActive);
+                            self.sundayEditable(data.Dates[6].IsActive);
+
+                            if (data.SubmitLog !== false)
+                            {
+                                self.submitEnabled(false);
+                                self.saveEnabled(false);
+                                self.WIPEnabled(false);
+                                self.JKEnabled(false);
+                                self.isFilterCurrentDayForward(false);
+                                self.filterCurrenDayEnabled(false);
+                                $.each(data.Dates, function (k, v) {
+                                    if(v.IsActive){
+                                        self.WIPEnabled(true);
+                                        self.JKEnabled(true);
+                                    }
+                                });
+                            } else {
+                                self.submitEnabled(true);
+                                self.WIPEnabled(true);
+                                self.JKEnabled(true);
+                                if(data.Resubmit){
+                                    self.filterCurrenDayEnabled(true);
+                                    self.isFilterCurrentDayForward(true);
+                                }else{
+                                    self.filterCurrenDayEnabled(false);
+                                    self.isFilterCurrentDayForward(false);
+                                }
+                            }
+                            //data.Dates.map(function(date)
+                            //{
+                            //    if (date.IsActive)
+                            //    {
+                            //        //self.submitEnabled(true);
+                            //        self.saveEnabled(true);
+                            //        self.WIPEnabled(true);
+                            //        self.JKEnabled(true);
+                            //    }
+                            //});
+                        });
+                    }
+                });
+            };
+
+            self.CalculateData = function() {
+                self.unitStatus = false;
+                if (self.gridView.editingRowIndex() !== -1)
+                    return;
+                var pageIsValid = true;
+                var notif = true;
+                ko.utils.arrayForEach(self.gridView.listDataItems(),function(row){
+                    ko.utils.arrayForEach(row.PlantTPK, function(item){
+                        //console.log(item.Allocation());
+                        if(item.Allocation()>item.WorkerAvailable()){
+                            // Remove condition on http://tp.voxteneo.co.id/entity/13065
+                            //SKTIS.Helper.Notification("Allocation cannot bigger than available");
+                            //notif = false;
+                            //pageIsValid = false;
+                            //self.ButtonCalculate(false);
+                            //setTimeout(function() {
+                            //    self.search();
+                            //}, 1000);
+                            //return;
+                        }
+                    });
+                });
+
+                if (!pageIsValid) return;
+
+                self.ButtonCalculate(false);
+
+                var datas = {"Parameters": {
+                    "LocationCode": self.filterLocationCode(),
+                    'BrandCode': self.filterBrandCode(),
+                    'KPSYear': self.filterKPSYear(),
+                    'KPSWeek': self.filterKPSWeek(),
+                    'UnitCode': self.filterUnitCode(),
+                    'IsFilterCurrentDayForward': self.isFilterCurrentDayForward(),
+                    'FilterCurrentDayForward': self.filterCurrentDayForward(),
+                },
+                    "edit": ko.mapping.toJS(self.gridView.listDataItems()),
+                    "total": ko.mapping.toJS(self.gridView.CustomResults())
+                };
+
+                datas = JSON.stringify(datas);
+                $.ajax({
+                    url: @Html.BaseUrl("PlanningPlantTPK/CalculatePlantTPK"),
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: datas,
+                    dataType: 'json',
+                    success: function(data) {
+                        self.ButtonCalculate(false);
+                        var convertObjectToObervable = [];
+                        $.each(data.Results, function (k, v) {
+                            var obj = ko.mapping.fromJS(v, self.gridView.mapping);
+                            convertObjectToObervable.push(obj);
+                        });
+                        self.gridView.listDataItems(convertObjectToObervable);
+
+                        var customResultObj = [];
+                        $.each(data.CustomResults, function (k, v) {
+                            var obj = ko.mapping.fromJS(v);
+                            customResultObj.push(obj);
+                        });
+                        self.gridView.CustomResults(customResultObj);
+
+                        self.saveEnabled(true);
+                        self.submitEnabled(false);
+                        self.EditedCanculation(false);
+                        //recalculate wip stock << no need this anymore
+                        //self.saveWIPStock();
+                    },
+                    error: function(xhr,status,error){
+                        console.log(xhr,status,error);
+                    }
+                });
+            };
+
+
+            // TRANSACTION HISTORY AND FLOW
+            self.historyGridView = new app.GridViewModel({
+                Criteria: {
+                    PageSize: 10,
+                    PageIndex: 1,
+                    SortExpression: "UpdatedDate",
+                    SortOrder: "DESC",
+                    code_1: 'TPK',
+                    code_2: self.filterLocationCode,
+                    code_3: self.filterBrandCode,
+                    code_4: self.filterUnitCode,
+                    code_5: self.filterKPSYear,
+                    code_6: self.filterKPSWeek
+                },
+                DataSourceUrl: @Html.BaseUrl("PlanningPlantTPK/GetHistory"),
+                InlineEdit: true,
+                InsertRowFocusedControlIndex: 1
+            });
+            self.flowGridView = new app.GridViewModel({
+                Criteria: {
+                    PageSize: 10,
+                    PageIndex: 1,
+                    SortExpression: "IDFlow",
+                    SortOrder: "ASC",
+                    FunctionName: 'PlantTargetProductionGroup'
+                },
+                DataSourceUrl: @Html.BaseUrl("PlanningPlantTPK/GetFlow"),
+                InlineEdit: true,
+                InsertRowFocusedControlIndex: 1
+            });
+
+            self.loadHistory = function() {
+                self.historyGridView.search({}, function(response) {
+                    if (response.status == 'KO') {
+                        SKTIS.Helper.Notification(response.message, 'error');
+                        $('.empty-row-message').html(response.message);
+                    } else if (response.status == 'Empty') {
+
+                        self.RemoveNotification();
+
+                        //SKTIS.Helper.Notification(response.message,'warning');
+                        $('.empty-row-message').html('@CommonLabel.lblDataEmpty');
+                    }
+                });
+            };
+            self.loadFlow = function() {
+                self.flowGridView.search({}, function(response) {
+                    if (response.status == 'KO') {
+                        SKTIS.Helper.Notification(response.message, 'error');
+                        $('.empty-row-message').html(response.message);
+                    } else if (response.status == 'Empty') {
+
+                        self.RemoveNotification();
+
+                        //SKTIS.Helper.Notification(response.message,'warning');
+                        $('.empty-row-message').html('@CommonLabel.lblDataEmpty');
+                    }
+                });
+            };
+            // END OF TRANSACTION HISTORY AND FLOW
+
+            // Load Data
+            // TRANSACTION LOGS
+            self.getTransactionLog = function(cb)
+            {
+                var data = {
+                    LocationCode: self.filterLocationCode(),
+                    BrandCode: self.filterBrandCode(),
+                    KPSYear: self.filterKPSYear(),
+                    KPSWeek: self.filterKPSWeek(),
+                    Shift: self.filterShift()?self.filterShift():1,
+                    UnitCode: self.filterUnitCode()
+                };
+
+                $.ajax({
+                    url: @Html.BaseUrl("PlanningPlantTPK/GetState"),
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(data),
+                    dataType: 'json',
+                    success: function(data) {
+                        cb(data);
+                    }
+                });
+            }
+
+            self.f2 = ko.observable(false);
+            self.EditKeyDown = function (data, event) {
+                if (event.keyCode == '113') {
+                    self.f2(true);
+                    $(event.target).attr('style', 'border-color: #66afe9;box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(255, 50, 0, 0.6);outline: 0 none;');
+                }
+
+                var editableClass = '.current';
+                var that = $(event.target);
+                var td = that.parent();
+                var tr = td.parent();
+                var $focused = $(':focus');
+                var isInput = $focused.is('input');
+                if (isInput) {
+                    var col = $focused.parents('td')
+                    var colNumber = col.parents('tr').find('td').index(col);
+                    //console.log(colNumber);
+                }
+
+                if (!self.f2()) {
+                    // Up
+                    if (event.keyCode == '38') {
+                        var prevTd = tr.prevAll(':not(.total):first').find('td')[colNumber];
+                        $(prevTd).find('input').focus();
+                    }
+                    // Down
+                    if (event.keyCode == '40') {
+                        var nextTd = tr.nextAll(':not(.total):first').find('td')[colNumber];
+                        $(nextTd).find('input').focus();
+                    }
+                }
+                return true;
+            }
+
+            // END
+            self.search = function() {
+                $('.empty-row-message').html('<div class="loader"></div>'); // Reset New and Edit row
+                // Check whether New or Edit data is existing and not saved to database yet (on Ajax Action)
+                if (SKTIS.Checker.modifiedDataExistsForAjax([self.gridView.listNewItems, self.gridView.listEditItems]) == true) {
+                    return;
+                } else {
+                    self.gridView.listNewItems.removeAll();
+                    self.gridView.listEditItems.removeAll();
+                }
+
+                self.filterExcelLocationCode = self.filterLocationCode();
+                self.filterExcelUnitCode = self.filterUnitCode();
+                self.filterExcelBrandCode = self.filterBrandCode();
+                self.filterExcelKPSYear = self.filterKPSYear();
+                self.filterExcelKPSWeek = self.filterKPSWeek();
+                self.filterExcelShift = self.filterShift();
+                self.ButtonCalculate(false);
+
+                self.getProductionStartDate();
+                //self.getWIPStock();
+
+                self.gridView.search({}, function(response) {
+                    if (response.status == 'KO') {
+                        SKTIS.Helper.Notification(response.message, 'error');
+                        $('.empty-row-message').html(response.message);
+                    } else if (response.status == 'Empty') {
+
+                        self.RemoveNotification();
+
+                        //SKTIS.Helper.Notification(response.message,'warning');
+                        $('.empty-row-message').html('@CommonLabel.lblDataEmpty');
+                    }
+
+                    self.submitEnabled(false);
+                    self.saveEnabled(false);
+                    self.WIPEnabled(false);
+                    self.JKEnabled(false);
+                    self.isFilterCurrentDayForward(false);
+                    self.filterCurrenDayEnabled(false);
+
+                    self.getTransactionLog(function(data) {
+                        self.mondayEditable(data.Dates[0].IsActive);
+                        self.tuesdayEditable(data.Dates[1].IsActive);
+                        self.wednesdayEditable(data.Dates[2].IsActive);
+                        self.thursdayEditable(data.Dates[3].IsActive);
+                        self.fridayEditable(data.Dates[4].IsActive);
+                        self.saturdayEditable(data.Dates[5].IsActive);
+                        self.sundayEditable(data.Dates[6].IsActive);
+
+                        if (data.SubmitLog !== false)
+                        {
+                            self.submitEnabled(false);
+                            self.saveEnabled(false);
+                            self.WIPEnabled(false);
+                            self.JKEnabled(false);
+                            self.isFilterCurrentDayForward(false);
+                            self.filterCurrenDayEnabled(false);
+                            $.each(data.Dates, function (k, v) {
+                                if(v.IsActive){
+                                    self.WIPEnabled(true);
+                                    self.JKEnabled(true);
+                                }
+                            });
+                        } else {
+                            self.submitEnabled(true);
+                            self.WIPEnabled(true);
+                            self.JKEnabled(true);
+                            if(data.Resubmit){
+                                self.filterCurrenDayEnabled(true);
+                                self.isFilterCurrentDayForward(true);
+                            }else{
+                                self.filterCurrenDayEnabled(false);
+                                self.isFilterCurrentDayForward(false);
+                            }
+                        }
+                        //data.Dates.map(function(date)
+                        //{
+                        //    if (date.IsActive)
+                        //    {
+                        //        alert(1);
+                        //        self.submitEnabled(true);
+                        //        //self.saveEnabled(true);
+                        //        self.WIPEnabled(true);
+                        //        self.JKEnabled(true);
+                        //        self.filterCurrenDayEnabled(true);
+                        //        if(data.Resubmit){
+                        //            self.isFilterCurrentDayForward(true);
+                        //        }else{
+                        //            self.isFilterCurrentDayForward(false);
+                        //        }
+                        //    }
+                        //});
+
+                    });
+
+                    self.getWorkHours();
+                    //self.GetTotalTargetManualTPU();
+
+                });
+
+                self.RemoveNotification = function() {
+                    if ($('#noty_top_layout_container').length > 0) {
+                        $('#noty_top_layout_container').remove();
+                    }
+                };
+
+                self.loadHistory();
+                self.loadFlow();
+            };
+
+            self.afterRender = function(options, item)
+            {
+                if (typeof(item) === 'undefined') return;
+
+                $(options).attr('title', item.LocationCode);
+                $(options).attr(
+                    'data-content',
+                    "<span class='text'><span style='width: 35px; display: inline-block;'>"+item.LocationCode+"</span> - "+item.LocationName+"</span>"
+                );
+            }
+
+            self.ListLocation = ko.observableArray([]);
+            self.getPlantLocationCodes = function(cb){
+                $.ajax({
+                    url: @Html.BaseUrl("PlanningPlantTPK/GetPlantLocationCode"),
+                    type: 'GET',
+                    cache: false,
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    success: function(data) {
+                        var listGroupModel = [];
+                        $.each(data, function (index, value) {
+                            listGroupModel.push({
+                                LocationCode: value.LocationCode,
+                                LocationName: value.LocationName,
+                                LocationCompat: value.LocationCompat
+                            });
+                        });
+                        self.ListLocation(listGroupModel);
+                        //console.log(self.filterLocationCode());
+                        if(self.firstInitFromUrl()){
+                            self.filterLocationCode('@Model.Param1LocationCode');
+                        }
+
+                        if (typeof cb == 'function') cb();
+                    }
+                });
+            };
+
+            self.init = function() {
+                if (typeof '@Model.Param1LocationCode' != 'undefined' && '@Model.Param1LocationCode') {
+                    self.firstInitFromUrl(true);
+                };
+
+                if(self.firstInitFromUrl()){
+                    self.filterKPSYear('@Model.Param5KPSYear');
+                }
+
+                //Asynch setting
+                async.series([
+                    function(callback) {
+                        self.getKPSWeekList(callback);
+                    },
+                    function(callback) {
+                        self.getPlantLocationCodes(callback);
+                    },
+                    function(callback) {
+                        self.search();
+                        self.firstInitFromUrl(false);
+                    },
+                ]);
+            };
+
+            self.init();
+
+
+            //self.onLocationCodeChange();
+            //self.getProductionStartDate();
+            //self.getWorkHours();
+            //self.getUnitCodeList();
+            //self.getKPSWeekList();
+            //self.onKPSWeekChange();
+
+
+            ////self.getWIPStock();
+            //self.search();
+
+            // Check whether New or Edit data is existing and not saved to database yet (on Request action)
+            SKTIS.Checker.modifiedDataExists([self.gridView.listNewItems, self.gridView.listEditItems]);
+
+        };
+        ko.applyBindings(new app.EditGrid());
+    })(app = this.app || {});
+</script>
+}

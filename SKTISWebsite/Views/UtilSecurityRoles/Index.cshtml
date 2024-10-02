@@ -1,0 +1,456 @@
+﻿@model SKTISWebsite.Models.UtilSecurityRoles.InitUtilSecurityRoles
+@using HMS.SKTIS.Application.Resources
+@using HMS.SKTIS.Application.Resources.Views.UtilSecurityRoles
+@using SKTISWebsite.Helper
+@{ Html.SetPageTitle(@UtilSecurityRoles.PageTitle); }
+
+<div class="col-lg-12">
+    <div class="tabs" role="tabpanel">
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs" role="tablist" id="roles-setting">
+            <li role="presentation" class="active"><a href="#roles" aria-controls="profile" role="tab" data-toggle="tab">@UtilSecurityRoles.lblTabRoles</a></li>
+            <li role="presentation"><a href="#function" aria-controls="home" role="tab" data-toggle="tab">@UtilSecurityRoles.lblTabFunctions</a></li>
+        </ul>
+
+        <!-- Tab panes -->
+        <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade in active" id="roles" data-bind="with: gridViewRoles">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="action-btn">
+                            <button type="button" class="btn btn-primary" data-bind="click:$root.saveDataRoles">@CommonLabel.btnSave</button>
+                            @Html.Partial("GridViewPageSizeSelector")
+                        </div>
+                    </div>
+                </div>
+                <div id="master-roles-setting-proccess">
+                    <div class="table-overflow">
+                        <table class="table table-striped">
+                            <thead>
+                                @*<tr class="head">*@
+                                <tr class="head">
+                                    <th data-bind="click:sortBy.bind($data,'IDRole'), css:sortCss('IDRole', $data.sortExpression(), $data.sortOrder())">@UtilSecurityRoles.lblRolesID</th>
+                                    <th data-bind="click:sortBy.bind($data,'RolesCode'), css:sortCss('RolesCode', $data.sortExpression(), $data.sortOrder())">@UtilSecurityRoles.lblRolesCode</th>
+                                    <th data-bind="click:sortBy.bind($data,'RolesName'), css:sortCss('RolesName', $data.sortExpression(), $data.sortOrder())">@UtilSecurityRoles.lblRolesName</th>
+                                </tr>
+                                <tr class="insertRow" data-bind="click: cancelInline.bind(),inlineAddProccess:[$data, $root.newDataRolesTab]">
+                                    <th></th>
+                                    <th><input data-bind="value:$root.newDataRolesTab.RolesCode, valueUpdate: 'afterkeydown'" class="form-control transparent"/></th>
+                                    <th><input data-bind="value:$root.newDataRolesTab.RolesName, valueUpdate: 'afterkeydown'" class="form-control transparent"/></th>
+                                </tr>
+                            </thead>
+                            <tbody data-bind="foreach: listDataItems">
+                                @*item template*@
+                                <tr data-bind="if: ($parent.editingRowIndex() !== $index()),
+                                   click: $parent.editInline3.bind($data,$index())">
+                                    <td><span data-bind="text:$data.IDRole"></span></td>
+                                    <td class="current"><span data-bind="text:$data.RolesCode"></span></td>
+                                    <td class="current"><span data-bind="text:$data.RolesName"></span></td>
+                                </tr>
+                                @*edit template*@
+                                <tr data-bind="validationOptions: {insertMessages: false, showTooltip:true, decorateInputElement: true, errorElementClass: 'input-error'}, inlineProccess:[$parent,$data],
+                                   if:($parent.editingRowIndex() === $index()),
+                                   click: $parent.selectRow.bind($data, $index()),
+                                    event: {keydown:$parent.keydown}">
+                                    <td><span data-bind="text:$data.IDRole"></span></td>
+                                    <td class="current"><input data-bind="value:$data.RolesCode, valueUpdate: 'afterkeydown'" class="form-control transparent"/></td>
+                                    <td class="current"><input data-bind="value:$data.RolesName, valueUpdate: 'afterkeydown'" class="form-control transparent"/></td>
+                                </tr>
+                            </tbody>
+                            <tbody data-bind="visible: !listDataItems().length">
+                                <tr>
+                                    <td colspan="9" class="empty-row-message"><div class="loader"></div></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div data-bind="if: (listDataItems() != null && listDataItems().length !== 0)">
+                        @Html.Partial("GridViewFooter")
+                    </div>
+                </div>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="function">
+                <div class="col-lg-6">
+                    <div class="row">
+                        <label class="form-label col-lg-4">
+                            Role
+                        </label>
+                        <div class="col-lg-3">
+                            <select id="ddlRoles" class="selectpicker show-tick form-control" data-live-search="true" data-bind="selectPicker: $root.RoleCode, optionsText: 'Text', optionsValue : 'Value', selectPickerOptions: { optionsArray: $root.Roles }, event : { change : $root.onRoleCodeChange}"></select>
+                            @*@Html.DropDownList("ddlRoles", Model.RolesList,
+                                new Dictionary<string, object>
+                                {
+                                    {"data-bind", "value:$root.RoleCode, event : { change : $root.onRoleCodeChange}"},
+                                    {"class", "selectpicker show-tick form-control"},
+                                    {"data-live-search", "true"}, {"id", "ddlRoles"}
+                                })*@
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="action-btn">
+                                <button type="button" class="btn btn-primary" data-bind="click:$root.saveDataFunction">@CommonLabel.btnSave</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <label class="form-label col-lg-3">
+                            Tree Function
+                        </label>    
+                    </div>
+                </div>
+                <div id="functionTree" class="tree">
+                    <ul></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts
+{
+    <script src="~/Scripts/common/app.GridViewModel.js" type="text/javascript"></script>
+    <script src="~/Scripts/jquery-ui.js"></script>
+    <script src="~/Scripts/jquery.tree.js"></script>
+    <script type="text/javascript">
+    $(function() {
+        $('#roles-setting a').click(function(e) {
+            e.preventDefault();
+            $(this).tab('show');
+        });
+    });
+    $(function() {
+        $('#functionTree').tree({
+            collapseAll: true,
+            collapseUiIcon: 'ui-icon-plusthick',
+            expandUiIcon: 'ui-icon-minusthick',
+            checkbox: true,
+            //onCheck: {
+            //    ancestors: 'checkIfFull',
+            //    descendants: 'check'
+            //},
+            //onUncheck: {
+            //    ancestors: 'uncheck'
+            //},
+            selectable: false
+        });
+    });
+    (function(app) {
+        app.EditGrid = function() {
+            var self = this;
+
+
+            self.filterrolesTabBrandCode = ko.observable('');
+            self.filterrolesTabroles = ko.observable('');
+            self.Roles = ko.observableArray(@Html.Raw(Json.Encode(@Model.RolesList)));
+            self.RoleCode = ko.observable(self.Roles()[0].Value);
+
+            //filter: function tab
+            self.filterfunctionTabfunctionCode = ko.observableArray([]);
+            self.filterfunctionTabBrandGroupCode = ko.observableArray([]);
+            self.filterfunctionTabIDRole = ko.observableArray([]);
+            self.filterfunctionTabExcelfunctionCode = self.filterfunctionTabfunctionCode();
+            self.filterfunctionTabExcelBrandGroupCode = self.filterfunctionTabBrandGroupCode();
+            self.filterfunctionTabExcelIDRole = self.filterfunctionTabIDRole();
+            self.filterfunctionName = ko.observable();
+            self.firstLoad = ko.observable(true);
+            self.functionChanges = ko.observableArray([]);
+
+            self.tree = null;
+
+            function RoleFunction(IDFunction, IDRole, Enable) {
+                this.IDFunction = ko.observable(IDFunction);
+                this.IDRole = ko.observable(IDRole);
+                this.enable = ko.observable(Enable);
+            }
+
+            self.resetEditedFunctions = function() {
+                self.functionChanges([]);
+            };
+
+            self.newDataRolesTab = {
+                RolesCode: ko.observable([]),
+                RolesName: ko.observable([])
+            };
+            self.setFunctionTree = function(cb) {
+                var datas = { IDRole: self.RoleCode() };
+                datas = JSON.stringify(datas);
+
+                $('#functionTree').tree('uncheckAll');
+
+                $.ajax({
+                    url: @Html.BaseUrl("UtilSecurityRoles/GetRolesFunctions"),
+                    type: 'POST',
+                    data: datas,
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    success: function(data) {
+                        for (var d in data) {
+                            $('#functionTree').find('input#inputRF' + data[d]).prop('checked', true);
+                        }
+                    }
+                }).done(function() {
+                    if (typeof cb != 'undefined') cb();
+                });
+                ;
+            }
+            //self.setFunctionTree();
+
+            self.onRoleCodeChange = function() {
+                if (self.firstLoad()) return;
+                async.series([
+                    function(cb) {
+                        $('input[name="function"]', '#functionTree').unbind('change');
+                        self.setFunctionTree(cb);
+                    }
+                ], function() {
+                    self.listenChanges();
+                });
+            };
+            
+            self.getFunctionTree = function(cb) {
+                $.ajax({
+                    url: @Html.BaseUrl("UtilSecurityRoles/GetFunctionsTree"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#functionTree').tree('removeNode', $('#functionTree.tree li'));
+                        for (var d in data) {
+                            $('#functionTree').tree('addNode',
+                                {
+                                    "span": {
+                                        "html": data[d].FunctionName,
+                                        "class": "item-tree"
+                                    },
+                                    "li": {
+                                        "class": "collapsed",
+                                        "id": "idfunction_" + data[d].IDFunction
+                                    }
+                                },
+                                (data[d].ParentIDFunction == null ? null : $('li#' + "idfunction_" + data[d].ParentIDFunction))
+                            );
+                        }
+                        $("span.item-tree").wrap('<div class="tree-contain"></div>');
+                        $("div.tree-contain").each(function() {
+                            var id = $(this).parent().attr("id").split("_")[1];
+                            $(this).append("<input type='checkbox' id='inputRF"+id+"' name='function' value='" + id + "'/>");
+                        });
+                        $('#functionTree').tree('collapseAll');
+                    }
+                }).done(function() {
+                    if (typeof cb != 'undefined') cb();
+                });
+            };
+            //self.getFunctionTree();
+
+            //description: init gridView roles tab
+            self.gridViewRoles = new app.GridViewModel({
+                Criteria: { PageSize: 10, PageIndex: 1, SortExpression: "IDRole", SortOrder: "ASC", BrandCode: self.filterrolesTabBrandCode, IDRole: self.filterfunctionTabIDRole },
+                DataSourceUrl: @Html.BaseUrl("UtilSecurityRoles/GetRoles"),
+                InlineEdit: true,
+                InsertRowFocusedControlIndex: 1
+            });
+
+            //validations: roles tab
+            self.gridViewRoles.applyValidationRules = function(entity) {
+
+                self.RemoveNotification();
+
+                entity.RolesCode.extend({
+                    required: {
+                        message: "<strong>Roles Code</strong> cannot be empty!"
+                    }
+                });
+
+                entity.RolesName.extend({
+                    required: {
+                        message: "<strong>Roles Name</strong> cannot be empty!"
+                    }
+                });
+            };
+
+            // Reset Fields for Insert Row
+            self.gridViewRoles.resetDefault = function(viewModel) {
+                viewModel.RolesCode('');
+                viewModel.RolesName('');
+            };
+
+            self.saveDataFunction = function() {
+                var data = ko.mapping.toJSON(self.functionChanges);
+
+                return $.ajax({
+                    url: @Html.BaseUrl("UtilSecurityRoles/SaveRolesFunctions"),
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: data,
+                    dataType: 'json',
+                    success: function(data) {
+                        SKTIS.Helper.Notification("<strong>Roles Functions</strong> has been successfully updated.", "success");
+                    },
+                    error: function(err) {
+                        SKTIS.Helper.Notification("Unknown error has occured.", "error");
+                    },
+                    complete: function() {
+                        $('input[name="function"]', '#functionTree').unbind('change');
+
+                        async.series([
+                            function(cb) {
+                                self.setFunctionTree(cb);
+                            }
+                        ], function() {
+                            self.listenChanges();
+                        });
+                    }
+                });
+            };
+
+            //description: save bulk data roles tab
+            self.saveDataRoles = function() {
+                if (self.gridViewRoles.editingRowIndex() !== -1)
+                    return;
+
+                var datas = {
+                    "New": self.gridViewRoles.listNewItems(),
+                    "Edit": self.gridViewRoles.listEditItems()
+                };
+
+                datas = JSON.stringify(datas);
+                $.ajax({
+                    url: @Html.BaseUrl("UtilSecurityRoles/SaveAllRoles"),
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: datas,
+                    dataType: 'json',
+                    success: function(data) {
+                        if (data.New) {
+                            $.each(data.New, function(k, value) {
+                                if (value)
+                                    SKTIS.Helper.ResponseNotification(value, "Insert Roles Info", value.RolesCode + " - " + value.RolesName);
+                            });
+                        }
+
+                        if (data.Edit) {
+                            $.each(data.Edit, function(k, value) {
+                                if (value)
+                                    SKTIS.Helper.ResponseNotification(value, "Edit Roles Info", value.RolesCode + " - " + value.RolesName);
+                            });
+                        }
+
+                        //self.initFilterroles('roles');
+                        //self.initFilterroles('function');
+                        self.gridViewRoles.sort('IDRole', 'ASC');
+                        self.gridViewRoles.listNewItems.removeAll();
+                        self.gridViewRoles.listEditItems.removeAll();
+                    }
+                });
+            };
+
+            self.generateExcelroles = function(formElement) {
+                $(formElement).find("input[name=brandCode]").val(self.filterrolesTabBrandCode());
+                $(formElement).find("input[name=roles]").val(self.filterrolesTabroles());
+                return true;
+            };
+
+            self.IDRoleSelectListroles = ko.observableArray();
+            self.initFilterroles = function(tab) {
+                $.ajax({
+                    url: @Html.BaseUrl("UtilSecurityRoles/GetIDRoleSelectList"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: { 'increment': (tab == 'roles') ? true : false },
+                    dataType: 'json',
+                    cache: false,
+                    success: function(data) {
+                        var IDRoleModel = [];
+                        $.each(data, function(index, value) {
+                            IDRoleModel.push({ "Name": value });
+                        });
+                        if (tab == 'roles')
+                            self.IDRoleSelectListroles(IDRoleModel);
+                        else if (tab == 'function')
+                            self.IDRoleSelectListfunction(IDRoleModel);
+                    }
+                });
+            };
+
+            //load data: roles
+            self.search = function() {
+
+                $('.empty-row-message').html('<div class="loader"></div>'); // Reset New and Edit row
+                // Check whether New or Edit data is existing and not saved to database yet (on Ajax Action)
+                if (SKTIS.Checker.modifiedDataExistsForAjax([self.gridViewRoles.listNewItems, self.gridViewRoles.listEditItems]) == true) {
+                    return;
+                } else {
+                    self.gridViewRoles.listNewItems.removeAll();
+                    self.gridViewRoles.listEditItems.removeAll();
+                }
+
+                self.gridViewRoles.search({}, function(response) {
+                    if (response.status == 'KO') {
+                        SKTIS.Helper.Notification(response.message, 'error');
+                        $('.empty-row-message').html(response.message);
+                    } else if (response.status == 'Empty') {
+
+                        self.RemoveNotification();
+
+                        //SKTIS.Helper.Notification(response.message,'warning');
+                        $('.empty-row-message').html('@CommonLabel.lblDataEmpty');
+                    }
+                });
+
+                self.listenChanges();
+            };
+
+            self.RemoveNotification = function() {
+                if ($('#noty_top_layout_container').length > 0) {
+                    $('#noty_top_layout_container').remove();
+                }
+            };
+
+            // Listen to any input function changes
+            self.listenChanges = function() {
+                self.functionChanges([]);
+                $('input[name="function"]', '#functionTree').unbind('change').bind('change', function(e) {
+                    var $el = $(this);
+                    var $rolesFunction = new RoleFunction($el.val(), self.RoleCode(), $el.is(':checked'));
+                    var key = self.functionChanges().map(function(v) {
+                        // we need this prevent accidentaly removed object in array!
+                        return v.IDFunction() + '-IDRole:' + v.IDRole();
+                    }).indexOf($rolesFunction.IDFunction() + '-IDRole:' + $rolesFunction.IDRole());
+
+                    // Check if object already pushed to changes
+                    if (key != -1) {
+                        // Remove in obs array if exist.
+                        self.functionChanges.splice(key, 1);
+                    } else {
+                        self.functionChanges.push($rolesFunction);
+                    }
+                });
+            }
+
+            // Check whether New or Edit data is existing and not saved to database yet (on Request action)
+            SKTIS.Checker.modifiedDataExists([self.gridViewRoles.listNewItems, self.gridViewRoles.listEditItems]);
+
+            self.init = function() {
+                $('input[name="function"]', '#functionTree').unbind('change');
+                async.series([
+                        function(cb) {
+                            self.getFunctionTree(cb);
+                        },
+                        function(cb) {
+                            self.setFunctionTree(cb);
+                        }
+                ], function() {
+                    self.firstLoad(false);
+                    self.search();
+                });
+            };
+
+            self.init();
+        };
+        ko.applyBindings(new app.EditGrid());
+    })(app = this.app || {});
+</script>
+}

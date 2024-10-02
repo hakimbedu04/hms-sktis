@@ -1,0 +1,172 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<mvcSiteMap xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xmlns="http://mvcsitemap.codeplex.com/schemas/MvcSiteMap-File-4.0"
+            xsi:schemaLocation="http://mvcsitemap.codeplex.com/schemas/MvcSiteMap-File-4.0 MvcSiteMapSchema.xsd">
+
+  <mvcSiteMapNode title="Homepage" controller="Home" action="Index" preservedRouteParameters="language">
+    <mvcSiteMapNode title="Masters" controller="Home" action="Index" clickable="false">
+      <mvcSiteMapNode title="General" controller="Home" action="Index" clickable="false">
+        <mvcSiteMapNode title="Closing Payroll" controller="MasterGenClosingPayroll" action="Index" preservedRouteParameters="language"/>
+        <mvcSiteMapNode title="List Group" controller="MasterGenList" action="Index" preservedRouteParameters="language"/>
+        <mvcSiteMapNode title="Location" controller="MasterGenLocation" action="Index" preservedRouteParameters="language"/>
+        <mvcSiteMapNode title="Holiday" controller="" action="Index" preservedRouteParameters="language"/>
+        <mvcSiteMapNode title="Standard Hour(s)" controller="MasterGenStandardHour" action="Index" preservedRouteParameters="language"/>
+        <mvcSiteMapNode title="Brand Group" controller="MasterGenBrandGroup" action="Index" preservedRouteParameters="language"/>
+        <mvcSiteMapNode title="Brand Group Material" controller="MasterGenBrandGroupMaterial" action="Index" preservedRouteParameters="language"/>
+        <mvcSiteMapNode title="Brand Package Mapping" controller="MasterGenBrandPackageMapping" action="Index" preservedRouteParameters="language"/>
+        <mvcSiteMapNode title="Brand" controller="MasterGenBrand" action="Index" preservedRouteParameters="language"/>
+        <mvcSiteMapNode title="Process" controller="MasterGenProcess" action="Index" preservedRouteParameters="language"/>
+        <mvcSiteMapNode title="Process Setting" controller="MasterGenProcessSetting" action="Index" preservedRouteParameters="language"/>
+        <mvcSiteMapNode title="Holiday" controller="MasterGenHoliday" action="Index" preservedRouteParameters="language"/>
+        </mvcSiteMapNode>
+      <mvcSiteMapNode title="Plant" controller="Home" action="Index" clickable="false">
+        <mvcSiteMapNode title="Unit" controller="MasterPlantUnit" action="Index" preservedRouteParameters="language"/>
+        <mvcSiteMapNode title="Absent Type" controller="MasterPlantAbsentType" action="Index" preservedRouteParameters="language"/>
+        <mvcSiteMapNode title="Employee Job Data" controller="MasterPlantEmployeeJobData" action="Index" preservedRouteParameters="language"/>
+        <mvcSiteMapNode title="Production Group" controller="MasterPlantProductionGroup" action="Index" preservedRouteParameters="language"/>
+      </mvcSiteMapNode>
+      <mvcSiteMapNode title="TPO" controller="Home" action="Index" clickable="false">
+        <mvcSiteMapNode title="TPO" controller="MasterTPOInfo" action="Index" preservedRouteParameters="language"/>
+        <mvcSiteMapNode title="TPO Package" controller="MasterTPOPackage" action="Index" preservedRouteParameters="language"/>
+        <mvcSiteMapNode title="TPO Fee Rate" controller="MasterTPORate" action="Index" preservedRouteParameters="language"/>
+        <mvcSiteMapNode title="Production Group" controller="MasterTPOProductionGroup" action="Index" preservedRouteParameters="language"/>
+        <mvcSiteMapNode title="TPO Fee Setting" controller="TPOFeeSettingCalculation" action="Index" preservedRouteParameters="language"/>
+      </mvcSiteMapNode>
+      <mvcSiteMapNode title="Maintenance" controller="Home" action="Index" clickable="false">
+        <mvcSiteMapNode title="Item Conversion" controller="MasterMaintenanceConvert" action="Index" preservedRouteParameters="language"/>
+        <mvcSiteMapNode title="Item" controller="MasterMntcItem" action="Index" preservedRouteParameters="language"/>
+        <mvcSiteMapNode title="Item Location" controller="MasterMntcItemLocation" action="Index" preservedRouteParameters="language"/>
+        <mvcSiteMapNode title="Package Equipments" controller="MasterGenBrandPackageItem" action="Index" preservedRouteParameters="language"/>
+      </mvcSiteMapNode>
+      <mvcSiteMapNode title="News Info" controller="News" action="Index" preservedRouteParameters="language"> </mvcSiteMapNode>
+      <mvcSiteMapNode title="News Info" controller="News" action="Create" preservedRouteParameters="language"> </mvcSiteMapNode>
+      <mvcSiteMapNode title="News Info" controller="News" action="Edit" preservedRouteParameters="language"> </mvcSiteMapNode>
+    </mvcSiteMapNode>
+    <mvcSiteMapNode title="Maintenance" controller="MaintenanceHome" action="Index" clickable="false">
+      <mvcSiteMapNode title="Execution" controller="Home" action="Index" clickable="false">
+        <mvcSiteMapNode title="Equipment Request" controller="EquipmentRequest" action="Index" preservedRouteParameters="language"/>
+        <mvcSiteMapNode title="Equipment Fulfillment" controller="EquipmentFulfillment" action="Index" preservedRouteParameters="language, param1, param2, param3"/>
+        <mvcSiteMapNode title="Equipment Transfer" controller="MaintenanceEquipmentTransfer" action="Index" preservedRouteParameters="language"/>
+        <mvcSiteMapNode title="Equipment Receive" controller="MaintenanceEquipmentReceive" action="Index" preservedRouteParameters="language"/>
+        <mvcSiteMapNode title="Equipment Repair Plant" controller="EquipmentRepairPlant" action="Index" preservedRouteParameters="language"/>
+        <mvcSiteMapNode title="Equipment Repair TPO" controller="EquipmentRepairTPO" action="Index" preservedRouteParameters="language"/>
+        <mvcSiteMapNode title="Item Disposal" controller="MaintenanceItemDisposal" action="Index" preservedRouteParameters="language"/>
+        <mvcSiteMapNode title="Item Conversion" controller="MaintenanceExecutionItemConversion" action="Index" preservedRouteParameters="language"/>
+        <mvcSiteMapNode title="Quality Inspection" controller="MaintenanceEquipmentQualityInspection" action="Index" preservedRouteParameters="language, param1, param2, param3"/>
+        <mvcSiteMapNode title="Inventory Adjustment" controller="MaintenanceExecutionInventoryAdjustment" action="Index" preservedRouteParameters="language"/>
+        <mvcSiteMapNode title="Inventory" controller="MaintenanceExecutionInventory" action="Index" preservedRouteParameters="language"/>
+      </mvcSiteMapNode>
+      <mvcSiteMapNode title="Reports" controller="Home" action="Index" clickable="false">
+        <mvcSiteMapNode title="Equipment Stock" controller="MaintenanceReportEquipmentStock" action="Index" preservedRouteParameters="language"/>
+        <mvcSiteMapNode title="Equipment Requirement" controller="MaintenanceReportEquipmentRequirement" action="Index" preservedRouteParameters="language"/>
+      </mvcSiteMapNode>
+    </mvcSiteMapNode>
+    <mvcSiteMapNode title="Production Planning" controller="Home" action="Index" clickable="false">
+      <mvcSiteMapNode title="Weekly Production Planning (WPP)" controller="PlanningWPP" action="Index" preservedRouteParameters="language"/>
+      <mvcSiteMapNode title="Plant" controller="Home" action="Index" clickable="false">
+        <mvcSiteMapNode title="Target Production Units (TPU)" controller="PlanningPlantTPU" action="Index" preservedRouteParameters="language"/>
+        <mvcSiteMapNode title="Target Production Groups (TPK)" controller="PlanningPlantTPK" action="Index" preservedRouteParameters="language, param1, param2, param3, param4, param5, param6, param7"/>
+        <mvcSiteMapNode title="Group Shift" controller="PlantGroupShift" action="Index" preservedRouteParameters="language"/>
+        <mvcSiteMapNode title="Individual Capacity" controller="PlanningPlantIndividualCapacity" action="Index" preservedRouteParameters="language"/>
+      </mvcSiteMapNode>
+      <mvcSiteMapNode title="Report" controller="Home" action="Index" clickable="false">
+        <mvcSiteMapNode title="Summary Daily Production Targets" controller="PlanningReportProductionTarget" action="Index" preservedRouteParameters="language"/>
+        <mvcSiteMapNode title="Summary Process Targets" controller="PlanningReportSummaryProcessTargets" action="Index" preservedRouteParameters="language"/>
+      </mvcSiteMapNode>
+      <mvcSiteMapNode title="TPO" controller="Home" action="Index" clickable="false">
+        <mvcSiteMapNode title="Target Production of Groups (TPK)" controller="PlanningTPOTPK" action="Index" preservedRouteParameters="language"/>
+      </mvcSiteMapNode>
+    </mvcSiteMapNode>
+    <mvcSiteMapNode title="Production Execution" controller="Home" action="Index" clickable="false">
+      <mvcSiteMapNode title="Plant" controller="Home" action="Index" clickable="false">
+        <mvcSiteMapNode title="Worker Absenteeism" controller="ExePlantWorkerAbsenteeism" action="Index" preservedRouteParameters="language"/>
+        <mvcSiteMapNode title="Worker Balancing" controller="ExePlantWorkerBalancing" action="Index" preservedRouteParameters="language"/>
+        <mvcSiteMapNode title="Production Entry" controller="ExePlantProductionEntry" action="Index" preservedRouteParameters="language, param1, param2, param3, param4, param5, param6, param7, param8, param9, param10"/>
+        <mvcSiteMapNode title="Production Entry Verification" controller="ExePlantProductionEntryVerification" action="Index" preservedRouteParameters="language"/>
+        <mvcSiteMapNode title="Actual Work Hours" controller="ExePlantActualWorkHours" action="Index" preservedRouteParameters="language"/>
+        <mvcSiteMapNode title="Worker Assignment" controller="ExePlantWorkerAssignment" action="Index" preservedRouteParameters="language"/>
+        <mvcSiteMapNode title="Material Usages" controller="ExePlantMaterialUsages" action="Index" preservedRouteParameters="language"/>
+      </mvcSiteMapNode>
+      <mvcSiteMapNode title="TPO" controller="Home" action="Index" clickable="false">
+        <mvcSiteMapNode title="Production Entry" controller="ExeTPOProductionEntry" action="Index" preservedRouteParameters="language, param1, param2, param3, param4, param5, param6, param7, param8"/>
+        <mvcSiteMapNode title="Actual Work Hours" controller="ExeTPOActualWorkHours" action="Index" preservedRouteParameters="language"/>
+        <mvcSiteMapNode title="Production Entry Verification" controller="ExeTPOProductionEntryVerification" action="Index" preservedRouteParameters="language"/>
+      </mvcSiteMapNode>
+      <mvcSiteMapNode title="Reports" controller="Home" action="Index" clickable="false">
+        <mvcSiteMapNode title="Production Report By Group" controller="ExeReportByGroup" action="Index" preservedRouteParameters="language"/>
+        <mvcSiteMapNode title="Production Report By Status" controller="ExeReportByStatus" action="Index" preservedRouteParameters="language"/>
+        <mvcSiteMapNode title="Production Report By Process" controller="ExeReportByProcess" action="Index" preservedRouteParameters="language, param1, param2, param3, param4, param5, param6, param7"/>
+        <mvcSiteMapNode title="Production and Stock Report by Process" controller="ExeReportProductionStock" action="Index" preservedRouteParameters="language"/>
+        <mvcSiteMapNode title="Daily Production Achievement" controller="ExeReportDailyProduction" action="Index" preservedRouteParameters="language, param1, param2, param3, param4"/>
+        <mvcSiteMapNode title="EMS Source Data" controller="ExeEMSSourceData" action="Index" preservedRouteParameters="language"/>
+     </mvcSiteMapNode>
+      <mvcSiteMapNode title="Plant" controller="Home" action="Index" clickable="false">
+        <mvcSiteMapNode title="Production Entry Print" controller="ExeOthersProductionEntryPrint" action="Index" preservedRouteParameters="language"/>
+        <mvcSiteMapNode title="Product Adjustment" controller="ExeProductAdjustment" action="Index" preservedRouteParameters="language"/>
+      </mvcSiteMapNode>
+    </mvcSiteMapNode>
+    <mvcSiteMapNode title="Plant Wages" controller="Home" action="Index" clickable="false">
+      <mvcSiteMapNode title="Plant" controller="Home" action="Index" clickable="false">
+        <mvcSiteMapNode title="Production Entry Release Approval" controller="EblekReleaseApproval" action="Index" preservedRouteParameters="language, param1, param2, param3, param4, param5, param6, param7, param8"/>
+        <mvcSiteMapNode title="Production Card" controller="ProductionCard" action="Index" preservedRouteParameters="language, param1, param2, param3, param4, param5, param6, param7, param8"/>
+        <mvcSiteMapNode title="Production Entry Release" controller="WagesEblekRelease" action="Index" preservedRouteParameters="language, param1, param2, param3, param4, param5"/>
+      </mvcSiteMapNode>
+      <mvcSiteMapNode title="Execution" controller="Home" action="Index" clickable="false">
+        <mvcSiteMapNode title="Production Card Approval" controller="WagesProductionCardApproval" action="Index" preservedRouteParameters="language" />
+        <mvcSiteMapNode title="Production Card Approval Detail" controller="WagesProductionCardApprovalDetail" action="Index" preservedRouteParameters="param1, param2, param3, param4"/>
+        <mvcSiteMapNode title="Production Card Correction" controller="WagesProductionCardCorrection" action="Index" preservedRouteParameters="language"/>
+      </mvcSiteMapNode>
+      <mvcSiteMapNode title="Report" controller="Home" action="Index" clickable="false">
+        <mvcSiteMapNode title="Absents Report" controller="WagesReportAbsents" action="Index" preservedRouteParameters="language" />
+        <mvcSiteMapNode title="Absents Report Group" controller="WagesReportAbsents" action="WagesReportAbsentsGroup" preservedRouteParameters="language, param1, param2, param3, param4, param5" />
+        <mvcSiteMapNode title="Absents Report Detail" controller="WagesReportAbsents" action="WagesReportAbsentsDetail" preservedRouteParameters="language, id" />
+        <mvcSiteMapNode title="Summary Production Card" controller="WagesReportSummaryProductionCard" action="Index" preservedRouteParameters="language" />
+        <mvcSiteMapNode title="Available Position Number" controller="WagesReportAvailablePositionNumber" action="Index" preservedRouteParameters="language" />
+      </mvcSiteMapNode>
+    </mvcSiteMapNode>
+    <mvcSiteMapNode title="TPO Fee" controller="Home" action="Index" clickable="false">
+      <mvcSiteMapNode title="Execution" controller="Home" action="Index" clickable="false">
+        <mvcSiteMapNode title="TPO Fee Actual" controller="TPOFeeExeActual" action="Index" preservedRouteParameters="language"/>
+        <mvcSiteMapNode title="TPO Fee Close Detail" controller="TPOFeeExeActualDetail" action="Index" preservedRouteParameters="param1,param2"/>
+        <mvcSiteMapNode title="TPO Fee Approval Detail" controller="TPOFeeExeActualDetail" action="Index" preservedRouteParameters="param1,param2,param3"/>
+        <mvcSiteMapNode title="TPO Fee Actual Detail" controller="TPOFeeExeActualDetail" action="Index" preservedRouteParameters="param1,param2,param3,param4"/>
+        <mvcSiteMapNode title="TPO Fee Open Detail" controller="TPOFeeExeActualDetail" action="Index" preservedRouteParameters="param1,param2,param3,param4,param5"/>
+        <mvcSiteMapNode title="TPO Fee Approval" controller="TPOFeeApproval" action="Index" preservedRouteParameters="language"/>
+        <mvcSiteMapNode title="TPO Fee Approval " controller="TPOFeeApproval" action="Index" preservedRouteParameters="param1,param2"/>
+        <mvcSiteMapNode title="TPO Fee AP Open" controller="TPOFeeExeAPOpen" action="Index" preservedRouteParameters="language"/>
+        <!--<mvcSiteMapNode title="Tpo Fee AP Open List" controller="TPOFeeAPOpen" action="Index" preservedRouteParameters="language"/>-->
+        <mvcSiteMapNode title="Tpo Fee AP Open List" controller="TPOFeeAPOpen" action="Index" preservedRouteParameters="param1,param2,param3,param4"/>
+        <mvcSiteMapNode title="TPO Fee Plan" controller="TPOFeeExePlan" action="Index" preservedRouteParameters="language"/>
+        <mvcSiteMapNode title="TPO Fee Plan Detail" controller="TPOFeeExePlanDetail" action="Index" preservedRouteParameters="id"/>
+        <mvcSiteMapNode title="TPO Fee Ap Close" controller="TPOFeeApClose" action="Index" preservedRouteParameters="language"/>
+        <mvcSiteMapNode title="TPO Fee GL Accrued" controller="TPOFeeExeGLAccrued" action="Index" preservedRouteParameters="language"/>
+        <mvcSiteMapNode title="TPO Fee GL Accrued Detail" controller="TPOFeeExeGLAccruedDetail" action="Index" preservedRouteParameters="language,id"/>
+      </mvcSiteMapNode>
+    </mvcSiteMapNode>
+    <mvcSiteMapNode title="TPO Fee" controller="Home" action="Index" clickable="false">
+      <mvcSiteMapNode title="Report" controller="Home" action="Index" clickable="false">
+        <mvcSiteMapNode title="Summary TPO Fee" controller="TPOFeeReportsSummary" action="Index" preservedRouteParameters="language"/>
+        <mvcSiteMapNode title="TPO Package Report" controller="TPOFeeReportsPackage" action="Index" preservedRouteParameters="language"/>
+        <mvcSiteMapNode title="TPO Production and Fee Report" controller="TPOFeeReportsProduction" action="Index" preservedRouteParameters="language"/>
+      </mvcSiteMapNode>
+    </mvcSiteMapNode>
+    <mvcSiteMapNode title="Reports" controller="Home" action="Index" clickable="false">
+      <mvcSiteMapNode title="Plan" controller="ReportPlan" action="Index" preservedRouteParameters="language"/>
+      <mvcSiteMapNode title="TPO" controller="ReportTpo" action="Index" preservedRouteParameters="language"/>
+    </mvcSiteMapNode>
+    <mvcSiteMapNode title="Security" controller="Home" action="Index" clickable="false">
+      <mvcSiteMapNode title="Security Rules" controller="UtilSecurityRules" action="Index" preservedRouteParameters="language"/>
+      <mvcSiteMapNode title="Security Function" controller="UtilSecurityFunctions" action="Index" preservedRouteParameters="language"/>
+      <mvcSiteMapNode title="Security Roles" controller="UtilSecurityRoles" action="Index" preservedRouteParameters="language"/>
+      <mvcSiteMapNode title="Security Delegation" controller="UtilSecurityDelegations" action="Index" preservedRouteParameters="language"/>
+    </mvcSiteMapNode>
+    <mvcSiteMapNode title="Utilities" controller="Home" action="Index" clickable="false">
+      <mvcSiteMapNode title="Security" controller="Home" action="Index" clickable="false">
+        <mvcSiteMapNode title="Responsibilities" controller="UtilSecurityResponsibilities" action="Index" preservedRouteParameters="language"/>
+      </mvcSiteMapNode>
+      <mvcSiteMapNode title="Workflows" controller="Home" action="Index" clickable="false">
+        <mvcSiteMapNode title="Flows" controller="UtilWorkflowFlow" action="Index" preservedRouteParameters="language"/>
+      </mvcSiteMapNode>
+    </mvcSiteMapNode>
+  </mvcSiteMapNode>
+</mvcSiteMap>

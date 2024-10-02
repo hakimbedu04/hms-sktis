@@ -1,0 +1,58 @@
+﻿@using SKTISWebsite.Helper
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   @* <title>SKT - IS</title>*@
+    <title>SKT - IS @Html.GetPageTitle()</title>
+    <link rel="shortcut icon" href="@Url.Content("~/content/assets/images/fav-ico.png")" type="image/x-icon" />
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-touch-fullscreen" content="yes">
+    <script type="text/javascript">
+        if (!window.console) console = { log: function () { } };
+    </script>
+    @Styles.Render("~/bundles/css")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/moment")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/knockoutjs")
+    @Scripts.Render("~/bundles/jquerynoty")
+    @Scripts.Render("~/bundles/async")
+    @Scripts.Render("~/bundles/numeral")
+
+    @*Place the main module at the bottom*@
+    @Scripts.Render("~/bundles/app")
+    <script type="text/javascript">
+        $.ajaxSetup({
+            cache: false
+        });
+    </script>
+</head>
+<body>
+    <div class="modal-loading">
+        <!-- Ajax Loader -->
+    </div>
+    @Html.Partial("Header")
+    <div class="content">
+        <div class="wrapper">
+            @Html.Partial("Sidebar")
+            <div id="main">
+                <div class="container-fluid">
+                    <div class="row">
+                        <ul class="breadcrumb hidden-print">
+                            @Html.MvcSiteMap().SiteMapPath()
+                        </ul>
+                        @RenderBody()
+                        @Html.Partial("Footer")
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

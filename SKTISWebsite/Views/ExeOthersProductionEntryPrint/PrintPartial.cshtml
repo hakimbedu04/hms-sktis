@@ -1,0 +1,343 @@
+﻿@{ var firstGroup = @Model.Count > 0 ? @Model[0] : null; }
+@foreach (var prnt in @Model)
+{
+    @*if (firstGroup != null && !prnt.Equals((firstGroup)))
+    {
+        <div class="page-break"></div>
+    }*@
+    <div class="print print-xs">
+    @{ var lastItem = @prnt.TableData.Count > 0 ? @prnt.TableData[@prnt.TableData.Count - 1] : null;}
+    @foreach (var tbl in @prnt.TableData)
+    {
+        <div class="row">
+            <label class="form-label larger col-lg-6 nomargin">
+                Eblek - 1 Week
+            </label>
+            <label class="col-lg-6 nomargin pull-right">
+                Tanggal Cetak : @prnt.PrintDate
+            </label>
+        </div>
+
+        <div class="row">
+            <hr>
+            <div class="extra-smallmin col-lg-6" style="font-size: 9px">
+                <div class="row">
+                    <label class="form-label col-lg-2">
+                        Location
+                    </label>
+                    <label class="col-lg-10">
+                        : @prnt.Location
+                    </label>
+                </div>
+                <div class="row">
+                    <label class="form-label col-lg-2">
+                        Unit
+                    </label>
+                    <label class="col-lg-10">
+                        : @prnt.UnitCode
+                    </label>
+                </div>
+                <div class="row">
+                    <label class="form-label col-lg-2">
+                        Shift
+                    </label>
+                    <label class="col-lg-10">
+                        : @prnt.Shift
+                    </label>
+                </div>
+                <div class="row">
+                    <label class="form-label col-lg-2">
+                        Process
+                    </label>
+                    <label class="col-lg-10">
+                        : @prnt.Process
+                    </label>
+                </div>
+                <div class="row">
+                    <label class="form-label col-lg-2">
+                        Group
+                    </label>
+                    <label class="col-lg-10">
+                        : @prnt.GroupCode
+                    </label>
+                </div>
+                <div class="row">
+                    <label class="form-label col-lg-2">
+                        Brand
+                    </label>
+                    <label class="col-lg-10">
+                        : @prnt.BrandCode
+                    </label>
+                </div>
+            </div>
+
+            <div class="extra-smallmin col-lg-6" style="font-size: 9px">
+                <div class="row">
+                    <label class="form-label col-lg-3">
+                        KPS Year
+                    </label>
+                    <label class="col-lg-9">
+                        : @prnt.KpsYear
+                    </label>
+                </div>
+                <div class="row">
+                    <label class="form-label col-lg-3">
+                        KPS Week
+                    </label>
+                    <label class="col-lg-9">
+                        : @prnt.KpsWeek
+                    </label>
+                </div>
+                <div class="row">
+                    <label class="form-label col-lg-3">
+                        Mandor
+                    </label>
+                    <label class="col-lg-9">
+                        : @prnt.Mandor
+                    </label>
+                </div>
+                <div class="row">
+                    <label class="form-label col-lg-3">
+                        Remark
+                    </label>
+                    <label class="col-lg-9">
+                        : @prnt.Remark
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+        <div class="col-lg-12">
+            <label class="form-label">C = Capacity; T = Target/ Rencana Aktual, A = Aktual/ Kenyataan Produksi (Garapan); R = Remark/ Keterangan</label><br/>
+            <label class="form-label">Jika T = C maka T diisi <span class="glyphicon glyphicon-check"></span>, jika tidak maka diisi nilai T. Jika A = T maka A diisi <span class="glyphicon glyphicon-check"></span>, jika tidak maka diisi nilai A.</label>
+        </div>
+    </div>
+    @*<div class="row">
+        <div class="col-lg-12">
+            <label class="form-label">Jika T = C maka T diisi <span class="glyphicon glyphicon-check"></span>, jika tidak maka diisi nilai T. Jika A = T maka A diisi <span class="glyphicon glyphicon-check"></span>, jika tidak maka diisi nilai A.</label>
+        </div>
+    </div>*@
+        <div class="table-overflow">
+            <table id="test" class="tablePrint">
+                <thead>
+                    <tr>
+                        <th class="text-left shrink">Hari Kerja</th>
+                        <th colspan="4">Senin</th>
+                        <th colspan="4">Selasa</th>
+                        <th colspan="4">Rabu</th>
+                        <th colspan="4">Kamis</th>
+                        <th colspan="4">Jumat</th>
+                        <th colspan="4">Sabtu</th>
+                        <th colspan="4">Minggu</th>
+                    </tr>
+                    <tr>
+                        <th class="text-left shrink">Tanggal</th>
+                        @foreach (var dt in @prnt.WeekDateList)
+                        {
+                            <th colspan="4">@dt.Replace("00:00:00", "")</th>
+                        }
+                    </tr>
+                    <tr class="head">
+                        <th class="text-left shrink">Plan</th>
+                        @for (int i = 1; i < 8; i++)
+                        {
+                            <th colspan="3">@prnt.TPKValue[i]</th>
+                            <th>@prnt.WorkHours[i]</th>
+                        }
+                    </tr>
+                    <tr class="head">
+                        <th class="text-left shrink" >Pekerja</th>
+                        <th class="expand">C</th>
+                        <th class="expand">T</th>
+                        <th class="expand">A</th>
+                        <th class="expand">R</th>
+                        <th class="expand">C</th>
+                        <th class="expand">T</th>
+                        <th class="expand">A</th>
+                        <th class="expand">R</th>
+                        <th class="expand">C</th>
+                        <th class="expand">T</th>
+                        <th class="expand">A</th>
+                        <th class="expand">R</th>
+                        <th class="expand">C</th>
+                        <th class="expand">T</th>
+                        <th class="expand">A</th>
+                        <th class="expand">R</th>
+                        <th class="expand">C</th>
+                        <th class="expand">T</th>
+                        <th class="expand">A</th>
+                        <th class="expand">R</th>
+                        <th class="expand">C</th>
+                        <th class="expand">T</th>
+                        <th class="expand">A</th>
+                        <th class="expand">R</th>
+                        <th class="expand">C</th>
+                        <th class="expand">T</th>
+                        <th class="expand">A</th>
+                        <th class="expand">R</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if ((tbl.PrintData.Count == 50) && ((tbl.PrintData.Count + lastItem.PrintData.Count) > 50))
+                    {
+                        foreach (var row in tbl.PrintData)
+                        {
+                            <tr>
+                                @if (@row.GroupCode.Substring(1, 1) != "5")
+                                {
+                                    <td class="text-left shrink"> @row.EmployeeID - @row.EmployeeNumberCompact </td>
+                                }
+                                else
+                                {
+                                    <td class="text-left shrink"> @row.EmployeeID - @row.EmployeeNumber </td>
+                                }
+                            
+                                <td class="expand">@row.MonProdCapacity</td>
+                                <td class="expand">@row.MonProdTarget</td>
+                                <td class="expand">@row.MonProdActual</td>
+                                <td class="expand">@row.MonAbsentType</td>
+                                <td class="expand">@row.TueProdCapacity</td>
+                                <td class="expand">@row.TueProdTarget</td>
+                                <td class="expand">@row.TueProdActual</td>
+                                <td class="expand">@row.TueAbsentType</td>
+                                <td class="expand">@row.WedProdCapacity</td>
+                                <td class="expand">@row.WedProdTarget</td>
+                                <td class="expand">@row.WedProdActual</td>
+                                <td class="expand">@row.WedAbsentType</td>
+                                <td class="expand">@row.ThuProdCapacity</td>
+                                <td class="expand">@row.ThuProdTarget</td>
+                                <td class="expand">@row.ThuProdActual</td>
+                                <td class="expand">@row.ThuAbsentType</td>
+                                <td class="expand">@row.FriProdCapacity</td>
+                                <td class="expand">@row.FriProdTarget</td>
+                                <td class="expand">@row.FriProdActual</td>
+                                <td class="expand">@row.FriAbsentType</td>
+                                <td class="expand">@row.SatProdCapacity</td>
+                                <td class="expand">@row.SatProdTarget</td>
+                                <td class="expand">@row.SatProdActual</td>
+                                <td class="expand">@row.SatAbsentType</td>
+                                <td class="expand">@row.SunProdCapacity</td>
+                                <td class="expand">@row.SunProdTarget</td>
+                                <td class="expand">@row.SunProdActual</td>
+                                <td class="expand">@row.SunAbsentType</td>
+                            </tr>
+                        }
+                    }
+                    else if (tbl.PrintData.Count == lastItem.PrintData.Count)
+                    {
+                        foreach (var row in tbl.PrintData)
+                        {
+                            <tr>
+                                @if (@row.GroupCode.Substring(1, 1) != "5")
+                                {
+                                    <td class="text-left shrink"> @row.EmployeeID - @row.EmployeeNumberCompact </td>
+                                }
+                                else
+                                {
+                                    <td class="text-left shrink"> @row.EmployeeID - @row.EmployeeNumber </td>
+                                }
+                            
+                                <td class="expand">@row.MonProdCapacity</td>
+                                <td class="expand">@row.MonProdTarget</td>
+                                <td class="expand">@row.MonProdActual</td>
+                                <td class="expand">@row.MonAbsentType</td>
+                                <td class="expand">@row.TueProdCapacity</td>
+                                <td class="expand">@row.TueProdTarget</td>
+                                <td class="expand">@row.TueProdActual</td>
+                                <td class="expand">@row.TueAbsentType</td>
+                                <td class="expand">@row.WedProdCapacity</td>
+                                <td class="expand">@row.WedProdTarget</td>
+                                <td class="expand">@row.WedProdActual</td>
+                                <td class="expand">@row.WedAbsentType</td>
+                                <td class="expand">@row.ThuProdCapacity</td>
+                                <td class="expand">@row.ThuProdTarget</td>
+                                <td class="expand">@row.ThuProdActual</td>
+                                <td class="expand">@row.ThuAbsentType</td>
+                                <td class="expand">@row.FriProdCapacity</td>
+                                <td class="expand">@row.FriProdTarget</td>
+                                <td class="expand">@row.FriProdActual</td>
+                                <td class="expand">@row.FriAbsentType</td>
+                                <td class="expand">@row.SatProdCapacity</td>
+                                <td class="expand">@row.SatProdTarget</td>
+                                <td class="expand">@row.SatProdActual</td>
+                                <td class="expand">@row.SatAbsentType</td>
+                                <td class="expand">@row.SunProdCapacity</td>
+                                <td class="expand">@row.SunProdTarget</td>
+                                <td class="expand">@row.SunProdActual</td>
+                                <td class="expand">@row.SunAbsentType</td>
+                            </tr>
+                        }
+                    }
+                    @if (lastItem == null || tbl.Equals(lastItem))
+                    {
+                        <tr class="mediumheight">
+                            <td class="bold text-left">Total C</td>
+                            <td colspan="4">@prnt.MonTotalCapacity</td>
+                            <td colspan="4">@prnt.TueTotalCapacity</td>
+                            <td colspan="4">@prnt.WedTotalCapacity</td>
+                            <td colspan="4">@prnt.ThuTotalCapacity</td>
+                            <td colspan="4">@prnt.FriTotalCapacity</td>
+                            <td colspan="4">@prnt.SatTotalCapacity</td>
+                            <td colspan="4">@prnt.SunTotalCapacity</td>
+                        </tr>
+                        <tr class="mediumheight">
+                            <td class="bold text-left">Total T</td>
+                            <td colspan="4">@prnt.MonTotalTarget</td>
+                            <td colspan="4">@prnt.TueTotalTarget</td>
+                            <td colspan="4">@prnt.WedTotalTarget</td>
+                            <td colspan="4">@prnt.ThuTotalTarget</td>
+                            <td colspan="4">@prnt.FriTotalTarget</td>
+                            <td colspan="4">@prnt.SatTotalTarget</td>
+                            <td colspan="4">@prnt.SunTotalTarget</td>
+                        </tr>
+                        <tr class="mediumheight">
+                            <td class="bold text-left">Total A</td>
+                            <td colspan="4">@prnt.MonTotalActual</td>
+                            <td colspan="4">@prnt.TueTotalActual</td>
+                            <td colspan="4">@prnt.WedTotalActual</td>
+                            <td colspan="4">@prnt.ThuTotalActual</td>
+                            <td colspan="4">@prnt.FriTotalActual</td>
+                            <td colspan="4">@prnt.SatTotalActual</td>
+                            <td colspan="4">@prnt.SunTotalActual</td>
+                        </tr>
+                        <tr class="bigheight">
+                            <td class="bold text-left">Paraf HRA</td>
+                            <td colspan="4"></td>
+                            <td colspan="4"></td>
+                            <td colspan="4"></td>
+                            <td colspan="4"></td>
+                            <td colspan="4"></td>
+                            <td colspan="4"></td>
+                            <td colspan="4"></td>
+                        </tr>
+                        <tr class="bigheight">
+                            <td class="bold text-left">Paraf PPC</td>
+                            <td colspan="4"></td>
+                            <td colspan="4"></td>
+                            <td colspan="4"></td>
+                            <td colspan="4"></td>
+                            <td colspan="4"></td>
+                            <td colspan="4"></td>
+                            <td colspan="4"></td>
+                        </tr>
+                        <tr class="ket">
+                            <td class="bold text-left">Keterangan</td>
+                            <td colspan="4"></td>
+                            <td colspan="4"></td>
+                            <td colspan="4"></td>
+                            <td colspan="4"></td>
+                            <td colspan="4"></td>
+                            <td colspan="4"></td>
+                            <td colspan="4"></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        if (lastItem != null && !tbl.Equals(lastItem))
+        {
+            <div class="page-break"></div>
+        }
+    }
+    </div>
+}

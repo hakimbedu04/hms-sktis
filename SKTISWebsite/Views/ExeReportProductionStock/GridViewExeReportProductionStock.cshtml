@@ -1,0 +1,103 @@
+﻿@model IEnumerable<SKTISWebsite.Models.ExeReportProductionStock.ExeReportProdStockPerBrandGroupCodeViewModel>
+
+<div class="table-overflow">
+        <table class="table table-striped">
+            <thead>
+                <tr class="head">
+                    <th rowspan="2">Brand Group</th>
+                    <th rowspan="2">Brand</th>
+                    <th rowspan="2">Location</th>
+                    <th colspan="2">Beginning Stock</th>
+                    <th rowspan="2">Production</th>
+                    <th colspan="2">Movement</th>
+                    <th colspan="2">Ending Stock</th>
+                    <th rowspan="2">Planning</th>
+                    <th colspan="2">Variance</th>
+                </tr>
+                <tr>
+                    <th>Internal Move</th>
+                    <th>External Move</th>
+                    <th>PAP</th>
+                    <th>PAG</th>
+                    <th>Internal Move</th>
+                    <th>External Move</th>
+                    <th>(Stick)</th>
+                    <th>(%)</th>
+                </tr>
+            </thead>
+            @if (!Model.Any()) 
+            { 
+                <tbody>
+                    <tr>
+                        <td colspan="13" align="left">Data is not found</td>
+                    </tr>
+                </tbody>
+            }
+            else
+            {
+                foreach (var itemBrandGroup in Model)
+                {
+                    <tbody>
+                        <tr>
+                            @{
+                                var index = 0;
+                                var rowspanBrandGroup = itemBrandGroup.CountBrandGroupCode + (itemBrandGroup.ListReportProdStockPerBrand.Count() * 2);
+                            }
+                                <td rowspan="@rowspanBrandGroup">@itemBrandGroup.BrandGroupCode</td>
+                            @foreach (var itemBrand in itemBrandGroup.ListReportProdStockPerBrand)
+                            {
+                                var rowspanBrand = itemBrand.CountBrandGroup + 1;
+
+                                <td rowspan="@rowspanBrand">@itemBrand.BrandGroup</td>
+                                @Html.Raw("</tr>");
+                                foreach (var item in itemBrand.ListReportProdStock)
+                                {
+                                    <tr>
+                                        <td>@item.LocationCode</td>
+                                        <td class="right">@item.BeginStockInternalMove</td>
+                                        <td class="right">@item.BeginStockExternalMove</td>
+                                        <td class="right">@item.Production</td>
+                                        <td class="right">@item.PAP</td>
+                                        <td class="right">@item.PAG</td>
+                                        <td class="right">@item.EndingStockInternalMove</td>
+                                        <td class="right">@item.EndingStockExternalMove</td>
+                                        <td class="right">@item.Planning</td>
+                                        <td class="right">@item.VarianceStick</td>
+                                        <td class="right">@item.VariancePercent</td>
+                                    </tr>
+                                      }
+                                    <tr class="total">
+                                        <td colspan="2" class="center">Total</td>
+                                        <td class="right">@itemBrand.TotalBeginStockInMovePerBrand</td>
+                                        <td class="right">@itemBrand.TotalBeginStockExtMovePerBrand</td>
+                                        <td class="right">@itemBrand.TotalProdPerBrand</td>
+                                        <td class="right">@itemBrand.TotalPAPPerBrand</td>
+                                        <td class="right">@itemBrand.TotalPAGPerBrand</td>
+                                        <td class="right">@itemBrand.TotalBeginStockInMovePerBrand</td>
+                                        <td class="right">@itemBrand.TotalEndStockExtMovePerBrand</td>
+                                        <td class="right">@itemBrand.TotalPlanningPerBrand</td>
+                                        <td class="right">@itemBrand.TotalVarStickPerBrand</td>
+                                        <td class="right">@itemBrand.TotalVarStickPercentPerBrand</td>
+                                    </tr>
+                                    index++;
+                                }
+                        <tr class="total">
+                            <td colspan="3" class="center">Total</td>
+                            <td class="right">@itemBrandGroup.TotalBeginStockInMovePerBrandGroupCode</td>
+                            <td class="right">@itemBrandGroup.TotalEndStockExtMovePerBrandGroupCode</td>
+                            <td class="right">@itemBrandGroup.TotalProdPerBrandGroupCode</td>
+                            <td class="right">@itemBrandGroup.TotalPAPPerBrandGroupCode</td>
+                            <td class="right">@itemBrandGroup.TotalPAGPerBrandGroupCode</td>
+                            <td class="right">@itemBrandGroup.TotalEndStockInMovePerBrandGroupCode</td>
+                            <td class="right">@itemBrandGroup.TotalEndStockExtMovePerBrandGroupCode</td>
+                            <td class="right">@itemBrandGroup.TotalPlanningPerBrandGroupCode</td>
+                            <td class="right">@itemBrandGroup.TotalVarStickPerBrandGroupCode</td>
+                            <td class="right">@itemBrandGroup.TotalVarStickPercentPerBrandGroupCode</td>
+                        </tr>
+                    </tbody>
+                }
+            }
+        </table>
+    </div>
+
+

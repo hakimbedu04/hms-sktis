@@ -1,0 +1,629 @@
+﻿@using HMS.SKTIS.Application.Resources
+@using HMS.SKTIS.Application.Resources.Views.MasterGenList
+@using PagedList.Mvc
+@using SKTISWebsite.Helper
+@using HMS.SKTIS.Core
+@model SKTISWebsite.Models.EquipmentRequest.InitEquipmentRequest
+
+@{ Html.SetPageTitle("Equipment Request"); }
+
+<div class="col-lg-12" data-bind="with: gridView">
+    <div class="col-lg-6">
+        <div class="row">
+            <label class="form-label col-lg-4">
+                Location
+            </label>
+            <div class="col-lg-3">
+                @*@Html.DropDownListFor(m => m.FilterLocationCode, Model.LocationCodeSelectList,
+                    new
+                    {
+                        @class = "selectpicker show-tick form-control",
+                        data_live_search = "true",
+                        data_bind = "selectPicker: $root.filterLocation, event : { change : $root.RepopulateItemCode }"
+                    })*@
+                @*@Html.DropDownList("FilterLocationCode", new SelectList(Model.LocationCodeSelectList, "LocationCode", "LocationCode"),
+                new
+                {
+                    @class = "selectpicker show-tick form-control",
+                    id = "FilterLocationCode",
+                    data_live_search = "true",
+                    data_bind = "selectPicker: $root.filterLocation, event : { change : $root.RepopulateItemCode }",
+                    data_size = "15"
+                })*@
+
+                <select id="FilterLocationCode"
+                        class="selectpicker show-tick form-control"
+                        data-live-search="true"
+                        data-bind="enable: !$root.isBusy(), selectPicker:$root.filterLocation, optionsText: 'LocationCode', optionsValue : 'LocationCode', optionsAfterRender: locationDesc, selectPickerOptions: { optionsArray: $root.menuItemLocations }, event : { change : $root.RepopulateItemCode}"></select>
+
+            </div>
+            <div class="col-lg-5">
+                <input id="LocationName" type="text" class="form-control" readonly="readonly" data-bind="value:$root.locationName">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-4">
+                <label class="form-label nopadding">
+                    Transaction Date
+                </label>
+            </div>
+            <div class="col-lg-4">
+                <div id="dtpRequestDate" class='input-group date time' data-bind="dateTimePicker: $root.filterRequestDate, value:$root.filterRequestDate, dateTimePickerOptions: {widgetPositioning: {vertical: 'bottom'}, showClear: true, ignoreReadonly: true}, container:'body'">
+                    <input type='text' class="form-control" readonly="readonly" data-bind="enable: !$root.isBusy()" />
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <p class="bg-primary">Request No.: <span id="spnRequestNumber" data-bind="text: $root.generateRequestNumber"></span></p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="action-btn">
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.View.ToString()))
+                {
+                    <button type="button" class="btn btn-primary" data-bind="click:$root.search, enable: !$root.isBusy()">@CommonLabel.btnView</button>
+                }
+                
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.Save.ToString()))
+                {
+                    <button type="button" class="btn btn-primary" data-bind="click:$root.saveData, enable: !$root.isBusy()">@CommonLabel.btnSave</button>
+                }
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.Excel.ToString())) { 
+                    using (Html.BeginForm("GenerateExcel", "EquipmentRequest", FormMethod.Post))
+                    {
+                        <input type="hidden" name="LocationCode" data-bind="value: $root.filterLocation" />
+                        <input type="hidden" name="RequestDate" data-bind="value: $root.filterRequestDate" />
+                        <input type="hidden" name="RequestNo" data-bind="value: $root.generateRequestNumber" />
+                        <button type="submit" class="btn btn-primary" data-bind="enable: !$root.isBusy()">@CommonLabel.btnExcel</button>
+                    }
+                }
+                @Html.Partial("GridViewPageSizeSelector")
+            </div>
+        </div>
+    </div>
+
+    <div class="table-overflow">
+        <table class="table table-striped">
+            <thead>
+                <tr class="head">
+                    <th data-bind="click:sortBy.bind($data,'ItemCode'), css:sortCss('ItemCode', $data.sortExpression(), $data.sortOrder())" rowspan="2">Item Code</th>
+                    <th rowspan="2">Item Description</th>
+                    <th colspan="3">Current Stock</th>
+                    <th rowspan="2">Total Quantity</th>
+                    <th rowspan="2">Approved Quantity</th>
+                </tr>
+                <tr class="head">
+                    <th>Ready To Use</th>
+                    <th>On Use</th>
+                    <th>On Repair</th>
+                </tr>
+                <tr class="insertRow" data-bind="click: cancelInline.bind(),inlineAddProccess:[$data, $root.newData]">
+                    <th class="current right">
+                        <select id="ItemCodeSelectList" class="selectpicker show-tick form-control" data-live-search="true" @*data-dropup-auto="false" data-size="10"*@
+                                data-bind="selectPicker: $root.newData.ItemCode, value: $root.newData.ItemCode, optionsText: 'ItemCompact', optionsValue : 'ItemCode', optionsAfterRender : $root.afterRender, event : { change : $root.ChangeItemCode } , selectPickerOptions: { optionsArray: $root.ItemCodeSelectList,container:'body' }"></select>
+                    </th>
+                    <th>
+                        <span data-bind="text:$root.newData.ItemDescription"></span>
+                    </th>
+                    <th>
+                        <span data-bind="text:$root.newData.ReadyToUse"></span>
+                    </th>
+                    <th>
+                        <span data-bind="text:$root.newData.OnUsed"></span>
+                    </th>
+                    <th>
+                        <span data-bind="text:$root.newData.OnRepair"></span>
+                    </th>
+                    <th>
+                        <input data-bind="value:$root.newData.TotalQuantity, valueUpdate: 'afterkeydown'" class="form-control transparent" type="number" data-sktis-validation="number" min="0" />
+                    </th>
+                    <th>
+                        <span data-bind="text:$root.newData.ApprovedQuantity"></span>
+                    </th>
+                </tr>
+            </thead>
+            <tbody data-bind="foreach: listDataItems">
+                <tr data-bind="if: ($parent.editingRowIndex() !== $index()),
+                                   click: $parent.editInline3.bind($data,$index())">
+                    <td><span data-bind="text:$data.ItemCode"></span></td>
+                    <td><span data-bind="text:$data.ItemDescription"></span></td>
+                    <td><span data-bind="decimal:$data.ReadyToUse"></span></td>
+                    <td><span data-bind="decimal:$data.OnUsed"></span></td>
+                    <td><span data-bind="decimal:$data.OnRepair"></span></td>
+                    <td class="current"><span data-bind="decimal:$data.TotalQuantity"></span></td>
+                    <td><span data-bind="text:$data.ApprovedQty"></span></td>
+                </tr>
+                <tr data-bind="validationOptions: {insertMessages: false, showTooltip:true, decorateInputElement: true, errorElementClass: 'input-error'}, inlineProccess:[$parent,$data],
+                                   if:($parent.editingRowIndex() === $index()),
+                                   click: $parent.selectRow.bind($data, $index())">
+                    <td>
+                        <span data-bind="text: $data.ItemCode"></span>
+                    </td>
+                    <td>
+                        <span data-bind="text: $data.ItemDescription"></span>
+                    </td>
+                    <td>
+                        <span data-bind="decimal: $data.ReadyToUse"></span>
+                    </td>
+                    <td>
+                        <span data-bind="decimal: $data.OnUsed"></span>
+                    </td>
+                    <td>
+                        <span data-bind="decimal: $data.OnRepair"></span>
+                    </td>
+                    <td class="current">
+                        <input data-bind="value:$data.TotalQuantity, valueUpdate: 'afterkeydown'" class="form-control transparent" type="number" data-sktis-validation="number" min="0" />
+                    </td>
+                    <td>
+                        <span data-bind="text: $data.ApprovedQty"></span>
+                    </td>
+                </tr>
+            </tbody>
+            <tbody data-bind="visible: !listDataItems().length">
+                <tr>
+                    <td colspan="9" class="empty-row-message"><div class="loader"></div></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div data-bind="if: (listDataItems() != null && listDataItems().length !== 0)">
+        @Html.Partial("GridViewFooter")
+    </div>
+
+</div>
+
+@section Scripts
+{
+    <script src="~/Scripts/app/globalfunctions.js" type="text/javascript"></script>
+    <script src="~/Scripts/common/app.GridViewModel.js" type="text/javascript"></script>
+    <script type="text/javascript">
+
+        $(document).ready(function() {
+            $('#FilterLocationCode').find("option[value='SKT']").remove();
+            $('#FilterLocationCode').find("option[value='PLNT']").remove();
+            $('#FilterLocationCode').find("option[value='TPO']").remove();
+            $('#FilterLocationCode').selectpicker('refresh');
+            $('#FilterLocationCode').change();
+        });
+
+        (function(app) {
+            app.EditGrid = function() {
+                var self = this;
+
+                self.menuItemLocations = ko.observableArray(@Html.Raw(Json.Encode(@Model.LocationCodeSelectList)));
+                @*self.itemLocations = @Html.Raw(Json.Encode(@Model.LocationDescs));*@
+                self.itemLocations = ko.observableArray(@Html.Raw(Json.Encode(@Model.LocationDescs)));
+                self.locationName = ko.observable();
+                // description : filter
+                self.filterLocation = ko.observable($('#FilterLocationCode').val());
+                self.filterRequestDate = ko.observable('@Model.FilterRequestDate');
+                self.filterRequestNumber = ko.observable(null);
+
+
+                //================= busy button state ================//
+                self.isBusy = ko.observable(true);
+
+                $(document).ajaxComplete(function () {
+                    if ($.active <= 1) {
+                        self.isBusy(false);
+                    }
+                });
+
+                $(document).ajaxStart(function () {
+                    if (!self.isBusy()) self.isBusy(true);
+                });
+                //================= busy button state ================//
+                
+
+                // description : generate Request Number
+                self.generateRequestNumber = ko.computed(function() {
+                    var locCode = self.filterLocation();
+                    var reqDate = self.filterRequestDate();
+                    reqDate = reqDate.replace(/\//g, '').slice(0, -4) + reqDate.slice(-4).substring(2);
+                    self.filterRequestNumber(locCode + reqDate);
+                    return locCode + reqDate;
+                }, self);
+
+                // description : change item code
+                self.ChangeItemCode = function() {
+                    if ($('#ItemCodeSelectList').val() == null) {
+                        self.newData.ItemCode('');
+                        self.newData.ItemDescription('');
+                        self.newData.ReadyToUse('');
+                        self.newData.OnUsed('');
+                        self.newData.OnRepair('');
+                    } else {
+
+                        // repopulate Item Description
+                        $.ajax({
+                            url: @Html.BaseUrl("/EquipmentRequest/GetItemDescription"),
+                            type: 'GET',
+                            contentType: 'application/json',
+                            data: { itemCode: $('#ItemCodeSelectList').val() },
+                            dataType: 'json',
+                            cache: false,
+                            success: function(data) {
+                                self.newData.ItemDescription(data.ItemDescription);
+                            }
+                        });
+
+                        self.newData.ReadyToUse(0);
+                        self.newData.OnUsed(0);
+                        self.newData.OnRepair(0);
+                        // repopulate All
+                        $.ajax({
+                            url: @Html.BaseUrl("/EquipmentRequest/GetDetailInventory"),
+                            type: 'GET',
+                            contentType: 'application/json',
+                            data:
+                            {
+                                inventoryDate: self.filterRequestDate(),
+                                itemCode: $('#ItemCodeSelectList').val(),
+                                locationCode: self.filterLocation()
+                            },
+                            dataType: 'json',
+                            cache: false,
+                            success: function(data) {
+                                self.newData.ReadyToUse(data.ReadyToUse);
+                                self.newData.OnUsed(data.OnUse);
+                                self.newData.OnRepair(data.OnRepair);
+                            }
+                        });
+
+                    }
+                };
+
+                // description : chaining dropdown
+                self.ItemCodeSelectList = ko.observableArray([]);
+                self.RepopulateItemCode = function() {
+
+                    $('#ItemCodeSelectList').find("option[value!='']").remove();
+                    $('#ItemCodeSelectList').selectpicker('refresh');
+
+                    $.ajax({
+                        url: @Html.BaseUrl("/EquipmentRequest/GetItemCode"),
+                        type: 'GET',
+                        SortOrder: "ASC",
+                        contentType: 'application/json',
+                        data: { locationCode: self.filterLocation() },
+                        dataType: 'json',
+                        cache: false,
+                        success: function(data) {
+                            //console.log(data);
+                            var listItemCode = [];
+                            
+                            $.each(data, function(index, value) {
+                                listItemCode.push({ 
+                                    ItemCode: value.ItemCode,
+                                    ItemDescription: value.ItemDescription,
+                                    ItemCompact: value.ItemDescription + ' - ' + value.ItemCode
+                                });
+                            });
+
+                            //remove from list if already insert before
+                            if (self.gridView.listDataItems().length > 0) {
+                                $.each(self.gridView.listDataItems(), function(index, value) {
+                                    $.each(listItemCode, function(i) {
+                                        if (value.ItemCode() === listItemCode[i].Name) {
+                                            listItemCode.splice(i, 1);
+                                            return false;
+                                        }
+                                    });
+                                });
+                            }
+
+                            self.ItemCodeSelectList(listItemCode);
+                        }
+                    });
+
+                    // update location name
+                    self.itemLocations().map(function(v) {
+                        if (typeof v.LocationCode !== 'undefined' && v.LocationCode == self.filterLocation()) {
+                            self.locationName(v.LocationName);
+                        }
+                    });
+
+                    if (typeof cb == 'function') cb();
+                    //for (var i = 0; i < self.itemLocations.length; i++) {
+                    //    if (self.itemLocations[i].LocationCode == self.filterLocation()) {
+                    //        $('#LocationName').val(self.itemLocations[i].LocationName);
+                    //        break;
+                    //    }
+                    //}
+
+                    // update item detail
+                    self.ChangeItemCode();
+                };
+
+                // description : init grid
+                self.gridView = new app.GridViewModel({
+                    Criteria:
+                    {
+                        PageSize: 10,
+                        PageIndex: 1,
+                        SortExpression: "",
+                        SortOrder: "",
+                        LocationCode: self.filterLocation,
+                        RequestDate: self.filterRequestDate
+                    },
+                    DataSourceUrl: @Html.BaseUrl("EquipmentRequest/GetEquipmentRequest"),
+                    InlineEdit: true
+                });
+
+                // description : object new data
+                self.newData =
+                {
+                    ItemCode: ko.observableArray([]),
+                    ItemDescription: ko.observable(''),
+                    ReadyToUse: ko.observable(''),
+                    OnUsed: ko.observable(''),
+                    OnRepair: ko.observable(''),
+                    TotalQuantity: ko.observable(''),
+                    ApprovedQuantity: ko.observable(null)
+                };
+
+                self.afterRender = function(options, item)
+                {
+                    if (typeof(item) === 'undefined') return;
+
+                    $(options).attr('title', item.ItemCode);
+                }
+
+                // Reset Fields for Insert Row
+                self.gridView.resetDefault = function(viewModel) {
+                    viewModel.ItemCode([]);
+                    viewModel.ItemDescription('');
+                    viewModel.ReadyToUse('');
+                    viewModel.OnUsed('');
+                    viewModel.OnRepair('');
+                    viewModel.TotalQuantity('');
+                    viewModel.ApprovedQuantity(null);
+                };
+
+                //description: validations
+                self.gridView.applyValidationRules = function(entity) {
+
+                    self.RemoveNotification();
+
+                    entity.TotalQuantity.extend({
+                        required: {
+                            message: "<strong>Total Quantity</strong> cannot be empty!"
+                        }
+                    });
+
+                    entity.TotalQuantity.extend({
+                        min: {
+                            params: 0,
+                            message: '<strong>Total Quantity</strong> must be higher than 0!'
+                        }
+                    });
+
+                    // Commented based on Requirement
+                    //var curentStock = (parseInt(entity.ReadyToUse()) || 0) + (parseInt(entity.OnRepair()) || 0) + (parseInt(entity.OnUsed()) || 0);
+                    //console.log(curentStock);
+                    //entity.TotalQuantity.extend({
+                    //    max: {
+                    //        params: curentStock,
+                    //        message: '<strong>Total Quantity</strong> cannot higher than curent stock!'
+                    //    }
+                    //});
+                    
+                    
+                    entity.ItemCode.extend({
+                        required: {
+                            message: "<strong>Item Code</strong> cannot be empty!"
+                        }
+                    });
+                    
+                    entity.ReadyToUse.extend({
+                        min: {
+                                params: 0,
+                                message: '<strong>Ready to use</strong> must be higher than 0!'
+                            }
+                    });
+                };
+
+                // Remove Value in Dropdownlist after Insert
+                self.gridView.onAfterInsert = function(insertedData) {
+                    $.each(self.ItemCodeSelectList(), function(index, value) {
+                        if (typeof value != 'undefined') {
+                            if (value.Name == insertedData.ItemCode()) {
+                                self.ItemCodeSelectList.remove(function(value) {
+                                    return value.Name == insertedData.ItemCode();
+                                });
+                            }
+                        }
+                    });
+                    if (self.ItemCodeSelectList().length < 1) {
+                        $('#ItemCodeSelectList').find('option').remove();
+                        $('#ItemCodeSelectList').selectpicker('refresh');
+                    };
+                };
+
+                //description: save bulk data
+                self.saveData = function() {
+                    if (self.gridView.editingRowIndex() !== -1)
+                        return;
+
+                    var datas = {
+                        "Parameters": { "LocationCode": self.filterLocation(), "RequestDate": self.filterRequestDate(), "RequestNumber": self.filterRequestNumber() },
+                        "New": self.gridView.listNewItems(),
+                        "Edit": self.gridView.listEditItems()
+                    };
+
+                    datas = JSON.stringify(datas);
+                    $.ajax({
+                        url: @Html.BaseUrl("EquipmentRequest/Save"),
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: datas,
+                        dataType: 'json',
+                        success: function(data) {
+                            if (data.New) {
+                                $.each(data.New, function(k, value) {
+                                    if (value)
+                                        SKTIS.Helper.ResponseNotification(value, "Insert Equipment Request", value.ItemCode);
+                                });
+                            }
+
+                            if (data.Edit) {
+                                $.each(data.Edit, function(k, value) {
+                                    if (value)
+                                        SKTIS.Helper.ResponseNotification(value, "Edit Equipment Request", value.ItemCode);
+                                });
+                            }
+
+                            self.gridView.listNewItems.removeAll();
+                            self.gridView.listEditItems.removeAll();
+                            self.search();
+                        }
+                    });
+                };
+
+                //description: load data
+                self.search = function() {
+                    $('.empty-row-message').html('<div class="loader"></div>'); // Reset New and Edit row
+                    // Check whether New or Edit data is existing and not saved to database yet (on Ajax Action)
+                    if (SKTIS.Checker.modifiedDataExistsForAjax([self.gridView.listNewItems, self.gridView.listEditItems]) == true) {
+                        return;
+                    } else {
+                        self.gridView.listNewItems.removeAll();
+                        self.gridView.listEditItems.removeAll();
+                    }
+
+                    self.gridView.search({}, function(response) {
+                        if (response.status == 'KO') {
+                            SKTIS.Helper.Notification(response.message, 'error');
+                            $('.empty-row-message').html(response.message);
+                        } else if (response.status == 'Empty') {
+
+                            self.RemoveNotification();
+
+                            //SKTIS.Helper.Notification(response.message,'warning');
+                            $('.empty-row-message').html('@CommonLabel.lblDataEmpty');
+                        }
+
+                        self.RepopulateItemCode();
+                    });
+
+                };
+
+                self.RemoveNotification = function() {
+                    if ($('#noty_top_layout_container').length > 0) {
+                        $('#noty_top_layout_container').remove();
+                    }
+                };
+
+                // Check whether New or Edit data is existing and not saved to database yet (on Request action)
+                SKTIS.Checker.modifiedDataExists([self.gridView.listNewItems, self.gridView.listEditItems]);
+
+                // Reset observable variable also when picker clear event
+                $('#dtpRequestDate').on('dp.change', function(e) {
+                    //disabled, because make a bug upon request to GetDetailInventory
+                    //self.filterRequestDate('');
+                });
+
+                $(document).ready(function() {
+                    $('#dtpRequestDate').data("DateTimePicker").options({
+                        maxDate: moment()
+                    });
+                });
+                //self.search();
+
+                self.init = function(){
+                    setTimeout(function() {
+                        self.search();
+                    }, 1000);
+                };
+
+                self.init();
+            };
+            ko.applyBindings(new app.EditGrid());
+        })(app = this.app || {});
+
+        @*$(document).ready(function() {
+            //init
+            filterChange();
+            getLocationNameByLocationCode();
+
+            $('#ddlFilterLocationCode').on('change', function(e) {
+                getLocationNameByLocationCode();
+                filterChange();
+            });
+
+            $('#dtpRequestDate').on('dp.change', function(e) {
+                filterChange();
+            });
+
+            $('#ddlPageSize').on('change', function(e) {
+                clearSort();
+                $('#hdnPageSize').val($('#ddlPageSize').val());
+                $("#filterForm").submit();
+            });
+
+            $('#btnView').on('click', function(e) {
+                clearSort();
+            });
+        });
+
+        function filterChange() {
+            //generate requestnumber
+            generateRequestNumber();
+            //set hidden value
+            $('#hdnFilterLocationCode').val($('#ddlFilterLocationCode').val());
+            $('#hdnFilterRequestDate').val($('#dtpRequestDate input').val());
+            //set add url
+            $('#btnAddNew').attr("href", "EquipmentRequest/AddNew?locationCode=" + $('#ddlFilterLocationCode').val()
+                + "&requestDate=" + $('#dtpRequestDate input').val()
+                + "&requestNumber=" + $("#spnRequestNumber").text());
+        }
+
+        function generateRequestNumber() {
+            var locCode = $("#ddlFilterLocationCode").val();
+            var reqDate = $("#dtpRequestDate input").val();
+            reqDate = reqDate.replace(/\//g, '').slice(0, -4) + reqDate.slice(-4).substring(2);
+            if (locCode != null || reqDate != null) {
+                $('#spnRequestNumber').html(locCode + reqDate).trigger('change');
+            }
+        }
+
+        function getLocationNameByLocationCode() {
+            var locationNameList = @Html.Raw(Json.Encode(@Model.LocationNameLookupList));
+            for (var i = 0; i < locationNameList.length; i++) {
+                if (locationNameList[i].LocationCode == $('#ddlFilterLocationCode').val()) {
+                    $('#locationNameInput').val(locationNameList[i].LocationName);
+                    break;
+                }
+            }
+        };
+
+        function generateExcel(formElement) {
+            $(formElement).find("input[name=locationCode]").val($('#ddlFilterLocationCode').val());
+            $(formElement).find("input[name=requestDate]").val($('#dtpRequestDate input').val());
+            return true;
+        };
+
+        function reloadGrid() {
+            $("#filterForm").submit();
+            SKTIS.Helper.Notification('Data successfully saved', 'success');
+        }
+
+        function sortGrid(element) {
+            var sortOrder = $('#hdnSortOrder').val();
+            $('#hdnSortOrder').val(sortOrder === "ASC" ? "DESC" : "ASC");
+            $('#hdnSortExpression').val($(element).data("sortexpression"));
+            $("#filterForm").submit();
+        }
+
+        function clearSort() {
+            $('#hdnSortOrder').val('');
+            $('#hdnSortExpression').val('');
+        };*@
+    </script>
+}

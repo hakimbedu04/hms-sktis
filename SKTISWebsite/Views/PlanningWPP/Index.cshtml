@@ -1,0 +1,501 @@
+﻿@using HMS.SKTIS.Application.Resources
+@using HMS.SKTIS.Application.Resources.Views.PlanningWPP
+@using SKTISWebsite.Helper
+@using HMS.SKTIS.Core
+@model SKTISWebsite.Models.PlanningWPP.InitPlanningWPPModel
+
+@{ Html.SetPageTitle(@PlanningWPP.PageTitle); }
+<div class="col-lg-12">
+    <div class="col-lg-6">
+        @if (ViewBag.ButtonAccess.Contains(Enums.ButtonName.Upload.ToString()))
+        {
+        <div class="row">
+            <label class="form-label col-lg-4">@PlanningWPP.lblFilterUpload</label>
+            <div class="col-lg-5">
+                <div class="input-group uploadfile">
+                    <form id="formUpload">
+                        <input id="fileInput" type="file" class="filestyle" data-buttonname="btn-primary" data-icon="false" data-buttontext="Browse" accept=".xlsx">
+                    </form>
+                </div>
+            </div>
+            <div class="col-lg-1">
+                <div class="row">
+                    <button class="btn btn-primary" type="button" id="btnUpload" disabled>@PlanningWPP.btnUpload</button>
+                </div>
+            </div>
+        </div>
+        }
+        <div class="row">
+            <label class="form-label col-lg-4">@PlanningWPP.lblFilterBrandFamily</label>
+            <div class="col-lg-5">
+                @Html.DropDownList("ddlBrandFamily", Model.BrandFamily, @CommonLabel.ddlSelectAll, new Dictionary<string, object> { { "class", "selectpicker show-tick form-control" },
+                                                                                                  {"data-live-search","true"},{"id","ddlBrandFamily"} })
+
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-4">@PlanningWPP.lblFilterBrandGroup</label>
+            <div class="col-lg-5">
+                <div class="input-group withmargin">
+                    <input type="hidden" disabled id="hdnBrandGroup">
+                    <input type="text" class="form-control" disabled id="txtBrandGroup">
+                    <span class="input-group-btn">
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalBrand">@PlanningWPP.btnSelect</button>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-4">@PlanningWPP.lblFilterLocation</label>
+            <div class="col-lg-5">
+                @Html.DropDownList("ddlLocationCode", Model.LocationCodes, new Dictionary<string, object> { { "class", "selectpicker show-tick form-control" },
+                                                                                                  {"data-live-search","true"},{"id","ddlLocationCode"} })
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="row">
+            <label class="form-label col-lg-3">@PlanningWPP.lblFilterYear</label>
+            <div class="col-lg-4">
+                @Html.DropDownList("ddlKPSYearFilter", Model.KPSYears, new Dictionary<string, object> { { "class", "selectpicker show-tick form-control kps-filter" },
+                                                                                                  {"data-live-search","true"},{"id","ddlKPSYearFilter"} })
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-3">@PlanningWPP.lblFilterWeek</label>
+            <div class="col-lg-4">
+                @Html.DropDownList("ddlKPSWeekFilter", Model.KPSWeeks, new Dictionary<string, object> { { "class", "selectpicker show-tick form-control" },
+                                                                                                  {"data-live-search","true"},{"id","ddlKPSWeekFilter"} })
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="action-btn">
+                <button type="button" class="btn btn-primary" id="btnView">@CommonLabel.btnView</button>
+                @if (ViewBag.ButtonAccess.Contains(Enums.ButtonName.Excel.ToString()))
+                {
+                    using (Html.BeginForm("GenerateExcel", "PlanningWPP", FormMethod.Post, new { @id = "formWPP" }))
+                    {
+                        <input type="hidden" name="brandFamily" id="brandFamily" />
+                        <input type="hidden" name="brandGroupCode" id="brandGroupCode" />
+                        <input type="hidden" name="brandCode" id="brandCode" />
+                        <input type="hidden" name="locationCode" id="locationCode" />
+                        <input type="hidden" name="year" id="year" />
+                        <input type="hidden" name="week" id="week" />
+                        <button type="button" id="btnExcel" class="btn btn-primary">@CommonLabel.btnExcel</button>
+                    }
+                }
+                @if (ViewBag.ButtonAccess.Contains(Enums.ButtonName.Submit.ToString()))
+                {
+                <button type="button" class="btn btn-success" id="btnSubmit" disabled>@CommonLabel.btnSubmit</button>
+                }
+
+            </div>
+        </div>
+    </div>
+    @Html.Partial("WPPTablePartial", @Model.WPPResult)
+    <!-- Modal -->
+    <div class="modal fade" id="ModalBrand" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close popup-dismiss" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Brand Code</h4>
+                </div>
+                <div class="modal-body">
+                    @Html.Partial("BrandGroupCodePartial", @Model.BrandCodes)
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="btnOK" data-dismiss="modal">OK</button>
+                    <button type="button" class="btn btn-primary popup-dismiss" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!-- End Modal -->
+    
+    <!-- Modal -->
+    <div class="modal fade" id="ModalUpload" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close popup-dismiss" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Confirmation</h4>
+                </div>
+                <div class="modal-body">
+                    @PlanningWPP.ViewConfirmation
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="btnOKpopup" data-dismiss="modal">OK</button>
+                    <button type="button" class="btn btn-primary popup-dismiss" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!-- End Modal -->
+
+    @Html.Partial("TransactionHistory")
+
+</div>
+
+@section Scripts
+{
+    <script src="~/Scripts/common/app.GridViewModel.js" type="text/javascript"></script>
+    <script language="javascript" type="text/javascript">
+
+        //$(document).ready( function () {
+        //    $('[data-toggle="tooltip"]').tooltip();
+        //    var table = $('#tblWPP').DataTable( {
+        //        scrollY: "300px",
+        //        scrollX: true,
+        //        scrollCollapse: true,
+        //        ordering: false,
+        //        autoWidth: true,
+        //        searching: false,
+        //        paging: false,
+        //        info: false
+        //    });
+        //    new $.fn.dataTable.FixedColumns(table, {
+        //        leftColumns: 2
+        //    });
+        //});
+
+        var filter = {
+            BrandFamily: "",
+            BrandGroupCode: "",
+            BrandCode: "",
+            LocationCode: null,
+            KPSYear: 0,
+            KPSWeek: 0,
+            PageSize: 10,
+            PageIndex: 1,
+            SortExpression: "BrandCode",
+            SortOrder: "ASC",
+            search: false
+        };
+
+        var listBrandCode = [];
+        
+        $(function() {
+            $("#ddlKPSYearFilter").val(@DateTime.Now.Year.ToString());
+            var SelectAllBrand = function() {
+                var chkAll = $("#chkSelectAll").prop('checked');
+                $("input[data-brandcode]").each(function() {
+                    $(this).prop("checked", chkAll);
+                });
+            };
+
+            var selectBrandCode = function() {
+                var all = $("Input[data-brandcode]").length;
+                var checked = $("Input[data-brandcode]:checked").length;
+                $("#chkSelectAll").prop('checked', (all == checked));
+            };
+
+            var resetForm = function() {
+                $("#formUpload").trigger('reset');
+                $("#btnSubmit").prop("disabled", true);
+                $("#btnUpload").prop("disabled", true);
+            };
+
+            var viewData = function(cb) {
+                filter.BrandFamily = $("#ddlBrandFamily").val();
+                filter.BrandGroupCode = $("#txtBrandGroup").val();
+                filter.BrandCode = listBrandCode.join();
+                filter.LocationCode = $("#ddlLocationCode").val();
+                filter.KPSYear = $("#ddlKPSYearFilter").val();
+                filter.KPSWeek = $("#ddlKPSWeekFilter").val();
+
+                $.ajax({
+                    url: @Html.BaseUrl("PlanningWPP/GetPlanWeeklyProductionPlanning"),
+                    type: 'GET',
+                    contentType: 'text/html',
+                    data: filter,
+                    dataType: 'html',
+                    success: function(data) {
+                        $("#tblWPP").replaceWith(data);
+                        filter.search = true;
+                        if(typeof cb != 'undefined'){
+                            cb();
+                        }
+                    },
+                    error: function(data) {
+                        console.log(data);
+                    }
+                });
+
+                transactionViewModelObj.loadHistory();
+                transactionViewModelObj.loadFlow();
+
+            };
+
+            var ele;
+            var eleClass;
+            $(document).on("click", ".custom-sort", function(){
+                var sortBy = this.getAttribute("data-sort");
+                ele = this.id;
+                
+                if($(this).hasClass( "sorting_asc" )){
+                    $('.custom-sort').removeClass("sorting_asc sorting_desc");
+                    eleClass = "sorting_desc";
+                    filter.SortOrder = 'DESC';
+                }else{
+                    $('.custom-sort').removeClass("sorting_asc sorting_desc");
+                    eleClass = "sorting_asc";
+                    filter.SortOrder = 'ASC';
+                }
+                
+                filter.SortExpression = sortBy;
+                viewData(setProp);
+            });
+
+            function setProp(){
+                $('#'+ele).addClass(eleClass);
+            }
+            
+            $("#fileInput").change(function() {
+                $("#btnUpload").prop("disabled", false);
+            });
+
+            $("#ddlBrandFamily").on("change", function() {
+                $.ajax({
+                    url: @Html.BaseUrl("PlanningWPP/GetBrandCode"),
+                    type: 'GET',
+                    contentType: 'text/html',
+                    data: {
+                        brandFamily: $("#ddlBrandFamily").val()
+                    },
+                    dataType: 'html',
+                    success: function(data) {
+                        $("#TableBrand").replaceWith(data);
+                        $("#chkSelectAll").on("click", SelectAllBrand);
+                        $("#txtBrandGroup").val('');
+                    },
+                });
+            });
+
+            $(".kps-filter").on("change", function() {
+                $.ajax({
+                    url: @Html.BaseUrl("PlanningWPP/GetKPSWeek"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: {
+                        year: $("#ddlKPSYearFilter").val()
+                    },
+                    dataType: 'json',
+                    success: function(data) {
+                        var options = "";
+                        for (var i = 0; i < data.length; i++) {
+                            options += "<option>" + data[i] + "</option>";
+                        }
+                        $("#ddlKPSWeekFilter").html(options).selectpicker('refresh');
+                    },
+                });
+            });
+
+            //bind event to checkbox
+            $("#chkSelectAll").on("click", SelectAllBrand);
+            $("Input[data-brandcode]").on("click", selectBrandCode);
+
+            //select brand group code
+            $("#btnOK").on("click", function() {
+                var listBrandGroupCode = [];
+                listBrandCode = [];
+                $("Input[data-brandcode]:checked").each(function() {
+                    listBrandCode.push($(this).attr('data-brandcode').trim());
+                    var groupcode = $(this).attr('data-brandgroup').trim();
+                    if (listBrandGroupCode.indexOf(groupcode) == -1)
+                        listBrandGroupCode.push(groupcode);
+                });
+                $("#txtBrandGroup").val(listBrandGroupCode);
+            });
+
+            //close popup brandgroupcode
+            $(".popup-dismiss").on("click", function() {
+                $("Input[data-brandcode]").each(function() {
+                    var checked = listBrandCode.indexOf($(this).attr('data-brandcode').trim()) >= 0;
+                    $(this).prop("checked", checked);
+                });
+                selectBrandCode();
+            });
+
+            $("#btnView").on("click", function() {
+                var uploadfile = $('#fileInput').val();
+                if (uploadfile) {
+                    $('#ModalUpload').modal('show');
+                    return;
+                }
+                viewData();
+            });
+            
+
+            $("#btnOKpopup").on("click", function() {
+                resetForm();
+                viewData();
+            });
+
+            $("#btnExcel").on("click", function() {
+                if (filter.search) {
+                    $("#brandFamily").val(filter.BrandFamily);
+                    $("#brandGroupCode").val(filter.BrandGroupCode);
+                    $("#brandCode").val(filter.BrandCode);
+                    $("#locationCode").val(filter.LocationCode);
+                    $("#year").val(filter.KPSYear);
+                    $("#week").val(filter.KPSWeek);
+                    $("#formWPP").submit();
+                }
+            });
+
+            self.RemoveNotification = function() {
+                if ($('#noty_top_layout_container').length > 0) {
+                    $('#noty_top_layout_container').remove();
+                }
+            };
+
+            $("#btnUpload").on("click", function() {
+                var uploadfile = $('#fileInput').val();
+                self.RemoveNotification();
+                if (!uploadfile) return;
+                $("#btnSubmit").prop("disabled", false);
+
+                $(".modal-loading").show();
+                var fileInput = document.getElementById('fileInput');
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', @Html.BaseUrl("PlanningWPP/UploadWPP"));
+                xhr.setRequestHeader('Content-type', 'multipart/form-data');
+                //Appending file information in Http headers
+                xhr.setRequestHeader('X-File-Name', fileInput.files[0].name);
+                xhr.setRequestHeader('X-File-Type', fileInput.files[0].type);
+                xhr.setRequestHeader('X-File-Size', fileInput.files[0].size);
+                //Sending file in XMLHttpRequest
+                xhr.send(fileInput.files[0]);
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState == 4 && xhr.status == 200) {
+                        if (xhr.response.substring(5, 10) == "table") {
+                            var invalidData = $(xhr.responseText).find('tr.wrong').length;
+                            
+                            if (invalidData > 0)
+                            {
+                                $("#btnSubmit").prop("disabled", true);
+                            }
+                            else
+                            {
+                                $("#btnSubmit").prop("disabled", false);
+                            }
+
+                            $("#tblWPP").replaceWith(xhr.responseText);
+                        } else {
+                            SKTIS.Helper.Notification(xhr.responseText, 'error');
+                        }
+                    }
+                    $(".modal-loading").hide();
+
+                };
+                //return false;
+
+
+            });
+
+            $("#btnSubmit").on("click", function() {
+                $.ajax({
+                    url: @Html.BaseUrl("PlanningWPP/SubmitData"),
+                    type: 'GET',
+                    cache: false,
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    data: {
+                        year: $("#ddlKPSYearFilter").val()
+                    },
+                    success: function(data) {
+                        console.log(data);
+                        SKTIS.Helper.Notification(data.Message, data.Type);
+                        if (data.Type == 'success') resetForm();
+                    },
+                });
+            });
+            
+            viewData();
+        });
+
+
+        var viewModel = function() {
+            var self = this;
+            self.RemoveNotification = function() {
+                if ($('#noty_top_layout_container').length > 0) {
+                    $('#noty_top_layout_container').remove();
+                }
+            };
+            // Gridview Initialization
+            self.historyGridView = new app.GridViewModel({
+                Criteria: {
+                    PageSize: 10,
+                    PageIndex: 1,
+                    SortExpression: "UpdatedDate",
+                    SortOrder: "DESC",
+                    code_1: 'WPP',
+                    code_2: $("#ddlKPSYearFilter").val(),
+                    code_3: $("#ddlKPSWeekFilter").val()
+                },
+                DataSourceUrl: @Html.BaseUrl("PlanningWPP/GetHistory"),
+                InlineEdit: true,
+                InsertRowFocusedControlIndex: 1
+            });
+            self.flowGridView = new app.GridViewModel({
+                Criteria: {
+                    PageSize: 10,
+                    PageIndex: 1,
+                    SortExpression: "UpdatedDate",
+                    SortOrder: "ASC",
+                    FunctionName: 'WeeklyProductionPlanning'
+                },
+                DataSourceUrl: @Html.BaseUrl("PlanningWPP/GetFlow"),
+                InlineEdit: true,
+                InsertRowFocusedControlIndex: 1
+            });
+
+            self.loadHistory = function() {
+                self.historyGridView.search({ code_2: $("#ddlKPSYearFilter").val(), code_3: $("#ddlKPSWeekFilter").val() }, function(response) {
+                    if (response.status == 'KO') {
+                        SKTIS.Helper.Notification(response.message, 'error');
+                        $('.empty-row-message').html(response.message);
+                    } else if (response.status == 'Empty') {
+
+                        self.RemoveNotification();
+
+                        //SKTIS.Helper.Notification(response.message,'warning');
+                        $('.empty-row-message').html('@CommonLabel.lblDataEmpty');
+                    }
+                });
+            };
+            self.loadFlow = function() {
+                self.flowGridView.search({}, function(response) {
+                    if (response.status == 'KO') {
+                        SKTIS.Helper.Notification(response.message, 'error');
+                        $('.empty-row-message').html(response.message);
+                    } else if (response.status == 'Empty') {
+
+                        self.RemoveNotification();
+
+                        //SKTIS.Helper.Notification(response.message,'warning');
+                        $('.empty-row-message').html('@CommonLabel.lblDataEmpty');
+                    }
+                });
+            };
+            
+
+            // todo notification
+            //SKTIS.Checker.modifiedDataExists([self.gridView.listNewItems, self.gridView.listEditItems]);
+        };
+
+        var transactionViewModelObj = new viewModel();
+        ko.applyBindings(transactionViewModelObj);
+
+        
+    </script>
+}

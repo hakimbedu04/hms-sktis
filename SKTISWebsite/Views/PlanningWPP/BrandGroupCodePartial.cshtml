@@ -1,0 +1,23 @@
+﻿@model List<SKTISWebsite.Models.MasterBrand.BrandCodeModel>
+
+<table class="table table-striped" id="TableBrand">
+    <thead>
+        <tr class="head">
+            <th><input type="checkbox" id="chkSelectAll" /></th>
+            <th>Brand Group Code</th>
+            <th>Brand Code</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var brandcode in @Model)
+        {
+            <tr>
+                <td class="center"><input type="checkbox" data-brandgroup="@brandcode.BrandGroupCode" data-brandcode="@brandcode.BrandCode" /></td>
+                <td>@brandcode.BrandGroupCode.Trim()</td>
+                <td>@brandcode.BrandCode.Trim()</td>
+                <td>@brandcode.Description</td>
+            </tr>
+        }
+    </tbody>
+</table>

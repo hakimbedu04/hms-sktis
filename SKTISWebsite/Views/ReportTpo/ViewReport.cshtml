@@ -1,0 +1,15 @@
+﻿@model SKTISWebsite.Models.ReportTpo.ReportTpoViewReportViewModel
+<div class="col-lg-12">
+    <div class="row">
+        <div class="col-lg-6">
+            <h5><strong>@Model.ReportName</strong></h5>
+        </div>
+        <div class="col-lg-6">
+            <div class="pull-right">
+                <a href="@Url.Action("Index", "ReportTpo")" class="btn btn-primary">Back</a>
+
+            </div>
+        </div>
+    </div>
+    <iframe src="@Model.ReportUrl" class="iframe-tableu"></iframe>
+</div>

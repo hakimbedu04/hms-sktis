@@ -1,0 +1,966 @@
+﻿@model SKTISWebsite.Models.MaintenanceEquipmentQualityInspection.InitMaintenanceExecutionQualityInspection
+
+@using HMS.SKTIS.Application.Resources
+@using SKTISWebsite.Helper
+
+@{ Html.SetPageTitle("Quality Inspection"); }
+<div class="col-lg-12" data-bind="with: gridView">
+    <div class="col-lg-6">
+        <div class="row">
+            <label class="form-label col-lg-4">
+                Location
+            </label>
+            <div class="col-lg-3">
+                <select id="LocationFilter"
+                        class="selectpicker show-tick form-control"
+                        data-live-search="true"
+                        data-bind="enable: !$root.isBusy(), selectPicker:$root.LocationFilter, optionsText: 'LocationCode', optionsValue : 'LocationCode', optionsAfterRender: locationDesc, selectPickerOptions: { optionsArray: $root.menuItemLocations}, event : { change : $root.onLocationCodeChange}"></select>
+                        @*data-bind="selectPicker:$root.LocationFilter, optionsText: 'LocationCode', optionsValue : 'LocationCode', optionsAfterRender: locationDesc, selectPickerOptions: { optionsArray: $root.menuItemLocations}, event : { change : $root.GetLocationNameFilter}"></select>*@
+            </div>
+            <div class="col-lg-5">
+                <input type="text" class="form-control" id="spLocationNameFilter" readonly="true" data-bind="value:$root.filterLocationName">
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-4">
+                Transaction Date
+            </label>
+            <div class="col-lg-3">
+                <div id="TransactionDateFilter" class='input-group date time' data-bind="dateTimePicker: $root.TransactionDateFilter, value: $root.TransactionDateFilter, dateTimePickerOptions: {widgetPositioning: {vertical: 'bottom'}, showClear: true, ignoreReadonly: true}">
+                    <input id="dtTransactionDateFilter" class="form-control" readonly="readonly" data-bind="enable: !$root.isBusy()"  />
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="action-btn">
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.View.ToString()))
+                {
+                    <button type="button" class="btn btn-primary" data-bind="enable: !$root.isBusy(), click:$root.search">@CommonLabel.btnView</button>
+                }
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.Save.ToString()))
+                {
+                    <button type="button" class="btn btn-primary" data-bind="enable: !$root.isBusy(), click:$root.saveData">@CommonLabel.btnSave</button>
+                }
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.Excel.ToString())) { 
+                    using (Html.BeginForm("GenerateExcel", "MaintenanceEquipmentQualityInspection", FormMethod.Post, new { @data_bind = "submit: $root.generateExcel" }))
+                    {
+                        <input type="hidden" name="location" />
+                        <input type="hidden" name="locationName" />
+                        <input type="hidden" name="TransactionDate" />
+                        <button type="submit" class="btn btn-primary" data-bind="enable: !$root.isBusy()">@CommonLabel.btnExcel</button>
+                    }
+                }
+                @Html.Partial("GridViewPageSizeSelector")
+            </div>
+        </div>
+    </div>
+    <div class="table-overflow">
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr class="head">
+                    <th data-bind="click:sortBy.bind($data,'RequestNumber'), css:sortCss('RequestNumber', $data.sortExpression(), $data.sortOrder())">Request Number</th>
+                    <th data-bind="click:sortBy.bind($data,'PurchaseNumber'), css:sortCss('PurchaseNumber', $data.sortExpression(), $data.sortOrder())">Purchase Number</th>
+                    <th data-bind="click:sortBy.bind($data,'ItemCode'), css:sortCss('ItemCode', $data.sortExpression(), $data.sortOrder())" class=" widthsmall">Item Code</th>
+                    <th data-bind="click:sortBy.bind($data,'ItemDescription'), css:sortCss('ItemDescription', $data.sortExpression(), $data.sortOrder())">Item Description</th>
+                    <th data-bind="click:sortBy.bind($data,'UOM'), css:sortCss('UOM', $data.sortExpression(), $data.sortOrder())">UOM</th>
+                    <th data-bind="click:sortBy.bind($data,'DeliveryNote'), css:sortCss('DeliveryNote', $data.sortExpression(), $data.sortOrder())">Delivery Note</th>
+                    <th data-bind="click:sortBy.bind($data,'Comments'), css:sortCss('Comments', $data.sortExpression(), $data.sortOrder())">Comments</th>
+                    <th data-bind="click:sortBy.bind($data,'Supplier'), css:sortCss('Supplier', $data.sortExpression(), $data.sortOrder())">Supplier</th>
+                    <th hidden data-bind="click:sortBy.bind($data,'QtyLeftOverCount'), css:sortCss('PreviousOutstanding', $data.sortExpression(), $data.sortOrder())">QtyLeftOver</th>
+                    <th hidden data-bind="click:sortBy.bind($data,'QtyLeftOver'), css:sortCss('PreviousOutstanding', $data.sortExpression(), $data.sortOrder())">QtyLeftOver</th>
+                    <th data-bind="click:sortBy.bind($data,'PreviousOutstanding'), css:sortCss('PreviousOutstanding', $data.sortExpression(), $data.sortOrder())">Previous Oustanding</th>
+                    <th data-bind="click:sortBy.bind($data,'QTYTransit'), css:sortCss('QTYTransit', $data.sortExpression(), $data.sortOrder())">Transit</th>
+                    <th data-bind="click:sortBy.bind($data,'QtyReceiving'), css:sortCss('QtyReceiving', $data.sortExpression(), $data.sortOrder())">Receiving</th>
+                    <th data-bind="click:sortBy.bind($data,'QtyPass'), css:sortCss('QtyPass', $data.sortExpression(), $data.sortOrder())">Pass</th>
+                    <th data-bind="click:sortBy.bind($data,'QtyReject'), css:sortCss('QtyReject', $data.sortExpression(), $data.sortOrder())">Reject</th>
+                    <th data-bind="click:sortBy.bind($data,'QtyOutstanding'), css:sortCss('QtyOutstanding', $data.sortExpression(), $data.sortOrder())">Outstanding</th>
+                    <th data-bind="click:sortBy.bind($data,'QtyReturn'), css:sortCss('QtyReturn', $data.sortExpression(), $data.sortOrder())">Return</th>
+                </tr>
+                <tr class="insertRow" data-bind="click: cancelInline.bind(),inlineAddProccess:[$data, $root.newData]">
+                    <th>
+                        <select id="ddlRequestNumberSelectList" class="selectpicker show-tick form-control" data-live-search="true"
+                                @*data-bind="selectPicker: $root.newData.RequestNumber, optionsText: 'Text', optionsValue : 'Value', selectPickerOptions: { optionsArray: $root.RequestNumberSelectList ,container:'body' }"></select>*@
+                                data-bind="enable: !$root.isBusy(), selectPicker: $root.newData.RequestNumber, optionsText: 'Text', optionsValue : 'Value', selectPickerOptions: { optionsArray: $root.RequestNumberSelectList ,container:'body' }, event : { change : $root.generateList}"></select>
+                    </th>
+                    <th>
+                        <span data-bind="text:$root.newData.PurchaseNumber"></span>
+                    </th>
+                    <th>
+                        <select id="ddlItemCodeSourceSelectList" class="selectpicker show-tick form-control" data-live-search="true"
+                                @*data-bind="selectPicker: $root.newData.ItemCode, optionsText: 'Text', optionsValue : 'Value', selectPickerOptions: { optionsArray: $root.ItemCodeSourceSelectList ,container:'body' }"></select>*@
+                                @*data-bind="selectPicker: $root.newData.ItemCode, optionsText: 'Text', optionsValue : 'Value', selectPickerOptions: { optionsArray: $root.ItemCodeSourceSelectList ,container:'body' }, event : { change : $root.getItemDescriptionList}"></select>*@
+                                data-bind="enable: !$root.isBusy(), selectPicker: $root.newData.ItemCode, optionsText: 'Text', optionsValue : 'Value', selectPickerOptions: { optionsArray: $root.ItemCodeSourceSelectList ,container:'body' }, event : { change : $root.onChangeItemCodeSeleclist}"></select>
+                        
+                    </th>
+                    <th><span id="spItemDescription" data-bind="text:$root.newData.ItemDescription"></span></th>
+                    <th><span id="spUOM" data-bind="text:$root.newData.UOM"></span></th>
+                    <th><input data-bind="value:$root.newData.DeliveryNote, valueUpdate: 'afterkeydown'" class="form-control transparent" /></th>
+                    <th><input data-bind="value:$root.newData.Comments, valueUpdate: 'afterkeydown'" class="form-control transparent" /></th>
+                    <th><input data-bind="value:$root.newData.Supplier, valueUpdate: 'afterkeydown'" class="form-control transparent" /></th>
+                    <th hidden><span data-bind="text:$root.LeftOverCount"></span></th>
+                    <th hidden><span data-bind="text:$root.qtyLeftOverNew"></span></th>
+                    <th><span id="spItemDescription" data-bind="text:$root.newData.PreviousOutstanding"></span></th>
+                    <th><input data-bind="value:$root.newData.QTYTransit, valueUpdate: 'afterkeydown'" class="form-control" type="text" data-sktis-validation="integer" /></th>
+                    <th><input data-bind="value:$root.newData.QtyReceiving, valueUpdate: 'afterkeydown'" class="form-control" type="text" data-sktis-validation="integer" /></th>
+                    <th><input data-bind="value:$root.newData.QtyPass, valueUpdate: 'afterkeydown'" class="form-control" type="text" data-sktis-validation="integer" /></th>
+                    <th><input data-bind="value:$root.newData.QtyReject, valueUpdate: 'afterkeydown'" class="form-control" type="text" data-sktis-validation="integer" /></th>
+                    <th><span id="spQtyOutstanding" data-bind="text:$root.outstandingValue"></span></th>
+                    @*<th><input data-bind="value:$root.newData.QtyOutstanding, valueUpdate: 'afterkeydown'" class="form-control" type="text" data-sktis-validation="integer" /></th>*@
+                    <th><input data-bind="value:$root.newData.QtyReturn, valueUpdate: 'afterkeydown'" class="form-control" type="text" data-sktis-validation="integer" /></th>
+                    @*<th><span id="spQtyReturn" data-bind="text:$root.newData.QtyReturn"></span></th>*@
+                </tr>
+            </thead>
+            <tbody>
+            <tbody data-bind="foreach: listDataItems">
+                <tr data-bind="if: ($parent.editingRowIndex() !== $index() && !$root.ValidateDateIsPast($data.UpdatedDate)),
+                                   click: $parent.editInline3.bind($data,$index())">
+                    <td><span data-bind="text:$data.RequestNumber"></span></td>
+                    <td><span data-bind="text:$data.PurchaseNumber"></span></td>
+                    <td><span data-bind="text:$data.ItemCode"></span></td>
+                    <td><span data-bind="text:$data.ItemDescription"></span></td>
+                    <td><span data-bind="text:$data.UOM"></span></td>
+                    <td class="current"><span data-bind="text:$data.DeliveryNote"></span></td>
+                    <td class="current"><span data-bind="text:$data.Comments"></span></td>
+                    <td class="current"><span data-bind="text:$data.Supplier"></span></td>
+                    <td hidden class="center"><span data-bind="text:$data.QtyLeftOverCount"></span></td>
+                    <td hidden class="center"><span data-bind="text:$data.QtyLeftOver"></span></td>
+                    <td class="center"><span data-bind="decimal:$data.PreviousOutstanding"></span></td>
+                    <td class="current"><span data-bind="decimal:$data.QTYTransit"></span></td>
+                    <td class="current"><span data-bind="decimal:$data.QtyReceiving"></span></td>
+                    <td class="current"><span data-bind="decimal:$data.QtyPass"></span></td>
+                    <td class="current"><span data-bind="decimal:$data.QtyReject"></span></td>
+                    <td class="center"><span data-bind="decimal:$data.QtyOutstanding"></span></td>
+                    <td class="current"><span data-bind="decimal:$data.QtyReturn"></span></td>
+                </tr>
+                <tr data-bind="if: ($parent.editingRowIndex() !== $index() && $root.ValidateDateIsPast($data.UpdatedDate)),
+                                   click: $parent.editInline3.bind($data,$index())">
+                    <td><span data-bind="text:$data.RequestNumber"></span></td>
+                    <td><span data-bind="text:$data.PurchaseNumber"></span></td>
+                    <td><span data-bind="text:$data.ItemCode"></span></td>
+                    <td><span data-bind="text:$data.ItemDescription"></span></td>
+                    <td><span data-bind="text:$data.UOM"></span></td>
+                    <td><span data-bind="text:$data.DeliveryNote"></span></td>
+                    <td><span data-bind="text:$data.Comments"></span></td>
+                    <td><span data-bind="text:$data.Supplier"></span></td>
+                    <td hidden class="center"><span data-bind="text:$data.QtyLeftOverCount"></span></td>
+                    <td hidden class="center"><span data-bind="text:$data.QtyLeftOver"></span></td>
+                    <td><span data-bind="decimal:$data.PreviousOutstanding"></span></td>
+                    <td><span data-bind="decimal:$data.QTYTransit"></span></td>
+                    <td><span data-bind="decimal:$data.QtyReceiving"></span></td>
+                    <td><span data-bind="decimal:$data.QtyPass"></span></td>
+                    <td><span data-bind="decimal:$data.QtyReject"></span></td>
+                    <td><span data-bind="decimal:$data.QtyOutstanding"></span></td>
+                    <td><span data-bind="decimal:$data.QtyReturn"></span></td>
+                </tr>
+                <tr data-bind="validationOptions: {insertMessages: false, showTooltip:true, decorateInputElement: true, errorElementClass: 'input-error'}, inlineProccess:[$parent,$data],
+                                   if:($parent.editingRowIndex() === $index() && !$root.ValidateDateIsPast($data.UpdatedDate)),
+                                   click: $parent.selectRow.bind($data, $index())">
+                    <td><span data-bind="text:$data.RequestNumber"></span></td>
+                    <td><span data-bind="text:$data.PurchaseNumber"></span></td>
+                    <td><span data-bind="text:$data.ItemCode"></span></td>
+                    <td><span data-bind="text:$data.ItemDescription"></span></td>
+                    <td><span data-bind="text:$data.UOM"></span></td>
+                    <td class="current"><input data-bind="value:$data.DeliveryNote, valueUpdate: 'afterkeydown'" class="form-control transparent" /></td>
+                    <td class="current"><input data-bind="value:$data.Comments, valueUpdate: 'afterkeydown'" class="form-control transparent" /></td>
+                    <td class="current"><input data-bind="value:$data.Supplier, valueUpdate: 'afterkeydown'" class="form-control transparent" /></td>
+                    <td hidden class="center"><span data-bind="text:$data.QtyLeftOverCount"></span></td>
+                    <td hidden class="center"><span data-bind="text:$data.QtyLeftOver"></span></td>
+                    <td class="center"><span data-bind="decimal:$data.PreviousOutstanding"></span></td>
+                    <td class="current"><input data-bind="value:$data.QTYTransit, valueUpdate: 'afterkeydown'" class="form-control" type="text" data-sktis-validation="integer" /></td>
+                    <td class="current"><input data-bind="value:$data.QtyReceiving, valueUpdate: 'afterkeydown'" class="form-control" type="text" data-sktis-validation="integer" /> </td>
+                    <td class="current"><input data-bind="value:$data.QtyPass, valueUpdate: 'afterkeydown'" class="form-control" type="text" data-sktis-validation="integer" /></td>
+                    <td class="current"><input data-bind="value:$data.QtyReject, valueUpdate: 'afterkeydown'" class="form-control" type="text" data-sktis-validation="integer" /></td>
+                    <td class="center"><span data-bind="decimal:$data.QtyOutstanding"></span></td>
+                    <td class="current"><input data-bind="value:$data.QtyReturn, valueUpdate: 'afterkeydown'" class="form-control" type="text" data-sktis-validation="integer" /></td>
+                </tr>
+                <tr data-bind="validationOptions: {insertMessages: false, showTooltip:true, decorateInputElement: true, errorElementClass: 'input-error'}, inlineProccess:[$parent,$data],
+                                   if:($parent.editingRowIndex() === $index() && $root.ValidateDateIsPast($data.UpdatedDate)),
+                                   click: $parent.selectRow.bind($data, $index())">
+                    <td><span data-bind="text:$data.RequestNumber"></span></td>
+                    <td><span data-bind="text:$data.PurchaseNumber"></span></td>
+                    <td><span data-bind="text:$data.ItemCode"></span></td>
+                    <td><span data-bind="text:$data.ItemDescription"></span></td>
+                    <td><span data-bind="text:$data.UOM"></span></td>
+                    <td><span data-bind="text:$data.DeliveryNote"></span></td>
+                    <td><span data-bind="text:$data.Comments"></span></td>
+                    <td><span data-bind="text:$data.Supplier"></span></td>
+                    <td hidden class="center"><span data-bind="text:$data.QtyLeftOverCount"></span></td>
+                    <td hidden class="center"><span data-bind="text:$data.QtyLeftOver"></span></td>
+                    <td><span data-bind="decimal:$data.PreviousOutstanding"></span></td>
+                    <td><span data-bind="decimal:$data.QTYTransit"></span></td>
+                    <td><span data-bind="decimal:$data.QtyReceiving"></span>y</td>
+                    <td><span data-bind="decimal:$data.QtyPass"></span></td>
+                    <td><span data-bind="decimal:$data.QtyReject"></span></td>
+                    <td><span data-bind="decimal:$data.QtyOutstanding"></span></td>
+                    <td><span data-bind="decimal:$data.QtyReturn"></span></td>
+                </tr>
+            <tbody data-bind="visible: !listDataItems().length">
+                <tr>
+                    <td colspan="16" class="empty-row-message"><div class="loader"></div></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div data-bind="if: (listDataItems() != null && listDataItems().length !== 0)">
+        @Html.Partial("GridViewFooter")
+    </div>
+</div>
+@section Scripts
+{
+    <script src="~/Scripts/common/app.GridViewModel.js" type="text/javascript"></script>
+    <script src="~/Scripts/app/globalfunctions.js" type="text/javascript"></script>
+    <script type="text/javascript">
+
+        (function(app) {
+            app.EditGrid = function() {
+                var self = this;
+                self.firstInitFromUrl = ko.observable(false);
+                self.filterLocationName = ko.observable();
+                self.valueQtyLeftOver = ko.observable('');
+                self.QtyLeftOverCount = ko.observable('');
+                self.QtyLeftOver = ko.observable('');
+                self.QtyApproveFullFillment = ko.observable('');
+                self.menuItemLocations = ko.observableArray(@Html.Raw(Json.Encode(@Model.Locations)));
+                self.itemLocations = @Html.Raw(Json.Encode(@Model.LocationNameLookupList));
+                self.masterItems = @Html.Raw(Json.Encode(@Model.ItemsList));
+                self.isLoading = ko.observable(true);
+                self.firstLoad = ko.observable(true);
+                
+
+                //================= busy button state ================//
+                self.isBusy = ko.observable(true);
+
+                $(document).ajaxComplete(function () {
+                    if ($.active <= 1) {
+                        self.isBusy(false);
+                    }
+                });
+
+                $(document).ajaxStart(function () {
+                    if (!self.isBusy()) self.isBusy(true);
+                });
+                //================= busy button state ================//
+                
+
+                if(self.firstInitFromUrl()){
+                    self.LocationFilter = ko.observable('@Model.Param1LocationCode');
+                }else{
+                    self.LocationFilter = ko.observable($("#LocationFilter").val());
+                }
+                self.TransactionDateFilter = ko.observable(moment().format("DD/MM/YYYY"));
+                self.filterExcelLocation = self.LocationFilter();
+                self.ExcelTransactionDateFilter = self.TransactionDateFilter();
+
+                
+                self.getDefaultLocationDescription = function(cb) {
+                    for (var i = 0; i < self.itemLocations.length; i++) {
+                        if (self.itemLocations[i].LocationCode == $("#LocationFilter").val()) {
+                            $('#spLocationNameFilter').val(self.itemLocations[i].LocationName);
+                            if (typeof cb != 'undefined') cb();
+                            //self.getRequestNumberSelectList(self.itemLocations[i].LocationCode);
+                            break;
+                        }
+                    }
+                };
+
+                self.GetLocationNameFilter = function(cb) {
+                    for (var i = 0; i < self.itemLocations.length; i++) {
+                        if($('#LocationFilter').val() != ""){
+                            if (self.itemLocations[i].LocationCode == self.LocationFilter()) {
+                                $('#spLocationNameFilter').val(self.itemLocations[i].LocationName);
+                                //self.getRequestNumberSelectList(self.itemLocations[i].LocationCode);
+                                if (typeof cb != 'undefined') cb();
+                                break;
+                            }
+                        }else{
+                            $('#spLocationNameFilter').val("");
+                            //self.getRequestNumberSelectList(self.itemLocations[i].LocationCode);
+                            if (typeof cb != 'undefined') cb();
+                            break;
+                        }
+                        
+                    }
+                }.bind(this);
+
+                self.newData = {
+                    TransactionDate: ko.observable(''),
+                    ItemCode: ko.observable(''),
+                    ItemCompact: ko.observable(''),
+                    LocationCode: ko.observable('@Model.DefaultLocation'),
+                    PurchaseNumber: ko.observable(''),
+                    RequestNumber: ko.observable(''),
+                    DeliveryNote: ko.observable(''),
+                    Comments: ko.observable(''),
+                    Supplier: ko.observable(''),
+                    PreviousOutstanding: ko.observable(''),
+                    ApprovedQty: ko.observable(''),
+                    qtyLeftOverNew: ko.observable(''),
+                    QtyLeftOver: ko.observable(''),
+                    QtyLeftOverCount: ko.observable(''),
+                    QTYTransit: ko.observable(''),
+                    QtyReceiving: ko.observable(''),
+                    QtyPass: ko.observable(''),
+                    QtyReject: ko.observable(''),
+                    QtyOutstanding: ko.observable(''),
+                    QtyReturn: ko.observable(''),
+                    ItemDescription: ko.observable(''),
+                    UOM: ko.observable('')
+                };
+
+                //self.onChangeRequestNumberSeleclist = function() {
+                //    self.PurchaseNumberFromFullFillment();
+                //};
+
+                self.RequestNumberSelectList = ko.observableArray([]);
+                self.getRequestNumberSelectList = function(cb) {
+                    self.reqNumSelected = ko.observable('');
+                    if (self.LocationFilter()) {
+                        //var requestCode = self.generateRequestNumber();
+                        $.ajax({
+                            url: @Html.BaseUrl("MaintenanceEquipmentQualityInspection/GetRequestNumberByLocationCode"),
+                            type: 'GET',
+                            contentType: 'application/json',
+                            data: { locationCode: self.LocationFilter() },
+                            dataType: 'json',
+                            cache: false,
+                            success: function(data) {
+                                $('#ddlRequestNumberSelectList').find('option').remove();
+                                $('#ddlRequestNumberSelectList').selectpicker('refresh');
+                                self.RequestNumberSelectList(data);
+                                $.each(data, function(index, value) {
+                                    if (index == 0){
+                                        if(self.firstInitFromUrl()){
+                                            self.reqNumSelected('@Model.Param2');
+                                        }
+                                        else{
+                                            //console.log(value.Text+"1");
+                                            self.reqNumSelected(value.Text);
+                                        }
+                                        
+                                    }
+                                        
+                                    //if(requestCode === value.Text)
+                                    //    self.reqNumSelected(value.Text);
+                                });
+                                //self.getItemCodeSourceSelectList(self.reqNumSelected());
+                                //self.PurchaseNumberFromFullFillment();
+                                self.generateList(cb);
+                            }
+                        }).done(function() {
+                            if (typeof cb != 'undefined') cb();
+                        });
+                    }
+                };
+
+                self.onChangeItemCodeSeleclist = function() {
+                    if (self.firstLoad() || self.isLoading()) return;
+                    self.isLoading(true);
+                    async.series([
+                            function(cb) {
+                                self.PurchaseNumberFromFullFillment(cb);
+                            },
+                            function(cb) {
+                                self.getPreviousOutstanding(cb);
+                            },
+                            function(cb) {
+                                self.getApprovedQty(cb);
+                            },
+                            function(cb) {
+                                self.getItemDescriptionList(cb);
+                            },
+                    ], function() {
+                        self.isLoading(false);
+                    });
+                };
+
+                self.generateList = function() {
+                    if (self.firstLoad() || self.isLoading()) return;
+                    self.isLoading(true);
+                    async.series([                        
+                            function(cb) {
+                                self.getItemCodeSourceSelectList(cb);
+                            },
+                            function(cb) {
+                                self.PurchaseNumberFromFullFillment(cb);
+                            },
+                            function(cb) {
+                                self.getPreviousOutstanding(cb);
+                            },
+                            function(cb) {
+                                self.getApprovedQty(cb);
+                            },
+                            function(cb) {
+                                self.getItemDescriptionList(cb);
+                            },
+                        ], function() {
+                            self.isLoading(false);
+                        });
+                };
+                // description : generate Request Number
+                self.generateRequestNumber = ko.computed(function() {
+                    var locCode = self.LocationFilter();
+                    var reqDate = self.TransactionDateFilter();
+                    reqDate = reqDate.replace(/\//g, '').slice(0, -4) + reqDate.slice(-4).substring(2);
+                    return locCode + reqDate;
+                }, self);
+
+                self.getItemCodeSourceSelectListInsert = function(cb) {
+                    if (self.firstLoad() || self.isLoading()) return;
+                    self.isLoading(true);
+                    async.series([
+                        //function(cb) {
+                        //    //self.getItemCodeSourceSelectList($('#ddlRequestNumberSelectList').val());
+                        //    self.getItemCodeSourceSelectList(cb);
+                        //},
+                        //function(cb) {
+                            //self.getPreviousOutstanding(cb);
+                        //},
+                        //function(cb) {
+                        //    self.getApprovedQty(cb);
+                        //},
+                        //function(cb) {
+                        //    //console.log('3');
+                        //    self.PurchaseNumberFromFullFillment(cb);
+                        //},
+                    ], function() {
+                        self.isLoading(false);
+                    });
+                    //self.onChangeRequestNumberSeleclist();
+                };
+
+                self.ItemCodeSourceSelectList = ko.observableArray([]);
+                self.getItemCodeSourceSelectList = function(cb) {
+                    $.ajax({
+                        url: @Html.BaseUrl("MaintenanceEquipmentQualityInspection/GetItemCodeFromEquipmentRequestByRequestNumber"),
+                        type: 'GET',
+                        contentType: 'application/json',
+                        data: { requestNumber: $('#ddlRequestNumberSelectList').val() },
+                        dataType: 'json',
+                        cache: false,
+                        success: function(data) {
+                            $('#ddlItemCodeSourceSelectList').find('option').remove();
+                            $('#ddlItemCodeSourceSelectList').selectpicker('refresh');
+                            self.ItemCodeSourceSelectList(data);
+                            if (data.length > 0) {
+                                self.newData.ItemCode(data[0].value);
+                                //self.PurchaseNumberFromFullFillment();
+                            }
+
+                        },
+                        complete : function() {
+                            if (typeof cb == 'function') cb();
+                        }
+                    });
+                };
+
+                self.getItemDescriptionList = function(cb) {
+                    ////console.log($("#ddlItemCodeSourceSelectList").val());
+                    for (var i = 0; i < self.masterItems.length; i++) {
+                        if($("#ddlItemCodeSourceSelectList").val() != null){
+                            if (self.masterItems[i].ItemCode == $("#ddlItemCodeSourceSelectList").val()) {
+                                $('#spItemCodeDestinationDescriptionSS').html(self.masterItems[i].ItemDescription);
+                                self.newData.ItemDescription(self.masterItems[i].ItemDescription);
+                                self.newData.UOM(self.masterItems[i].UOM);
+                                if ($.isFunction(cb)) cb();
+                                break;
+                            }
+                        }else{
+                            self.newData.ItemDescription("");
+                            self.newData.UOM("");
+                            if ($.isFunction(cb)) cb();
+                            break;
+                        }
+                        
+                    }
+                }.bind(this);
+
+                //self.getItemDescription = function() {
+                //    //console.log($("#ddlItemCodeSourceSelectList").val());
+                //    for (var i = 0; i < self.masterItems.length; i++) {
+                //        if (self.masterItems[i].ItemCode == $("#ddlItemCodeSourceSelectList").val()) {
+                //            $('#spItemCodeDestinationDescriptionSS').html(self.masterItems[i].ItemDescription);
+                //            self.newData.ItemDescription(self.masterItems[i].ItemDescription);
+                //            self.newData.UOM(self.masterItems[i].UOM);
+                //            //if (typeof cb != 'undefined') cb();
+                //            break;
+                //        }
+                //    }
+                //    //self.getPreviousOutstanding($("#ddlItemCodeSourceSelectList").val());
+                //    //self.getApprovedQty($("#ddlItemCodeSourceSelectList").val());
+                //    //self.PurchaseNumberFromFullFillment();
+                //}.bind(this);
+
+                self.getPreviousOutstanding = function(cb) {
+                    $.ajax({
+                        url: @Html.BaseUrl("MaintenanceEquipmentQualityInspection/GetPreviousOutstanding"),
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify({ itemCode: $("#ddlItemCodeSourceSelectList").val(), locationCode: self.LocationFilter(), inventoryDate: self.TransactionDateFilter(), requestNumber: $("#ddlRequestNumberSelectList").val() }),
+                        dataType: 'json',
+                        cache: false,
+                        success: function(data) {
+                            self.newData.PreviousOutstanding(data);
+                        }
+                    }).done(function() {
+                        if (typeof cb != 'undefined') cb();
+                    });
+                };
+
+                self.tempApp = ko.observableArray([]);
+                self.getApprovedQty = function(cb) {
+                    $.ajax({
+                        url: @Html.BaseUrl("MaintenanceEquipmentQualityInspection/GetQtyLeftOver"),
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify({ itemCode: $("#ddlItemCodeSourceSelectList").val(), locationCode: self.LocationFilter(), requestNumber: $("#ddlRequestNumberSelectList").val() }),
+                        dataType: 'json',
+                        cache: false,
+                        success: function(data) {
+                            self.newData.QtyLeftOver(data);
+                            self.valueQtyLeftOver(data);
+                        }
+                    }).done(function() {
+                        if (typeof cb != 'undefined') cb();
+                    });
+                };
+
+                //Get Purchase Number From FullFillMentMaintenance
+                self.PurchaseNumberFromFullFillment = function(cb) {
+                    $.ajax({
+                        url: @Html.BaseUrl("MaintenanceEquipmentQualityInspection/GetPurchaseNumberFromFullFillment"),
+                        type: 'GET',
+                        contentType: 'application/json',
+                        data: {
+                            requestLocation: self.LocationFilter(),
+                            //fulfillmentDate: self.TransactionDateFilter(),
+                            itemCode: self.newData.ItemCode(), //$("#ddlItemCodeSourceSelectList").val(),//
+                            requestNumber: self.newData.RequestNumber(),
+                        },
+                        dataType: 'json',
+                        cache: false,
+                        success: function(data) {
+                            if (data.LocationCode != "" && data.FulfillmentDate != "" && data.ItemCode != "" && data.RequestNumber != "") {
+
+                                self.newData.PurchaseNumber(data.PurchaseNumber);
+                            } else {
+
+                                self.newData.PurchaseNumber = ko.observable('');
+                            }
+                            self.QtyApproveFullFillment(data.RequestToQty);
+                        }
+                    }).done(function() {
+                        if (typeof cb != 'undefined') cb();
+                    });
+                };
+
+                //sebagai pembatas nilai receiving, tidak berubah dan tidak di insert
+                self.LeftOverCount = ko.computed(function() {
+                    var result = parseToInt(self.valueQtyLeftOver());
+                    self.newData.QtyLeftOverCount(result);
+                    return result;
+                }, self);
+
+                self.qtyLeftOverNew = ko.computed(function() {
+                    //app - trans -receiving+return
+                    var valueQtyLeftOvers = parseToInt(self.valueQtyLeftOver());
+                    var valueTransit = parseToInt(self.newData.QTYTransit());
+                    var valueReceiving = parseToInt(self.newData.QtyReceiving());
+                    var valueReturn = parseToInt(self.newData.QtyReturn());
+
+                    var result = valueQtyLeftOvers - valueTransit - valueReceiving + valueReturn;
+                    self.newData.QtyLeftOver(result);
+
+                    return result;
+                }, self);//hakim
+
+
+                self.outstandingValue = ko.computed(function() {
+                    var valuePrevOutstanding = parseToInt(self.newData.PreviousOutstanding());
+                    var valueReceiving = parseToInt(self.newData.QtyReceiving());
+                    var valuePass = parseToInt(self.newData.QtyPass());
+                    var valueReject = parseToInt(self.newData.QtyReject());
+                    var valueReturn = parseToInt(self.newData.QtyReturn());
+                    
+                    var result = valuePrevOutstanding + (valueReceiving - valuePass - valueReject - valueReturn);
+                    self.newData.QtyOutstanding(result);
+
+                    return result;
+                }, self);
+
+                function equipmentRepair(data) {
+                    ko.mapping.fromJS(data, {}, this);
+                    //calculate total target manual
+                    this.QtyOutstanding = ko.computed({
+                        read: function() {
+                            var result = parseToInt(this.PreviousOutstanding()) +
+                                (parseToInt(this.QtyReceiving()) - parseToInt(this.QtyPass()) - parseToInt(this.QtyReject()) - parseToInt(this.QtyReturn()));
+                            return result;
+                        },
+                        write: function(value) {
+                        }
+                    }, this);
+
+                    this.QtyLeftOver = ko.computed({
+                        read: function() {
+                            var result = parseToInt(self.valueQtyLeftOver()) - parseToInt(this.QTYTransit()) - parseToInt(this.QtyReceiving()) + parseToInt(this.QtyReturn());
+                            //var result = parseToInt(this.PreviousOutstanding()) + (parseToInt(this.QtyReceiving()) - parseToInt(this.QtyPass()) - parseToInt(this.QtyReject()) - parseToInt(this.QtyReturn()));
+                            return result;
+                        },
+                        write: function(value) {
+                        }
+                    }, this);
+                }
+
+                ;
+
+                // Gridview Initialization
+                self.gridView = new app.GridViewModel({
+                    Criteria: { PageSize: 10, PageIndex: 1, SortExpression: "UpdatedDate", SortOrder: "DESC", Location: self.LocationFilter, TransactionDate: self.TransactionDateFilter },
+                    DataSourceUrl: @Html.BaseUrl("MaintenanceEquipmentQualityInspection/GetMaintenanceExecutionQualityInspection"),
+                    InlineEdit: true,
+                    InsertRowFocusedControlIndex: 1
+                });
+
+                //custom mapping knockout
+                self.gridView.mapping = {
+                    create: function(options) {
+                        return new equipmentRepair(options.data);
+                    }
+                };
+
+                // Field Validations
+                self.gridView.applyValidationRules = function(entity) {
+
+                    self.RemoveNotification();
+
+                    entity.RequestNumber.extend({
+                        required: {
+                            message: "<strong>Request Number</strong> cannot be empty!"
+                        }
+                    });
+
+                    entity.PurchaseNumber.extend({
+                        required: {
+                            message: "<strong>Purchase Number</strong> cannot be empty!"
+                        }
+                    });
+
+                    entity.ItemCode.extend({
+                        required: {
+                            message: "<strong>Item Code</strong> cannot be empty!"
+                        }
+                    });
+
+                    //entity.QTYTransit.extend({
+                    //    validation: {
+                    //        async: false,
+                    //        validator: function(val, otherVal) {
+
+                    //            self.check = ko.computed({
+                    //                read: function() {
+                    //                    var result = parseToInt(entity.QtyReceiving()) + parseToInt(entity.QTYTransit());
+                    //                    return result;
+                    //                }
+                    //            });
+
+                    //            if (self.check() > self.QtyApproveFullFillment()) {
+
+                    //                return false;
+
+                    //            } else {
+                    //                return true;
+                    //            }
+                    //        },
+                    //        message: "<Strong> Quantity Recieving + Quantity Transit large than Total Approved Quantity </strong>"
+                    //    }
+                    //});
+
+
+
+                    //this.QtyReturnValidation = ko.pureComputed(function() {
+                    //    return ((parseInt(entity.PreviousOutstanding()) || 0) + (parseInt(entity.QtyReceiving()) || 0) - (parseInt(entity.QtyPass()) || 0) - (parseInt(entity.QtyReject()) || 0));
+                    //}, this);
+
+                    //previous function
+                    //entity.QtyReturn.extend({
+                    //    max: {
+                    //        //params: this.QtyReturnValidation,
+                    //        params: entity.QtyOutstanding,
+                    //        message: "<strong>Return</strong> cannot be greater than Outstanding!"
+                    //    }
+                    //});
+                    //previous function
+                    entity.QtyOutstanding.extend({
+                        // revise validation from (//previous function)
+                        min: {
+                            params: 0,
+                            message: "<strong>Outstanding</strong> cannot be less than zero!"
+                        }
+                    });
+
+                    entity.QtyReceiving.extend({
+                        // revise validation from (//previous function)
+                        max: {
+                            params: entity.QtyLeftOverCount,
+                            message: "<strong>Receiving</strong> cannot be greater than Approved Request Qty!"
+                        }
+                    });
+                };
+
+                // Reset Fields for Insert Row
+                self.gridView.resetDefault = function(viewModel) {
+                    viewModel.TransactionDate('');
+                    viewModel.ItemCode('');
+                    viewModel.LocationCode('');
+                    viewModel.PurchaseNumber('');
+                    viewModel.RequestNumber('');
+                    viewModel.DeliveryNote('');
+                    viewModel.Comments('');
+                    viewModel.Supplier('');
+                    viewModel.PreviousOutstanding('');
+                    viewModel.QTYTransit('');
+                    viewModel.QtyReceiving('');
+                    viewModel.QtyPass('');
+                    viewModel.QtyReject('');
+                    viewModel.QtyOutstanding('');
+                    viewModel.QtyReturn('');
+                };
+
+                self.ValidateDateIsPast= function(date) {
+                    if(ko.utils.unwrapObservable(date) === '' || typeof ko.utils.unwrapObservable(date) === 'undefined') return false;
+                    return moment(moment(ko.utils.unwrapObservable(date), 'DD/MM/YYYY').format('YYYY-MM-DD')).isBefore(moment().format('YYYY-MM-DD'));
+                };
+
+                self.generateExcel = function(formElement) {
+                    $(formElement).find("input[name=location]").val(self.filterExcelLocation);
+                    $(formElement).find("input[name=TransactionDate]").val(self.TransactionDateFilter());
+                    $(formElement).find("input[name=locationName]").val($('#spLocationNameFilter').val());
+                    return true;
+                };
+
+                // Save Action
+                self.saveData = function() {
+                    if (self.gridView.editingRowIndex() !== -1)
+                        return;
+
+                    if (self.gridView.listNewItems().length > 0) {
+                        var notif = false;
+
+                        if (self.TransactionDateFilter() == "") {
+                            //self.RemoveNotification();
+                            SKTIS.Helper.Notification("<strong>Transaction Date</strong> cannot be empty!", '');
+                            notif = true;
+                        }
+                        if (notif) return;
+                    }
+
+                    // Prevent Edited new Row data for triggering Edited message
+                    // Primary Key : ListGroup, ListDetail (need to compare both of arrays using unique key[s])
+                    $.each(self.gridView.listNewItems(), function(k, v) {
+                        var shouldBeAsNew = ko.utils.arrayFirst(self.gridView.listEditItems(), function(editItem) {
+                            if (editItem) {
+                                return editItem['ItemCode'] == v['ItemCode'];
+                            }
+                        });
+                        if (shouldBeAsNew) {
+                            self.gridView.listNewItems()[k] = shouldBeAsNew;
+                        }
+                        self.gridView.listEditItems.remove(function(data) {
+                            if (data) {
+                                return data['ItemCode'] == v['ItemCode'];
+                            }
+                        });
+                    });
+
+                    var datas = {
+                        "Parameters": {
+                            "LocationCode": self.LocationFilter(),
+                            "TransactionDate": self.TransactionDateFilter(),
+                            "ItemCode": $('#ddlItemCodeSourceSelectList').val(),
+                            "RequestNumber": $('#ddlRequestNumberSelectList').val()
+                        },
+                        "new": self.gridView.listNewItems(),
+                        "edit": self.gridView.listEditItems()
+                    };
+
+                    datas = JSON.stringify(datas);
+
+                    $.ajax({
+                        url: @Html.BaseUrl("MaintenanceEquipmentQualityInspection/SaveMaintenanceEquipmentQualityInspection"),
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: datas,
+                        dataType: 'json',
+                        success: function(data) {
+                            if (data.New) {
+                                $.each(data.New, function(k, value) {
+                                    if (value)
+                                        SKTIS.Helper.ResponseNotification(value, "Insert Quality Inspection", value.RequestNumber + " - " + value.PurchaseNumber + " - " + value.ItemCode);
+                                });
+                            }
+
+                            if (data.Edit) {
+                                $.each(data.Edit, function(k, value) {
+                                    if (value)
+                                        SKTIS.Helper.ResponseNotification(value, "Edit Quality Inspection", value.RequestNumber + " - " + value.PurchaseNumber + " - " + value.ItemCode);
+                                });
+                            }
+
+                            self.gridView.listNewItems.removeAll();
+                            self.gridView.listEditItems.removeAll();
+
+                            
+                        },
+                        complete : function() {
+                            self.search();
+                        }
+                    });
+                    
+                };
+
+                self.onLocationCodeChange = function() {
+                    if (self.firstLoad() || self.isLoading()) return;
+                
+                    self.isLoading(true);
+
+                    async.series([
+                        function(cb) {
+                            self.GetLocationNameFilter(cb);
+                            self.filterExcelLocation = self.LocationFilter();
+                        },
+                        function(cb) {
+                            self.getRequestNumberSelectList(cb);
+                        },
+                        function(cb) {
+                            self.getItemCodeSourceSelectList(cb);
+                        },
+                        function(cb) {
+                            self.PurchaseNumberFromFullFillment(cb);
+                        },
+                        function(cb) {
+                            self.getPreviousOutstanding(cb);
+                        },
+                        function(cb) {
+                            self.getApprovedQty(cb);
+                        },
+                        function(cb) {
+                            self.getItemDescriptionList(cb);
+                        },
+                    ], function() {
+                        self.isLoading(false);
+                    });
+                };
+
+                // Load Data
+                self.search = function() {
+                    $('.empty-row-message').html('<div class="loader"></div>'); // Reset New and Edit row
+                    // Check whether New or Edit data is existing and not saved to database yet (on Ajax Action)
+                    if (SKTIS.Checker.modifiedDataExistsForAjax([self.gridView.listNewItems, self.gridView.listEditItems]) == true) {
+                        return;
+                    } else {
+                        self.gridView.listNewItems.removeAll();
+                        self.gridView.listEditItems.removeAll();
+                    }
+
+                    self.filterExcelLocation = self.LocationFilter();
+                    self.ExcelTransactionDateFilter = self.TransactionDateFilter();
+                    self.gridView.search({}, function(response) {
+                        if (response.status == 'KO') {
+                            SKTIS.Helper.Notification(response.message, 'error');
+                            $('.empty-row-message').html(response.message);
+                        } else if (response.status == 'Empty') {
+
+                            self.RemoveNotification();
+
+                            $('.empty-row-message').html('@CommonLabel.lblDataEmpty');
+                        }
+
+                        $.each(self.gridView.listDataItems(), function(index, value) {
+                            for (var i = 0; i < self.masterItems.length; i++) {
+                                if (self.masterItems[i].ItemCode == self.gridView.listDataItems()[index].ItemCode()) {
+                                    self.gridView.listDataItems()[index].ItemDescription(self.masterItems[i].ItemDescription);
+                                    self.gridView.listDataItems()[index].UOM(self.masterItems[i].UOM);
+                                    break;
+                                }
+                            }
+                        });
+                    });
+                    ////console.log(self.firstLoad);
+                    if(self.firstLoad == false){
+                        self.getRequestNumberSelectList();
+                    }
+                    
+
+                    self.RemoveNotification = function() {
+                        if ($('#noty_top_layout_container').length > 0) {
+                            $('#noty_top_layout_container').remove();
+                        }
+                    };
+                };
+
+                // Reset observable variable also when picker clear event
+                $('#TransactionDateFilter').on('dp.change', function(e) {
+                    //self.TransactionDateFilter('');
+                });
+
+                $(document).ready(function(){
+                    self.init();
+                });
+                
+                self.init = function() {
+                    if (typeof '@Model.Param1LocationCode' != 'undefined' && '@Model.Param1LocationCode') {
+                        self.firstInitFromUrl(true);
+                    };
+
+                    if(self.firstInitFromUrl()){
+                        $("#LocationFilter").val('@Model.Param1LocationCode').change();
+                    }
+                    
+                    //if (self.LocationFilter() == null)
+                    //    self.LocationFilter(self.locationSelectList()[0].LocationCode);
+
+                    async.series([
+                        function(cb) {
+                            self.GetLocationNameFilter(cb);
+                            self.filterExcelLocation = self.LocationFilter();
+                        },
+                        function(cb) {
+                            self.getRequestNumberSelectList(cb);
+                        },
+                        function(cb) {
+                            self.getItemCodeSourceSelectList(cb);
+                        },
+                        function(cb) {
+                            self.PurchaseNumberFromFullFillment(cb);
+                        },
+                        function(cb) {
+                            self.getPreviousOutstanding(cb);
+                        },
+                        function(cb) {
+                            self.getApprovedQty(cb);
+                        },
+                        function(cb) {
+                            self.getItemDescriptionList(cb);
+                        },
+                        
+                    ], function() {
+                        self.search();
+                        self.firstLoad(false);
+                        self.isLoading(false);
+                    });
+                };
+
+                // Check whether New or Edit data is existing and not saved to database yet (on Request action)
+                SKTIS.Checker.modifiedDataExists([self.gridView.listNewItems, self.gridView.listEditItems]);    
+            };
+            
+            ko.applyBindings(new app.EditGrid());
+        }
+        )(app = this.app || {});
+    </script>
+}

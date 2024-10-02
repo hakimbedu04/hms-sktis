@@ -1,0 +1,1244 @@
+﻿@model SKTISWebsite.Models.ExeTPOProductionEntry.InitExeTPOProductionEntryViewModel
+@using HMS.SKTIS.Application.Resources
+@using SKTISWebsite.Helper
+@{ Html.SetPageTitle(" TPO Production Entry"); }
+@* dummy button to focus after save row *@
+<button type="button" class="btn-primary" style="position: absolute; left: -1000px;">Dummy</button>
+<div class="container-fluid" data-bind="with: gridView">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="col-lg-6">
+                <div class="row">
+                    <label class="form-label col-lg-4">
+                        Location
+                    </label>
+                    <div class="col-lg-2">
+                        <select id="ddlFilterLocationCode"
+                                class="selectpicker show-tick form-control"
+                                data-live-search="true"
+                                data-bind="selectPicker:$root.filterLocationCode, optionsText: 'LocationCode', optionsValue : 'LocationCode', optionsAfterRender: locationDesc, selectPickerOptions: { optionsArray: $root.itemLocations }, event : { change : $root.onLocationCodeChange}, isDisabled: $root.isLoading()"></select>
+                        @*@Html.DropDownList("ddlFilterLocationCode", new SelectList(Model.PLNTChildLocationLookupList, "LocationCode", "LocationCode"), new { @class = "selectpicker show-tick form-control", id = "ddlFilterLocationCode", data_live_search = "true", data_bind = "value:$root.filterLocationCode, event : { change : $root.onLocationCodeChange}" })*@
+                    </div>
+                    <div class="col-lg-4">
+                        <input type="text" class="form-control" readonly="readonly" data-bind="value:$root.filterLocationName">
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="form-label col-lg-4">
+                        Process
+                    </label>
+                    <div class="col-lg-6">
+                        <select class="selectpicker show-tick form-control" id="ddlProcessGroupFilter"
+                                data-live-search="true"
+                                data-bind="selectPicker: $root.filterProcessGroup, optionsText: 'Text', optionsValue : 'Value', selectPickerOptions: { optionsArray: $root.ProcessGroupSelectList }, event : { change : $root.onProcessFilterChange }, isDisabled: $root.isLoading()"></select>
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="form-label col-lg-4">
+                        Status
+                    </label>
+                    <div class="col-lg-6">
+                        <select class="selectpicker show-tick form-control" id="ddlStatusFilter"
+                                data-live-search="true"
+                                data-bind="selectPicker: $root.filterStatus, optionsText: 'Text', optionsValue : 'Value', selectPickerOptions: { optionsArray: $root.StatusSelectList }, event : { change : $root.onFilterChange}, isDisabled: $root.isLoading()"></select>
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="form-label col-lg-4">
+                        Brand
+                    </label>
+                    <div class="col-lg-6">
+                        <select class="selectpicker show-tick form-control" id="ddlBrandFilter"
+                                data-live-search="true"
+                                data-bind="selectPicker: $root.filterBrand, optionsText: 'Text', optionsValue : 'Value', selectPickerOptions: { optionsArray: $root.BrandSelectList }, event : { change : $root.onFilterChangeBrand}, isDisabled: $root.isLoading()"></select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="row">
+                    <label class="form-label col-lg-3">
+                        Year
+                    </label>
+                    <div class="col-lg-4">
+                        @Html.DropDownList("filterYear", Model.YearSelectList,
+                                     new Dictionary<string, object> { { "data-bind", "value:$root.filterYear, event : { change : $root.onYearSelectedChange}, isDisabled: $root.isLoading()" },
+                                { "class", "selectpicker show-tick form-controlt" },
+                                {"data-live-search","true"},{"id","filterYear"} })
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="form-label col-lg-3">
+                        Week
+                    </label>
+                    <div class="col-lg-4">
+                        <select id="filterWeek" class="selectpicker show-tick form-control" data-live-search="true"
+                                data-bind="selectPicker: $root.filterWeek, optionsText: 'Value', optionsValue : 'Text', selectPickerOptions: { optionsArray: $root.WeekFromSelectList },  event : { change : $root.onWeekChange }, isDisabled: $root.isLoading()"></select>
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="form-label col-lg-3" id="rdWeek">
+                        Date
+                    </label>
+                    <div class="col-lg-4">
+                        <select id="filterDate" class="selectpicker show-tick form-control" data-live-search="true"
+                                data-bind="selectPicker: $root.filterDate, optionsText: 'Value', optionsValue : 'Text', selectPickerOptions: { optionsArray: $root.DateFromSelectList }, event : { change : $root.onDateFilterChange }, isDisabled: $root.isLoading()"></select>
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="form-label col-lg-3">
+                        TPK Value
+                    </label>
+                    <div class="col-lg-4">
+                        <input type="text" class="form-control" data-bind="value: $root.TotalTpkValue" disabled>
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="form-label col-lg-3">
+                        Actual
+                    </label>
+                    <div class="col-lg-4">
+                        <input type="text" class="form-control" data-bind="value: $root.TotalActual" disabled>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="action-btn">
+                        @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.View.ToString()))
+{
+    <button type="button" class="btn btn-primary" data-bind="isDisabled: $root.isLoading(), click:$root.searchManual, disable: $root.isBusy()">@CommonLabel.btnView</button>
+
+}
+                        @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.Save.ToString()))
+{
+                        <button type="button" class="btn btn-primary" data-bind="click:$root.saveData, enable:$root.enableSaveBtn() && $root.isLoading()==false && !$root.isBusy()">@CommonLabel.btnSave</button>
+                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#UploadTPODaily" data-bind="click:$root.ShowUploadTPODaily">Upload</button>
+}
+                        @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.Excel.ToString()))
+                        {
+                            using (Html.BeginForm("GenerateExcel", "ExeTPOProductionEntry", FormMethod.Post, new { @data_bind = "submit: $root.generateExcel" }))
+                            {
+                                <input type="hidden" name="locationCode">
+                                <input type="hidden" name="process">
+                                <input type="hidden" name="status">
+                                <input type="hidden" name="brand">                           
+                                <input type="hidden" name="year">
+                                <input type="hidden" name="week">
+                                <input type="hidden" name="date">
+    <button type="submit" class="btn btn-primary" data-bind="isDisabled: $root.isLoading(), disable: $root.isBusy()">@CommonLabel.btnExcel</button>
+                            }
+                        }
+                        
+                    </div>
+                </div>
+            </div>
+            <div class="table-overflow">
+                <table class="table table-striped table-hover">
+                    <thead data-bind="visible: !$root.isStatusMultiskill()">
+                        <tr class="head">
+                            <th rowspan="2" data-bind="click:sortBy.bind($data,'ProductionGroup',$root.getTargetManualByLocationWeek), css:sortCss('ProductionGroup', $data.sortExpression(), $data.sortOrder())">Group</th>
+                            <th rowspan="2" data-bind="click:sortBy.bind($data,'WorkerCount',$root.getTargetManualByLocationWeek), css:sortCss('WorkerCount', $data.sortExpression(), $data.sortOrder()), visible: !$root.isStatusMultiskill()">Registered</th>
+                            <th rowspan="2" data-bind="click:sortBy.bind($data,'Absent',$root.getTargetManualByLocationWeek), css:sortCss('Absent', $data.sortExpression(), $data.sortOrder())">Absence</th>
+                            <th colspan="2">Production</th>
+                        </tr>
+                        <tr class="head">
+                            <th data-bind="click:sortBy.bind($data,'ActualProduction',$root.getTargetManualByLocationWeek), css:sortCss('ActualProduction', $data.sortExpression(), $data.sortOrder())">Actual</th>
+                            <th data-bind="click:sortBy.bind($data,'TargetManual',$root.getTargetManualByLocationWeek), css:sortCss('TargetManual', $data.sortExpression(), $data.sortOrder())">TPK Value</th>
+                        </tr>
+                    </thead>
+                    <thead data-bind="visible: $root.isStatusMultiskill()">
+                        <tr class="head">
+                            <th rowspan="2" data-bind="click:sortBy.bind($data,'ProductionGroup',$root.getTargetManualByLocationWeek), css:sortCss('ProductionGroup', $data.sortExpression(), $data.sortOrder())">Group</th>
+                            <th rowspan="2" data-bind="click:sortBy.bind($data,'WorkerCount',$root.getTargetManualByLocationWeek), css:sortCss('Absent', $data.sortExpression(), $data.sortOrder())">Attend</th>
+                            <th colspan="2">Production</th>
+                        </tr>
+                        <tr class="head">
+                            <th data-bind="click:sortBy.bind($data,'ActualProduction',$root.getTargetManualByLocationWeek), css:sortCss('ActualProduction', $data.sortExpression(), $data.sortOrder())">Actual</th>
+                            @*<th data-bind="click:sortBy.bind($data,'TargetManual',$root.getTargetManualByLocationWeek), css:sortCss('TargetManual', $data.sortExpression(), $data.sortOrder())">TPK Value</th>*@
+                        </tr>
+                    </thead>
+                    <tbody data-bind="foreach: listDataItems">
+                        @*insert template for status multiskill*@
+                        <tr data-bind="if: ($parent.editingRowIndex() !== $index() && $root.isStatusMultiskill() == true && $root.latestCondition() !== 'Submitted'), click: $parent.editInline3.bind($data,$index())">
+                            <td><span data-bind="text:$data.ProductionGroup"></span></td>
+                            <td class="current"><span data-bind="text:$data.WorkerCount"></span></td>
+                            <td class="current"><span data-bind="decimal:$data.ActualProduction"></span></td>
+                            @*<td><span data-bind="text:$data.TargetManual"></span></td>*@
+                        </tr>
+
+                        @*insert template for status multiskill disabled*@
+                        <tr data-bind="if: ($parent.editingRowIndex() !== $index() && $root.isStatusMultiskill() == true && $root.latestCondition() == 'Submitted'), click: $parent.editInline3.bind($data,$index())">
+                            <td><span data-bind="text:$data.ProductionGroup"></span></td>
+                            <td><span data-bind="text:$data.WorkerCount"></span></td>
+                            <td><span data-bind="decimal:$data.ActualProduction"></span></td>
+                            @*<td><span data-bind="text:$data.TargetManual"></span></td>*@
+                        </tr>
+
+                        @*insert template*@
+                        <tr data-bind="if: ($parent.editingRowIndex() !== $index() && $root.isStatusMultiskill() == false && $root.latestCondition() != 'Submitted'), click: $parent.editInline3.bind($data,$index())">
+                            <td><span data-bind="text:$data.ProductionGroup"></span></td>
+                            <td><span data-bind="text:$data.WorkerCount"></span></td>
+                            <td class="current"><span data-bind="text:$data.Absent"></span></td>
+                            <td class="current"><span data-bind="decimal:$data.ActualProduction"></span></td>
+                            <td><span data-bind="money:$data.TargetManual"></span></td>
+                        </tr>
+
+                        @*insert template disabled*@
+                        <tr data-bind="if: ($parent.editingRowIndex() !== $index() && $root.isStatusMultiskill() == false && $root.latestCondition() == 'Submitted'), click: $parent.editInline3.bind($data,$index())">
+                            <td><span data-bind="text:$data.ProductionGroup"></span></td>
+                            <td><span data-bind="text:$data.WorkerCount"></span></td>
+                            <td><span data-bind="text:$data.Absent"></span></td>
+                            <td><span data-bind="decimal:$data.ActualProduction"></span></td>
+                            <td><span data-bind="money:$data.TargetManual"></span></td>
+                        </tr>
+
+                        @*edit template for status multiskill*@
+                        <tr data-bind="validationOptions: {insertMessages: false, showTooltip:true, decorateInputElement: true, errorElementClass: 'input-error'}, inlineProccess:[$parent,$data],
+                                   if:($parent.editingRowIndex() === $index() && $root.isStatusMultiskill() && $root.latestCondition() != 'Submitted'),
+                                   click: $parent.selectRow.bind($data, $index()),
+                                    event: {keydown:$parent.keydown}">
+                            <td><span data-bind="text:$data.ProductionGroup"></span></td>
+                            <td class="current">
+                                <input class="form-control" type="text" data-bind="value:$data.WorkerCount, valueUpdate: 'afterkeydown'">
+                            </td>
+                            <td class="current">
+                                <input class="form-control" type="text" data-bind="value: $data.ActualProduction, valueUpdate: 'afterkeydown'" data-sktis-validation="decimal" data-sktis-digit-after-comma="2"/>
+                            </td>
+                            @*<td><span data-bind="text:$data.TargetManual"></span></td>*@
+                        </tr>
+
+                        @*edit template for status multiskill disabled*@
+                        <tr data-bind="validationOptions: {insertMessages: false, showTooltip:true, decorateInputElement: true, errorElementClass: 'input-error'}, inlineProccess:[$parent,$data],
+                                   if:($parent.editingRowIndex() === $index() && $root.isStatusMultiskill() && $root.latestCondition() == 'Submitted'),
+                                   click: $parent.selectRow.bind($data, $index()),
+                                    event: {keydown:$parent.keydown}">
+                            <td><span data-bind="text:$data.ProductionGroup"></span></td>
+                            <td><span data-bind="text:$data.WorkerCount"></span></td>
+                            <td><span data-bind="decimal:$data.ActualProduction"></span></td>
+                            @*<td><span data-bind="text:$data.TargetManual"></span></td>*@
+                        </tr>
+
+                        @*edit template *@
+                        <tr data-bind="validationOptions: {insertMessages: false, showTooltip:true, decorateInputElement: true, errorElementClass: 'input-error'}, inlineProccess:[$parent,$data],
+                                   if:($parent.editingRowIndex() === $index() && !$root.isStatusMultiskill() && $root.latestCondition() != 'Submitted'),
+                                   click: $parent.selectRow.bind($data, $index()),
+                                    event: {keydown:$parent.keydown}">
+                            <td><span data-bind="text:$data.ProductionGroup"></span></td>
+                            <td><span data-bind="text: $data.WorkerCount"></span></td>
+                            <td class="current"><input class="form-control" type="text" data-bind="value: $data.Absent, valueUpdate: 'afterkeydown'" data-sktis-validation="decimal" /></td>
+                            <td class="current"><input class="form-control" type="text" data-bind="value: $data.ActualProduction, valueUpdate: 'afterkeydown'" data-sktis-validation="decimal" /></td>
+                            <td><span data-bind="money:$data.TargetManual"></span></td>
+                        </tr>
+
+                        @*edit template disabled*@
+                        <tr data-bind="validationOptions: {insertMessages: false, showTooltip:true, decorateInputElement: true, errorElementClass: 'input-error'}, inlineProccess:[$parent,$data],
+                                   if:($parent.editingRowIndex() === $index() && !$root.isStatusMultiskill() && $root.latestCondition() == 'Submitted'),
+                                   click: $parent.selectRow.bind($data, $index()),
+                                    event: {keydown:$parent.keydown}">
+                            <td><span data-bind="text:$data.ProductionGroup"></span></td>
+                            <td><span data-bind="text: $data.WorkerCount"></span></td>
+                            <td><span data-bind="text: $data.Absent"></span></td>
+                            <td><span data-bind="decimal: $data.ActualProduction"></span></td>
+                            <td><span data-bind="money: $data.TargetManual"></span></td>
+                        </tr>
+
+                    </tbody>
+                    <tbody data-bind="visible: !listDataItems().length">
+                        <tr>
+                            <td colspan="5" class="empty-row-message"><div class="loader"></div></td>
+                        </tr>
+                    </tbody>
+                    <tfoot data-bind="visible: listDataItems().length">
+                        <tr class="total" data-bind="visible: !$root.isStatusMultiskill()">
+                            <td class="right">Total</td>
+                            <td class="right"><span data-bind="text: $root.TotalRegistered"></span></td>
+                            <td class="right"><span data-bind="text: $root.TotalAbsence"></span></td>
+                            <td class="right"><span data-bind="decimal: $root.TotalActual"></span></td>
+                            <td class="right"><span data-bind="decimal: $root.TotalTPKLast"></span></td>
+                        </tr>
+                        <tr class="total" data-bind="visible: $root.isStatusMultiskill()">
+                            <td class="right">Total</td>
+                            <td class="right"><span data-bind="text: $root.TotalRegistered"></span></td>
+                            <td class="right"><span data-bind="decimal: $root.TotalActual"></span></td>
+                            @*<td class="right"><span data-bind="text: $root.TotalTPKLast"></span></td>*@
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            @Html.Partial("TransactionHistory")
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="UploadTPODaily" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">TPO Upload File</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <label class="form-label col-lg-3">
+                        TPO Daily Excel File
+                    </label>
+                    <div class="col-lg-5">
+                        <div class="input-group uploadfile">
+                            <form id="formUpload">
+                                <input id="fileInput" type="file" class="filestyle" data-buttonname="btn-primary" data-icon="false" data-buttontext="Browse" accept=".xlsx">
+                            </form>
+                        </div>
+                    </div>
+                    <div>
+                        <button class="btn btn-primary" type="button" id="btnUpload" disabled>Upload</button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-3">
+                        <a href="@Url.Content("~/content/TPODailyTemplate/Template_TPODAILY.xlsx")" target="_blank">Download Template</a>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            <div class="modal-footer">
+                <div id="loading" class="pull-left">
+                    <p>Uploading Please wait....    <img src="@Url.Content("~/content/assets/images/ajax-loader.gif")" style="display:inline" /></p>
+                </div>
+                <div class="pull-left"><span id="notifupload"></span></div>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Modal -->
+
+
+@section Scripts
+{
+    <script src="~/Scripts/app/globalfunctions.js" type="text/javascript"></script>
+    <script src="~/Scripts/common/app.GridViewModel.js" type="text/javascript"></script>
+    <script src="~/Scripts/common/app.Extenders.js" type="text/javascript"></script>
+    <script type="text/javascript">
+
+    (function(app) {
+        app.EditGrid = function() {
+            var self = this;
+
+            self.firstInitFromUrl = ko.observable(false);
+            self.itemLocations = ko.observableArray(@Html.Raw(Json.Encode(@Model.PLNTChildLocationLookupList)));
+
+            self.filterLocationCode = ko.observable($("#ddlFilterLocationCode").val());
+            self.filterLocationName = ko.observable();
+            self.filterProcessGroup = ko.observable('');
+            self.filterStatus = ko.observable('');
+            self.filterBrand = ko.observable('');
+            self.filterYear = ko.observable('@Model.DefaultYear');
+            self.filterWeek = ko.observable('@Model.DefaultWeek');
+            self.filterDate = ko.observable('@Model.DefaultDate');
+            self.firstLoad = true;
+            self.firstLoadDate = true;
+            self.isStatusMultiskill = ko.observable();
+            self.enableSaveBtn = ko.observable(true);
+            self.isLoading = ko.observable(false);
+
+            self.isBusy = ko.observable(false);
+
+            //event on location dropdown change
+            self.onLocationCodeChange = function(callback) {
+                if((! self.firstLoad) && (! self.isLoading())){
+
+                    self.isLoading(true);
+
+                    async.series([
+                        function(cb) {
+                            self.getLocationNameFilter(cb);//location
+                        },
+                        function(cb) {
+                            self.getProcessGroupSelectListByLocation(cb);//process
+                        },
+                        function(cb) {
+                            self.getBrandSelectListByLocation(cb);//brand
+                        },
+                        function(cb) {
+                            self.getAllStatusSelectListByLocationCodeAndDate(cb);//status
+                        },
+                        function(cb){
+                            self.GetTpkValue(cb);//tpk value
+                        }
+                    ], function() {
+                        self.isLoading(false);
+                        self.enableSaveBtn(false);
+                        if (typeof callback == 'function') callback();
+                    });
+                }
+
+            };
+
+            self.onYearSelectedChange = function() {
+                if ((! self.firstLoad) && (! self.isLoading())) {
+                    self.isLoading(true);
+
+                    async.series([
+                        function(cb) {
+                            self.GetWeekFromSelectList(cb);
+                        },
+                        function(cb) {
+                            self.GetDateFromSelectList(cb);
+                        },
+                        function(cb) {
+                            self.getProcessGroupSelectListByLocation(cb);//process
+                        },
+                        function(cb) {
+                            self.getBrandSelectListByLocation(cb);
+                        },
+                        function(cb) {
+                            self.getAllStatusSelectListByLocationCodeAndDate(cb);
+                        },
+                        function(cb){
+                            self.GetTpkValue(cb);//tpk value
+                        }
+                    ], function() {
+                        self.isLoading(false);
+                        self.enableSaveBtn(false);
+                    });
+                }
+            };
+
+
+            //get location name by location code
+            self.getLocationNameFilter = function(cb) {
+                self.itemLocations().map(function(v) {
+                    if (typeof v.LocationCode !== 'undefined' && v.LocationCode == self.filterLocationCode()) {
+                        self.filterLocationName(v.LocationName);
+                    }
+                });
+
+                if (typeof cb == 'function') cb();
+            };
+
+            //prepare unitCode selectlist data
+            self.ProcessGroupSelectList = ko.observableArray();
+            self.getProcessGroupSelectListByLocation = function(cb) {
+                $.ajax({
+                    //url: @Html.BaseUrl("ExeTPOProductionEntry/GetProcess"),
+                    url: @Html.BaseUrl("ExeTPOProductionEntry/GetProcessByLocationCodeAndDate"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: { locationCode: self.filterLocationCode(), year: self.filterYear(), week: self.filterWeek(), date: self.filterDate() },
+                    dataType: 'json',
+                    cache: false,
+                    success: function(data) {
+                        var processModel = [];
+                        $.each(data, function(index, value) {
+                            processModel.push({ "Text": value.Text, "Value": value.Text });
+                        });
+                        $('#ddlProcessGroupFilter').find('option').remove();
+                        $('#ddlProcessGroupFilter').selectpicker('refresh');
+                        self.ProcessGroupSelectList(processModel);
+
+                        if(self.firstInitFromUrl()){
+                            self.filterProcessGroup('@Model.Param2ProcessGroup');
+                        }
+                    },
+                    complete : function() {
+                        if (typeof cb == 'function') cb();
+                    }
+                });
+            };
+
+            self.StatusSelectList = ko.observableArray();
+            self.getAllStatusSelectListByLocationCodeAndDate = function(cb) {
+                $.ajax({
+                    url: @Html.BaseUrl("ExeTPOProductionEntry/getStatusSelectListByLocationCodeAndDate"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    cache: false,
+                    data: {
+                        locationCode: self.filterLocationCode(),
+                        date: self.filterDate(),
+                        BrandCode: self.filterBrand(),
+                        ProcessGroup: self.filterProcessGroup()
+                    },
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#ddlStatusFilter').find('option').remove();
+                        $('#ddlStatusFilter').selectpicker('refresh');
+                        var empStatusModel = [];
+                        var multiskill = false;
+
+                        $.each(data, function(index, value) {
+                            if(data.length - empStatusModel.length == 1 && data[0] == "Resmi"){
+                                if(value == "Pemula"){
+                                    empStatusModel.push({ "Text": "Multiskill", "Value": "Multiskill" })
+                                    multiskill = true;
+                                }
+                            }
+                            empStatusModel.push({ "Text": value, "Value": value });
+                            if(data.length == empStatusModel.length && !multiskill && data[0] == "Resmi"){
+                                empStatusModel.push({ "Text": "Multiskill", "Value": "Multiskill" })
+                            }
+                        });
+                        self.StatusSelectList(empStatusModel);
+
+                        if(self.firstInitFromUrl()){
+                            self.filterStatus('@Model.Param3StatusEmp');
+                        }
+                    },
+                    complete : function() {
+                        if (typeof cb == 'function') cb();
+                    }
+                });
+            };
+
+            self.BrandSelectList = ko.observableArray();
+            self.getBrandSelectListByLocation = function(cb) {
+                $.ajax({
+                    //url: @Html.BaseUrl("ExeTPOProductionEntry/GetBrand"),
+                    url: @Html.BaseUrl("ExeTPOProductionEntry/GetBrandByLocationCodeAndDate"),
+                    type: 'GET',
+                    cache: false,
+                    contentType: 'application/json',
+                    data: {
+                        locationCode: self.filterLocationCode(),Week :self.filterWeek(),Year: self.filterYear(), date: self.filterDate()
+                    },
+                    dataType: 'json',
+                    success: function(data) {
+                        if(data.length>0)
+                        {
+                            var brandModel = [];
+                            $.each(data, function(index, value) {
+                                brandModel.push({ "Text": value, "Value": value });
+                            });
+                            $('#ddlBrandFilter').find('option').remove();
+                            $('#ddlBrandFilter').selectpicker('refresh');
+                            self.BrandSelectList(brandModel);
+                        }
+                        else{
+                            var brandModel = [];
+                            $('#ddlBrandFilter').find('option').remove();
+                            $('#ddlBrandFilter').selectpicker('refresh');
+                            self.BrandSelectList(brandModel);
+                            //SKTIS.Helper.Notification("NO Brand Code at "+self.filterLocationCode()+", Production Entry Verification week "+self.filterWeek()+" year "+self.filterYear()+" doesn't generate","error");
+                        }
+
+                        if(self.firstInitFromUrl()){
+                            self.filterBrand('@Model.Param4BrandCode');
+                        }
+
+                    },
+                    complete : function() {
+                        if (typeof cb == 'function') cb();
+                    }
+                });
+            };
+
+            self.onFilterChange = function() {
+                if ((! self.firstLoad) && (! self.isLoading())) {
+                    self.isLoading(true);
+
+                    async.series([
+                        function(cb) {
+                            self.GetTpkValue(cb);
+                        },
+                    ], function() {
+                        self.isLoading(false);
+                        self.enableSaveBtn(false);
+                    });
+                }
+            }
+
+            self.onFilterChangeBrand = function() {
+                if ((! self.firstLoad) && (! self.isLoading())) {
+                    self.isLoading(true);
+
+                    async.series([
+                        function(cb) {
+                            self.getAllStatusSelectListByLocationCodeAndDate(cb);
+                        },
+                        function(cb){
+                            self.GetTpkValue(cb);
+                        },
+                    ], function() {
+                        self.isLoading(false);
+                        self.enableSaveBtn(false);
+                    });
+                }
+            }
+
+            self.onWeekChange = function() {
+                if ((! self.firstLoad) && (! self.isLoading())) {
+                    self.isLoading(true);
+
+                    async.series([
+
+                        function(cb) {
+                            self.GetDateFromSelectList(cb);
+                        },
+                        function(cb) {
+                            self.getProcessGroupSelectListByLocation(cb);//process
+                        },
+                        function(cb) {
+                            self.getBrandSelectListByLocation(cb);
+                        },
+                        function(cb) {
+                            self.getAllStatusSelectListByLocationCodeAndDate(cb);
+                        },
+                        function(cb){
+                            self.GetTpkValue(cb);//tpk value
+                        }
+                    ], function() {
+                        self.isLoading(false);
+                        self.enableSaveBtn(false);
+                    });
+                }
+            }
+
+            self.onDateFilterChange = function() {
+                if ((! self.firstLoad) && (! self.isLoading())) {
+                    self.isLoading(true);
+
+                    async.series([
+                        function(cb) {
+                            self.getProcessGroupSelectListByLocation(cb);//process
+                        },
+                        function(cb) {
+                            self.getBrandSelectListByLocation(cb);
+                        },
+                        function(cb) {
+                            self.getAllStatusSelectListByLocationCodeAndDate(cb);
+                        },
+                        function(cb) {
+                            self.GetTpkValue(cb);
+                        }
+                    ], function() {
+                        self.isLoading(false);
+                        self.enableSaveBtn(false);
+                    });
+                }
+            }
+
+            self.onProcessFilterChange = function() {
+                if ((! self.firstLoad) && (! self.isLoading())) {
+                    self.isLoading(true);
+
+                    async.series([
+                        function(cb) {
+                            self.GetTpkValue(cb);
+                        },
+                        function(cb) {
+                            self.getAllStatusSelectListByLocationCodeAndDate(cb);
+                        }
+                    ], function() {
+                        self.isLoading(false);
+                        self.enableSaveBtn(false);
+                    });
+                }
+            }
+
+
+            self.WeekFromSelectList = ko.observableArray([]);
+            self.GetWeekFromSelectList = function(cb) {
+                $.ajax({
+                    url: @Html.BaseUrl("ExeTPOProductionEntry/GetWeekByYear"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: { year: self.filterYear() },
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#filterWeek').find('option').remove();
+                        $('#filterWeek').selectpicker('refresh');
+                        var kpsWeekModel = [];
+                        $.each(data, function(index, value) {
+                            kpsWeekModel.push({ "Text": value, "Value": value });
+                        });
+                        self.WeekFromSelectList(kpsWeekModel);
+
+                        if(self.firstInitFromUrl()){
+                            self.filterWeek('@Model.Param6KPSWeek');
+                        }else{
+                            //set default
+                            self.filterWeek('@Model.DefaultWeek');
+                        }
+                    },
+                    complete : function() {
+                        if (typeof cb == 'function') cb();
+                    }
+                });
+            };
+
+            self.DateFromSelectList = ko.observableArray([]);
+            self.GetDateFromSelectList = function(cb) {
+                $.ajax({
+                    url: @Html.BaseUrl("ExeTPOProductionEntry/GetDateByYearWeek"),
+                    type: 'GET',
+                    cache: false,
+                    contentType: 'application/json',
+                    data: { year: self.filterYear(), week: self.filterWeek() },
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#filterDate').find('option').remove();
+                        $('#filterDate').selectpicker('refresh');
+                        var datemodel = [];
+                        $.each(data, function(index, value) {
+                            datemodel.push({ "Text": value.Text, "Value": value.Text });
+                        });
+
+                        self.DateFromSelectList(datemodel);
+                        if(self.firstInitFromUrl()){
+                            var dt = moment('@Model.Param7Date','DD/MM/YYYY').format('DD/MM/YYYY');
+                            self.filterDate(dt);
+                        }else{
+                            var curDate = moment().format('DD/MM/YYYY');
+                            self.filterDate(curDate);
+                        }
+
+                    },
+                    complete : function() {
+                        if (typeof cb == 'function') cb();
+                    }
+                });
+            };
+
+            self.gridView = new app.GridViewModel({
+                Criteria: {
+                    PageSize: 10,
+                    PageIndex: 1,
+                    SortExpression: "ProcessGroup",
+                    SortOrder: "DESC",
+                    LocationCode: self.filterLocationCode,
+                    Process: self.filterProcessGroup,
+                    Status: self.filterStatus,
+                    Brand: self.filterBrand,
+                    Year: self.filterYear,
+                    Week: self.filterWeek,
+                    Date: self.filterDate
+                },
+                cache: false,
+                DataSourceUrl: @Html.BaseUrl("ExeTPOProductionEntry/GetExeTPOProductionEntry"),
+                InlineEdit: true,
+                InsertRowFocusedControlIndex: 0
+            });
+
+            self.gridView.isBusy.subscribe(function(value) {
+                self.isBusy(value);
+            });
+
+            //self.gridView.selectedPageSize(1000); //show all record
+
+            //self.onLocationCodeChange(); TODO AJAX
+            //self.onYearSelectedChange();
+
+            // Field Validations
+            self.gridView.applyValidationRules = function (entity) {
+
+                self.RemoveNotification();
+
+                entity.ActualProduction(parseToFloatWithPrecision(entity.ActualProduction(), 2));
+                entity.Absent(parseToFloat(entity.Absent()));
+                entity.WorkerCount(parseToFloat(entity.WorkerCount()));
+
+                entity.ActualProduction.extend({
+                    validation: {
+                        async: false,
+                        validator: function(val, otherVal) {
+                            if (entity.ActualProduction() < 0) {
+                                entity.ActualProduction(0);
+                                return false;
+                            }
+                            else
+                            {
+                                return true
+                            }
+
+                        },
+                        message: "<strong>Actual Production</strong> cannot minus!"
+
+                    }
+                });
+
+                entity.WorkerCount.extend({
+                    validation: {
+                        async: false,
+                        validator: function(val, otherVal) {
+                            if (entity.WorkerCount() < 0) {
+                                entity.WorkerCount(0);
+                                return false;
+                            }
+                            else
+                            {
+                                return true
+                            }
+
+                        },
+                        message: "<strong>Attend</strong> cannot minus!"
+
+                    }
+                });
+
+                entity.Absent.extend({
+                    validation: {
+                        async: false,
+                        validator: function(val, otherVal) {
+                            if (entity.Absent() < 0) {
+                                entity.Absent(0);
+                                return false;
+                            }
+                            else
+                            {
+                                return true
+                            }
+
+                        },
+                        message: "<strong>Absent</strong> cannot minus!"
+
+                    }
+                });
+
+            };
+
+            function getComputedTargetValue(fieldName) {
+                return ko.computed({
+                    read: function() {
+                        var total = 0;
+                        ko.utils.arrayForEach(self.gridView.listDataItems(), function(item) {
+                            var field = ko.isObservable(item[fieldName]) ? item[fieldName]() : item[fieldName];
+                            var value = parseFloat(field);
+                            if (!isNaN(value)) {
+                                total += value;
+                            }
+                        });
+                        //return parseToFloat(total);
+                        return fieldName === 'ActualProduction' ? parseToFloat(total).toFixed(2) : parseToFloat(total);
+                    },
+                    write: function(value) {
+                        //alert(value);
+                    }
+                });
+            };
+
+            //description : generateExcel
+            self.generateExcel = function(formElement) {
+                $(formElement).find("input[name=locationCode]").val($('#ddlFilterLocationCode').val());
+                $(formElement).find("input[name=process]").val($('#ddlProcessGroupFilter').val());
+                $(formElement).find("input[name=status]").val($('#ddlStatusFilter').val());
+                $(formElement).find("input[name=brand]").val($('#ddlBrandFilter').val());
+                $(formElement).find("input[name=year]").val($('#filterYear').val());
+                $(formElement).find("input[name=week]").val($('#filterWeek').val());
+                $(formElement).find("input[name=date]").val($('#filterDate').val());
+                return true;
+            };
+
+            self.TotalRegistered = getComputedTargetValue('WorkerCount');
+            self.TotalAbsence = getComputedTargetValue('Absent');
+            //self.TotalTpkValue = getComputedTargetValue('TotalTargetManual');
+            self.TotalTpkValue = ko.observable();
+            self.TotalActual = getComputedTargetValue('ActualProduction');
+            self.TotalTPKLast = getComputedTargetValue('TargetManual');
+
+            self.GetTpkValue = function(cb) {
+                self.TotalTpkValue(0);
+                if (self.filterBrand() &&
+                    self.filterYear() &&
+                    self.filterWeek() &&
+                    self.filterProcessGroup() &&
+                    self.filterStatus() &&
+                    self.filterDate()) {
+                    var input = {
+                        locationCode: self.filterLocationCode(),
+                        brand: self.filterBrand(),
+                        year: self.filterYear(),
+                        week: self.filterWeek(),
+                        date: self.filterDate(),
+                        process: self.filterProcessGroup(),
+                        status: self.filterStatus()
+                    };
+                    $.ajax({
+                        url: @Html.BaseUrl("ExeTPOProductionEntry/GetTpkValue"),
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: ko.myToJSON(input),
+                        dataType: 'json',
+                        success: function(data) {
+                            if(data != null) {
+                                self.TotalTpkValue(data);
+                            }
+                        },
+                        complete : function() {
+                            if (typeof cb == 'function') cb();
+                        }
+                    });
+                } else {
+                    if (typeof cb == 'function') cb();
+                }
+
+            };
+            self.TargetModel = [];
+            self.ajaxTargetManual = null;
+
+            // Load Data
+            self.search = function() {
+                self.enableSaveBtn(true);
+                $('.empty-row-message').html('<div class="loader"></div>'); // Reset New and Edit row
+                // Check whether New or Edit data is existing and not saved to database yet (on Ajax Action)
+                if (SKTIS.Checker.modifiedDataExistsForAjax([self.gridView.listNewItems, self.gridView.listEditItems]) == true) {
+                    return;
+                } else {
+                    self.gridView.listNewItems.removeAll();
+                    self.gridView.listEditItems.removeAll();
+                }
+
+                //self.filterExcelListGroup = self.filterListGroup();
+                self.gridView.search({}, function(response) {
+                    if (response.status == 'KO') {
+                        SKTIS.Helper.Notification(response.message, 'error');
+                        $('.empty-row-message').html(response.message);
+                    } else if (response.status == 'Empty') {
+
+                        self.RemoveNotification();
+
+                        //SKTIS.Helper.Notification(response.message,'warning');
+                        $('.empty-row-message').html('@CommonLabel.lblDataEmpty');
+                    }
+
+                    if(self.ajaxTargetManual != null)
+                        self.ajaxTargetManual.abort();
+
+                    self.ajaxTargetManual = $.ajax({
+                        url: @Html.BaseUrl("ExeTPOProductionEntry/GetTargetManual"),
+                        type: 'GET',
+                        contentType: 'application/json',
+                        data: { LocationCode: self.filterLocationCode,
+                            Process: self.filterProcessGroup,
+                            Status: self.filterStatus,
+                            Brand: self.filterBrand,
+                            Year: self.filterYear,
+                            Week: self.filterWeek,
+                            Date: self.filterDate },
+                        dataType: 'json',
+                        success: function(data) {
+                            self.TargetModel = [];
+                            for(var value in data) {
+                                //if(self.gridView.listDataItems()[index].ProductionGroup == value.ProdGroup){
+                                //  self.gridView.listDataItems()[index].TargetManual = value.targetmanual;
+                                //}
+                                if(typeof self.TargetModel[data[value].ProdGroup] == 'undefined' && self.TargetModel[data[value].ProdGroup] != 0){
+                                    self.TargetModel[data[value].ProdGroup] = parseFloat(data[value].targetmanual);
+                                }
+                            }
+
+                            $.each(self.gridView.listDataItems(), function(index, value) {
+                                if(typeof self.TargetModel[self.gridView.listDataItems()[index].ProductionGroup()] != "undefined"){
+                                    self.gridView.listDataItems()[index].TargetManual(self.TargetModel[self.gridView.listDataItems()[index].ProductionGroup()]);
+                                }
+                            });
+                            checkButtonCondition();
+                        }
+                    });
+
+                    if (!self.firstLoad || !self.isLoading()){
+                        self.loadHistory();
+                        self.loadFlow();
+                    }
+
+                });
+
+
+                var selector = $('#ddlStatusFilter');
+                if (selector.val() != null) {
+                    var isMultiSkill = selector.val().toLowerCase() == 'multiskill';
+                    self.isStatusMultiskill(isMultiSkill);
+                }
+
+            };
+
+            // TRANSACTION HISTORY AND FLOW
+            self.historyGridView = new app.GridViewModel({
+                Criteria: {
+                    PageSize: 10,
+                    PageIndex: 1,
+                    SortExpression: "UpdatedDate",
+                    SortOrder: "DESC",
+                    code_1: 'EBL',
+                    code_2: self.filterLocationCode,
+                    code_3: self.filterProcessGroup,
+                    code_4: self.filterBrand,
+                    code_5: self.filterYear,
+                    code_6: self.filterWeek,
+                    code_7: self.filterDate,
+                    statusEmployee: self.filterStatus
+                },
+                DataSourceUrl: @Html.BaseUrl("ExeTPOProductionEntry/GetHistory"),
+                InlineEdit: true,
+                InsertRowFocusedControlIndex: 1
+            });
+
+            self.flowGridView = new app.GridViewModel({
+                Criteria: {
+                    PageSize: 10,
+                    PageIndex: 1,
+                    SortExpression: "IDFlow",
+                    SortOrder: "ASC",
+                    FunctionName: 'TPOProductionEntry'
+                },
+                DataSourceUrl: @Html.BaseUrl("ExeTPOProductionEntry/GetFlow"),
+                InlineEdit: true,
+                InsertRowFocusedControlIndex: 1
+            });
+
+            self.loadHistory = function(cb){
+                self.historyGridView.search({}, function (response) {
+                    if (response.status == 'KO') {
+                        SKTIS.Helper.Notification(response.message,'error');
+                        $('.empty-row-message').html(response.message);
+                    }else if (response.status == 'Empty') {
+
+                        self.RemoveNotification();
+
+                        //SKTIS.Helper.Notification(response.message,'warning');
+                        $('.empty-row-message').html('@CommonLabel.lblDataEmpty');
+                    }
+
+                    if (typeof cb != 'undefined') cb();
+                });
+            };
+            self.loadFlow = function(cb){
+                self.flowGridView.search({}, function (response) {
+                    if (response.status == 'KO') {
+                        SKTIS.Helper.Notification(response.message,'error');
+                        $('.empty-row-message').html(response.message);
+                    }else if (response.status == 'Empty') {
+
+                        self.RemoveNotification();
+
+                        //SKTIS.Helper.Notification(response.message,'warning');
+                        $('.empty-row-message').html('@CommonLabel.lblDataEmpty');
+                    }
+
+                    if (typeof cb != 'undefined') cb();
+                });
+            };
+            // END OF TRANSACTION HISTORY AND FLOW
+
+            self.RemoveNotification = function() {
+                if ($('#noty_top_layout_container').length > 0) {
+                    $('#noty_top_layout_container').remove();
+                }
+            };
+
+            self.latestCondition = ko.observable("");
+            function checkButtonCondition() {
+                $.ajax({
+                    url: @Html.BaseUrl("ExeTPOProductionEntry/GetLastConditionTranslogTPOProdEntry"),
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: ko.toJSON({
+                        LocationCode: self.filterLocationCode, //ok
+                        Process: self.filterProcessGroup,
+                        Brand: self.filterBrand,
+                        Year: self.filterYear,
+                        Week: self.filterWeek,
+                        Date: self.filterDate,
+                        RevisionType: self.revisionType
+                    }),
+                    dataType: 'json',
+                    success: function(data) {
+                        if ( self.gridView.listDataItems().length === 0)
+                        {
+                            self.enableSaveBtn(false);
+                            self.latestCondition(data);
+                            return;
+                        }
+
+                        if(data == "Submitted"){
+                            self.enableSaveBtn(false);
+                            self.latestCondition(data);
+                            return;
+                        }else if(data == "Open"){
+                            self.enableSaveBtn(true);
+                            self.latestCondition(data);
+                            return;
+                        }
+
+                    }
+                });
+            };
+
+            self.searchManual = function() {
+                async.series([
+                    function (cb) {
+                        self.getTargetManualByLocationWeek(self.search(),cb);
+                    },
+                ]);
+            }
+            self.TargetManual = ko.observable;
+            //gettargetmanual
+            self.getTargetManualByLocationWeek = function(data,cb) {
+                $.each(self.gridView.listDataItems(), function(index, value) {
+                    if(typeof self.TargetModel[self.gridView.listDataItems()[index].ProductionGroup] !== "undefined"){
+                        self.gridView.listDataItems()[index].TargetManual = ko.observable();
+                        self.gridView.listDataItems()[index].TargetManual(self.TargetModel[self.gridView.listDataItems()[index].ProductionGroup]);
+                    }
+                });
+                if (typeof cb == 'function') cb();
+            };
+
+            // Save Action
+            self.saveData = function () {
+                if (self.gridView.editingRowIndex() !== -1)
+                    return;
+
+                var datas = {
+                    "new": self.gridView.listNewItems(),
+                    "edit": self.gridView.listDataItems(),
+                    "parameters" :{//hakim
+                        "originalEmpStatus" : self.filterStatus(),
+                        "LocationCode": self.filterLocationCode(),
+                        "BrandCode": self.filterBrand(),
+                        "KPSYear": self.filterYear(),
+                        "KPSWeek": self.filterWeek(),
+                        "ProductionDate": self.filterDate()
+                    }
+                };
+                SKTIS.Helper.Log(datas);
+                //datas = JSON.stringify(datas);
+                datas = ko.myToJSON(datas);
+
+                $.ajax({
+                    url: @Html.BaseUrl("ExeTPOProductionEntry/SaveExeTPOProductionEntry"),
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: datas,
+                    dataType: 'json',
+                    success: function (data) {
+                        SKTIS.Helper.Log(data);
+
+                        if (data.Edit) {
+                            SKTIS.Helper.Notification("Production Entry - Save succesfully","success");
+                        }
+                        self.getTargetManualByLocationWeek();
+                        self.gridView.sort('ProcessGroup', 'DESC');
+                        self.gridView.listNewItems.removeAll();
+                        self.gridView.listEditItems.removeAll();
+                        self.search();
+                    }
+                });
+            };
+
+            $(document).ready(function(){
+
+                $('#ddlStatusFilter').change(function(){
+                    var isMultiSkill = $(this).val().toLowerCase() == 'multiskill';
+                    self.isStatusMultiskill(isMultiSkill);
+                });
+
+                //self.init();
+
+                $('#loading').hide();
+                $('#notifupload').hide();
+
+            });
+
+            self.init = (function() {
+                if (typeof '@Model.Param1LocationCode' != 'undefined' && '@Model.Param1LocationCode') {
+                    self.firstInitFromUrl(true);
+                };
+
+                if(self.firstInitFromUrl()){
+                    self.filterYear('@Model.Param5KPSYear');
+                    self.filterLocationCode('@Model.Param1LocationCode');
+                }
+
+                //Asynch setting
+                self.isLoading(true);
+
+                async.series([
+                    function(callback) {
+                        self.GetWeekFromSelectList(callback);
+                    },
+                    function(callback) {
+                        self.GetDateFromSelectList(callback);
+                    },
+                    function(cb) {
+                        self.getLocationNameFilter(cb);//location
+                    },
+                    function(cb) {
+                        self.getProcessGroupSelectListByLocation(cb);//process
+                    },
+                    function(cb) {
+                        self.getBrandSelectListByLocation(cb);//brand
+                    },
+                    function(cb) {
+                        self.getAllStatusSelectListByLocationCodeAndDate(cb);//status
+                    },
+                    function(cb){
+                        self.GetTpkValue(cb);//tpk value
+                    }
+                ], function() {
+                    self.search();
+                    self.firstLoad = false;
+                    self.isLoading(false);
+                    self.firstInitFromUrl(false);
+                });
+
+            }());
+
+            $("#fileInput").change(function() {
+                $("#btnUpload").prop("disabled", false);
+            });
+
+            $("#btnUpload").on("click", function() {
+                $('#notifupload').hide();
+               
+                var uploadfile = $('#fileInput').val();
+                $('#loading').show();
+
+                self.RemoveNotification();
+
+                if (!uploadfile) return;
+
+                var fileInput = document.getElementById('fileInput');
+                var xhr = new XMLHttpRequest();
+
+                xhr.open('POST', @Html.BaseUrl("ExeTPOProductionEntry/UploadTPODaily"));
+
+                xhr.setRequestHeader('Content-type', 'multipart/form-data');
+                //Appending file information in Http headers
+                xhr.setRequestHeader('X-File-Name', fileInput.files[0].name);
+
+                //Sending file in XMLHttpRequest
+                xhr.send(fileInput.files[0]);
+
+                xhr.onreadystatechange = function() {
+
+                    $('#loading').hide();
+                    $('#notifupload').show();
+                    if (xhr.readyState == 4 && xhr.status == 200) {
+                        $('#notifupload').text("The file was successfully uploaded");
+                        $('#notifupload').css('color', 'green');
+                        self.searchManual();
+
+                    } else {
+                        console.log(xhr);
+                        $('#notifupload').text("Upload Failed " + xhr.statusText);
+                        $('#notifupload').css('color', 'red');
+                    }
+                };
+
+            });
+
+            self.ShowUploadTPODaily = function(){
+                $('#loading').hide();
+                $('#notifupload').hide();
+            }
+        };
+        ko.applyBindings(new app.EditGrid());
+    })(app = this.app || {});
+
+</script>
+}

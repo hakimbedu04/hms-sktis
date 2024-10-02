@@ -1,0 +1,1030 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{D09928D1-F7E1-4C8A-AD81-DA808F82B918}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>HMS.SKTIS.BusinessObjects</RootNamespace>
+    <AssemblyName>HMS.SKTIS.BusinessObjects</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AdjustmentTypeByBrandCode.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="AvailabelPositionNumberGroup.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="AvailablePositionNumberView_Result.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="BrandCodeByLocationView.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DTOs\BrandCodeByLocationCodeDTO.cs" />
+    <Compile Include="DTOs\BrandCompositeDTO.cs" />
+    <Compile Include="DTOs\DateStateDTO.cs" />
+    <Compile Include="DTOs\BrandGroupMaterialDTO.cs" />
+    <Compile Include="DTOs\BrandPackageMappingDTO.cs" />
+    <Compile Include="DTOs\EmailApprovalLogDto.cs" />
+    <Compile Include="DTOs\Execution\ExeEMSSourceDataDTO.cs" />
+    <Compile Include="DTOs\Execution\ExePlantActualWorkHoursDTO.cs" />
+    <Compile Include="DTOs\Execution\ExePlantMaterialUsagesDTO.cs" />
+    <Compile Include="DTOs\Execution\ExePlantProductionEntryAllocationCompositeDTO.cs" />
+    <Compile Include="DTOs\Execution\ExePlantProductionEntryDTO.cs" />
+    <Compile Include="DTOs\Execution\ExePlantProductionEntryVerificationViewDTO.cs" />
+    <Compile Include="DTOs\Execution\ExePlantWorkerAbsenteeismDTO.cs" />
+    <Compile Include="DTOs\Execution\ExePlantWorkerAbsenteeismViewDTO.cs" />
+    <Compile Include="DTOs\Execution\ExePlantWorkerAssignmentDTO.cs" />
+    <Compile Include="DTOs\Execution\ExePlantWorkerBalancingSingleViewDTO.cs" />
+    <Compile Include="DTOs\Execution\ExeProductionEntryMinimumValueDTO.cs" />
+    <Compile Include="DTOs\Execution\ExeProductionEntryPrintDataViewDTO.cs" />
+    <Compile Include="DTOs\Execution\ExeProductionEntryPrintViewDTO.cs" />
+    <Compile Include="DTOs\Execution\ExePlantWorkerBalancingProcessPerGroupDTO.cs" />
+    <Compile Include="DTOs\Execution\ExePlantWorkerBalancingProcessPerUnitDTO.cs" />
+    <Compile Include="DTOs\Execution\ExePlantWorkerBalancingViewDTO.cs" />
+    <Compile Include="DTOs\Execution\ExeProductionEntryPrintViewPartitionDTO.cs" />
+    <Compile Include="DTOs\Execution\ExeReportByGroupViewDTO.cs" />
+    <Compile Include="DTOs\Execution\ExeReportByGroupWeeklyDTO.cs" />
+    <Compile Include="DTOs\Execution\ExeReportByGroupMonthlyDTO.cs" />
+    <Compile Include="DTOs\Execution\ExeReportByGroupDTO.cs" />
+    <Compile Include="DTOs\Execution\ExeReportByGrouppCompositeDTO.cs" />
+    <Compile Include="DTOs\Execution\ExeReportByProcessDTO.cs" />
+    <Compile Include="DTOs\Execution\ExeReportByProcessViewDTO.cs" />
+    <Compile Include="DTOs\Execution\ExeReportByStatusDTO.cs" />
+    <Compile Include="DTOs\Execution\ExeReportByStatusMonthlyDTO.cs" />
+    <Compile Include="DTOs\Execution\ExeReportByStatusWeeklyDTO.cs" />
+    <Compile Include="DTOs\Execution\ExeReportDailyProductionAchievementViewDTO.cs" />
+    <Compile Include="DTOs\Execution\ExeReportingDailyProductionAchievementDTO.cs" />
+    <Compile Include="DTOs\Execution\ExeReportProdStockPerBrandDTO.cs" />
+    <Compile Include="DTOs\Execution\ExeReportProdStockPerBrandGroupCodeDTO.cs" />
+    <Compile Include="DTOs\Execution\ExeReportProductionStockDTO.cs" />
+    <Compile Include="DTOs\Execution\ExeTPOActualWorkHoursDTO.cs" />
+    <Compile Include="DTOs\Execution\ExeTPOProductionEntryVerificationDTO.cs" />
+    <Compile Include="DTOs\Execution\ExeTPOProductionEntryVerificationViewDTO.cs" />
+    <Compile Include="DTOs\Execution\ExeTPOProductionViewDTO.cs" />
+    <Compile Include="DTOs\Execution\GetLocationByResponsibilityViewDTO.cs" />
+    <Compile Include="DTOs\Execution\GetReportByStatusCompositeDTO.cs" />
+    <Compile Include="DTOs\Execution\InsertMultipleAbsenteeismDTO.cs" />
+    <Compile Include="DTOs\Execution\ProductAdjustmentDTO.cs" />
+    <Compile Include="DTOs\Execution\GroupCodesPopUpDTO.cs" />
+    <Compile Include="DTOs\Maintenance\EquipmentRequirementDTO.cs" />
+    <Compile Include="DTOs\Maintenance\EquipmentRequirementSummaryItemDTO.cs" />
+    <Compile Include="DTOs\Maintenance\MaintenanceExecutionInventoryAdjustmentDTO.cs" />
+    <Compile Include="DTOs\Maintenance\MaintenanceRequestToLocationDTO.cs" />
+    <Compile Include="DTOs\MntcFulfillmentViewDTO.cs" />
+    <Compile Include="DTOs\MntcRequestToLocationDTO.cs" />
+    <Compile Include="DTOs\EquipmentFulfillmentCompositeDTO.cs" />
+    <Compile Include="DTOs\EquipmentRequestDTO.cs" />
+    <Compile Include="DTOs\InformatipsNewsInfoDTO.cs" />
+    <Compile Include="DTOs\LocationDTO.cs" />
+    <Compile Include="DTOs\Maintenance\EquipmentReceiveCompositeDTO.cs" />
+    <Compile Include="DTOs\Maintenance\EquipmentReceiveDTO.cs" />
+    <Compile Include="DTOs\Maintenance\EquipmentRepairDTO.cs" />
+    <Compile Include="DTOs\Maintenance\EquipmentTransferCompositeDTO.cs" />
+    <Compile Include="DTOs\Maintenance\EquipmentTransferDTO.cs" />
+    <Compile Include="DTOs\Maintenance\EquipmentRepairTPODTO.cs" />
+    <Compile Include="DTOs\Maintenance\InventoryStockDTO.cs" />
+    <Compile Include="DTOs\Maintenance\MaintenanceEquipmentRequirementReportDTO.cs" />
+    <Compile Include="DTOs\Maintenance\MaintenanceEquipmentStockReportDTO.cs" />
+    <Compile Include="DTOs\Maintenance\MaintenanceExecutionInventoryViewDTO.cs" />
+    <Compile Include="DTOs\Maintenance\MaintenanceExecutionItemConversionCompositeDTO.cs" />
+    <Compile Include="DTOs\Maintenance\MaintenanceExecutionItemConversionDTO.cs" />
+    <Compile Include="DTOs\Maintenance\MaintenanceExecutionQualityInspectionDTO.cs" />
+    <Compile Include="DTOs\Maintenance\SparepartDTO.cs" />
+    <Compile Include="DTOs\Maintenance\MntcRepairItemUsageDTO.cs" />
+    <Compile Include="DTOs\MstHolidayByWeekDTO.cs" />
+    <Compile Include="DTOs\MstADTempDto.cs" />
+    <Compile Include="DTOs\MstClosingPayrollDTO.cs" />
+    <Compile Include="DTOs\MstProcessBrandViewDTO.cs" />
+    <Compile Include="DTOs\MstTableauReportDto.cs" />
+    <Compile Include="DTOs\NewsInfoCompositeDTO.cs" />
+    <Compile Include="DTOs\NewsInfoDTO.cs" />
+    <Compile Include="DTOs\InventoryByStatusViewDTO.cs" />
+    <Compile Include="DTOs\LocationInfoDTO.cs" />
+    <Compile Include="DTOs\MaintenanceInventoryDTO.cs" />
+    <Compile Include="DTOs\MasterMaintenanceItemLocationDTO.cs" />
+    <Compile Include="DTOs\MntcEquipmentItemDisposalCompositeDTO.cs" />
+    <Compile Include="DTOs\MntcEquipmentRequestCompositeDTO.cs" />
+    <Compile Include="DTOs\MstEmployeeJobsDataActiveDTO.cs" />
+    <Compile Include="DTOs\MstGenEmpStatusCompositeDTO.cs" />
+    <Compile Include="DTOs\MstGenEmpStatusDTO.cs" />
+    <Compile Include="DTOs\MstGenProcessSettingDTO.cs" />
+    <Compile Include="DTOs\MstGenProcessSettingCompositeDTO.cs" />
+    <Compile Include="DTOs\MstGenProcessSettingLocationDTO.cs" />
+    <Compile Include="DTOs\MstGenProcessSettingsLocationCompositeDTO.cs" />
+    <Compile Include="DTOs\MstGenWeekDTO.cs" />
+    <Compile Include="DTOs\MstMntcConvertCompositeDTO.cs" />
+    <Compile Include="DTOs\MstMntcConvertDTO.cs" />
+    <Compile Include="DTOs\MstPlantAbsentTypeDTO.cs" />
+    <Compile Include="DTOs\MstPlantProductionGroupCompositeDTO.cs" />
+    <Compile Include="DTOs\MstTPOProductionGroupDTO.cs" />
+    <Compile Include="DTOs\MasterProcessSettingLocationDto.cs" />
+    <Compile Include="DTOs\MstGenBrandGroupDTO.cs" />
+    <Compile Include="DTOs\BrandDTO.cs" />
+    <Compile Include="DTOs\MstEmployeeJobsDataActiveCompositeDTO.cs" />
+    <Compile Include="DTOs\MstGenBrandPkgMappingDTO.cs" />
+    <Compile Include="DTOs\MstGeneralListCompositeDTO.cs" />
+    <Compile Include="DTOs\MstHolidayDTO.cs" />
+    <Compile Include="DTOs\MstPlantProductionGroupDTO.cs" />
+    <Compile Include="DTOs\MstPlantUnitCompositeDTO.cs" />
+    <Compile Include="DTOs\MstTPOFeeRateDTO.cs" />
+    <Compile Include="DTOs\MstGenBrandPackageItemDTO.cs" />
+    <Compile Include="DTOs\MstTPOPackageDTO.cs" />
+    <Compile Include="DTOs\MstPlantUnitDTO.cs" />
+    <Compile Include="DTOs\MstGenStandardHourDTO.cs" />
+    <Compile Include="DTOs\MstGenProcessDTO.cs" />
+    <Compile Include="DTOs\MstTPOInfoDTO.cs" />
+    <Compile Include="DTOs\MstMntcItemLocationDTO.cs" />
+    <Compile Include="DTOs\MstMntcItemCompositeDTO.cs" />
+    <Compile Include="DTOs\MstGeneralListDTO.cs" />
+    <Compile Include="DTOs\Planning\ExePlantProductionEntryVerificationDTO.cs" />
+    <Compile Include="DTOs\Planning\GenericValuePerWeekDTO.cs" />
+    <Compile Include="DTOs\Planning\PlanningReportSummaryProcessTargetsCompositeDTO.cs" />
+    <Compile Include="DTOs\Planning\PlanPlantAllocationDTO.cs" />
+    <Compile Include="DTOs\Planning\PlanTargetProductionUnitDTO.cs" />
+    <Compile Include="DTOs\Planning\PlanTmpWeeklyProductionPlanningDTO.cs" />
+    <Compile Include="DTOs\Planning\PlanTPOTPKCompositeDTO.cs" />
+    <Compile Include="DTOs\Planning\PlanningPlantIndividualCapacityByReferenceDTO.cs" />
+    <Compile Include="DTOs\Planning\PlanningPlantIndividualCapacityWorkHourDTO.cs" />
+    <Compile Include="DTOs\Planning\PlanningReportProductionTargetCompositeDTO.cs" />
+    <Compile Include="DTOs\Planning\PlanTPOTPKTotalBoxDTO.cs" />
+    <Compile Include="DTOs\Planning\PlanTPUCompositeDTO.cs" />
+    <Compile Include="DTOs\Planning\PlanTPUDTO.cs" />
+    <Compile Include="DTOs\Planning\PlanTPUStatusDTO.cs" />
+    <Compile Include="DTOs\Planning\PlantTPKCalculateDTO.cs" />
+    <Compile Include="DTOs\Planning\PlantTPKCompositeDTO.cs" />
+    <Compile Include="DTOs\Planning\PlantTPKDTO.cs" />
+    <Compile Include="DTOs\Planning\PlantTPKByProcessDTO.cs" />
+    <Compile Include="DTOs\Planning\TargetManualTPUDTO.cs" />
+    <Compile Include="DTOs\Planning\TPOTPKByProcessDTO.cs" />
+    <Compile Include="DTOs\Planning\TPOTPKCalculateDTO.cs" />
+    <Compile Include="DTOs\Planning\TPOTPKDTO.cs" />
+    <Compile Include="DTOs\Planning\WIPStockDTO.cs" />
+    <Compile Include="DTOs\Planning\WorkerBrandAssigmentDTO.cs" />
+    <Compile Include="DTOs\PlanPlantGroupShiftDTO.cs" />
+    <Compile Include="DTOs\PlantWages\GetWagesReportAbsentGroupViewDTO.cs" />
+    <Compile Include="DTOs\PlantWages\GetWagesReportAbsentViewDTO.cs" />
+    <Compile Include="DTOs\PlantWages\ExeProductionEntryReleaseDTO.cs" />
+    <Compile Include="DTOs\PlantWages\EblekReleaseApprovalDTO.cs" />
+    <Compile Include="DTOs\PlantWages\ExeProductionEntryReleaseTransactLogsDTO.cs" />
+    <Compile Include="DTOs\PlantWages\GetWagesReportAvailablePositionNumberViewDTO.cs" />
+    <Compile Include="DTOs\PlantWages\ProductionCardCalculateTotalPayotherDTO.cs" />
+    <Compile Include="DTOs\PlantWages\ProductionCardGroupAllDTO.cs" />
+    <Compile Include="DTOs\PlantWages\ProductionCardDTO.cs" />
+    <Compile Include="DTOs\PlantWages\SuratPeriodeComposite.cs" />
+    <Compile Include="DTOs\PlantWages\WagesProductionCardApprovalCompositeDTO.cs" />
+    <Compile Include="DTOs\PlantWages\WagesProductionCardApprovalDetailViewDTO.cs" />
+    <Compile Include="DTOs\PlantWages\WagesProductionCardApprovalDetailViewGroupDTO.cs" />
+    <Compile Include="DTOs\PlantWages\WagesReportDetailEmployeeDTO.cs" />
+    <Compile Include="DTOs\PlantWages\WagesReportSummaryDTO.cs" />
+    <Compile Include="DTOs\PlantWages\WagesReportSummaryProductionCardDTO.cs" />
+    <Compile Include="DTOs\PlanWeeklyProductionPlanningDTO.cs" />
+    <Compile Include="DTOs\ProcessSettingsAndLocationDTO.cs" />
+    <Compile Include="DTOs\SliderNewsInfoDTO.cs" />
+    <Compile Include="DTOs\MstGenLocationDTO.cs" />
+    <Compile Include="DTOs\TPOFeeSettingCalculationDTO.cs" />
+    <Compile Include="DTOs\TPOFee\GenerateP1TemplateAPDTO.cs" />
+    <Compile Include="DTOs\TPOFee\GenerateP1TemplateGLDTO.cs" />
+    <Compile Include="DTOs\TPOFee\TPOFeeAPCloseDTO.cs" />
+    <Compile Include="DTOs\TPOFee\TPOFeeAPOpenDTO.cs" />
+    <Compile Include="DTOs\TPOFee\TPOFeeApprovalViewDTO.cs" />
+    <Compile Include="DTOs\TPOFee\TPOFeeCalculationPlanDto.cs" />
+    <Compile Include="DTOs\TPOFee\TPOFeeCalculationDTO.cs" />
+    <Compile Include="DTOs\TPOFee\TPOFeeExeAPOpenViewDTO.cs" />
+    <Compile Include="DTOs\TPOFee\TPOFeeExeActualViewDTO.cs" />
+    <Compile Include="DTOs\TPOFee\TPOFeeExeGLAccruedDailyDTO.cs" />
+    <Compile Include="DTOs\TPOFee\TPOFeeExeGLAccruedDetailDTO.cs" />
+    <Compile Include="DTOs\TPOFee\TPOFeeExeGLAccruedHdrDTO.cs" />
+    <Compile Include="DTOs\TPOFee\TPOFeeExeGLAccruedViewListDTO.cs" />
+    <Compile Include="DTOs\TPOFee\TpoFeeHdrPlanDto.cs" />
+    <Compile Include="DTOs\TPOFee\TpoFeePlanViewDto.cs" />
+    <Compile Include="DTOs\TPOFee\TPOFeeProductionDailyPlanDto.cs" />
+    <Compile Include="DTOs\TPOFee\TPOFeeHdrDTO.cs" />
+    <Compile Include="DTOs\TPOFee\TPOFeeProductionDailyDTO.cs" />
+    <Compile Include="DTOs\TPOFee\TPOGenerateP1TemplateViewDTO.cs" />
+    <Compile Include="DTOs\Utils\UserDTO.cs" />
+    <Compile Include="DTOs\Utils\UtilFlowDTO.cs" />
+    <Compile Include="DTOs\Utils\UtilDelegationDto.cs" />
+    <Compile Include="DTOs\Utils\UtilResponsibilityDTO.cs" />
+    <Compile Include="DTOs\Utils\UtilUserResponsibilitiesRoleViewDTO.cs" />
+    <Compile Include="DTOs\Utils\UtilUsersResponsibilityDTO.cs" />
+    <Compile Include="DTOs\Utils\UtilRolesFunctionDTO.cs" />
+    <Compile Include="ExeReportByProcessFuncParent_Result.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ExeReportByProcessFunc_Result.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ExeReportByProcessView.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GenerateP1TemplateAP_Result.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GenerateP1TemplateGL_Result.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GetDeltaViewFunction_Result.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GetInventoryView_Result.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GetMaintenanceEquipmentStockFunction_Result.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GetReportByStatusTotalWorkHour_Result.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GetReportByStatus_Result.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GetProductionCardApprovalList_Result.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GetTPOReportsProduction_Result.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GetTransactionHistoryWagesProdcardCorrection_Result.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GetWagesProductionCardApprovalView_Result.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Inputs\PlantWages\ButtonStateInput.cs" />
+    <Compile Include="Inputs\PlantWages\GetProductionCardInputGroupAll.cs" />
+    <Compile Include="Inputs\Utils\UtilSecurityResponsibilitiesInput.cs" />
+    <Compile Include="MaintenanceExecutionInventoryFunction_Result.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MntcEquipmentStockFunction_Result.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MntcFulfillmentView.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MntcInventoryAllFunction_Result.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Outputs\ButtonState.cs" />
+    <Compile Include="Outputs\UserSession.cs" />
+    <Compile Include="Outputs\Responsibility.cs" />
+    <Compile Include="DTOs\TPOFee\TPOFeeReportsPackageCompositeDTO.cs" />
+    <Compile Include="DTOs\Utils\UtilFunctionDTO.cs" />
+    <Compile Include="DTOs\Utils\UtilRuleDTO.cs" />
+    <Compile Include="DTOs\TPOFee\TPOFeeReportsProductionDTO.cs" />
+    <Compile Include="DTOs\TPOFee\TPOFeeReportsSummaryCompositeDTO.cs" />
+    <Compile Include="DTOs\Utils\UtilRoleDTO.cs" />
+    <Compile Include="DTOs\Utils\TransactionFlowDTO.cs" />
+    <Compile Include="DTOs\Utils\TransactionHistoryDTO.cs" />
+    <Compile Include="DTOs\Utils\UtilFlowFunctionViewDTO.cs" />
+    <Compile Include="DTOs\Utils\UtilTransactionLogDTO.cs" />
+    <Compile Include="DTOs\WorkerAssignmentRemovalDTO.cs" />
+    <Compile Include="EMSSourceDataBrandView.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="EquipmentRequestView.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="EquipmentRequirementView.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ExeActualWorkHour.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ExeMaterialUsage.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ExeMaterialUsageView.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ExePlantActualWorkHoursView.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ExePlantCKSubmit.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ExePlantProductionEntry.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ExePlantProductionEntryVerification.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ExePlantProductionEntryVerificationView.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ExePlantWorkerAbsenteeism.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ExePlantWorkerAbsenteeismView.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ExePlantWorkerAssignment.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ExePlantWorkerBalancingMulti.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ExePlantWorkerBalancingSingle.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ExeProductionEntryMinimumValue.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ExeProductionEntryPrintView.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ExeProductionEntryRelease.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ExeProductionEntryReleaseTransactLogsView.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ExeReportByGroup.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ExeReportByGroupsMonthly.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ExeReportByGroupsWeekly.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ExeReportByProcess.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ExeReportByStatusMonthlyView.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ExeReportByStatusView.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ExeReportByStatusWeeklyView.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ExeReportDailyProductionAchievementView.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ExeReportEMSSubmitted.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ExeReportProdStockProcessView.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ExeTPOActualWorkHour.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ExeTPOProduction.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ExeTPOProductionEntryVerification.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ExeTPOProductionEntryVerificationView.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ExeTPOProductionView.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GetEMSSourceData_Result.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GetEquipmenrRequiremenrReport2_Result.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GetEquipmentRequirementItem_Result.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GetEquipmentRequirementReport_Result.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GetExeReportByGroupAnnualy_Result.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GetExeReportByGroupDaily_Result.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GetExeReportDailyProductionAchievement_Result.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GetLastChildLocation_Result.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GetLocationByResponsibilityView.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GetLocationsByLevel_Result.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GetLocationShift_Result.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GetLocations_Result.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GetMaintenanceEquipmentStockView_Result.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GetMstGenLocationsByParentCode_Result.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GetPastWeek_Result.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GetPlanPlantIndividualCapacityByReference_Result.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GetProcessFromProdCard_Result.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GetReportProdStockProcessAllUnitView_Result.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GetReportProdStockProcessView_Result.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GetReportSummaryDailyProductionTargets_Result.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GetReportSummaryProcessTargets_Result.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GetTotalWorkHoursPrev3Weeks_Result.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GetTransactionFlow_Result.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GetTransactionHistory_Result.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GetUserAdByRoleLocation_Result.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GetUserAndEmailPlanTPUSubmit_Result.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GetUserAndEmail_Result.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GetWagesReportAbsentDetailDialy_Result.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GetWagesReportAbsentDialyMore_Result.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GetWagesReportAbsentDialy_Result.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GetWorkerBrandAssignmentPlanningPlantTPK_Result.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="HMSSKTIS.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Include="Inputs\Execution\GetExeEMSSourceDataInput.cs" />
+    <Compile Include="Inputs\Execution\GetExeOthersProductionEntryPrintInput.cs" />
+    <Compile Include="Inputs\Execution\GetExePlantActualWorkHoursInput.cs" />
+    <Compile Include="Inputs\Execution\GetExePlantMaterialUsagesInput.cs" />
+    <Compile Include="Inputs\Execution\GetExePlantProductionEntryInput.cs" />
+    <Compile Include="Inputs\Execution\GetExePlantProductionEntryVerificationBrandInput.cs" />
+    <Compile Include="Inputs\Execution\GetExePlantWorkerAbsenteeismExcelDailyInput.cs" />
+    <Compile Include="Inputs\Execution\GetExePlantWorkerAbsenteeismExcelPieceRateInput.cs" />
+    <Compile Include="Inputs\Execution\GetExePlantWorkerAbsenteeismInput.cs" />
+    <Compile Include="Inputs\Execution\GetExePlantWorkerAssignmentExcelInput.cs" />
+    <Compile Include="Inputs\Execution\GetExePlantWorkerAssignmentInput.cs" />
+    <Compile Include="Inputs\Execution\GetExePlantWorkerLoadBalancingMulti.cs" />
+    <Compile Include="Inputs\Execution\GetExePlantWorkerLoadBalancingSingle.cs" />
+    <Compile Include="Inputs\Execution\GetExeProdStockInput.cs" />
+    <Compile Include="Inputs\Execution\GetExeReportByGroupInput.cs" />
+    <Compile Include="Inputs\Execution\GetExeReportByProcessInput.cs" />
+    <Compile Include="Inputs\Execution\GetExeReportByStatusInput.cs" />
+    <Compile Include="Inputs\Execution\GetExeReportDailyProductionInput.cs" />
+    <Compile Include="Inputs\Execution\GetExeTPOActualWorkHoursInput.cs" />
+    <Compile Include="Inputs\Execution\GetExeTPOProductionEntryVerificationInput.cs" />
+    <Compile Include="Inputs\Execution\GetExeTPOProductionInput.cs" />
+    <Compile Include="Inputs\GetUserAndEmailInput.cs" />
+    <Compile Include="Inputs\Planning\CalculatePlantTPKInput.cs" />
+    <Compile Include="Inputs\Planning\CalculatePlantTPUInput.cs" />
+    <Compile Include="Inputs\Planning\CalculateTPOTPKCheck.cs" />
+    <Compile Include="Inputs\Planning\CalculateTPOTPKInput.cs" />
+    <Compile Include="Inputs\Planning\MailInput.cs" />
+    <Compile Include="Inputs\Planning\PlanTPOTPKTotalBoxInput.cs" />
+    <Compile Include="Inputs\PlantWages\GetExeProductionEntryReleaseInput.cs" />
+    <Compile Include="Inputs\PlantWages\GetProductionCardApprovalDetailInput.cs" />
+    <Compile Include="Inputs\PlantWages\GetProductionCardApprovalListInput.cs" />
+    <Compile Include="Inputs\PlantWages\GetEblekReleaseApprovalInput.cs" />
+    <Compile Include="Inputs\PlantWages\GetProductionCardInput.cs" />
+    <Compile Include="Inputs\PlantWages\GetWagesReportAbsentViewInput.cs" />
+    <Compile Include="Inputs\PlantWages\GetWagesReportSummaryInput.cs" />
+    <Compile Include="Inputs\PlantWages\MailPlantWagesInput.cs" />
+    <Compile Include="Inputs\PlantWages\SuratPeriodeLaluInput.cs" />
+    <Compile Include="Inputs\PlantWages\WagesReportAvailablePositionNumberInput.cs" />
+    <Compile Include="Inputs\ProductAdjustmentInput.cs" />
+    <Compile Include="Inputs\Execution\GetGroupCodePopUpWorkerAssignmentInput.cs" />
+    <Compile Include="Inputs\GetAllEmployeeJobsDataActivesInput.cs" />
+    <Compile Include="Inputs\GetAllLocationsInput.cs" />
+    <Compile Include="Inputs\GetAllProcessSettingsInput.cs" />
+    <Compile Include="Inputs\GetAllProcessSettingsLocationsInput.cs" />
+    <Compile Include="Inputs\GetAllUnitsInput.cs" />
+    <Compile Include="Inputs\GetEquipmentRequestByIdInput.cs" />
+    <Compile Include="Inputs\GetEquipmentRequestsInput.cs" />
+    <Compile Include="Inputs\GetExePlantProductionEntryVerificationInput.cs" />
+    <Compile Include="Inputs\GetInventoryCurrentStockInput.cs" />
+    <Compile Include="Inputs\GetItemDisposalInput.cs" />
+    <Compile Include="Inputs\GetMaintenanceInventoryInput.cs" />
+    <Compile Include="Inputs\GetMaintenanceEquipmentItemConvertInput.cs" />
+    <Compile Include="Inputs\GetMasterProcessSettingsInput.cs" />
+    <Compile Include="Inputs\GetMstClosingPayrollInput.cs" />
+    <Compile Include="Inputs\GetMstGenProcessesSettingInput.cs" />
+    <Compile Include="Inputs\GetMstAbsentTypeInput.cs" />
+    <Compile Include="Inputs\GetMstGenLocationsByParentCodeInput.cs" />
+    <Compile Include="Inputs\GetMstGenProcessSettingLocationInput.cs" />
+    <Compile Include="Inputs\GetMstGenWeekInput.cs" />
+    <Compile Include="Inputs\GetMstMntcConvertInput.cs" />
+    <Compile Include="Inputs\GetMstPlantProductionGroupsInput.cs" />
+    <Compile Include="Inputs\GetMstGenBrandGroupInput.cs" />
+    <Compile Include="Inputs\GetBrandGroupMaterialInput.cs" />
+    <Compile Include="Inputs\GetBrandInput.cs" />
+    <Compile Include="Inputs\GetMstEmployeeJobsDataActivesInput.cs" />
+    <Compile Include="Inputs\GetMstGenListsInput.cs" />
+    <Compile Include="Inputs\BaseInput.cs" />
+    <Compile Include="Inputs\GetMstGenLocationInput.cs" />
+    <Compile Include="Inputs\GetPlanPlantGroupShiftInput.cs" />
+    <Compile Include="Inputs\Maintenance\GetEquipmentFulfillmentInput.cs" />
+    <Compile Include="Inputs\Maintenance\GetEquipmentReceivesInput.cs" />
+    <Compile Include="Inputs\Maintenance\GetEquipmentRepairItemUsage.cs" />
+    <Compile Include="Inputs\Maintenance\GetEquipmentRequirementSummaryInput.cs" />
+    <Compile Include="Inputs\Maintenance\GetInventoryStockInput.cs" />
+    <Compile Include="Inputs\Maintenance\GetMaintenanceExecutionInventoryAdjustmentInput.cs" />
+    <Compile Include="Inputs\Maintenance\GetPlantEquipmentRepairsInput.cs" />
+    <Compile Include="Inputs\Maintenance\GetEquipmentTransfersInput.cs" />
+    <Compile Include="Inputs\Maintenance\GetMaintenanceEquipmentStockReportInput.cs" />
+    <Compile Include="Inputs\Maintenance\GetMaintenanceExecutionQualityInspectionInput.cs" />
+    <Compile Include="Inputs\Maintenance\GetPlantEquipmentRepairsTPOInput.cs" />
+    <Compile Include="Inputs\Maintenance\GetRepairItemUsageInput.cs" />
+    <Compile Include="Inputs\Maintenance\MaintenanceExecutionInventoryViewInput.cs" />
+    <Compile Include="Inputs\MstHolidayInput.cs" />
+    <Compile Include="Inputs\GetMstTPOProductionGroupInput.cs" />
+    <Compile Include="Inputs\MstTPOFeeRateInput.cs" />
+    <Compile Include="Inputs\GetMasterTPOInfoInput.cs" />
+    <Compile Include="Inputs\GetMstPlantUnitsInput.cs" />
+    <Compile Include="Inputs\GetMstGenProcessesInput.cs" />
+    <Compile Include="Inputs\MstMntcItemLocationInput.cs" />
+    <Compile Include="Inputs\MstMntcItemInput.cs" />
+    <Compile Include="Inputs\MstGenBrandPackageItemInput.cs" />
+    <Compile Include="Inputs\GetMstTPOPackagesInput.cs" />
+    <Compile Include="Inputs\Planning\GetPlanningPlantIndividualCapacityByReferenceInput.cs" />
+    <Compile Include="Inputs\Planning\GetPlanningPlantIndividualCapacityWorkHourInput.cs" />
+    <Compile Include="Inputs\Planning\GetPlanningReportProductionTargetInput.cs" />
+    <Compile Include="Inputs\Planning\GetPlanningReportSummaryProcessTargetsInput.cs" />
+    <Compile Include="Inputs\Planning\GetPlanPlantAllocation.cs" />
+    <Compile Include="Inputs\Planning\GetTargetManualTPUInput.cs" />
+    <Compile Include="Inputs\Planning\GetPlanTPUsInput.cs" />
+    <Compile Include="Inputs\Planning\GetPlantTPKsInput.cs" />
+    <Compile Include="Inputs\Planning\GetPlantWIPStockInput.cs" />
+    <Compile Include="Inputs\Planning\GetTargetWPPInput.cs" />
+    <Compile Include="Inputs\Planning\GetTPOTPKInput.cs" />
+    <Compile Include="Inputs\PlanWeeklyProductionPlanningInput.cs" />
+    <Compile Include="Inputs\SortBaseInput.cs" />
+    <Compile Include="Inputs\TPOFee\GetTPOFeeAPCloseInput.cs" />
+    <Compile Include="Inputs\TPOFee\GetTPOFeeAPOpenInput.cs" />
+    <Compile Include="Inputs\TPOFee\GetTPOFeeExeAPOpenInput.cs" />
+    <Compile Include="Inputs\TPOFee\GetTPOFeeExeActualInput.cs" />
+    <Compile Include="Inputs\TPOFee\GetTPOFeeExeGLAccruedInput.cs" />
+    <Compile Include="Inputs\TPOFee\GetTPOFeeHdrPlanInput.cs" />
+    <Compile Include="Inputs\TPOFee\TPOReportsProductionInput.cs" />
+    <Compile Include="Inputs\TPOFee\TPOReportsSummaryInput.cs" />
+    <Compile Include="Inputs\TPOReportsPackageInput.cs" />
+    <Compile Include="Inputs\TransactionLogInput.cs" />
+    <Compile Include="Inputs\Utils\GetUtilSecurityRulesViewInput.cs" />
+    <Compile Include="InventoryByStatusView.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MaintenanceEquipmentFulfillmentDetailView.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MaintenanceEquipmentFulfillmentItemDetailView.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MaintenanceEquipmentFulfillmentView.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MaintenanceEquipmentStockView.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MaintenanceExecutionInventoryView.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MaintenanceItemConversionDestinationView.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MntcEquipmentFulfillment.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MntcEquipmentItemConvert.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MntcEquipmentItemDisposal.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MntcEquipmentMovement.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MntcEquipmentQualityInspection.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MntcEquipmentRepair.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MntcEquipmentRequest.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MntcInventory.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MntcInventoryAdjustment.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MntcInventoryAll.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MntcInventoryDeltaView.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MntcRepairItemUsage.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MntcRepairItemUsageView.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MntcRequestToLocation.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MstADTemp.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MstClosingPayroll.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MstGenBrand.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MstGenBrandGroup.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MstGenBrandPackageItem.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MstGenBrandPkgMapping.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MstGenEmpStatu.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MstGenHoliday.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MstGenList.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MstGenLocation.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MstGenLocStatu.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MstGenMaterial.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MstGenProcess.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MstGenProcessSetting.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MstGenProcessSettingsLocation.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MstGenStandardHour.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MstGenWeek.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MstMntcConvert.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MstMntcConvertGetItemDestinationView.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MstMntcItem.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MstMntcItemLocation.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MstPlantAbsentType.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MstPlantEmpJobsDataAcv.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MstPlantEmpJobsDataAll.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MstPlantProductionGroup.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MstPlantProductionGroupView.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MstPlantUnit.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MstPlantUnitView.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MstProcessBrandView.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MstTableauReport.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MstTPOFeeRate.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MstTPOInfo.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MstTPOPackage.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MstTPOProductionGroup.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="NewsInfo.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Outputs\Execution\ExeReportByStatusOutput.cs" />
+    <Compile Include="PlanPlantAllocation.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PlanPlantGroupShift.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PlanPlantIndividualCapacityByReferenceView.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PlanPlantIndividualCapacityReference.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PlanPlantIndividualCapacityWorkHour.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PlanPlantLineBalancing.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PlanPlantTargetProductionKelompok.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PlanPlantTargetProductionKelompokView.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PlanPlantWIPDetail.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PlanPlantWorkerBalancing.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PlanTargetProductionUnit.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PlanTmpWeeklyProductionPlanning.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PlanTPOTargetProductionKelompok.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PlanTPOTargetProductionKelompokBox.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PlanWeeklyProductionPlanning.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ProcessSettingsAndLocationView.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ProductAdjustment.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ProductionCard.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="QueueCopyDeltaView.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RoleButtonWagesApprovalDetail_Result.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="SSISGetSwitchBrand_Result.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="TargetProductionUnitPerBoxView.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="TargetProductionUnitView.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="TemporaryTableViewInventory.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="TPOFeeApprovalView.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="TPOFeeCalculation.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="TPOFeeCalculationPlan.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="TPOFeeExeActualView.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="TPOFeeExeGLAccruedListView.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="TPOFeeGLAccount.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="TPOFeeHdr.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="TPOFeeHdrPlan.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="TpoFeePlanView.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="TPOFeeProductionDaily.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="TPOFeeProductionDailyPlan.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="TPOFeeReportsProductionDailyView.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="TPOFeeReportsProductionWeeklyView.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="TPOFeeSettingCalculation.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="TPOGenerateP1TemplateView.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="TPOTargetProductionKelompokView.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="UserADResponsibilityRolesView.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="UtilDelegation.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="UtilFlow.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="UtilFlowFunctionView.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="UtilFunction.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="UtilResponsibility.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="UtilResponsibilityRule.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="UtilRole.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="UtilRolesFunction.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="UtilRolesFunctionView.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="UtilRule.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="UtilTransactionLog.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="UtilUserResponsibilitiesRoleView.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="UtilUsersResponsibility.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ViewInventory.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="WagesProductionCardApprovalDetailView.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="WagesProductionCardApprovalDetailViewGroup.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="WagesProductionCardApprovalView.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="WAGES_ABSENT_REPORT_BYEMPLOYEE_DETAIL_Result.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="WAGES_ABSENT_REPORT_BYEMPLOYEE_Result.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="WAGES_ABSENT_REPORT_BYGROUP_Result.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+    <Compile Include="WorkerAssignmentRemoval.cs">
+      <DependentUpon>HMSSKTIS.tt</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="HMSSKTIS.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>HMSSKTIS.cs</LastGenOutput>
+    </None>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\HMS.SKTIS.Core\HMS.SKTIS.Core.csproj">
+      <Project>{a6a6706f-9385-4f85-b9b6-5dfd4ef88db8}</Project>
+      <Name>HMS.SKTIS.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\HMS.SKTIS.Core\HMS.SKTIS.Core.csproj">
+      <Project>{a6a6706f-9385-4f85-b9b6-5dfd4ef88db8}</Project>
+      <Name>HMS.SKTIS.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

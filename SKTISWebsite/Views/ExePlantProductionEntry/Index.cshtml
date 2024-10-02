@@ -1,0 +1,2254 @@
+﻿@model SKTISWebsite.Models.ExePlantProductionEntry.InitExePlantProductionEntryViewModel
+@using HMS.SKTIS.Application.Resources
+@using SKTISWebsite.Helper
+@{ Html.SetPageTitle(" Production Entry"); }
+@* dummy button to focus after save row *@
+<button type="button" class="btn-primary" style="position: absolute; left: -1000px;">Dummy</button>
+<div class="container-fluid" data-bind="with: gridView">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="col-lg-6">
+                <div class="row">
+                    <label class="form-label col-lg-4">
+                        Location
+                    </label>
+                    <div class="col-lg-2">
+                        @*@Html.DropDownList("ddlFilterLocationCode", new SelectList(Model.PLNTChildLocationLookupList, "LocationCode", "LocationCode"),
+                        new
+                        {
+                            @class = "selectpicker show-tick form-control",
+                            id = "ddlFilterLocationCode",
+                            data_live_search = "true",
+                            data_bind = "value:$root.filterLocationCode, event : { change : $root.onLocationCodeChange}, isDisabled: $root.isLoading(), optionsAfterRender: locationDesc"
+                        })*@
+                        <select id="ddlFilterLocationCode"
+                                class="selectpicker show-tick form-control"
+                                data-live-search="true"
+                                data-bind="selectPicker:$root.filterLocationCode, optionsText: 'LocationCode', optionsValue : 'LocationCode', optionsAfterRender: locationDesc, selectPickerOptions: { optionsArray: $root.locationSelectList }, event : { change : $root.onLocationCodeChange}, isDisabled: $root.isLoading()"></select>
+                    </div>
+                    <div class="col-lg-4">
+                        <input type="text" class="form-control" readonly="readonly" data-bind="value:$root.filterLocationName">
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="form-label col-lg-4">
+                        Unit
+                    </label>
+                    <div class="col-lg-6">
+                        <select class="selectpicker show-tick form-control" id="ddlUnitCodeFilter"
+                                data-live-search="true"
+                                data-bind="selectPicker: $root.filterUnitCode, optionsText: 'Text', optionsValue : 'Value', selectPickerOptions: { optionsArray: $root.unitCodeSelectList }, event : {change : $root.onUnitFilterChange}, isDisabled: $root.isLoading()"></select>
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="form-label col-lg-4">
+                        Shift
+                    </label>
+                    <div class="col-lg-6">
+                        <select class="selectpicker show-tick form-control" id="ddlShiftFilter"
+                                data-live-search="true"
+                                data-bind="selectPicker: $root.filterShift, optionsText: 'Text', optionsValue : 'Value', selectPickerOptions: { optionsArray: $root.shiftSelectList }, event : {change : $root.onShiftChange}, isDisabled: $root.isLoading()"></select>
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="form-label col-lg-4">
+                        Process
+                    </label>
+                    <div class="col-lg-6">
+                        <select class="selectpicker show-tick form-control" id="ddlProcessGroupFilter"
+                                data-live-search="true"
+                                data-bind="selectPicker: $root.filterProcessGroup, optionsText: 'Text', optionsValue : 'Value', selectPickerOptions: { optionsArray: $root.processGroupSelectList }, event : {change : $root.onProcessFilterChange}, isDisabled: $root.isLoading()"></select>
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="form-label col-lg-4">
+                        Group
+                    </label>
+                    <div class="col-lg-6">
+                        <select class="selectpicker show-tick form-control" id="ddlGroupFilter"
+                                data-live-search="true"
+                                data-bind="selectPicker: $root.filterGroup, optionsText: 'Text', optionsValue : 'Value', selectPickerOptions: { optionsArray: $root.groupSelectList }, event: { change: $root.onGroupFilterChange }, isDisabled: $root.isLoading()"></select>
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="form-label col-lg-4">
+                        Brand
+                    </label>
+                    <div class="col-lg-6">
+                        <select class="selectpicker show-tick form-control" id="ddlBrandFilter"
+                                data-live-search="true"
+                                data-bind="selectPicker: $root.filterBrand, optionsText: 'Text', optionsValue : 'Value', selectPickerOptions: { optionsArray: $root.brandSelectList }, event : {change : $root.onBrandFilterChange}, isDisabled: $root.isLoading()"></select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="row">
+                    <label class="form-label col-lg-3">
+                        Year
+                    </label>
+                    <div class="col-lg-4">
+                        @Html.DropDownList("filterYear", Model.YearSelectList,
+                        new Dictionary<string, object>
+                            { { "data-bind", "value:$root.filterYear, event : { change : $root.onYearSelectedChange}, isDisabled: $root.isLoading()" },
+                            { "class", "selectpicker show-tick form-controlt" },
+                            {"data-live-search","true"},{"id","filterYear"} })
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="form-label col-lg-3">
+                        Week
+                    </label>
+                    <div class="col-lg-4">
+                        <select id="filterWeek" class="selectpicker show-tick form-control" data-live-search="true"
+                                data-bind="selectPicker: $root.filterWeek, optionsText: 'Value', optionsValue : 'Text', selectPickerOptions: { optionsArray: $root.WeekFromSelectList },  event : { change : $root.onWeekFilterChange }, isDisabled: $root.isLoading()"></select>
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="form-label col-lg-3" id="rdWeek">
+                        Date
+                    </label>
+                    <div class="col-lg-4">
+                        <select id="filterDate" class="selectpicker show-tick form-control" data-live-search="true"
+                                data-bind="selectPicker: $root.filterDate, optionsText: 'Value', optionsValue : 'Text', selectPickerOptions: { optionsArray: $root.DateFromSelectList }, event : {change : $root.onDateFilterChange}, isDisabled: $root.isLoading()"></select>
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="form-label col-lg-3">
+                        Closing Payroll
+                    </label>
+                    <div class="col-lg-4">
+                        <input type="text" class="form-control" data-bind="value: $root.filterClosingPayroll" disabled>
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="form-label col-lg-3">
+                        TPK Target
+                    </label>
+                    <div class="col-lg-4">
+                        <input type="text" class="form-control" data-bind="value: $root.filterTPKPlant" disabled>
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="form-label col-lg-3">
+                        Target
+                    </label>
+                    <div class="col-lg-4">
+                        <input type="text" class="form-control" data-bind="value: $root.filterTarget" disabled>
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="form-label col-lg-3">
+                        Actual
+                    </label>
+                    <div class="col-lg-4">
+                        <input type="text" class="form-control" data-bind="value: $root.filterActual" disabled>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <p class="bg-primary">Satuan GL & GT: Ratusan Batang. Satuan PK & BD: Box Pasok</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="action-btn">
+                        @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.View.ToString()))
+{
+    <button type="button" class="btn btn-primary" data-bind="click:$root.search, disable: $root.isBusy()">View</button>
+}
+                        @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.Save.ToString()))
+                        {
+                            <button type="button" class="btn btn-primary" data-bind="click:$root.saveData, enable: $root.canSaveData() && !$root.isFilterChange() && !$root.isBusy() && $root.previousDateCheck()" id="btnSaveEblek">Save</button>
+                        }
+                        @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.Submit.ToString()))
+{
+    <button type="button" class="btn btn-primary" data-bind="click:$root.submit, enable: $root.disableBtnSubmit() && !$root.isFilterChange() && !$root.isBusy()">Submit</button>
+}
+                        @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.CancelSubmit.ToString()))
+{
+    <button type="button" class="btn btn-primary" data-bind="click:$root.cancelSubmit, enable:$root.disableBtnCancelSubmit() && !$root.isBusy()">Cancel Submit</button>
+}
+                        @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.Allocation.ToString()))
+{
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#allocated" data-bind="click:$root.ShowAllocation, enable: $root.disableBtnAllocation && !$root.isBusy()">Allocation</button>
+}
+                        @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.Excel.ToString()))
+                        {
+                            using (Html.BeginForm("GenerateExcel", "ExePlantProductionEntry", FormMethod.Post, new { @data_bind = "submit: $root.generateExcel" }))
+                            {
+                            <input type="hidden" name="locationCompat">
+                                <input type="hidden" name="locationCode">
+                                <input type="hidden" name="unitCode">
+                                <input type="hidden" name="shift">
+                                <input type="hidden" name="process">
+                                <input type="hidden" name="group">
+                                <input type="hidden" name="brandCode">
+                                <input type="hidden" name="year">
+                                <input type="hidden" name="week">
+                                <input type="hidden" name="date">
+    <button type="submit" class="btn btn-primary" data-bind="enable: !$root.isFilterChange() && !$root.isBusy()">Excel</button>
+                            }
+                        }
+
+                        @*@Html.Partial("GridViewPageSizeSelector")*@
+                    </div>
+                </div>
+            </div>
+            <div class="table-overflow">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr class="head">
+                            <th colspan="2">Employee</th>
+                            <th colspan="3">Production</th>
+                            <th rowspan="2">Absent</th>
+                            <th rowspan="2">Absent Code</th>
+                        </tr>
+                        <tr class="head">
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th class="widthsmall">Capacity</th>
+                            <th class="widthsmall">Target</th>
+                            <th class="widthsmall">Actual</th>
+                        </tr>
+                    </thead>
+                    <tbody data-bind="foreach: {data: listDataItems, afterAdd: showGrid}" id="tbodyGrid">
+                        @*ProdTarget editable*@
+                        <tr data-bind="if: ($parent.editingRowIndex() !== $index() && $root.saveType() == 'target'), click: $parent.editInline3.bind($data,$index())">
+                            <td><span data-bind="text:$data.EmployeeID"></span></td>
+                            <td><span data-bind="text:$data.EmployeeName"></span></td>
+                            <td><span data-bind="decimal:$data.ProdCapacity, precision:3"></span></td>
+                            <td class="current"><span data-bind="decimal:$data.ProdTarget"></span></td>
+                            <td><span data-bind="decimal:$data.ProdActual"></span></td>
+                            <td class="current"><span data-bind="text:$data.AbsentType"></span></td>
+                            <td><span data-bind="text:$data.AbsentCodeEblek"></span></td>
+                        </tr>
+                        @*Loading after save pertama*@
+                        <tr data-bind="if: ($parent.editingRowIndex() !== $index() && $root.saveType() == 'actual' && !$root.canSaveData()), click: $parent.editInline3.bind($data,$index())">
+                            <td><span data-bind="text:$data.EmployeeID"></span></td>
+                            <td><span data-bind="text:$data.EmployeeName"></span></td>
+                            <td><span data-bind="decimal:$data.ProdCapacity, precision:3"></span></td>
+                            <td><span data-bind="decimal:$data.ProdTarget"></span></td>
+                            <td><span data-bind="decimal:$data.ProdActual"></span></td>
+                            <td><span data-bind="text:$data.AbsentType"></span></td>
+                            <td><span data-bind="text:$data.AbsentCodeEblek"></span></td>
+                        </tr>
+                        @*ProdTarget editable*@
+                        <tr data-bind="if: ($parent.editingRowIndex() !== $index() && $root.saveType() == 'actual' && $root.canSaveData()), click: $parent.editInline3.bind($data,$index())">
+                            <td><span data-bind="text:$data.EmployeeID"></span></td>
+                            <td><span data-bind="text:$data.EmployeeName"></span></td>
+                            <td><span data-bind="decimal:$data.ProdCapacity, precision:3"></span></td>
+                            <td><span data-bind="decimal:$data.ProdTarget"></span></td>
+                            <td class="current"><span data-bind="decimal:$data.ProdActual"></span></td>
+                            <td class="current"><span data-bind="text:$data.AbsentType"></span></td>
+                            <td><span data-bind="text:$data.AbsentCodeEblek"></span></td>
+                        </tr>
+                        @*ProdTarget submited*@
+                        <tr data-bind="if: ($parent.editingRowIndex() !== $index() && ($root.saveType() == 'submit'))">
+                            <td><span data-bind="text:$data.EmployeeID"></span></td>
+                            <td><span data-bind="text:$data.EmployeeName"></span></td>
+                            <td><span data-bind="decimal:$data.ProdCapacity, precision:3"></span></td>
+                            <td><span data-bind="decimal:$data.ProdTarget"></span></td>
+                            <td><span data-bind="decimal:$data.ProdActual"></span></td>
+                            <td><span data-bind="text:$data.AbsentType"></span></td>
+                            <td><span data-bind="text:$data.AbsentCodeEblek"></span></td>
+                        </tr>
+                        @*ProdTarget editable*@
+                        <tr data-bind="validationOptions: {insertMessages: false, showTooltip:true, decorateInputElement: true, errorElementClass: 'input-error'}, inlineProccess:[$parent,$data],
+                                   if:($parent.editingRowIndex() === $index() && $root.saveType() == 'target'),
+                                   click: $parent.selectRow.bind($data, $index()),
+                                    event: {keydown:$parent.keydown}">
+                            <td><span data-bind="text:$data.EmployeeID"></span></td>
+                            <td><span data-bind="text:$data.EmployeeName"></span></td>
+                            <td><span data-bind="decimal:$data.ProdCapacity, precision:3"></span></td>
+                            <td class="current">
+                                <!-- ko if: ($root.IsAbsentCode($data) || $root.IsFromAbsent($data) || $root.checkMo($data)) -->
+                                <input data-bind="value:$data.ProdTarget, valueUpdate:'afterkeydown'" class="form-control" type="text" data-sktis-validation="decimal" />
+                                <!-- /ko -->
+                                <!-- ko if: !($root.IsAbsentCode($data) || $root.IsFromAbsent($data) || $root.checkMo($data)) -->
+                                <span data-bind="decimal:$data.ProdTarget">0</span>
+                                <!-- /ko -->
+                            </td>
+                            <td><span data-bind="decimal:$data.ProdActual"></span></td>
+                            <td class="current">
+                                <!-- ko if: ($root.checkMo($data) || $root.IsFromAbsent($data))  -->
+                                <span data-bind="text:$data.AbsentType"></span>
+                                <!-- /ko -->
+                                <!-- ko if: !($root.checkMo($data) || $root.IsFromAbsent($data))  -->
+                                <select class="show-tick form-control absent-type" id="ddlAbsentType"
+                                        data-live-search="true"
+                                        data-bind="value: $data.AbsentTypeComputed, options: $root.AbsentSelectList,
+                                            optionsText: 'Text', optionsValue : 'Value', optionsCaption:'', isSelectPicker:{}, event : {change : $root.onAbsenTypeChange($data.ProdTarget, $data.ProdActual, $data.AbsentCodeEblek, $data.AbsentType, $data.ProdCapacity)}"></select>
+                                <!-- /ko -->
+                            </td>
+                            <td><span class="AbsentCodeComputed" data-bind="text:$data.AbsentCodeEblek"></span></td>
+                        </tr>
+                        @*ProdActual editable*@
+                        <tr data-bind="validationOptions: {insertMessages: false, showTooltip:true, decorateInputElement: true, errorElementClass: 'input-error'}, inlineProccess:[$parent,$data],
+                                   if:($parent.editingRowIndex() === $index() && $root.saveType() == 'actual'),
+                                   click: $parent.selectRow.bind($data, $index()),
+                                    event: {keydown:$parent.keydown}">
+                            <td><span data-bind="text:$data.EmployeeID"></span></td>
+                            <td><span data-bind="text:$data.EmployeeName"></span></td>
+                            <td><span data-bind="decimal:$data.ProdCapacity, precision:3"></span></td>
+                            <td><span data-bind="decimal:$data.ProdTarget"></span></td>
+                            <td class="current">
+                                <!-- ko if: ($root.IsAbsentCode($data) || $root.IsFromAbsent($data) || $root.checkMo($data)) -->
+                                <input data-bind="value:$data.ProdActual, valueUpdate:'afterkeydown', event: { 'keyup': $root.setActualChange.bind($parent,$data,$index()) }" class="form-control" type="text" data-sktis-validation="decimal" />
+                                <!-- /ko -->
+                                <!-- ko if: !($root.IsAbsentCode($data) || $root.IsFromAbsent($data) || $root.checkMo($data)) -->
+                                <span data-bind="decimal:$data.ProdActual"></span>
+                                <!-- /ko -->
+                            </td>
+                            <td class="current">
+                                <!-- ko if: ($root.checkMo($data) || $root.IsFromAbsent($data))-->
+                                <span data-bind="text:$data.AbsentType"></span>
+                                <!-- /ko -->
+                                <!-- ko if: !($root.checkMo($data) || $root.IsFromAbsent($data)) -->
+                                <select class="show-tick form-control absent-type" id="ddlAbsentType"
+                                        data-live-search="true"
+                                        data-bind="value: $data.AbsentTypeComputed, options: $root.AbsentSelectList,
+                                            optionsText: 'Text', optionsValue : 'Value', optionsCaption:'', optionsAfterRender: $root.afterRenderDataOnGrid,isSelectPicker:{}, event : {change : $root.onAbsenTypeChange($data.ProdTarget, $data.ProdActual, $data.AbsentCodeEblek, $data.AbsentType, $data.ProdCapacity)}"></select>
+                                <!-- /ko -->
+                            </td>
+                            <td><span class="AbsentCodeComputed" data-bind="text:$data.AbsentCodeEblek"></span></td>
+                        </tr>
+                    </tbody>
+                    <tbody data-bind="visible: !listDataItems().length">
+                        <tr>
+                            <td colspan="7" class="empty-row-message"><div class="loader"></div></td>
+                        </tr>
+                    </tbody>
+                    <tfoot data-bind="visible: listDataItems().length" id="tfooterGrid">
+                        <tr class="total">
+                            <td class="left">Total</td>
+                            <td class="right"><span data-bind="text: listDataItems().length"></span></td>
+                            <td class="right"><span data-bind="decimal: $root.totalCapacity, precision:3"></span></td>
+                            <td class="right"><span data-bind="decimal: $root.filterTarget"></span></td>
+                            <td class="right"><span data-bind="decimal: $root.filterActual"></span></td>
+                            <td class="right" colspan="2"><span data-bind="text: $root.totalAbsent"></span></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    @Html.Partial("TransactionHistory")
+                </div>
+            </div>
+            <div data-bind="if: (listDataItems() != null && listDataItems().length !== 0)">
+                @Html.Partial("GridViewFooter")
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="allocated" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">List of Employee</h4>
+            </div>
+            <div class="modal-body">
+                <div class="col-lg-12">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <div class="checkbox nomargin">
+                                        <label><input type="checkbox" data-bind="click: $root.selectAll, checked: $root.allSelected" name="check_all">Check All</label>
+                                    </div>
+                                </div>
+                                <div class="panel-body scrolled" data-bind="foreach: allocationList">
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" data-bind="checked: Status, click: $root.checkedAllorNot" name="checked" class="idRow">
+                                            <span data-bind="text: EmployeeName"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" data-bind="click: $root.saveAllocations">Save</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal End -->
+@section Scripts
+{
+    <script src="~/Scripts/app/globalfunctions.js" type="text/javascript"></script>
+    <script src="~/Scripts/common/app.GridViewModel.js" type="text/javascript"></script>
+    <script src="~/Scripts/common/app.Extenders.js" type="text/javascript"></script>
+    <script type="text/javascript">
+
+        
+
+    (function(app) {
+        app.EditGrid = function() {
+            var self = this;
+            self.firstInitFromUrl = ko.observable(false);
+            if (typeof '@Model.Param1LocationCode' != 'undefined' && '@Model.Param1LocationCode') {
+                self.firstInitFromUrl(true);
+            };
+            self.isFilterChange = ko.observable(true);
+            self.locationSelectList = ko.observableArray(@Html.Raw(Json.Encode(@Model.PLNTChildLocationLookupList)));
+            self.itemLocations = @Html.Raw(Json.Encode(@Model.PLNTChildLocationLookupList));
+            self.absentTypes = @Html.Raw(Json.Encode(@Model.AbsentTypeLookupLists));
+            self.filterLocationCode = ko.observable($("#ddlFilterLocationCode").val());
+            self.filterLocationName = ko.observable();
+            self.filterUnitCode = ko.observable('');
+            self.filterShift = ko.observable($("#ddlShiftFilter").val());
+            self.filterProcessGroup = ko.observable('');
+            self.filterGroup = ko.observable('');
+            self.filterBrand = ko.observable('');
+            self.filterYear = ko.observable('@Model.DefaultYear');
+            self.filterWeek = ko.observable('@Model.DefaultWeek');
+            self.filterBrandCode = ko.observable('@Model.DefaultBrandCode');
+            self.filterTPKPlant = ko.observable('');
+            self.filterDate = ko.observable(moment().toDate());
+            self.filterClosingPayroll = ko.observable('');
+            self.initDate = false;
+            self.firstLoad = true;
+            self.canSaveData = ko.observable(false);
+            self.previousDateCheck = ko.observable(false);
+            self.disableBtnSubmit = ko.observable(false);
+            self.disableBtnCancelSubmit = ko.observable(false);
+            self.disableBtnAllocation = ko.observable(true);
+            self.saveType = ko.observable("target");
+            self.MinStickPerHour = ko.observable();
+            self.StdStickPerHour = ko.observable();
+            self.CalculationAbsentType = ko.observable();
+            self.IsHolidayOrNot = ko.observable();
+            self.isLoading = ko.observable(true);
+            self.isActual = ko.observable(false);
+            self.allAbsentData = ko.observableArray([]);
+
+            self.isBusy = ko.observable(false);
+            $("#tbodyGrid").hide();
+            $("#tfooterGrid").hide();
+            self.newData = {
+                ProdTarget: ko.observable(''),
+                ProdActual: ko.observable(''),
+                AbsentType: ko.observable(''),
+                AbsentCodeEblek: ko.observable('')
+            };
+
+            showGrid = function(elements) { 
+                $(function(){
+                    $("#tbodyGrid").show();
+                    $("#tfooterGrid").show();
+                });
+            }
+
+            self.checkMo = function(data){
+                if(jQuery.isFunction( data.AbsentType )){
+                    return (data.AbsentType() === 'Multiskill Out') || (data.AbsentType() === 'Tugas Luar');
+                }else{
+                    return (data.AbsentType === 'Multiskill Out') || (data.AbsentType === 'Tugas Luar');
+                }
+            };
+
+            self.IsFromAbsent = function(data){
+                if(jQuery.isFunction( data.IsFromAbsenteeism )){
+                    return data.IsFromAbsenteeism() == true;
+                }else{
+                    return data.IsFromAbsenteeism === true;
+                }
+            };
+            @*SLP,SL4, SLS, LL, LO, LP, LP1, TL, PG, SB*@
+            self.IsAbsentCode = function(data){
+                if(jQuery.isFunction( data.AbsentCodeEblek )){
+                    return data.AbsentCodeEblek() == 'SLP' || data.AbsentCodeEblek() == 'SL4' || data.AbsentCodeEblek() == 'SLS' || data.AbsentCodeEblek() == 'LO'
+                        || data.AbsentCodeEblek() == 'LP' || data.AbsentCodeEblek() == 'LP1' || data.AbsentCodeEblek() == 'TL'
+                        || data.AbsentCodeEblek() == 'PG' || data.AbsentCodeEblek() == 'SB' || data.AbsentType() == 'Tugas HUT'
+                        || data.AbsentCodeEblek() == '';
+                }else{
+                    return data.AbsentCodeEblek === 'SLP' || data.AbsentCodeEblek === 'SL4' || data.AbsentCodeEblek === 'SLS' || data.AbsentCodeEblek === 'LO'
+                        || data.AbsentCodeEblek === 'LP' || data.AbsentCodeEblek === 'LP1' || data.AbsentCodeEblek === 'TL'
+                        || data.AbsentCodeEblek === 'PG' ||data.AbsentCodeEblek === 'SB'|| data.AbsentType === 'Tugas HUT'
+                        || data.AbsentCodeEblek === '';
+                }
+            };
+
+
+            self.onLocationCodeChange = function(callback) {
+                if (!self.firstLoad && !self.isLoading()) {
+                    self.isLoading(true);
+                    self.canSaveData(false);
+                    async.series([
+                        function(cb) {
+                            self.getLocationNameFilter(cb);
+                        },
+                        function(cb) {
+                            self.getUnitCodeSelectListByLocation(cb);
+                        },
+                        function(cb) {
+                            self.getShiftSelectList(cb);
+                        },
+                        function(cb) {
+                            self.getprocessGroupSelectListByLocation(cb);
+                        },
+                        function(cb) {
+                            self.getGroupFromExePlantProductionEntryVerificationByLocationUnitAndProcess(cb);
+                        },
+                        function(cb) {
+                            self.getBrandFromExePlantProductionEntryVerificationByLocationUnitAndProcess(cb);
+                        },
+                        function(cb) {
+                            self.GetPlanTpkByGroup(cb);
+                        }
+                    // self.getClosingPayroll();
+                    ], function() {
+                        self.isLoading(false);
+                    });
+                }
+            };
+
+            self.onYearSelectedChange = function() {
+                if (!self.firstLoad && !self.isLoading()) {
+
+                    self.isLoading(true);
+                    self.canSaveData(false);
+                    async.series([
+                        function(cb) {
+                            self.GetWeekFromSelectList(cb);
+                        },
+                        function(cb) {
+                            self.setDateRange(cb);
+                        },
+                        function(cb) {
+                            self.getClosingPayroll(cb);
+                        },
+                        function(cb) {
+                            self.getUnitCodeSelectListByLocation(cb);
+                        },
+                        function(cb) {
+                            self.getShiftSelectList(cb);
+                        },
+                        function(cb) {
+                            self.getprocessGroupSelectListByLocation(cb);
+                        },
+                        function(cb) {
+                            self.getGroupFromExePlantProductionEntryVerificationByLocationUnitAndProcess(cb);
+                        },
+                        function(cb) {
+                            self.getBrandFromExePlantProductionEntryVerificationByLocationUnitAndProcess(cb);
+                        },
+                        function(cb) {
+                            self.GetPlanTpkByGroup(cb);
+                        }
+                    ], function() {
+                        self.isLoading(false);
+                    });
+                }
+            };
+
+            self.onWeekFilterChange = function() {
+                if (!self.firstLoad && !self.isLoading()) {
+
+                    self.isLoading(true);
+                    self.canSaveData(false);
+                    async.series([
+                        function(cb) {
+                            self.setDateRange(cb);
+                        },
+                        function(cb) {
+                            self.getClosingPayroll(cb);
+                        },
+                        function(cb) {
+                            self.getUnitCodeSelectListByLocation(cb);
+                        },
+                        function(cb) {
+                            self.getShiftSelectList(cb);
+                        },
+                        function(cb) {
+                            self.getprocessGroupSelectListByLocation(cb);
+                        },
+                        function(cb) {
+                            self.getGroupFromExePlantProductionEntryVerificationByLocationUnitAndProcess(cb);
+                        },
+                        function(cb) {
+                            self.getBrandFromExePlantProductionEntryVerificationByLocationUnitAndProcess(cb);
+                        },
+                        function(cb) {
+                            self.GetPlanTpkByGroup(cb);
+                        }
+                    ], function() {
+                        self.isLoading(false);
+                    });
+                }
+            }
+
+            //get location name by location code
+            self.getLocationNameFilter = function(cb) {
+                for (var i = 0; i < self.itemLocations.length; i++) {
+                    if (self.itemLocations[i].LocationCode == self.filterLocationCode()) {
+                        self.filterLocationName(self.itemLocations[i].LocationName);
+                        if (typeof cb != 'undefined') cb();
+                        break;
+                    }
+                }
+
+            };
+            self.onUnitFilterChange = function() {
+                if (!self.firstLoad && !self.isLoading()) {
+                    self.isLoading(true);
+                    self.canSaveData(false);
+                    async.series([
+                        function(cb) {
+                            self.getGroupFromExePlantProductionEntryVerificationByLocationUnitAndProcess(cb);
+                        },
+                        function(cb) {
+                            self.getBrandFromExePlantProductionEntryVerificationByLocationUnitAndProcess(cb);
+                        },
+                        function(cb) {
+                            self.GetPlanTpkByGroup(cb);
+                        }
+                    ], function() {
+                        self.isLoading(false);
+                    });
+                }
+            };
+
+            self.onProcessFilterChange = function() {
+                if (!self.firstLoad && !self.isLoading()) {
+                    self.isLoading(true);
+                    self.canSaveData(false);
+                    async.series([
+                        function(cb) {
+                            self.getGroupFromExePlantProductionEntryVerificationByLocationUnitAndProcess(cb);
+                        },
+                        function(cb) {
+                            self.getBrandFromExePlantProductionEntryVerificationByLocationUnitAndProcess(cb);
+                        },
+                        function(cb) {
+                            self.GetPlanTpkByGroup(cb);
+                        }
+                    ], function() {
+                        self.isLoading(false);
+                    });
+                }
+            };
+
+            self.onBrandFilterChange = function() {
+                if (!self.firstLoad && !self.isLoading()) {
+                    self.isLoading(true);
+
+                    async.series([
+                        function(cb) {
+                            self.GetPlanTpkByGroup(cb);
+                        }
+                    ], function() {
+                        self.isLoading(false);
+                    });
+                }
+            }
+
+            self.onGroupFilterChange = function() {
+                if (!self.firstLoad && !self.isLoading()) {
+                    self.isLoading(true);
+                    self.canSaveData(false);
+                    async.series([
+                        function(cb) {
+                            self.GetPlanTpkByGroup(cb);
+                        },
+                        function(cb) {
+                            self.getBrandFromExePlantProductionEntryVerificationByLocationUnitAndProcess(cb);
+                        },
+                    ], function() {
+                        self.isLoading(false);
+                    });
+                }
+            }
+
+            self.onDateFilterChange = function() {
+                if (!self.firstLoad && !self.isLoading()) {
+                    self.canSaveData(false);
+                    async.series([
+                        function(cb) {
+                            self.getClosingPayroll(cb);
+                        },
+                        function(cb) {
+                            self.GetPlanTpkByGroup(cb);
+                        },
+                        function(cb){
+                            self.getGroupFromExePlantProductionEntryVerificationByLocationUnitAndProcess(cb);
+                        }
+                    ], function() {
+                        self.isLoading(false);
+                    });
+                }
+
+                var today = moment();
+                var date = moment(self.filterDate(), "DD/MM/YYYY");
+                if (date.isAfter(today)) {
+                    self.previousDateCheck(false);
+                } else {
+                    self.previousDateCheck(true);
+                }
+                //console.log(date.isAfter(today), self.previousDateCheck());
+            }
+
+            self.onShiftChange = function() {
+                if (!self.firstLoad && !self.isLoading()) {
+                    self.isLoading(true);
+                    self.canSaveData(false);
+                }
+            }
+
+            //prepare unitCode selectlist data
+            self.unitCodeSelectList = ko.observableArray();
+            self.getUnitCodeSelectListByLocation = function(cb) {
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantProductionEntry/GetUnitCodeSelectListByLocationCode"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: {
+                        LocationCode: self.filterLocationCode()
+                    },
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#ddlUnitCodeFilter').find('option').remove();
+                        $('#ddlUnitCodeFilter').selectpicker('refresh');
+                        self.unitCodeSelectList(data);
+                        if(self.firstInitFromUrl()){
+                            self.filterUnitCode('@Model.Param2UnitCode');
+                        }
+                    },
+                    complete: function() {
+                        if (typeof cb != 'undefined') cb();
+                    }
+                });
+            };
+
+
+            self.processGroupSelectList = ko.observableArray();
+            self.getprocessGroupSelectListByLocation = function(cb) {
+                return $.ajax({
+                    url: @Html.BaseUrl("ExePlantProductionEntry/GetProcessGroupSelectListByLocationCode"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: {
+                        locationCode: self.filterLocationCode(),
+                        unit: self.filterUnitCode(),
+                        shift: self.filterShift(),
+                        productionDate: self.filterDate()
+                    },
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#ddlProcessGroupFilter').find('option').remove();
+                        $('#ddlProcessGroupFilter').selectpicker('refresh');
+
+                        ////console.log(self.processGroupSelectList()[0]);
+                        var processModel = [];
+                        $.each(data, function(index, value) {
+                            processModel.push({ "Text": value.Text, "Value": value.Text });
+                        });
+                        self.processGroupSelectList(processModel);
+                        if(data.length > 0)
+                            self.filterProcessGroup(processModel[0].Value);
+
+                        if(self.firstInitFromUrl()){
+                            self.filterGroup('@Model.Param4ProcessGroup');
+                        }
+                    },
+                    complete: function() {
+                        if (typeof cb != 'undefined') cb();
+                    }
+                });
+            };
+
+            self.groupSelectList = ko.observableArray();
+            self.getGroupFromExePlantProductionEntryVerificationByLocationUnitAndProcess = function(cb) {
+                if (self.filterProcessGroup() && self.filterUnitCode()) {
+                    return $.ajax({
+                        url: @Html.BaseUrl("ExePlantProductionEntry/GetGroupFromExePlantProductionEntryVerificationByLocationUnitAndProcess"),
+                        type: 'GET',
+                        contentType: 'application/json',
+                        data: {
+                            locationCode: self.filterLocationCode(),
+                            unit: self.filterUnitCode(),
+                            shift: self.filterShift(),
+                            processGroup: self.filterProcessGroup(),
+                            productionDate: self.filterDate(),
+                        },
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#ddlGroupFilter').find('option').remove();
+                            $('#ddlGroupFilter').selectpicker('refresh');
+                            self.groupSelectList(data);
+                            self.filterGroup(self.groupSelectList()[0]);
+                            if(self.firstInitFromUrl()){
+                                self.filterGroup('@Model.Param5GroupCode');
+                            }
+                        },
+                        complete: function() {
+                            if (typeof cb != 'undefined') cb();
+                        }
+                    });
+                } else {
+                    if (typeof cb != 'undefined') cb();
+                }
+            };
+
+            //get brand group code by location
+            self.getBrandCodeList = function() {
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantProductionEntry/GetBrandCodeByLocationYearWeek"),
+                    type: 'GET',
+                    cache: false,
+                    contentType: 'application/json',
+                    data: {
+                        locationCode: self.filterLocationCode(),
+                        KPSYear: self.filterYear,
+                        KPSWeek: self.filterWeek
+                    },
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#ddlBrandFilter').find('option').remove();
+                        $('#ddlBrandFilter').selectpicker('refresh');
+                        var brandCodeModel = [];
+                        $.each(data, function(index, value) {
+                            brandCodeModel.push({ "Text": value, "Value": value });
+                        });
+                        self.filterBrand(brandCodeModel);
+
+
+                        if(brandCodeModel.length > 0)
+                        {
+                            self.brandSelectList(brandCodeModel);
+                            self.filterBrandCode(self.filterBrand()[0].Value);
+                            //self.GetMasterGenBrandCodeByBrandCode();
+                        }
+                        else
+                        {
+                            self.filterBrandCode('');
+                        }
+
+                        if(self.firstInitFromUrl()){
+                            self.filterGroup('@Model.Param6BrandCode');
+                        }
+
+                    }
+                });
+            };
+
+            self.GetPlanTpkByGroup = function(cb) {
+                self.filterTPKPlant(0);
+                var input = {
+                    locationCode: self.filterLocationCode(),
+                    unit: self.filterUnitCode(),
+                    group: self.filterGroup(),
+                    brand: self.filterBrand(),
+                    year: self.filterYear(),
+                    week: self.filterWeek(),
+                    date: self.filterDate(),
+                    shift: self.filterShift()
+                };
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantProductionEntry/GetPlanTpkByGroup"),
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: ko.myToJSON(input),
+                    dataType: 'json',
+                    success: function(data) {
+                        if(data.TPKValue != null)
+                            self.filterTPKPlant(data.TPKValue);
+                    },
+                    complete: function() {
+                        self.isFilterChange(true);
+                        if (typeof cb != 'undefined') cb();
+                    }
+                });
+            };
+
+            self.shiftSelectList = ko.observableArray([]);
+            self.getShiftSelectList = function(cb) {
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantProductionEntry/GetShiftByLocation"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: { locationCode: self.filterLocationCode() },
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#ddlShiftFilter').find('option').remove();
+                        $('#ddlShiftFilter').selectpicker('refresh');
+                        var kpsWeekModel = [];
+                        $.each(data, function(index, value) {
+                            kpsWeekModel.push({ "Text": value.Text, "Value": value.Text });
+                        });
+                        self.shiftSelectList(kpsWeekModel);
+                        ////console.log(kpsWeekModel);
+                        if(self.firstInitFromUrl()){
+                            self.filterGroup('@Model.Param3Shift');
+                        }else{
+                            self.filterShift(kpsWeekModel[0].Text);
+                        }
+
+                    },
+                    complete: function() {
+                        if (typeof cb != 'undefined') cb();
+                    }
+                });
+            };
+
+            self.brandSelectList = ko.observableArray();
+            self.getBrandFromExePlantProductionEntryVerificationByLocationUnitAndProcess = function(cb) {
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantProductionEntry/GetBrandCodeFromExePlantProductionEntryVerification"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: {
+                        LocationCode: self.filterLocationCode(),
+                        UnitCode: self.filterUnitCode(),
+                        ProcessGroup: self.filterProcessGroup(),
+                        KpsYear: self.filterYear(),
+                        KpsWeek: self.filterWeek(),
+                        Shift: self.filterShift(),
+                        GroupCode: self.filterGroup(),
+                        ProductionDate: self.filterDate()
+                    },
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#ddlBrandFilter').find('option').remove();
+                        $('#ddlBrandFilter').selectpicker('refresh');
+
+                        self.brandSelectList(data);
+                        if(self.firstInitFromUrl()){
+                            self.filterBrand('@Model.Param6BrandCode');
+                        }
+                    },
+                    complete: function() {
+                        if (typeof cb != 'undefined') cb();
+                    }
+                });
+            };
+
+            self.WeekFromSelectList = ko.observableArray([]);
+            self.GetWeekFromSelectList = function(cb) {
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantProductionEntry/GetWeekByYear"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: { year: self.filterYear() },
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#filterWeek').find('option').remove();
+                        $('#filterWeek').selectpicker('refresh');
+                        var kpsWeekModel = [];
+                        $.each(data, function(index, value) {
+                            kpsWeekModel.push({ "Text": value, "Value": value });
+                        });
+                        self.WeekFromSelectList(kpsWeekModel);
+                        self.filterWeek('@Model.DefaultWeek');
+                        if(self.firstInitFromUrl()){
+                            self.filterWeek('@Model.Param8KPSWeek');
+                        }
+                    },
+                    complete: function() {
+                        if (typeof cb != 'undefined') cb();
+                    }
+                });
+                //self.setDateRange();
+            };
+
+            self.DateFromSelectList = ko.observableArray([]);
+            self.setDateRange = function(cb) {
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantProductionEntry/GetDateByYearWeek"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: { year: self.filterYear(), week: self.filterWeek() },
+                    dataType: 'json',
+                    success: function(data) {
+                        self.DateFromSelectList([]);
+                        $('#filterDate').find('option').remove();
+                        $('#filterDate').selectpicker('refresh');
+                        var model = [];
+                        $.each(data, function(index, value) {
+                            model.push({ "Text": value.Text, "Value": value.Text });
+                        });
+                        self.DateFromSelectList(model);
+                        if(self.firstInitFromUrl()){
+                            self.filterWeek('@Model.Param9ProductionDate');
+                        }
+                        else{
+                            self.filterDate(moment().format("DD/MM/YYYY"));
+                        }
+                    },
+                    complete: function() {
+                        if (typeof cb != 'undefined') cb();
+                    }
+                });
+            };
+
+            self.getClosingPayroll = function(cb) {
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantProductionEntry/GetClosingPayroll"),
+                    type: 'POST',
+                    data: ko.myToJSON({date: self.filterDate()}),
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    success: function(data) {
+                        self.filterClosingPayroll(data);
+                    },
+                    complete: function() {
+                        if (typeof cb != 'undefined') cb();
+                    }
+                });
+            };
+            
+            function mappingGridView(data) {
+
+                ko.mapping.fromJS(data, {}, this);
+
+                this.AbsentTypeComputed = ko.pureComputed({
+                    read: function(){
+                        //console.log(this.AbsentType());
+                        if (typeof this.AbsentType() == 'undefined' ){
+                            this.AbsentCodeEblek(null);
+                        }
+                        return this.AbsentType();
+                    },
+                    write: function(value){
+                        var that = this;
+                        var c = self.AbsentSelectList().filter(function(item) {
+                            return item.Value == that.AbsentType();
+                        });
+
+                        //console.log(1234, $(".absent-type option:selected").text());
+
+                        //if (typeof value == 'undefined' ){
+                        //    console.log(this.AbsentType());
+                        //    if ($(".absent-type option:selected").text()==""){
+                        //       // $(".absent-type option:selected").text(this.AbsentType());
+                        //    }
+                        //}else{
+                        //    this.AbsentType(value);
+                        //    //console.log($(".absent-type option:selected").text()=="");
+                        //    if ($(".absent-type option:selected").text()==""){
+                        //        $(".absent-type option:selected").text(this.AbsentType());
+                        //    }
+                        //}
+
+                        if(this.ProdTarget() == null || this.ProdTarget() == "" &&
+                          (value == "Multiskill Out" || value == "Tugas Lain Organisasi"  || value == "Tugas Lain Perusahaan"))
+                            //this.ProdTarget(this.ProdCapacity());
+                            this.ProdTarget();
+                        else if (this.ProdActual() == "" || this.ProdActual() == null)
+                        {
+                            if( value != "Multiskill Out" && value != "Tugas Lain Organisasi"  && value != "Tugas Lain Perusahaan" && value != "" && value != undefined){
+                                ////console.log(value + "-Multiskill Out");
+                                this.ProdActual("");
+                                //this.ProdTarget("");
+                            }
+                        }
+                        //console.log(this.AbsentCodeEblek());
+                        var sktAbsentCode = ko.utils.unwrapObservable(this.AbsentCodeEblek) != null ? this.AbsentCodeEblek() : '';
+                        for (var i = 0; i < self.absentTypes.length; i++) {
+                            if (self.absentTypes[i].AbsentType == value) {
+                                sktAbsentCode = self.absentTypes[i].SktAbsentCode;
+                                break;
+                            }
+                        }
+                        this.AbsentCodeEblek(sktAbsentCode);
+                        //console.log(sktAbsentCode);
+                        
+                        if((this.ProdTarget() == null || this.ProdTarget() == "") && sktAbsentCode == "")
+                            //this.ProdTarget(this.ProdCapacity());
+                            this.ProdTarget();
+
+                        //if (c.length == 0) {
+                        //    self.AbsentSelectList().push({
+                        //        Text: this.AbsentType(),
+                        //        Value: this.AbsentType()
+                        //    });
+                        //} else 
+
+                        //console.log(c);
+                        if (typeof value !== 'undefined' ){
+                            this.AbsentType(value);
+                            console.log(1111, value)
+                        }
+
+                        $('.absent-type').selectpicker('refresh');
+                        //console.log($(".absent-type option:selected").val()=="");
+                        //console.log($(".absent-type option:selected").text()=='');
+                        //console.log(".AbsentCodeComputed");
+                        if($(".absent-type option:selected").val()==""){
+                            if ($(".absent-type option:selected").text() == 'Nothing Selected' ){
+                                this.AbsentCodeEblek('');
+                                $(".absent-type option:selected").val('');
+                                this.AbsentType('');
+                            }
+                        }
+                        
+                        
+                        //console.log("mau dihilangkan"+$(".absent-type option:selected").text());
+                    }
+                }, this);
+
+                //this.AbsentCodeEblek = ko.computed({
+                //    read: function() {
+                //        var sktAbsentCode = "";
+                //        for (var i = 0; i < self.absentTypes.length; i++) {
+                //            if (self.absentTypes[i].AbsentType == this.AbsentType()) {
+                //                sktAbsentCode = self.absentTypes[i].SktAbsentCode;
+                //                break;
+                //            }
+                //        }
+                //        return sktAbsentCode;
+                //    },
+                //    write: function(value) {
+                //        //update your self.chosenAge().population value here
+                //    },
+                //    owner: this
+                //}, this);
+            }
+
+            self.gridView = new app.GridViewModel({
+                Criteria: {
+                    PageSize: 1000,
+                    PageIndex: 1,
+                    SortExpression: "EmployeeNumber",
+                    SortOrder: "ASC",
+                    LocationCode: self.filterLocationCode,
+                    UnitCode: self.filterUnitCode,
+                    ProcessGroup: self.filterProcessGroup,
+                    Group: self.filterGroup,
+                    Brand: self.filterBrand,
+                    Year: self.filterYear,
+                    Week: self.filterWeek,
+                    Date: self.filterDate,
+                    Shift: self.filterShift
+                },
+                DataSourceUrl: @Html.BaseUrl("ExePlantProductionEntry/GetExePlantProductionEntry"),
+                InlineEdit: true,
+                InsertRowFocusedControlIndex: 0
+            });
+
+            self.gridView.isBusy.subscribe(function(value) {
+                self.isBusy(value);
+            });
+
+            function getComputedTargetValue(fieldName) {
+                return ko.computed({
+                    read: function() {
+                        var total = 0;
+                        ko.utils.arrayForEach(self.gridView.listDataItems(), function(item) {
+                            var field = ko.isObservable(item[fieldName]) ? item[fieldName]() : item[fieldName];
+                            var value = parseFloat(field);
+                            if (!isNaN(value)) {
+                                total += value;
+                            }
+                        });
+                        if(fieldName == "ProdActual"){
+                            if(total == 0){
+                                self.disableBtnSubmit(false);
+                            }else{
+                                if(self.saveType() != 'submit')
+                                    self.canSaveData(true);
+                                $('#btnSaveEblek').text("Save");
+                                //clearAllInterval();
+                            }
+                        }
+                        if(fieldName == "ProdCapacity"){
+                            return parseToFloat(total).toFixed(3);
+                        }
+                        return Math.round(parseToFloat(total));
+                    },
+                    write: function(value) {
+                        //alert(value);
+                    }
+                });
+            };
+
+            function getComputedTargetValueFloat(fieldName) {
+                return ko.computed({
+                    read: function() {
+                        var total = 0;
+                        ko.utils.arrayForEach(self.gridView.listDataItems(), function(item) {
+                            var field = ko.isObservable(item[fieldName]) ? item[fieldName]() : item[fieldName];
+                            var value = parseFloat(field);
+                            if (!isNaN(value)) {
+                                total += value;
+                            }
+                        });
+                        if(fieldName == "ProdActual"){
+                            //if(total == 0){
+                            //    self.disableBtnSubmit(false);
+                            //}else{
+                                if(self.saveType() != 'submit')
+                                    self.canSaveData(true);
+                                $('#btnSaveEblek').text("Save");
+                                //clearAllInterval();
+                            //}
+                        }
+
+                        //return Math.round(parseToFloat(total),2);
+                        return total.toFixed(2);
+                    },
+                    write: function(value) {
+                        //alert(value);
+                    }
+                });
+            };
+            function getComputedRowCount(fieldName) {
+                return ko.computed({
+                    read: function() {
+                        var total = 0;
+                        ko.utils.arrayForEach(self.gridView.listDataItems(), function(item) {
+                            var field = ko.isObservable(item[fieldName]) ? item[fieldName]() : item[fieldName];
+                            ////console.log(field);
+                            //var value = parseFloat(field);
+                            if (field !== null) {
+                                total += 1;
+                            }
+                        });
+                        return Math.round(parseToFloat(total));
+                    },
+                    write: function(value) {
+                        //alert(value);
+                    }
+                });
+            };
+
+            function getComputedRowCountField(fieldName) {
+                return ko.computed({
+                    read: function() {
+                        var total = true;
+                        ko.utils.arrayForEach(self.gridView.listDataItems(), function(item) {
+                            var field = ko.isObservable(item[fieldName]) ? item[fieldName]() : item[fieldName];
+                            var value = parseFloat(field);
+                            if (isNaN(value)) {
+                                total = false;
+                            }
+                        });
+                        ////console.log(total);
+                        return total;
+                    },
+                    write: function(value) {
+                        //alert(value);
+                    }
+                });
+            };
+
+
+            self.gridView.mapping = {
+                create: function(options) {
+                    return new mappingGridView(options.data);
+                }
+            };
+
+            self.getAllAbsentTypeCalculation = function(cb){
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantProductionEntry/GetAllAbsentTypeCalculation"),
+                    type: 'GET',
+                    async: false,
+                    contentType: 'application/json',
+                    data: {},
+                    dataType: 'json',
+                    success: function(data) {
+                        
+                        self.allAbsentData(data);
+
+                    },
+                    complete: function() {
+                        if (typeof cb != 'undefined') cb();
+                    }
+                }
+
+            )};
+
+            self.onAbsenTypeChange = function(prodTarget,prodActual,absentCode,AbsentType,ProdCapacity) {
+                if (typeof AbsentType != 'function'){
+                    var tipeAbsen = AbsentType;
+                    AbsentType = ko.observable(tipeAbsen);
+                }
+
+                self.CalculationAbsentType(false);
+                $.each(self.allAbsentData(), function(k, value) {
+                    if (value.AbsentType == AbsentType()){
+                        //console.log(value.Calculation == "T");
+                        self.CalculationAbsentType(value.Calculation == "T");
+                    }
+
+                });
+
+                if ($(".absent-type option:selected").text() == ""){
+                    $(".absent-type option:selected").text("Nothing Selected");
+                    $(".absent-type option:selected").val("");
+                    $(".AbsentCodeComputed").text("");
+                    $('.absent-type').selectpicker('refresh');
+                }
+
+                        
+                if(self.saveType() === 'target')
+                {
+                    if (jQuery.isFunction(absentCode))
+                    {
+                        if (absentCode() != 'SLP' && absentCode() != 'SL4' && absentCode() != 'SLS' && absentCode() != 'LL'
+                            && absentCode() != 'LO' && absentCode() != 'LP' && absentCode() != 'TL' && absentCode() != 'PG' && absentCode() != 'SB'
+                            && absentCode() != '')
+                        {
+                            prodTarget(parseToFloat(prodTarget()));
+                            prodActual(parseToFloat(prodActual()));
+
+                        }
+
+                    }
+
+                }
+
+                if(self.saveType() === 'actual' && self.IsHolidayOrNot() != true)
+                {
+
+
+                    if (jQuery.isFunction(absentCode))
+                    {
+                        self.SetActualIfZero(prodActual());
+                        if (absentCode() != 'SLP' && absentCode() != 'SL4' && absentCode() != 'SLS' && AbsentType() != 'Tugas HUT' && AbsentType() != 'LP1'
+                            && absentCode() != 'LO' && absentCode() != 'LP' && absentCode() != 'TL' && absentCode() != 'PG' && absentCode() != 'SB'
+                            && absentCode() != '' && absentCode() != null && absentCode() != "null")
+                        {
+                            //prodTarget(parseToFloat(0));
+                            prodActual(parseToFloat(0));
+                            self.SetActualIfZero(prodActual());
+
+                        }
+                        if(absentCode() == 'LP1')
+                        {
+                            //prodTarget(parseToFloat(ProdCapacity()));
+                            prodActual(parseToFloat(0));
+                            self.SetActualIfZero(prodActual());
+                        }
+
+                    }
+
+                }
+
+                if(self.saveType() === 'actual' && self.IsHolidayOrNot() == true)
+                {
+
+
+                    if (jQuery.isFunction(absentCode))
+                    {
+                        self.SetActualIfZero(prodActual());
+                        if (absentCode() != 'SLP' && absentCode() != 'SL4' && absentCode() != 'SLS' && AbsentType() != 'Tugas HUT'
+                            && absentCode() != 'LO' && absentCode() != 'LP' && absentCode() != 'TL' && absentCode() != 'PG' && absentCode() != 'SB'
+                            && absentCode() != '')
+                        {
+                            //prodTarget(parseToFloat(0));
+                            prodActual(parseToFloat(0));
+                            self.SetActualIfZero(prodActual());
+
+                        }
+
+                    }
+
+                }
+
+                    
+            };
+
+
+            self.gridView.applyValidationRules = function(entity) {
+                self.RemoveNotification();
+
+                entity.ProdTarget.extend({
+                    validation: {
+                        //async: false,
+                        validator: function(val, otherVal) {
+                            if (entity.ProdTarget() < 0) {
+                                entity.ProdTarget(0);
+                                return false;
+                            }
+                            else
+                            {
+                                return true
+                            }
+
+                        },
+                        message: "<strong>Production Target</strong> cannot minus!"
+
+                    }
+                });
+
+                //validation for modes actual
+                entity.ProdActual.extend({
+                    validation: {
+                        //async: false,
+                        validator: function(val, otherVal) {
+                            var that = this;
+
+                            if (entity.ProdActual() < 0) {
+                                entity.ProdActual(0);
+                                that.message = "<strong>Production Actual</strong> cannot minus!";
+                                return false;
+                            }
+                          
+                            var isMinimumValue;
+                            var prodActualPlusSource = parseToFloat(entity.ProdActual()) + parseToFloat(entity.SourceProdActual())
+                            //console.log(parseToFloat(entity.ProdActual()));
+                            //console.log(parseToFloat(entity.SourceProdActual()));
+                            //console.log(prodActualPlusSource);
+                            //console.log(entity.MinimumValueActual());
+                            if(self.saveType() === 'actual' && self.IsHolidayOrNot() != true)
+                            {
+                                //console.log(entity.AbsentCodeEblek());
+                                if (parseToFloat(prodActualPlusSource) < entity.MinimumValueActual() && entity.AbsentCodeEblek() == 'SLP' && entity.AbsentCodeEblek() == 'SL4' && entity.AbsentCodeEblek() == 'SLS'
+                                    && entity.AbsentCodeEblek() == 'LO' && entity.AbsentCodeEblek() == 'LP' && entity.AbsentCodeEblek() == 'TL' && entity.AbsentCodeEblek() == 'PG')
+                                {
+                                    isMinimumValue = false;
+                                    that.message = 'Actual Value cannot less than Minimum Value : ' + entity.MinimumValueActual();
+                                }
+                                if(parseToFloat(prodActualPlusSource) < entity.MinimumValueActual() && ((entity.AbsentCodeEblek() == 'LP' && self.CalculationAbsentType() == true) || (entity.AbsentCodeEblek() == 'LO'&& self.CalculationAbsentType() == true)
+                                    || (entity.AbsentCodeEblek() == 'SB' && self.CalculationAbsentType() == true)))
+                                {
+                                    entity.ProdTarget(parseToFloat(entity.ProdCapacity()));
+                                    entity.ProdActual(parseToFloat(entity.ProdActual()));
+                                    isMinimumValue = true;
+                                }
+                                if(parseToFloat(prodActualPlusSource) < entity.MinimumValueActual() && (entity.AbsentCodeEblek() == 'A' || entity.AbsentCodeEblek() == 'S' || entity.AbsentCodeEblek() == 'I'
+                                    || entity.AbsentCodeEblek() == 'C' || entity.AbsentCodeEblek() == 'CT' || entity.AbsentCodeEblek() == 'CH' || entity.AbsentCodeEblek() == 'SKR'
+                                    || entity.AbsentCodeEblek() == 'TL' || entity.AbsentCodeEblek() == 'T'))
+                                {
+                                    //entity.ProdTarget(parseToFloat(0));
+                                    entity.ProdActual(parseToFloat(0));
+                                    isMinimumValue = true;
+                                }
+                                
+                                if(parseToFloat(prodActualPlusSource) < entity.MinimumValueActual() && entity.AbsentCodeEblek() == '')
+                                {
+                                    isMinimumValue = false;
+                                    that.message = 'Actual Value cannot less than Minimum Value : ' + entity.MinimumValueActual();
+                                }
+                                else
+                                {
+                                    entity.ProdActual(parseToFloat(entity.ProdActual()));
+                                    isMinimumValue = true;
+                                }
+
+                            }
+
+                            if(self.saveType() === 'actual' && self.IsHolidayOrNot() == true)
+                            {
+                                isMinimumValue = true;
+                            }
+                            if( self.saveType() === 'actual' && self.IsHolidayOrNot() == true && (parseToFloat(prodActualPlusSource) < entity.MinimumValueActual() && entity.AbsentCodeEblek() == ''))
+                            {
+                                isMinimumValue = false;
+                                that.message = 'Actual Value cannot less than Minimum Value : ' + entity.MinimumValueActual();
+
+                            }
+                            if(self.saveType() === 'target')
+                            {
+                                isMinimumValue = true;
+                            }
+                            return isMinimumValue;
+                        }
+
+                    }
+
+                });
+
+            };
+
+            self.SetActualIfZero = function(prodActual)
+            {
+                //console.log(self.absentTypes);
+                var listModel = [];
+                listModel.push({ "Text": "Nothing Selected", "Value": '' });
+                if(self.IsHolidayOrNot() != true){
+                    if(prodActual < self.MinStickPerHour()){
+                        //If Actual is not entered, Absent Type that user can choose !=  SLP, SL4, SLS, LL, LO, LP, LP1, TL, PG, SB
+                        //then Target and Actual value are set to 0/ Zero
+                        for (var i = 0; i < self.absentTypes.length; i++) {
+                            if(self.absentTypes[i].SktAbsentCode != "@HMS.SKTIS.Core.Enums.SKTAbsentCode.SLP" && self.absentTypes[i].SktAbsentCode != "@HMS.SKTIS.Core.Enums.SKTAbsentCode.SL4"
+                                && self.absentTypes[i].SktAbsentCode != "@HMS.SKTIS.Core.Enums.SKTAbsentCode.SLS" && self.absentTypes[i].SktAbsentCode != "@HMS.SKTIS.Core.Enums.SKTAbsentCode.LO"
+                                && self.absentTypes[i].SktAbsentCode != "@HMS.SKTIS.Core.Enums.SKTAbsentCode.LP" && self.absentTypes[i].SktAbsentCode != "@HMS.SKTIS.Core.Enums.SKTAbsentCode.TL"
+                                && self.absentTypes[i].SktAbsentCode != "@HMS.SKTIS.Core.Enums.SKTAbsentCode.PG" && self.absentTypes[i].SktAbsentCode != "@HMS.SKTIS.Core.Enums.SKTAbsentCode.SB"
+                                && self.absentTypes[i].AbsentType != 'Tugas HUT')
+                                listModel.push({ "Text": self.absentTypes[i].AbsentType, "Value": self.absentTypes[i].AbsentType });
+                        }
+
+                    }
+                    else if(prodActual < self.StdStickPerHour())
+                    {
+                        for (var i = 0; i < self.absentTypes.length; i++) {
+                            if(self.absentTypes[i].SktAbsentCode == "@HMS.SKTIS.Core.Enums.SKTAbsentCode.SLP" || self.absentTypes[i].AbsentType == 'Tugas HUT'
+                            || self.absentTypes[i].SktAbsentCode == "@HMS.SKTIS.Core.Enums.SKTAbsentCode.SLS" || self.absentTypes[i].SktAbsentCode == "@HMS.SKTIS.Core.Enums.SKTAbsentCode.LO"
+                            || self.absentTypes[i].SktAbsentCode == "@HMS.SKTIS.Core.Enums.SKTAbsentCode.LP"|| self.absentTypes[i].SktAbsentCode == "@HMS.SKTIS.Core.Enums.SKTAbsentCode.TL"
+                            || self.absentTypes[i].SktAbsentCode == "@HMS.SKTIS.Core.Enums.SKTAbsentCode.PG" || self.absentTypes[i].SktAbsentCode == "@HMS.SKTIS.Core.Enums.SKTAbsentCode.SB")
+                                listModel.push({ "Text": self.absentTypes[i].AbsentType, "Value": self.absentTypes[i].AbsentType });
+                        }
+                    }
+                    else{
+                        //If Actual is entered, Absent Type that user can choose is only  SLP, SLS, LO, LP, LP1, TL, PG, SB
+                        for (var i = 0; i < self.absentTypes.length; i++) {
+                            if(self.absentTypes[i].SktAbsentCode == "@HMS.SKTIS.Core.Enums.SKTAbsentCode.SLP" || self.absentTypes[i].SktAbsentCode == "@HMS.SKTIS.Core.Enums.SKTAbsentCode.SL4"
+                            || self.absentTypes[i].SktAbsentCode == "@HMS.SKTIS.Core.Enums.SKTAbsentCode.SLS" || self.absentTypes[i].SktAbsentCode == "@HMS.SKTIS.Core.Enums.SKTAbsentCode.LO"
+                            || self.absentTypes[i].SktAbsentCode == "@HMS.SKTIS.Core.Enums.SKTAbsentCode.LP" || self.absentTypes[i].SktAbsentCode == "@HMS.SKTIS.Core.Enums.SKTAbsentCode.TL"
+                            || self.absentTypes[i].SktAbsentCode == "@HMS.SKTIS.Core.Enums.SKTAbsentCode.PG" ||self.absentTypes[i].SktAbsentCode == "@HMS.SKTIS.Core.Enums.SKTAbsentCode.SB"
+                            || self.absentTypes[i].AbsentType === 'Tugas HUT')
+                                listModel.push({ "Text": self.absentTypes[i].AbsentType, "Value": self.absentTypes[i].AbsentType });
+                        }
+
+                    }
+                }
+                else
+                {
+                    //just view data holiday
+                    for (var i = 0; i < self.absentTypes.length; i++) {
+                        if(self.absentTypes[i].SktAbsentCode == "@HMS.SKTIS.Core.Enums.SKTAbsentCode.A" || self.absentTypes[i].SktAbsentCode == "@HMS.SKTIS.Core.Enums.SKTAbsentCode.S"
+                            || self.absentTypes[i].SktAbsentCode == "@HMS.SKTIS.Core.Enums.SKTAbsentCode.I" || self.absentTypes[i].SktAbsentCode == "@HMS.SKTIS.Core.Enums.SKTAbsentCode.C")
+                            listModel.push({ "Text": self.absentTypes[i].AbsentType, "Value": self.absentTypes[i].AbsentType });
+
+                    }
+                }
+                
+                //listModel.unshift({
+                //    Text: "Nothing Selected",
+                //    Value: null
+                //});
+
+                //console.log(listModel)
+
+                self.AbsentSelectList(listModel)
+                //$('#ddlAbsentType').selectpicker('refresh');
+                $('.absent-type').selectpicker('refresh');
+            }
+
+
+            self.AbsentSelectList = ko.observableArray([]);
+
+            self.setActualChange = function(event, index) {
+                //console.log(event);
+                //$('#ddlAbsentType').find('option').remove();
+                var listModel = [];
+                if(self.IsHolidayOrNot() != true){
+                    if(event.ProdActual() == "" || event.ProdActual() < self.MinStickPerHour()){
+                        //If Actual is not entered, Absent Type that user can choose !=  SLP, SL4 SLS, LL, LO, LP, LP1, TL, PG, SB
+                        //then Target and Actual value are set to 0/ Zero
+                        for (var i = 0; i < self.absentTypes.length; i++) {
+                            if(self.absentTypes[i].SktAbsentCode != "@HMS.SKTIS.Core.Enums.SKTAbsentCode.SLP" && self.absentTypes[i].SktAbsentCode != "@HMS.SKTIS.Core.Enums.SKTAbsentCode.SL4"
+                                && self.absentTypes[i].SktAbsentCode != "@HMS.SKTIS.Core.Enums.SKTAbsentCode.SLS" && self.absentTypes[i].SktAbsentCode != "@HMS.SKTIS.Core.Enums.SKTAbsentCode.LO"
+                                && self.absentTypes[i].SktAbsentCode != "@HMS.SKTIS.Core.Enums.SKTAbsentCode.LP" && self.absentTypes[i].SktAbsentCode != "@HMS.SKTIS.Core.Enums.SKTAbsentCode.TL"
+                                && self.absentTypes[i].SktAbsentCode != "@HMS.SKTIS.Core.Enums.SKTAbsentCode.PG" && self.absentTypes[i].SktAbsentCode != "@HMS.SKTIS.Core.Enums.SKTAbsentCode.SB"
+                                && self.absentTypes[i].AbsentType != 'Tugas HUT')
+                                listModel.push({ "Text": self.absentTypes[i].AbsentType, "Value": self.absentTypes[i].AbsentType });
+                        }
+
+                    }
+                        //If Actual is entered, Absent Type that user can choose is only SLS, LO, LP, LP1, TL, PG, SB and SLP
+                    else if(event.ProdActual() < self.StdStickPerHour())
+                    {
+                        for (var i = 0; i < self.absentTypes.length; i++) {
+                            if(self.absentTypes[i].SktAbsentCode == "@HMS.SKTIS.Core.Enums.SKTAbsentCode.SLP" || self.absentTypes[i].AbsentType == 'Tugas HUT'
+                            || self.absentTypes[i].SktAbsentCode == "@HMS.SKTIS.Core.Enums.SKTAbsentCode.SLS" || self.absentTypes[i].SktAbsentCode == "@HMS.SKTIS.Core.Enums.SKTAbsentCode.LO"
+                            || self.absentTypes[i].SktAbsentCode == "@HMS.SKTIS.Core.Enums.SKTAbsentCode.LP"|| self.absentTypes[i].SktAbsentCode == "@HMS.SKTIS.Core.Enums.SKTAbsentCode.TL"
+                            || self.absentTypes[i].SktAbsentCode == "@HMS.SKTIS.Core.Enums.SKTAbsentCode.PG" || self.absentTypes[i].SktAbsentCode == "@HMS.SKTIS.Core.Enums.SKTAbsentCode.SB")
+                                listModel.push({ "Text": self.absentTypes[i].AbsentType, "Value": self.absentTypes[i].AbsentType });
+                        }
+                    }
+                    else{
+                        //If Actual is entered, Absent Type that user can choose is only  SLP,SL4, SLS, LO, LP, LP1, TL, PG, SB
+                        for (var i = 0; i < self.absentTypes.length; i++) {
+                            if(self.absentTypes[i].SktAbsentCode == "@HMS.SKTIS.Core.Enums.SKTAbsentCode.SLP" || self.absentTypes[i].SktAbsentCode == "@HMS.SKTIS.Core.Enums.SKTAbsentCode.SL4"
+                            || self.absentTypes[i].SktAbsentCode == "@HMS.SKTIS.Core.Enums.SKTAbsentCode.SLS" || self.absentTypes[i].SktAbsentCode == "@HMS.SKTIS.Core.Enums.SKTAbsentCode.LO"
+                            || self.absentTypes[i].SktAbsentCode == "@HMS.SKTIS.Core.Enums.SKTAbsentCode.LP" || self.absentTypes[i].SktAbsentCode == "@HMS.SKTIS.Core.Enums.SKTAbsentCode.TL"
+                            || self.absentTypes[i].SktAbsentCode == "@HMS.SKTIS.Core.Enums.SKTAbsentCode.PG" || self.absentTypes[i].SktAbsentCode == "@HMS.SKTIS.Core.Enums.SKTAbsentCode.SB"
+                            || self.absentTypes[i].AbsentType === 'Tugas HUT')
+                                listModel.push({ "Text": self.absentTypes[i].AbsentType, "Value": self.absentTypes[i].AbsentType });
+                        }
+
+                    }
+                }
+
+                else
+                {
+                    // just view data holiday
+                    for (var i = 0; i < self.absentTypes.length; i++) {
+                        if(self.absentTypes[i].SktAbsentCode == "@HMS.SKTIS.Core.Enums.SKTAbsentCode.A" || self.absentTypes[i].SktAbsentCode == "@HMS.SKTIS.Core.Enums.SKTAbsentCode.S"
+                            || self.absentTypes[i].SktAbsentCode == "@HMS.SKTIS.Core.Enums.SKTAbsentCode.I" || self.absentTypes[i].SktAbsentCode == "@HMS.SKTIS.Core.Enums.SKTAbsentCode.C")
+                            listModel.push({ "Text": self.absentTypes[i].AbsentType, "Value": self.absentTypes[i].AbsentType });
+
+                    }
+                }
+
+                self.AbsentSelectList(listModel)
+                //$('#ddlAbsentType').selectpicker('refresh');
+                $('.absent-type').selectpicker('refresh');
+
+            }
+
+            self.setAbsentSeleclistDefault = function(){
+                // $('#ddlAbsentType').find('option').remove();
+                var listModel = [];
+                for (var i = 0; i < self.absentTypes.length; i++) {
+                    listModel.push({ "Text": self.absentTypes[i].AbsentType, "Value": self.absentTypes[i].AbsentType });
+                }
+                self.AbsentSelectList(listModel)
+                //                    $('#ddlAbsentType').selectpicker('refresh');
+                //$('.absent-type').selectpicker('refresh');
+            }
+            //self.setAbsentSeleclistDefault();
+
+            //getMinimumValue
+            self.MinimumValueProdEntry = function(cb){
+                var Criteria = {
+                    LocationCode: self.filterLocationCode,
+                    UnitCode: self.filterUnitCode,
+                    ProcessGroup: self.filterProcessGroup,
+                    Group: self.filterGroup,
+                    Brand: self.filterBrand,
+                    Shift: self.filterShift,
+
+                };
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantProductionEntry/GetMinimumValueByProdEntryFilter"),
+                    type: 'GET',
+                    //async: false,
+                    contentType: 'application/json',
+                    data: Criteria,
+                    dataType: 'json',
+                    success: function(data) {
+                        self.MinStickPerHour(data.MinimalStickPerHour);
+                        self.StdStickPerHour(data.StdStickPerHour);
+                    },
+                    complete: function() {
+                        if (typeof cb != 'undefined') cb();
+                    }
+                });
+            };
+
+            //GetListAbsentTypeHoliday
+            self.HolidayOrSundayAbsentList = function(cb) {
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantProductionEntry/GetListAbsentTypeHoliday"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: {LocationCode: self.filterLocationCode(), Date: moment(self.filterDate(), "DD/MM/YYYY").format("MM/DD/YYYY") },
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#ddlAbsentType').find('option').remove();
+                        $('#ddlAbsentType').selectpicker('refresh');
+                        var dataHoliday = [];
+                        var dataHolidayType = [];
+                        $.each(data, function(index, value) {
+                            dataHoliday.push({ "Text": value.AbsentType, "Value": value.AbsentType });
+                            dataHolidayType.push({ "AbsentType": value.AbsentType, "SktAbsentCode": value.SktAbsentCode });
+                        });
+
+                        // todo
+                        self.AbsentSelectList(dataHoliday);
+                        self.absentTypes = dataHolidayType;
+
+                    },
+                    complete: function() {
+                        if (typeof cb != 'undefined') cb();
+                    }
+                });
+            };
+
+            //IsHolidayOrNot
+            self.Holiday = function(cb){
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantProductionEntry/IsHolidayOrNot"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: {LocationCode: self.filterLocationCode(), Date: moment(self.filterDate(), "DD/MM/YYYY").format("MM/DD/YYYY") },
+                    dataType: 'json',
+                    success: function(data) {
+                        self.IsHolidayOrNot(data);
+                        //self.HolidayOrSundayAbsentList();
+                    },
+                    complete: function() {
+                        if (typeof cb != 'undefined') cb();
+                    }
+                })
+            };
+
+
+
+            // Remove Value in Dropdownlist after Insert
+            //self.gridView.onAfterInsert = function(insertedData) {
+            //    self.setAbsentSeleclistDefault();
+            //};
+
+            //description : generateExcel
+            self.generateExcel = function(formElement) {
+                //$(formElement).find("input[name=locationCode]").val($('#ddlFilterLocationCode').val());
+                var locName = self.filterLocationName();
+                var locCode = self.filterLocationCode();
+                var locCompat = locCode+' - '+locName;
+                $(formElement).find("input[name=locationCode]").val(locCode);
+                $(formElement).find("input[name=locationCompat]").val(locCompat);
+                $(formElement).find("input[name=unitCode]").val($('#ddlUnitCodeFilter').val());
+                $(formElement).find("input[name=shift]").val($('#ddlShiftFilter').val());
+                $(formElement).find("input[name=process]").val($('#ddlProcessGroupFilter').val());
+                $(formElement).find("input[name=group]").val($('#ddlGroupFilter').val());
+                $(formElement).find("input[name=brandCode]").val($('#ddlBrandFilter').val());
+                $(formElement).find("input[name=year]").val($('#filterYear').val());
+                $(formElement).find("input[name=week]").val($('#filterWeek').val());
+                $(formElement).find("input[name=date]").val($('#filterDate').val());
+                return true;
+            };
+
+            //description : submitDatas
+            self.submit = function() {
+                if (self.gridView.editingRowIndex() !== -1)
+                    return;
+
+                var datas = {
+                    "Parameters": {
+                        "SaveType": self.saveType(),
+                        "LocationCode": self.filterLocationCode(),
+                        "UnitCode": self.filterUnitCode(),
+                        "ProcessGroup": self.filterProcessGroup(),
+                        "Group": self.filterGroup(),
+                        "Brand": self.filterBrand(),
+                        "Year": self.filterYear(),
+                        "Week": self.filterWeek(),
+                        "Date": self.filterDate(),
+                        "Shift": self.filterShift()
+                    },
+                    //"Edit": self.gridView.listEditItems()
+                    "Edit": self.gridView.listDataItems()
+                    //"Edit": ko.myToJSON(self.gridView.listDataItems())
+                };
+
+                datas = ko.myToJSON(datas);
+
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantProductionEntry/SubmitDatas"),
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: datas,
+                    dataType: 'json',
+                    success: function(data) {
+                        if(data.length > 1){
+                            SKTIS.Helper.Notification(data[0]);
+                            SKTIS.Helper.Notification(data[1], 'error');
+                        }else{
+                            SKTIS.Helper.Notification(data[0]);
+                        }
+                        self.search();
+                    }
+                })
+            };
+
+            //description : cancelSubmitDatas
+            self.cancelSubmit = function() {
+                if (self.gridView.editingRowIndex() !== -1)
+                    return;
+
+                var datas = {
+                    "Parameters": {
+                        "SaveType": self.saveType(),
+                        "LocationCode": self.filterLocationCode(),
+                        "UnitCode": self.filterUnitCode(),
+                        "ProcessGroup": self.filterProcessGroup(),
+                        "Group": self.filterGroup(),
+                        "Brand": self.filterBrand(),
+                        "Year": self.filterYear(),
+                        "Week": self.filterWeek(),
+                        "Date": self.filterDate(),
+                        "Shift": self.filterShift()
+                    },
+                    //"Edit": self.gridView.listDataItems()
+                };
+
+                datas = ko.myToJSON(datas);
+
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantProductionEntry/CancelSubmitDatas"),
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: datas,
+                    dataType: 'json',
+                    success: function(data) {
+                        SKTIS.Helper.Notification(data);
+
+                        self.search();
+                    }
+                })
+            };
+
+            //description: save bulk data
+            self.saveData = function(datas, fromPopup) {
+                if (self.gridView.editingRowIndex() !== -1)
+                    return;
+
+                var datas = {
+                    "Parameters": {
+                        "SaveType": self.saveType(),
+                        "LocationCode": self.filterLocationCode(),
+                        "UnitCode": self.filterUnitCode(),
+                        "ProcessGroup": self.filterProcessGroup(),
+                        "Group": self.filterGroup(),
+                        "Brand": self.filterBrand(),
+                        "Year": self.filterYear(),
+                        "Week": self.filterWeek(),
+                        "Date": self.filterDate(),
+                        "Shift": self.filterShift()
+                    },
+                    //"Edit": self.gridView.listEditItems()
+                    "Edit": self.gridView.listDataItems()
+                    //"Edit": ko.myToJSON(self.gridView.listDataItems())
+                };
+
+                datas = ko.myToJSON(datas);
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantProductionEntry/SaveAllProductionEntry"),
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: datas,
+                    dataType: 'json',
+                    success: function(data) {
+                        //if (data.Edit) {
+                        //    $.each(data.Edit, function(k, value) {
+                        //        if (value)
+                        //        {
+                        //            SKTIS.Helper.ResponseNotification(value, "Save Production Entry", "");
+                        //        }
+                        //    });
+                        //}
+                        if(data[0].State == 'actual'){
+                            self.isActual(true);
+                        }
+                        //if (fromPopup)
+                        //    SKTIS.Helper.ResponseNotification("", "Save Allocation Success", "");
+                        $.each(data, function(k, value) {
+                            SKTIS.Helper.Notification(value.Message, value.ResponseType);
+                        });
+
+                        //self.gridView.reload();
+                        self.gridView.listNewItems.removeAll();
+                        self.gridView.listEditItems.removeAll();
+                        disableBtnSave(self.isActual());
+                        self.search();
+                        if(data[0].State == 'actual'){
+                            self.disableBtnSubmit(true);
+                        }
+                    }
+                });
+            };
+            var x;
+
+            function clearAllInterval(){
+                //for (var i = 0; i < 1000; i++) {
+                window.clearInterval(x);
+                //}
+            };
+
+            self.disableBtnSubmit(false);
+            self.canSaveData(false);
+
+
+            function disableBtnSave(p) {
+                //self.disableBtnSubmit(false);
+                self.disableBtnCancelSubmit(false);
+                self.canSaveData(false);
+                //console.log(p);
+                var duration = 7200000;
+                self.saveType('target');
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantProductionEntry/GetLastUpdatedByEblekCode"),
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: ko.toJSON({
+                        LocationCode: self.filterLocationCode,
+                        UnitCode: self.filterUnitCode,
+                        Shift: self.filterShift,
+                        ProcessGroup: self.filterProcessGroup,
+                        Group: self.filterGroup,
+                        Brand: self.filterBrand,
+                        Year: self.filterYear,
+                        Week: self.filterWeek,
+                        Date: self.filterDate }),
+                    dataType: 'json',
+                    success: function(data) {
+                        if (data.status == "In Progress") {
+                            self.disableBtnSubmit(false);
+                            self.disableBtnCancelSubmit(false);
+                            duration = -1;
+                        } else if(data.status == "Save"){
+                            self.saveType('actual');
+                            var eventTime = moment(data.duration).unix();
+                            var currentTime = moment().unix();
+                            var diffTime = eventTime - currentTime;
+
+                            //set duration 30 seconds
+                            duration = moment.duration(diffTime * 1000, 'milliseconds');
+                            //setting duration 2 hours
+                            //duration = moment.duration(diffTime * 1000, 'milliseconds');
+                            if(p) {
+                                duration = -1;
+                            }
+                        }
+
+                        if(data.status == "Submit"){
+                            self.saveType('submit');
+                            self.disableBtnSubmit(false);
+                            self.disableBtnCancelSubmit(true);
+                            self.canSaveData(false);
+                            self.disableBtnAllocation(false);
+                            return;
+                        }
+
+                        if(data.status == "Closed"){
+                            self.saveType('submit');
+                            self.disableBtnSubmit(false);
+                            self.disableBtnCancelSubmit(false);
+                            self.canSaveData(false);
+                            self.disableBtnAllocation(false);
+                            return;
+                        }
+
+
+                        //window.clearInterval(x);
+                        ////console.log(moment(data).format("dddd, MMMM Do YYYY, h:mm:ss a"));
+
+                        var interval = 1000; // 1 second
+                        self.canSaveData(false);
+                        var xInterval = window.setInterval(function(){
+                            duration = moment.duration(duration - interval, 'milliseconds');
+                            //console.log('duration: ', duration);
+                            if(duration < 0){
+                                window.clearInterval(xInterval);
+                                self.canSaveData(true);
+                                //$('#btnSaveEblek').text("Save");
+                            }
+                        }, interval);
+                        //self.canSaveData(true);
+                    }
+                });
+            }
+
+            self.filterTarget = getComputedTargetValueFloat('ProdTarget');
+            self.filterActual = getComputedTargetValueFloat('ProdActual');
+            self.totalCapacity = getComputedTargetValue('ProdCapacity');
+            self.totalAbsent = getComputedRowCount('AbsentType');
+
+            //self.disableBtnSubmit = getComputedRowCountField('ProdActual');
+            self.afterRenderDataOnGrid = function(options, item)
+            {
+                if (typeof item == 'undefined'){
+                    $(options).text('Please Select...');
+                    $(options).val('Nothing Selected');
+                    //$(options).prop( "disabled", true );
+                    //ko.applyBindingsToNode(options, {disable: !item}, item);
+
+                }
+
+                //
+                //$(options).attr(
+                //    'data-content',
+                //    "<span class='text'><span style='width: 35px; display: inline-block;'>" + item.Value + "</span> - " + locDesc + "</span>"
+                //);
+
+            }
+
+            //Allocation
+            self.allocationList = ko.observableArray([]);
+            self.ShowAllocation = function()
+            {
+                var filter = {
+                    LocationCode: self.filterLocationCode(),
+                    UnitCode: self.filterUnitCode(),
+                    ProcessGroup: self.filterProcessGroup(),
+                    Group: self.filterGroup(),
+                    Brand: self.filterBrand(),
+                    Year: self.filterYear(),
+                    Week: self.filterWeek(),
+                    Date: moment(self.filterDate(), "DD/MM/YYYY").format("MM/DD/YYYY"),
+                    Shift: self.filterShift()
+                };
+
+                ////console.log(JSON.stringify(filter));
+
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantProductionEntry/GetExePlantProductionAllocations"),
+                    type: 'GET',
+                    cache: false,
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    data: filter,
+                    async:false,
+                    success: function(data) {
+                        ////console.log(data);
+                        self.allSelected(true);
+                        var list = [];
+                        $.each(data, function(index, value) {
+                            list.push({
+                                "ProductionEntryCode": value.ProductionEntryCode,
+                                "EmployeeName": value.EmployeeID + " " + value.EmployeeName,
+                                "EmployeeID": value.EmployeeID,
+                                "EmployeeNumber": value.EmployeeNumber,
+                                "Status": ko.observable(value.Status)
+                            });
+                        });
+                        self.allocationList(list);
+                        self.checkedAllorNot();
+                        
+                        // Commented due to error caused by no implementation of GetMinimumActualValue!
+                        //self.GetMinimumActualValue();
+                    }
+                });
+            };
+
+            // observe variable jang togle all checked
+            self.allSelected = ko.observable('');
+
+            // pungsi buat toggle all checked atau unchecked
+            self.selectAll = function() {
+                var all = self.allSelected();
+                ko.utils.arrayForEach(self.allocationList(), function(item) {
+                    item.Status(!all);
+                });
+                return true;
+            };
+
+            // Child check's will affect the parent Check All control
+            self.checkedAllorNot = function(){
+                var check = true;
+                ko.utils.arrayForEach(self.allocationList(), function(item) {
+                    check = check && item.Status();
+                });
+                if(check)
+                    self.allSelected(true);
+                else
+                    self.allSelected(false);
+                return true;
+            };
+
+            self.saveAllocations = function(datas, fromPopup){
+                var datas = ko.toJSON(self.allocationList());
+                $.ajax({
+                    url: @Html.BaseUrl("ExePlantProductionEntry/SaveAllocations"),
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: datas,
+                    dataType: 'json',
+                    success: function(data) {
+                        //$.each(data, function(k, value) {
+                        //    if (!value.Status)
+                        //        SKTIS.Helper.ResponseNotification("", "Save Allocation Success", value.EmployeeName);
+                        //});
+                        ////console.log(data)
+                        ////console.log('Save Allocation Success');
+                        if(fromPopup)
+                            SKTIS.Helper.ResponseNotification("", "Save Allocation Success", "");
+
+                        self.search();
+                    }
+                });
+                ////console.log(datas);
+            };
+
+            // Load Data
+            self.search = function() {
+                $("#tbodyGrid").hide();
+                $("#tfooterGrid").hide();
+                self.disableBtnSubmit(false);
+                self.canSaveData(false);
+                $('.empty-row-message').html('<div class="loader"></div>'); // Reset New and Edit row
+                // Check whether New or Edit data is existing and not saved to database yet (on Ajax Action)
+                if (SKTIS.Checker.modifiedDataExistsForAjax([self.gridView.listNewItems, self.gridView.listEditItems]) == true) {
+                    return;
+                } else {
+                    self.gridView.listNewItems.removeAll();
+                    self.gridView.listEditItems.removeAll();
+                }
+
+
+                //self.filterExcelListGroup = self.filterListGroup();
+                self.gridView.search({}, function(response) {
+                    if (response.status == 'KO') {
+                        SKTIS.Helper.Notification(response.message, 'error');
+                        $('.empty-row-message').html(response.message);
+
+                    } else if (response.status == 'Empty') {
+
+                        self.RemoveNotification();
+
+
+                        //SKTIS.Helper.Notification(response.message,'warning');
+                        $('.empty-row-message').html('@CommonLabel.lblDataEmpty');
+                    }
+
+                    if (!self.firstLoad || !self.isLoading()){
+                        self.loadHistory();
+                        self.loadFlow();
+                    }
+
+                });
+
+                self.afterSearchFn();
+            };
+
+            // TRANSACTION HISTORY AND FLOW
+            self.historyGridView = new app.GridViewModel({
+                Criteria: {
+                    PageSize: 10,
+                    PageIndex: 1,
+                    SortExpression: "UpdatedDate",
+                    SortOrder: "DESC",
+                    code_1: 'EBL',
+                    code_2: self.filterLocationCode,
+                    code_3: self.filterShift,
+                    code_4: self.filterUnitCode,
+                    code_5: self.filterGroup,
+                    code_6: self.filterBrand,
+                    code_7: self.filterYear,
+                    code_8: self.filterWeek,
+                    code_9: self.filterDate
+                },
+                DataSourceUrl: @Html.BaseUrl("ExePlantProductionEntry/GetHistory"),
+                InlineEdit: true,
+                InsertRowFocusedControlIndex: 1
+            });
+            self.flowGridView = new app.GridViewModel({
+                Criteria: {
+                    PageSize: 10,
+                    PageIndex: 1,
+                    SortExpression: "IDFlow",
+                    SortOrder: "ASC",
+                    FunctionName: 'PlantProductionEntry'
+                },
+                DataSourceUrl: @Html.BaseUrl("ExePlantProductionEntry/GetFlow"),
+                InlineEdit: true,
+                InsertRowFocusedControlIndex: 1
+            });
+
+            self.loadHistory = function(cb){
+                self.historyGridView.search({}, function (response) {
+                    if (response.status == 'KO') {
+                        SKTIS.Helper.Notification(response.message,'error');
+                        $('.empty-row-message').html(response.message);
+                    }else if (response.status == 'Empty') {
+
+                        self.RemoveNotification();
+
+                        //SKTIS.Helper.Notification(response.message,'warning');
+                        $('.empty-row-message').html('@CommonLabel.lblDataEmpty');
+                    }
+
+                    if (typeof cb != 'undefined') cb();
+                });
+            };
+            self.loadFlow = function(cb){
+                self.flowGridView.search({}, function (response) {
+                    if (response.status == 'KO') {
+                        SKTIS.Helper.Notification(response.message,'error');
+                        $('.empty-row-message').html(response.message);
+                    }else if (response.status == 'Empty') {
+
+                        self.RemoveNotification();
+
+                        //SKTIS.Helper.Notification(response.message,'warning');
+                        $('.empty-row-message').html('@CommonLabel.lblDataEmpty');
+                    }
+
+                    if (typeof cb != 'undefined') cb();
+                });
+            };
+            // END OF TRANSACTION HISTORY AND FLOW
+
+            self.RemoveNotification = function() {
+                if ($('#noty_top_layout_container').length > 0) {
+                    $('#noty_top_layout_container').remove();
+                }
+            };
+
+            self.afterSearchFn = function(cb) {
+                async.series([
+                    function(cb) {
+                        self.MinimumValueProdEntry(cb);
+                    },
+                    function(cb) {
+                        self.HolidayOrSundayAbsentList(cb);
+                    },
+                    function(cb) {
+                        self.Holiday(cb);
+                    },
+                ], function() {
+                    disableBtnSave(self.isActual());
+                    self.isActual(false);
+                    self.isFilterChange(false);
+                });
+            };
+
+            self.init = function() {
+
+                if(self.firstInitFromUrl()){
+                    self.filterLocationCode('@Model.Param1LocationCode');
+                }else if (self.filterLocationCode() == null)
+                    self.filterLocationCode(self.locationSelectList()[0].LocationCode);
+
+                $('#ddlFilterLocationCode').selectpicker('refresh');
+
+                async.series([
+                    function(cb) {
+                        self.getAllAbsentTypeCalculation(cb);
+                    },
+                    function(cb) {
+                        self.getLocationNameFilter(cb);
+                    },
+                    function(cb) {
+                        if(self.firstInitFromUrl()){
+                            self.filterLocationCode('@Model.Param1LocationCode');
+                        }
+                        self.GetWeekFromSelectList(cb);
+                    },
+                    function(cb) {
+                        self.setDateRange(cb);
+                    },
+                    function(cb) {
+                        self.getClosingPayroll(cb);
+                    },
+                    function(cb) {
+                        self.getUnitCodeSelectListByLocation(cb);
+                    },
+                    function(cb) {
+                        self.getShiftSelectList(cb);
+                    },
+                    function(cb) {
+                        self.getprocessGroupSelectListByLocation(cb);
+                    },
+                    function(cb) {
+                        self.getGroupFromExePlantProductionEntryVerificationByLocationUnitAndProcess(cb);
+                    },
+                    function(cb) {
+                        self.getBrandFromExePlantProductionEntryVerificationByLocationUnitAndProcess(cb);
+                    },
+                    function(cb) {
+                        self.GetPlanTpkByGroup(cb);
+                    }
+                    // self.getClosingPayroll();
+                ], function() {
+                    self.search();
+                    self.firstLoad = false;
+                    self.firstInitFromUrl(false);
+                    // Broadcast that page load filters already completed
+                    self.isLoading(false);
+                });
+            };
+
+            self.init();
+        };
+
+        ko.applyBindings(new app.EditGrid());
+    })(app = this.app || {});
+
+    </script>
+}

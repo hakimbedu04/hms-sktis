@@ -1,0 +1,12 @@
+﻿@using HMS.SKTIS.Application.Resources
+
+<div class="pull-left">@CommonLabel.PageTotal <span data-bind="text:totalRecords()"></span> @CommonLabel.PageEntries</div>
+<div data-bind="visible: (totalPages() > 1)" class="pull-right dataTables_paginate paging_simple_numbers">
+    <a class="paginate_button previous" data-bind="css:{disabled : currentPageIndex() === 1}, click:prevPage()">@CommonLabel.NavPrev</a>
+    <span data-bind="foreach: new Array(totalPages())">
+        <a data-bind="text: $index() + 1,
+                        css: {current : $parent.currentPageIndex() === $index()+1, hide: ((3 < $index()+1 && $parent.currentPageIndex()-2 > $index()+1) || ($parent.currentPageIndex()+2 < $index()+1 && $parent.totalPages()-2 > $index()+1))},
+                        click: $parent.enterPage.bind($data,$index()+1)" class="paginate_button"></a>
+    </span>
+    <a class="paginate_button next" data-bind="css:{disabled : currentPageIndex() === totalPages()}, click:nextPage()">@CommonLabel.NavNext</a>
+</div>

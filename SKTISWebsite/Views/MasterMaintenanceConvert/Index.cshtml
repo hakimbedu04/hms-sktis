@@ -1,0 +1,833 @@
+﻿@using HMS.SKTIS.Application.Resources
+@using HMS.SKTIS.Application.Resources.Views.MasterMaintenanceConvert
+@using SKTISWebsite.Helper
+
+@{ Html.SetPageTitle(@MasterMaintenanceConvert.PageTitle); }
+<div class="col-lg-12">
+    <div class="tabs" role="tabpanel">
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs" role="tablist" id="conversionequpment">
+            <li role="presentation" class="active"><a href="#eqsp" aria-controls="profile" role="tab" data-toggle="tab">@MasterMaintenanceConvert.lblTitleTabEquipmentToSparepart</a></li>
+            <li role="presentation"><a href="#spsp" aria-controls="home" role="tab" data-toggle="tab">@MasterMaintenanceConvert.lblTitleTabSparepartToSparepart</a></li>
+        </ul>
+        <!-- Tab panes -->
+        <div class="tab-content">
+            <!--Equipment to Sparepart--->
+            <div role="tabpanel" class="tab-pane fade in active" id="eqsp" data-bind="with: gridView0">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="action-btn">
+                            <!--<button type="button" class="btn btn-primary" data-bind="click:$root.search0">@CommonLabel.btnView</button>-->
+                            @if (ViewBag.ButtonAccess.Contains(String.Format("{0}/{1}", HMS.SKTIS.Core.Enums.TabName.EquipmenttoSparePart, HMS.SKTIS.Core.Enums.ButtonName.Save)))
+                            {
+                                <button type="button" class="btn btn-primary" data-bind="click:$root.saveData0">@CommonLabel.btnSave</button>
+                            }
+                            @if (ViewBag.ButtonAccess.Contains(String.Format("{0}/{1}", HMS.SKTIS.Core.Enums.TabName.EquipmenttoSparePart, HMS.SKTIS.Core.Enums.ButtonName.Excel)))
+                            {
+                                using (Html.BeginForm("GenerateExcel", "MasterMaintenanceConvert", FormMethod.Post, new { @data_bind = "submit: $root.generateExcel0" }))
+                                {
+                                    <input type="hidden" name="conversionType" />
+                                    <button type="submit" class="btn btn-primary">@CommonLabel.btnExcel</button>
+                                }
+                            }
+                            @Html.Partial("GridViewPageSizeSelector")
+                        </div>
+                    </div>
+                </div>
+                <div class="table-overflow">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr class="head">
+                                <th colspan="2">@MasterMaintenanceConvert.lblTitleEquipmentToSparepartSource</th>
+                                <th rowspan="2">@MasterMaintenanceConvert.lblTitleEquipmentToSparepartActive</th>
+                                <th rowspan="2">@MasterMaintenanceConvert.lblTitleEquipmentToSparepartRemark</th>
+                                <th rowspan="2"></th>
+                                <th rowspan="2">@MasterMaintenanceConvert.lblTitleEquipmentToSparepartUserUpdate</th>
+                                <th rowspan="2">@MasterMaintenanceConvert.lblTitleEquipmentToSparepartUpdateDate</th>
+                            </tr>
+                            <tr class="head">
+                                <th class="widthsmall">@MasterMaintenanceConvert.lblTitleEquipmentToSparepartSourceItemCode</th>
+                                <th>@MasterMaintenanceConvert.lblTitleEquipmentToSparepartSourceDescription</th>
+                            </tr>
+                            <tr class="insertRow" data-bind="click: cancelInline.bind(),inlineAddProccess:[$data, $root.newData0]">
+                                <th>
+                                    <select class="selectpicker show-tick form-control" id="ddlSourceItemCodeEquimpment"
+                                            data-live-search="true" data-size="10"
+                                            data-bind="selectPicker: $root.newData0.ItemCodeSource, optionsText: 'Name', optionsValue : 'Name', selectPickerOptions: { optionsArray: $root.ListItemCodeSourceEquipment }, event : { change : $root.GetItemCodeDescriptionEquipment}"></select>
+                                </th>
+                                <th><span id="spItemCodeSourceDescription0" data-bind="text:$root.newData0.ItemCodeSourceDescription" /></th>
+                                <th class="center"><input type="checkbox" data-bind="checked:$root.newData0.StatusActive" /></th>
+                                <th><input data-bind="value:$root.newData0.Remark, valueUpdate: 'afterkeydown'" class="form-control transparent" /></th>
+                                <th>
+                                    <button id="btnShowPopup" type="button" class="btn btn-primary" data-toggle="modal"
+                                            data-id=""
+                                            data-target="#itemDestinationInsert" data-bind="click:$root.ShowPopupInsert">
+                                        Detail
+                                    </button>
+                                </th>
+                                <th><span data-bind="text:$root.newData1.UpdatedBy"></span></th>
+                                <th><span data-bind="text:$root.newData1.UpdatedDate"></span></th>
+                            </tr>
+                        </thead>
+                        <tbody data-bind="foreach: listDataItems">
+                            @*item template*@
+                            <tr data-bind="if: ($parent.editingRowIndex() !== $index()),
+                                   click: $parent.editInline3.bind($data,$index())">
+                                <td><span data-bind="text:$data.ItemCodeSource"></span></td>
+                                <td><span data-bind="text:$data.ItemCodeSourceDescription"></span></td>
+                                <td class="current center"><input type="checkbox" data-bind="checked:$data.StatusActive, enable: false" /></td>
+                                <td class="current"><span data-bind="text:$data.Remark"></span></td>
+                                <td class="center">
+                                    Detail
+                                </td>
+                                <td><span data-bind="text:$data.UpdatedBy"></span></td>
+                                <td><span data-bind="text:$data.UpdatedDate"></span></td>
+                            </tr>
+                            @*edit template*@
+                            <tr data-bind="validationOptions: {insertMessages: false, showTooltip:true, decorateInputElement: true, errorElementClass: 'input-error'}, inlineProccess:[$parent,$data],
+                                   if:($parent.editingRowIndex() === $index()),
+                                   click: $parent.selectRow.bind($data, $index()),
+                                    event: {keydown:$parent.keydown}">
+                                <td><span data-bind="text:$data.ItemCodeSource"></span></td>
+                                <td><span data-bind="text:$data.ItemCodeSourceDescription"></span></td>
+                                <td class="current center"><input type="checkbox" data-bind="checked:$data.StatusActive" /></td>
+                                <td class="current"><input data-bind="value:$data.Remark,tabToNext:[$parent,$data], valueUpdate:'afterkeydown'" class="form-control transparent" /></td>
+                                <td class="center">
+                                    <button id="btnShowPopupWhenEdit" type="button" class="btn btn-primary" data-toggle="modal"
+                                            data-target="#itemDestinationInsert"
+                                            data-bind="click:$root.ShowPopupEdit.bind($parent,$data)">
+                                        Detail
+                                    </button>
+                                </td>
+                                <td><span data-bind="text:$data.UpdatedBy"></span></td>
+                                <td><span data-bind="text:$data.UpdatedDate"></span></td>
+                            </tr>
+                        </tbody>
+                        <tbody data-bind="visible: !listDataItems().length">
+                            <tr>
+                                <td colspan="9" class="empty-row-message"><div class="loader"></div></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div data-bind="if: (listDataItems() != null && listDataItems().length !== 0)">
+                    @Html.Partial("GridViewFooter")
+                </div>
+            </div>
+            <!--Sparepart to Sparepart--->
+            <div role="tabpanel" class="tab-pane fade" id="spsp" data-bind="with: gridView1">
+                <!--Button Sparepart to Sparepart--->
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="action-btn">
+                            <!--<button type="button" class="btn btn-primary" data-bind="click:$root.search1">@CommonLabel.btnView</button>-->
+                            @if (ViewBag.ButtonAccess.Contains(String.Format("{0}/{1}", HMS.SKTIS.Core.Enums.TabName.SpareParttoSparePart, HMS.SKTIS.Core.Enums.ButtonName.Save)))
+                            {
+                                <button type="button" class="btn btn-primary" data-bind="click:$root.saveData1">@CommonLabel.btnSave</button>
+                            }
+                            @if (ViewBag.ButtonAccess.Contains(String.Format("{0}/{1}", HMS.SKTIS.Core.Enums.TabName.SpareParttoSparePart, HMS.SKTIS.Core.Enums.ButtonName.Excel)))
+                                {
+                                    using (Html.BeginForm("GenerateExcel", "MasterMaintenanceConvert", FormMethod.Post, new { @data_bind = "submit: $root.generateExcel" }))
+                                    {
+                                    <input type="hidden" name="conversionType" />
+                                    <button type="submit" class="btn btn-primary">@CommonLabel.btnExcel</button>
+                                }
+                            }
+                            @Html.Partial("GridViewPageSizeSelector")
+                        </div>
+                    </div>
+                </div>
+                <div class="table-overflow">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr class="head">
+                                <th colspan="2">@MasterMaintenanceConvert.lblTitleSparepartToSparepartSource</th>
+                                <th colspan="3">@MasterMaintenanceConvert.lblTitleSparepartToSparepartDestination</th>
+                                <th rowspan="2" data-bind="click:sortBy.bind($data,'StatusActive'), css:sortCss('StatusActive', $data.sortExpression(), $data.sortOrder())">@MasterMaintenanceConvert.lblTitleSparepartToSparepartActive</th>
+                                <th rowspan="2" data-bind="click:sortBy.bind($data,'ItemCodeSource'), css:sortCss('ItemCodeSource', $data.sortExpression(), $data.sortOrder())">@MasterMaintenanceConvert.lblTitleSparepartToSparepartRemark</th>
+                                <th rowspan="2">@MasterMaintenanceConvert.lblTitleSparepartToSparepartUserUpdate</th>
+                                <th rowspan="2">@MasterMaintenanceConvert.lblTitleSparepartToSparepartUpdatedDate</th>
+                            </tr>
+                            <tr class="head">
+                                <th class="widthsmall" data-bind="click:sortBy.bind($data,'ItemCodeSource'), css:sortCss('ItemCodeSource', $data.sortExpression(), $data.sortOrder())">@MasterMaintenanceConvert.lblTitleSparepartToSparepartSourceItemCode</th>
+                                <th data-bind="click:sortBy.bind($data,'ItemCodeSourceDescription'), css:sortCss('ItemCodeSourceDescription', $data.sortExpression(), $data.sortOrder())">@MasterMaintenanceConvert.lblTitleSparepartToSparepartSourceDescription</th>
+                                <th class="widthsmall" data-bind="click:sortBy.bind($data,'ItemCodeDestination'), css:sortCss('ItemCodeDestination', $data.sortExpression(), $data.sortOrder())">@MasterMaintenanceConvert.lblTitleSparepartToSparepartDestinationItemCode</th>
+                                <th data-bind="click:sortBy.bind($data,'ItemCodeDestinationDescription'), css:sortCss('ItemCodeDestinationDescription', $data.sortExpression(), $data.sortOrder())">@MasterMaintenanceConvert.lblTitleSparepartToSparepartDestinationDescription</th>
+                                <th class="widthsmall" data-bind="click:sortBy.bind($data,'QtyConvert'), css:sortCss('QtyConvert', $data.sortExpression(), $data.sortOrder())">@MasterMaintenanceConvert.lblTitleSparepartToSparepartDestinationQty</th>
+                            </tr>
+                            <tr class="insertRow" data-bind="click: cancelInline.bind(),inlineAddProccess:[$data, $root.newData1]">
+                                <th>
+                                    <select class="selectpicker show-tick form-control" id="ddlSourceItemCodeSparepart"
+                                            data-live-search="true"
+                                            data-bind="selectPicker: $root.newData1.ItemCodeSource, optionsText: 'Name', optionsValue : 'Name', selectPickerOptions: { optionsArray: $root.ListItemCodeSource }, event : { change : $root.GetDestItemCode}"></select>
+                                </th>
+                                <th><span id="spItemCodeSourceDescription1" data-bind="text:$root.newData1.ItemCodeSourceDescription" /></th>
+                                <th>
+                                    <select class="selectpicker show-tick form-control" id="ddlDestItemCode"
+                                            data-live-search="true"
+                                            data-bind="selectPicker: $root.newData1.ItemCodeDestination, optionsText: 'Name', optionsValue : 'Name',selectPickerOptions: { optionsArray: $root.ListItemCodeDestination}, event : { change: $root.GetDestinationItemCodeDescription }"></select>
+                                </th>
+                                <th><span id="spItemCodeDestinationDescription1" data-bind="text:$root.newData1.ItemCodeDestinationDescription" /></th>
+                                <th><input data-bind="value:$root.newData1.QtyConvert, valueUpdate: 'afterkeydown'" class="form-control transparent" type="number" data-sktis-validation="number" min="0" /></th>
+                                <th class="center"><input type="checkbox" data-bind="checked:$root.newData1.StatusActive" /></th>
+                                <th><input data-bind="value:$root.newData1.Remark, valueUpdate: 'afterkeydown'" class="form-control transparent" /></th>
+                                <th><span data-bind="text:$root.newData1.UpdatedBy"></span></th>
+                                <th><span data-bind="text:$root.newData1.UpdatedDate"></span></th>
+                            </tr>
+                        </thead>
+                        <tbody data-bind="foreach: listDataItems">
+                            @*item template*@
+                            <tr data-bind="if: ($parent.editingRowIndex() !== $index()),
+                                   click: $parent.editInline3.bind($data,$index())">
+                                <td><span data-bind="text:$data.ItemCodeSource"></span></td>
+                                <td><span data-bind="text:$data.ItemCodeSourceDescription"></span></td>
+                                <td><span data-bind="text:$data.ItemCodeDestination"></span></td>
+                                <td><span data-bind="text:$data.ItemCodeDestinationDescription"></span></td>
+                                <td class="current"><span data-bind="text:$data.QtyConvert"></span></td>
+                                <td class="current center"><input type="checkbox" data-bind="checked:$data.StatusActive, enable: false" /></td>
+                                <td class="current"><span data-bind="text:$data.Remark"></span></td>
+                                <td><span data-bind="text:$data.UpdatedBy"></span></td>
+                                <td><span data-bind="text:$data.UpdatedDate"></span></td>
+                            </tr>
+                            @*edit template*@
+                            <tr data-bind="validationOptions: {insertMessages: false, showTooltip:true, decorateInputElement: true, errorElementClass: 'input-error'}, inlineProccess:[$parent,$data],
+                                   if:($parent.editingRowIndex() === $index()),
+                                   click: $parent.selectRow.bind($data, $index()),
+                                    event: {keydown:$parent.keydown}">
+                                <td><span data-bind="text:$data.ItemCodeSource"></span></td>
+                                <td><span data-bind="text:$data.ItemCodeSourceDescription"></span></td>
+                                <td><span data-bind="text:$data.ItemCodeDestination"></span></td>
+                                <td><span data-bind="text:$data.ItemCodeDestinationDescription"></span></td>
+                                <td class="current"><input data-bind="value:$data.QtyConvert, valueUpdate: 'afterkeydown'" class="form-control transparent" type="number" data-sktis-validation="number" min="0" /></td>
+                                <td class="current center"><input type="checkbox" data-bind="checked:$data.StatusActive" /></td>
+                                <td class="current"><input data-bind="value:$data.Remark,tabToNext:[$parent,$data], valueUpdate:'afterkeydown'" class="form-control transparent" /></td>
+                                <td><span data-bind="text:$data.UpdatedBy"></span></td>
+                                <td><span data-bind="text:$data.UpdatedDate"></span></td>
+                            </tr>
+                        </tbody>
+                        <tbody data-bind="visible: !listDataItems().length">
+                            <tr>
+                                <td colspan="9" class="empty-row-message"><div class="loader"></div></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div data-bind="if: (listDataItems() != null && listDataItems().length !== 0)">
+                    @Html.Partial("GridViewFooter")
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal Insert-->
+    <div class="modal fade" id="itemDestinationInsert" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Item Destination</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="table-overflow">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr class="head">
+                                    <th>Item Code</th>
+                                    <th>Item Description</th>
+                                    <th>QTY</th>
+                                </tr>
+                            </thead>
+                            <tbody data-bind='foreach: equipmentItemDestinations'>
+                                <tr>
+                                    <td><span data-bind="text: ItemCode"></span></td>
+                                    <td><span data-bind="text: ItemDescription"></span></td>
+                                    <td class="current"><input class="form-control transparent right" data-bind="value: $data.QtyConvert" type="number" data-sktis-validation="number" min="0" ></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" data-bind="click:$root.saveDataItemDestination">OK</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal Insert End -->
+</div>
+@section Scripts
+{
+    <script src="~/Scripts/common/app.GridViewModel.js" type="text/javascript"></script>
+    <script type="text/javascript">
+    $(function() {
+        $('#conversionequpment a').click(function(e) {
+            e.preventDefault();
+            $(this).tab('show');
+        });
+    });
+
+    (function(app) {
+        app.EditGrid = function() {
+            var self = this;
+
+            self.ItemCodeDesc = @Html.Raw(Json.Encode(@Model.ItemDescriptions));
+
+            self.DetailValue = ko.observableArray([]);
+
+
+            self.newData0 = {
+                ItemCodeSource: ko.observableArray([]),
+                StatusActive: ko.observable(true),
+                Remark: ko.observable(''),
+                ItemDestinationEquipment: ko.observableArray([]),
+                ConversionType: ko.observable(true)
+            };
+
+            self.newData1 = {
+                ItemCodeSource: ko.observableArray([]),
+                ItemCodeDestination: ko.observableArray([]),
+                QtyConvert: ko.observable(''),
+                StatusActive: ko.observable(true),
+                Remark: ko.observable(''),
+                ConversionType: ko.observable(false)
+            };
+
+            // gridView0 Initialization
+            self.gridView0 = new app.GridViewModel({
+                Criteria: { PageSize: 10, PageIndex: 1, SortExpression: "UpdatedDate", SortOrder: "DESC", ConversionType: true },
+                DataSourceUrl: @Html.BaseUrl("MasterMaintenanceConvert/GetMaintenanceConvert"),
+                InlineEdit: true,
+                InsertRowFocusedControlIndex: 1
+            });
+
+            // gridView1 Initialization
+            self.gridView1 = new app.GridViewModel({
+                Criteria: { PageSize: 10, PageIndex: 1, SortExpression: "UpdatedDate", SortOrder: "DESC", ConversionType: false },
+                DataSourceUrl: @Html.BaseUrl("MasterMaintenanceConvert/GetMaintenanceConvert"),
+                InlineEdit: true,
+                InsertRowFocusedControlIndex: 1
+            });
+
+            //Get ItemCode Source Equipment
+            self.ListItemCodeSourceEquipment = ko.observableArray();
+            $.ajax({
+                url: @Html.BaseUrl("MasterMaintenanceConvert/GetMstMaintenanceItemNotContainItemType"),
+                type: 'GET',
+                contentType: 'application/json',
+                data: { itemType: "SPAREPART" },
+                dataType: 'json',
+                success: function(data) {
+                    var list = [];
+                    $.each(data, function(index, value) {
+                        list.push({ "Name": value.ItemCode });
+                    });
+                    self.ListItemCodeSourceEquipment(list);
+                    self.GetItemCodeDescriptionEquipment();
+                }
+            });
+
+            //Get ItemCode Description Equipment
+            self.GetItemCodeDescriptionEquipment = function() {
+                for (var i = 0; i < self.ItemCodeDesc.length; i++) {
+                    if (self.ItemCodeDesc[i].ItemCode == self.newData0.ItemCodeSource()) {
+                        self.newData0.ItemCodeSourceDescription = self.ItemCodeDesc[i].ItemDescription;
+                        $('#spItemCodeSourceDescription0').html(self.ItemCodeDesc[i].ItemDescription);
+                        break;
+                    }
+                }
+            }.bind(this);
+
+
+            self.equipmentItemDestinations = ko.observableArray();
+            self.ShowPopupInsert = function() {
+                self.GetDataFromOldOrAjax(self.newData0.ItemCodeSource());
+            };
+
+            self.ShowPopupEdit = function(event) {
+                self.GetDataFromOldOrAjax(event.ItemCodeSource());
+            };
+
+            self.GetDataFromOldOrAjax = function(itemCodeSource) {
+                self.equipmentItemDestinations([]);
+                var list = [];
+                $.each(self.DetailValue(), function(index, value) {
+                    if (value.ItemCodeSource == itemCodeSource) {
+                        $.each(value.Items, function(i, val) {
+                            list.push({
+                                "ItemCode": val.ItemCode,
+                                "ItemCodeSource": val.ItemCodeSource,
+                                "ItemDescription": val.ItemDescription,
+                                "QtyConvert": val.QtyConvert
+                            });
+                        });
+                    }
+                });
+                if (list.length > 0)
+                    self.equipmentItemDestinations(list);
+                else
+                    self.GetEquipmentItemDestination(itemCodeSource);
+            };
+
+            self.GetEquipmentItemDestination = function(itemCode) {
+                $.ajax({
+                    url: @Html.BaseUrl("MasterMaintenanceConvert/GetEqupmentItemDestinationDetail"),
+                    type: "GET",
+                    data: { sourceItemCode: itemCode },
+                    dataType: "json",
+                    traditional: true,
+                    contentType: "application/json; charset=utf-8",
+                    success: function(data) {
+                        //console.log(data);
+                        var list = [];
+                        $.each(data, function(index, value) {
+                            list.push({
+                                "ItemCode": value.ItemCode,
+                                "ItemCodeSource": value.ItemCodeSource,
+                                "ItemDescription": value.ItemDescription,
+                                "QtyConvert": value.QtyConvert
+                            });
+                        });
+                        self.equipmentItemDestinations(list);
+                    }
+                });
+            };
+
+            //Get ItemCodeSource Sparepart
+            self.ListItemCodeSource = ko.observableArray();
+            $.ajax({
+                url: @Html.BaseUrl("MasterMaintenanceConvert/GetItemCodes"),
+                type: 'GET',
+                contentType: 'application/json',
+                data: { itemCode: "", itemType: "SPAREPART" },
+                dataType: 'json',
+                success: function(data) {
+                    var list = [];
+                    $.each(data, function(index, value) {
+                        list.push({ "Name": value.ItemCode });
+                    });
+                    self.ListItemCodeSource(list);
+                    self.GetDestinationItemCodeDescription();
+                }
+            });
+
+            //Get ItemCodeDestination Sparepart
+            self.ListItemCodeDestination = ko.observableArray();
+            self.GetDestItemCode = function() {
+                $.ajax({
+                    url: @Html.BaseUrl("MasterMaintenanceConvert/GetItemCodes"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: { itemCode: self.newData1.ItemCodeSource, itemType: "SPAREPART" },
+                    dataType: 'json',
+                    success: function(data) {
+                        var list = [];
+                        $('#ddlDestItemCode').find('option').remove();
+                        $('#ddlDestItemCode').selectpicker('refresh');
+                        $.each(data, function(index, value) {
+                            list.push({ "Name": value.ItemCode });
+                        });
+                        self.ListItemCodeDestination(list);
+                    }
+                });
+                self.GetSourceItemCodeDescription();
+            };
+
+            //Get ItemCodeSource Description
+            self.GetSourceItemCodeDescription = function() {
+                for (var i = 0; i < self.ItemCodeDesc.length; i++) {
+                    if (self.ItemCodeDesc[i].ItemCode == self.newData1.ItemCodeSource()) {
+                        self.newData1.ItemCodeSourceDescription = self.ItemCodeDesc[i].ItemDescription;
+                        $('#spItemCodeSourceDescription1').html(self.ItemCodeDesc[i].ItemDescription);
+                        break;
+                    }
+                }
+            }.bind(this);
+
+            //Get ItemCodeDestination Description
+            self.GetDestinationItemCodeDescription = function() {
+                for (var i = 0; i < self.ItemCodeDesc.length; i++) {
+                    if (self.ItemCodeDesc[i].ItemCode == self.newData1.ItemCodeDestination()) {
+                        self.newData1.ItemCodeDestinationDescription = self.ItemCodeDesc[i].ItemDescription;
+                        $('#spItemCodeDestinationDescription1').html(self.ItemCodeDesc[i].ItemDescription);
+                        break;
+                    }
+                }
+            }.bind(this);
+
+            // Field Validations gridView0
+            self.gridView0.applyValidationRules = function(entity) {
+
+                self.RemoveNotification();
+
+                var list = [];
+                $.each(self.DetailValue(), function(index1, value1) {
+                    //console.log(value1.ItemCodeSource + ' - ' + entity.ItemCodeSource());
+                    if (value1.ItemCodeSource == entity.ItemCodeSource()) {
+                        $.each(value1.Items, function(i, val) {
+                            list.push({
+                                "ItemCode": val.ItemCode,
+                                "ItemCodeSource": val.ItemCodeSource,
+                                "ItemDescription": val.ItemDescription,
+                                "QtyConvert": val.QtyConvert
+                            });
+                        });
+                    }
+                });
+                
+                if(list.length > 0)
+                    entity.ItemDestinationEquipment(list);
+                
+                entity.ItemDestinationEquipment.extend({
+                    required: {
+                        message: "<strong>Detail</strong> cannot be empty!"
+                    }
+                });
+                
+                // popup qty validation
+                if (entity.ItemDestinationEquipment().length > 0) {
+                    entity.ItemDestinationEquipment.extend({
+                        validation: {
+                            message: "<strong>Detail</strong> cannot be empty!",
+                            validator: function() {
+                                var stat = false;
+                                $.each(entity.ItemDestinationEquipment(), function(index, value) {
+                                    if (typeof value != 'undefined') {
+                                        if (jQuery.isFunction(value.QtyConvert)) {
+                                            //console.log(value.QtyConvert());
+                                            if (value.QtyConvert() > 0) {
+                                                stat = true;
+                                                return stat;
+                                            }
+                                        } else {
+                                            //console.log(value.QtyConvert);
+                                            if (value.QtyConvert > 0) {
+                                                stat = true;
+                                                return stat;
+                                            }
+                                        }
+                                    }
+                                });
+                                return stat;
+                            }
+                        }
+                    });
+                }
+
+                //console.log(entity.Remark());
+
+                entity.ItemCodeSource.extend({
+                    required: {
+                        message: "<strong>Source Item Code</strong> cannot be empty!"
+                    }
+                });
+                
+                entity.Remark.extend({
+                    required: {
+                        message: "<strong>Remark</strong> cannot be empty!",
+                        onlyIf: function() {
+                            return entity.StatusActive() === false;
+                        }
+                    }
+                });
+            };
+
+            // Field Validations gridView1
+            self.gridView1.applyValidationRules = function(entity) {
+
+                self.RemoveNotification();
+
+                entity.QtyConvert.extend({
+                    required: {
+                        message: "<strong>Quantity</strong> cannot be empty!"
+                    }
+                });
+
+                entity.ItemCodeSource.extend({
+                    required: {
+                        message: "<strong>Source Item Code</strong> cannot be empty!"
+                    }
+                });
+                entity.ItemCodeDestination.extend({
+                    required: {
+                        message: "<strong>Destination Item Code</strong> cannot be empty!"
+                    }
+                });
+                entity.Remark.extend({
+                    required: {
+                        message: "<strong>Remark</strong> cannot be empty!",
+                        onlyIf: function() {
+                            return entity.StatusActive() === false;
+                        }
+                    }
+                });
+            };
+
+            // Remove Value in Dropdownlist after Insert
+            self.gridView0.onAfterInsert = function(insertedData) {
+                $.each(self.ListItemCodeSourceEquipment(), function(index, value) {
+                    if (typeof value != 'undefined') {
+                        if (value.Name == insertedData.ItemCodeSource()) {
+                            self.ListItemCodeSourceEquipment.remove(function(value) {
+                                return value.Name == insertedData.ItemCodeSource();
+                            });
+                        }
+                    }
+                });
+                if (self.ListItemCodeSourceEquipment().length < 1) {
+                    $('#ddlSourceItemCodeEquimpment').find('option').remove();
+                    $('#ddlSourceItemCodeEquimpment').selectpicker('refresh');
+                }
+                ;
+
+            };
+
+            // Reset Fields for Insert Row gridView0
+            self.gridView0.resetDefault = function(viewModel) {
+                viewModel.ItemCodeSource('');
+                viewModel.StatusActive(true);
+                viewModel.Remark('');
+                viewModel.ItemDestinationEquipment('');
+            };
+
+            // Reset Fields for Insert Row gridView1
+            self.gridView1.resetDefault = function(viewModel) {
+                viewModel.ItemCodeSource('');
+                viewModel.ItemCodeDestination('');
+                viewModel.QtyConvert('');
+                viewModel.StatusActive(true);
+                viewModel.Remark('');
+            };
+
+            self.listDataItems = ko.observableArray([]);
+            
+            //description: save detail
+            self.saveDataItemDestination = function() {
+                //self.equipmentItemDestinations.remove(function(item){return (item.QtyConvert == null)||(item.QtyConvert == "")||(item.QtyConvert == undefined)});
+                self.newData0.ItemDestinationEquipment(self.equipmentItemDestinations());
+
+                //console.log(self.equipmentItemDestinations());
+
+                var detailValue = [];
+                var valueDetail = [];
+                var list = [];
+                var itemCodeSource = "";
+                $.each(self.equipmentItemDestinations(), function(index, value) {
+                    
+                    if (parseInt(value.QtyConvert) > 0) {
+                        value.QtyConvert = parseInt(value.QtyConvert);
+                    } else {
+                        value.QtyConvert = null;
+                    }
+                    valueDetail = {
+                        "ItemCodeSource": value.ItemCodeSource,
+                        "ItemCode": value.ItemCode,
+                        "ItemDescription": value.ItemDescription,
+                        "QtyConvert": value.QtyConvert
+                    };
+                    itemCodeSource = value.ItemCodeSource;
+                    list.push(valueDetail);
+                });
+                detailValue = { "ItemCodeSource": itemCodeSource, Items: list };
+                
+                if (self.DetailValue().length > 0) {
+                    $.each(self.DetailValue(), function(index, value) {
+                        if (typeof value != 'undefined') {
+                            if (value.ItemCodeSource == itemCodeSource) {
+                                self.DetailValue.remove(value);
+                            }
+                        }
+                    });
+                }
+
+                self.DetailValue.push(detailValue);
+            };
+
+            //description: save bulk data saveData0
+            self.saveData0 = function() {
+                if (self.gridView0.editingRowIndex() !== -1)
+                    return;
+
+                //console.log(JSON.stringify(self.gridView0.listEditItems()));
+
+                $.each(self.gridView0.listEditItems(), function(index, value) {
+                    if (typeof value != 'undefined') {
+
+                        //console.log(value.ItemCodeSource);
+                        //console.log(index);
+                        var list = [];
+                        $.each(self.DetailValue(), function(index1, value1) {
+                            //console.log(value1.ItemCodeSource + ' - ' + value.ItemCodeSource);
+                            if (value1.ItemCodeSource == value.ItemCodeSource) {
+                                $.each(value1.Items, function(i, val) {
+                                    list.push({
+                                        "ItemCode": val.ItemCode,
+                                        "ItemCodeSource": val.ItemCodeSource,
+                                        "ItemDescription": val.ItemDescription,
+                                        "QtyConvert": val.QtyConvert
+                                    });
+                                });
+                            }
+                        });
+                        value.ItemDestinationEquipment = list;
+                    }
+                });
+
+                var datas = {
+                    //"Parameters": { "LocationCode": self.LocationCode, "Process": self.filterProcess(), "Status": self.filterStatus() },
+                    "New": self.gridView0.listNewItems(),
+                    "Edit": self.gridView0.listEditItems()
+                };
+                datas = ko.myToJSON(datas);
+                
+                //console.log(datas);
+
+                $.ajax({
+                    url: @Html.BaseUrl("MasterMaintenanceConvert/SaveAllMstMntcConvertEquipment"),
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: datas,
+                        dataType: 'json',
+                        success: function(data) {
+                            //console.log(data);
+                            if (data.New) {
+                                $.each(data.New, function(k, value) {
+                                    if (value)
+                                        SKTIS.Helper.ResponseNotification(value, "Insert Master Maintenance Convert", value.ItemCodeSource);
+                                });
+                            }
+
+                            if (data.Edit) {
+                                $.each(data.Edit, function(k, value) {
+                                    if (value)
+                                        SKTIS.Helper.ResponseNotification(value, "Edit Master Maintenance Convert", value.ItemCodeSource);
+                                });
+                            }
+
+                            self.gridView0.sort('UpdatedDate', 'DESC');
+                            self.gridView0.listNewItems.removeAll();
+                            self.gridView0.listEditItems.removeAll();
+                        }
+                    });
+                };
+
+                //description: save bulk data saveData1
+                self.saveData1 = function() {
+                    if (self.gridView1.editingRowIndex() !== -1)
+                        return;
+
+                    var datas = {
+                        //"Parameters": { "LocationCode": self.LocationCode, "Process": self.filterProcess(), "Status": self.filterStatus() },
+                        "New": self.gridView1.listNewItems(),
+                        "Edit": self.gridView1.listEditItems()
+                    };
+                    datas = JSON.stringify(datas);
+
+                    $.ajax({
+                        url: @Html.BaseUrl("MasterMaintenanceConvert/SaveAllMstMntcConvert"),
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: datas,
+                        dataType: 'json',
+                        success: function(data) {
+                            //console.log(data);
+                            if (data.New) {
+                                $.each(data.New, function(k, value) {
+                                    if (value)
+                                        SKTIS.Helper.ResponseNotification(value, "Insert Master Maintenance Convert", value.ItemCodeSource);
+                                });
+                            }
+
+                            if (data.Edit) {
+                                $.each(data.Edit, function(k, value) {
+                                    if (value)
+                                        SKTIS.Helper.ResponseNotification(value, "Edit Master Maintenance Convert", value.ItemCodeSource);
+                                });
+                            }
+
+                            self.gridView1.sort('UpdatedDate', 'DESC');
+                            self.gridView1.listNewItems.removeAll();
+                            self.gridView1.listEditItems.removeAll();
+                        }
+                    });
+                };
+
+
+                self.generateExcel0 = function(formElement) {
+                    $(formElement).find("input[name=conversionType]").val(true);
+                    return true;
+                };
+
+                self.generateExcel = function(formElement) {
+                    $(formElement).find("input[name=conversionType]").val(false);
+                    return true;
+                };
+
+                // Load Data gridView0
+                self.search0 = function() {
+
+                    $('.empty-row-message').html('<div class="loader"></div>'); // Reset New and Edit row
+                    // Check whether New or Edit data is existing and not saved to database yet (on Ajax Action)
+                    if (SKTIS.Checker.modifiedDataExistsForAjax([self.gridView0.listNewItems, self.gridView0.listEditItems]) == true) {
+                        return;
+                    } else {
+                        self.gridView0.listNewItems.removeAll();
+                        self.gridView0.listEditItems.removeAll();
+                    }
+
+                    self.gridView0.search({}, function(response) {
+                        if (response.status == 'KO') {
+                            SKTIS.Helper.Notification(response.message, 'error');
+                            $('.empty-row-message').html(response.message);
+                        } else if (response.status == 'Empty') {
+
+                            self.RemoveNotification();
+
+                            //SKTIS.Helper.Notification(response.message,'warning');
+                            $('.empty-row-message').html('@CommonLabel.lblDataEmpty');
+                }
+            });
+        };
+
+        // Load Data
+        self.search1 = function() {
+
+            $('.empty-row-message').html('<div class="loader"></div>'); // Reset New and Edit row
+            // Check whether New or Edit data is existing and not saved to database yet (on Ajax Action)
+            if (SKTIS.Checker.modifiedDataExistsForAjax([self.gridView1.listNewItems, self.gridView1.listEditItems]) == true) {
+                return;
+            } else {
+                self.gridView1.listNewItems.removeAll();
+                self.gridView1.listEditItems.removeAll();
+            }
+
+            self.gridView1.search({}, function(response) {
+                if (response.status == 'KO') {
+                    SKTIS.Helper.Notification(response.message, 'error');
+                    $('.empty-row-message').html(response.message);
+                } else if (response.status == 'Empty') {
+
+                    self.RemoveNotification();
+
+                    //SKTIS.Helper.Notification(response.message,'warning');
+                    $('.empty-row-message').html('@CommonLabel.lblDataEmpty');
+                }
+            });
+        };
+
+        self.RemoveNotification = function() {
+            if ($('#noty_top_layout_container').length > 0) {
+                $('#noty_top_layout_container').remove();
+            }
+        };
+
+        // Check whether New or Edit data is existing and not saved to database yet (on Request action)
+        SKTIS.Checker.modifiedDataExists([self.gridView0.listNewItems, self.gridView0.listEditItems, self.gridView1.listNewItems, self.gridView1.listEditItems]);
+
+        self.search0();
+        self.search1();
+    };
+    ko.applyBindings(new app.EditGrid());
+    })(app = this.app || {});
+    </script>
+}

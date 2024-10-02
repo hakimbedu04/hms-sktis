@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+  <appSettings>
+    <!--Databsae name and connection string-->
+    <add key="DatabaseName" value="SKT-IS-V1.1.7"/>
+    <!--<add key="ConnectionString" value="User Id=sa;Password=Passw0rd;Database=SKT_DEV;server=.;"/>-->
+    <add key="ConnectionString" value="Database=SKT_DEV;server=192.168.62.54;User Id=sa;Password=Vti_2015!;"/>
+    <!--Allow to target script for a specific DB instance only (mostly Cremas)-->
+    <add key="InstanceName" value="SKT_DEV"/>
+    <!--Basckup destination folder, both the machine running the scripts and the server must have access to it-->
+    <add key="BackupFolder" value ="D:\Projects\_backup"/>
+    <!--Allow to skip database backup, if running the scripts from a remote machine for ex.-->
+    <add key="skipBackup" value="True"/>
+  </appSettings>
+</configuration>

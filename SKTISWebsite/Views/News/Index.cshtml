@@ -1,0 +1,122 @@
+﻿@model IEnumerable<SKTISWebsite.Models.News.NewsInfoCompositeViewModel>
+@using HMS.SKTIS.Core;
+@using HMS.SKTIS.Application.Resources;
+@using HMS.SKTIS.Application.Resources.Views.News
+@using SKTISWebsite.Helper
+
+@{ Html.SetPageTitle("News Info List"); }
+
+
+<div class="col-lg-12">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="action-btn">
+                @Html.ActionLink("New", "Create", null, new { @class = "btn btn-primary" })
+            </div>
+        </div>
+    </div>
+    <div class="table-overflow">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>No.</th>
+                    @*<th>@News.lblLocation</th>*@
+                    <th>@News.lblTitle</th>
+                    <th>@News.lblShortDesc</th>
+                    <th>@News.lblImage</th>
+                    @*<th>@News.lblSlider</th>*@
+                    @*<th>@News.lblInformatips</th>*@
+                    <th>@CommonLabel.lblTitleUpdatedBy</th>
+                    <th>@CommonLabel.lblTitleUpdatedDate</th>
+                    <th>Active</th>
+                    <th class="widthsmall">Update</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{var i = 1;}
+                @foreach (var item in @Model)
+                {
+                    <tr>
+                        <td class="right">@(i++)</td>
+                        @*<td>@Html.DisplayFor(modelItem => item.Location)</td>*@
+                        <td>@Html.DisplayFor(modelItem => item.Title)</td>
+                        <td>@Html.DisplayFor(modelItem => item.ShortDescription)</td>
+                        <td>
+                            <div class="table-image">
+                                <img src="@Url.Content(Constants.UploadPathNews + item.Image)">
+                            </div>
+                        </td>
+                        @*<td class="center">@Html.CheckBoxFor(modelItem => item.IsSlider, new { disabled = "disabled" })</td>
+                        <td class="center">@Html.RadioButtonFor(modelItem => item.IsInformatips, true, new { disabled = "disabled" })</td>*@
+                        <td>@item.UpdateBy</td>
+                        <td>@item.UpdatedDate</td>
+                        <td class="center">@Html.CheckBoxFor(modelItem => item.Active, new { @class = "activate", data_id = item.NewsId })</td>
+                        <td class="center">
+                            <a href="@Url.Action("Edit", "News", new { id = item.NewsId })" class="btn btn-primary"><i class="fa fa-pencil"></i></a>
+                            @*<button data-id="@item.NewsId" class="delete-btn btn btn-danger"><i class="fa fa-times"></i></button>*@
+                        </td>
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+    </div>
+</div>
+@section Scripts{
+    <script type="text/javascript">
+        if("@ViewBag.message" != "")
+            SKTIS.Helper.ResponseNotification("", "@ViewBag.message", "");
+        $(document).ready(function () {
+            $('.activate').click(function (ev) {
+                var checked = $(this).is(":checked");
+                var text = "activate";
+                var activate = true;
+                if(!checked){
+                    activate = false;
+                    text = "inactivate";
+                }
+                if (!confirm("Are you sure to "+text+" News Info?")) {
+                    ev.preventDefault();
+                    return;
+                }
+
+                $.ajax({
+                    url: @Html.BaseUrl("News/Activate"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: { id: $(this).data('id'),  activate: activate},
+                    dataType: 'json',
+                    success: function(data) {
+                        if(data.success)
+                            SKTIS.Helper.ResponseNotification("", data.message, "");
+                        else
+                            SKTIS.Helper.Notification(data.message, 'error');
+                    }
+                });
+
+            });
+
+            @*$('.delete-btn').click(function (ev) {
+                if (!confirm("Are you sure to delete News Info?")) {
+                    ev.preventDefault();
+                    return;
+                }
+
+                $.ajax({
+                    url: @Html.BaseUrl("News/Delete"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: { id: $(this).data('id')},
+                    dataType: 'json',
+                    success: function(data) {
+                        if(data.success)
+                            SKTIS.Helper.ResponseNotification("", data.message, "");
+                        else
+                            SKTIS.Helper.Notification(data.message, 'error');
+                    }
+                });
+
+            });*@
+        });
+    </script>    
+}

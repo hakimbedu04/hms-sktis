@@ -1,0 +1,664 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{2F73B164-E5D7-4C42-907C-42FF296DB6AD}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>HMS.SKTIS.Application</RootNamespace>
+    <AssemblyName>HMS.SKTIS.Application</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Resources\CommonLabel.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>CommonLabel.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\Views\ExePlantWorkerAbsenteeism\ExePlantWorkerAbsenteeism.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ExePlantWorkerAbsenteeism.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\Views\Home\Home.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Home.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\Views\Home\Home.id.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Home.id.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\Views\MaintenanceEquipmentReceive\MaintenanceEquipmentReceive.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MaintenanceEquipmentReceive.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\Views\MaintenanceEquipmentReceive\MaintenanceEquipmentReceive.id.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MaintenanceEquipmentReceive.id.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\Views\MaintenanceEquipmentTransfer\MaintenanceEquipmentTransfer.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MaintenanceEquipmentTransfer.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\Views\MaintenanceEquipmentTransfer\MaintenanceEquipmentTransfer.id.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MaintenanceEquipmentTransfer.id.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\Views\MaintenanceExecutionItemConversion\MaintenanceExecutionItemConversion.id.Designer.cs">
+      <DependentUpon>MaintenanceExecutionItemConversion.id.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Resources\Views\MaintenanceExecutionItemConversion\MaintenanceExecutionItemConversion.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MaintenanceExecutionItemConversion.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\Views\MaintenanceItemDisposal\MaintenanceItemDisposal.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MaintenanceItemDisposal.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\Views\MasterGenBrandGroupMaterial\MasterGenBrandGroupMaterial.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MasterGenBrandGroupMaterial.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\Views\MasterGenBrandGroupMaterial\MasterGenBrandGroupMaterial.id.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MasterGenBrandGroupMaterial.id.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\Views\EquipmentRequest\EquipmentRequest.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>EquipmentRequest.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\Views\EquipmentRequest\EquipmentRequest.id.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>EquipmentRequest.id.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\Views\MasterGenBrandGroup\MasterGenBrandGroup.Designer.cs">
+      <DependentUpon>MasterGenBrandGroup.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Resources\Views\MasterGenBrandGroup\MasterGenBrandGroup.id.Designer.cs">
+      <DependentUpon>MasterGenBrandGroup.id.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Resources\Views\MasterGenBrandPackageItem\MasterGenBrandPackageItem.id.Designer.cs">
+      <DependentUpon>MasterGenBrandPackageItem.id.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Resources\Views\MasterGenBrandPackageItem\MasterGenBrandPackageItem.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MasterGenBrandPackageItem.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\Views\MasterGenBrandPackageMapping\MasterGenBrandPackageMapping.id.Designer.cs">
+      <DependentUpon>MasterGenBrandPackageMapping.id.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Resources\Views\MasterGenBrandPackageMapping\MasterGenBrandPackageMapping.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MasterGenBrandPackageMapping.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\Views\MasterGenBrand\MasterGenBrand.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MasterGenBrand.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\Views\MasterGenHoliday\MasterGenHoliday.id..Designer.cs">
+      <DependentUpon>MasterGenHoliday.id..resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Resources\Views\MasterGenHoliday\MasterGenHoliday.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MasterGenHoliday.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\Views\MasterGenList\MasterGenList.id.Designer.cs">
+      <DependentUpon>MasterGenList.id.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Resources\Views\MasterGenList\MasterGenList.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MasterGenList.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\Views\MasterGenLocation\MasterGenLocation.id.Designer.cs">
+      <DependentUpon>MasterGenLocation.id.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Resources\Views\MasterGenLocation\MasterGenLocation.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MasterGenLocation.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\Views\MasterGenProcessSetting\MasterGenProcessSetting.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MasterGenProcessSetting.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\Views\MasterGenProcessSetting\MasterGenProcessSetting.id.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MasterGenProcessSetting.id.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\Views\MasterGenProcess\MasterGenProcess.id.Designer.cs">
+      <DependentUpon>MasterGenProcess.id.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Resources\Views\MasterGenProcess\MasterGenProcess.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MasterGenProcess.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\Views\MasterGenStandardHour\MasterGenStandardHour.id.Designer.cs">
+      <DependentUpon>MasterGenStandardHour.id.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Resources\Views\MasterGenStandardHour\MasterGenStandardHour.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MasterGenStandardHour.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\Views\MasterMaintenanceConvert\MasterMaintenanceConvert.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MasterMaintenanceConvert.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\Views\MasterMntcItemLocation\MasterMntcItemLocation.id.Designer.cs">
+      <DependentUpon>MasterMntcItemLocation.id.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Resources\Views\MasterMntcItemLocation\MasterMntcItemLocation.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MasterMntcItemLocation.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\Views\MasterMntcItem\MasterMntcItem.id.Designer.cs">
+      <DependentUpon>MasterMntcItem.id.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Resources\Views\MasterMntcItem\MasterMntcItem.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MasterMntcItem.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\Views\MasterPlantEmployeeJobData\MasterPlantEmployeeJobData.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MasterPlantEmployeeJobData.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\Views\MasterPlantAbsentType\MasterPlantAbsentType.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MasterPlantAbsentType.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\Views\MasterPlantAbsentType\MasterPlantAbsentType.id.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MasterPlantAbsentType.id.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\Views\MasterPlantProductionGroup\MasterPlantProductionGroup.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MasterPlantProductionGroup.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\Views\MasterPlantUnit\MasterPlantUnit.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MasterPlantUnit.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\Views\MasterTPOFeeRate\MasterTPOFeeRate.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MasterTPOFeeRate.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\Views\MasterTPOInfo\MasterTPOInfo.id.Designer.cs">
+      <DependentUpon>MasterTPOInfo.id.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Resources\Views\MasterTPOInfo\MasterTPOInfo.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MasterTPOInfo.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\Views\MasterTPOPackage\MasterTPOPackage.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MasterTPOPackage.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\Views\MasterTPOProductionGroup\MasterTPOProductionGroup.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MasterTPOProductionGroup.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\Views\PlanningTPOTPK\PlanningTPOTPK.id.Designer.cs">
+      <DependentUpon>PlanningTPOTPK.id.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Resources\Views\PlanningTPOTPK\PlanningTPOTPK.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>PlanningTPOTPK.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\Views\PlanningWPP\PlanningWPP.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>PlanningWPP.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\Views\PlantGroupShift\PlantGroupShift.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>PlantGroupShift.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\Views\News\News.Designer.cs" />
+    <Compile Include="Resources\Views\PlantGroupShift\PlantGroupShift.id.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>PlantGroupShift.id.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\Views\UtilSecurityFunctions\UtilSecurityFunctions.Designer.cs">
+      <DependentUpon>UtilSecurityFunctions.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Resources\Views\UtilSecurityFunctions\UtilSecurityFunctions.id.Designer.cs">
+      <DependentUpon>UtilSecurityFunctions.id.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Resources\Views\UtilSecurityResponsibilities\UtilSecurityResponsibilities.Designer.cs">
+      <DependentUpon>UtilSecurityResponsibilities.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Resources\Views\UtilSecurityResponsibilities\UtilSecurityResponsibilities.id.Designer.cs">
+      <DependentUpon>UtilSecurityResponsibilities.id.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Resources\Views\UtilSecurityRules\UtilSecurityRules.Designer.cs">
+      <DependentUpon>UtilSecurityRules.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Resources\Views\UtilSecurityRules\UtilSecurityRules.id.Designer.cs">
+      <DependentUpon>UtilSecurityRules.id.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Resources\Views\UtilSecurityRoles\UtilSecurityRoles.Designer.cs">
+      <DependentUpon>UtilSecurityRoles.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Resources\Views\UtilSecurityRoles\UtilSecurityRoles.id.Designer.cs">
+      <DependentUpon>UtilSecurityRoles.id.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Resources\Views\WagesProductionCardApprovalDetail\WagesProductionCardApprovalDetail.id.Designer.cs">
+      <DependentUpon>WagesProductionCardApprovalDetail.id.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Resources\Views\WagesProductionCardApprovalDetail\WagesProductionCardApprovalDetail.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>WagesProductionCardApprovalDetail.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\Views\WagesProductionCardApproval\WagesProductionCardApproval.id.Designer.cs">
+      <DependentUpon>WagesProductionCardApproval.id.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Resources\Views\WagesProductionCardApproval\WagesProductionCardApproval.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>WagesProductionCardApproval.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\CommonLabel.id.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\CommonLabel.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>CommonLabel.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Views\ExePlantWorkerAbsenteeism\ExePlantWorkerAbsenteeism.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>ExePlantWorkerAbsenteeism.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Views\Home\Home.id.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Home.id.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Views\Home\Home.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Home.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Views\MaintenanceEquipmentReceive\MaintenanceEquipmentReceive.id.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>MaintenanceEquipmentReceive.id.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Views\MaintenanceEquipmentReceive\MaintenanceEquipmentReceive.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>MaintenanceEquipmentReceive.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Views\MaintenanceEquipmentTransfer\MaintenanceEquipmentTransfer.id.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>MaintenanceEquipmentTransfer.id.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Views\MaintenanceEquipmentTransfer\MaintenanceEquipmentTransfer.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>MaintenanceEquipmentTransfer.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Views\MaintenanceExecutionItemConversion\MaintenanceExecutionItemConversion.id.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>MaintenanceExecutionItemConversion.id.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Views\MaintenanceExecutionItemConversion\MaintenanceExecutionItemConversion.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>MaintenanceExecutionItemConversion.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Views\MaintenanceItemDisposal\MaintenanceItemDisposal.id.resx" />
+    <EmbeddedResource Include="Resources\Views\MaintenanceItemDisposal\MaintenanceItemDisposal.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>MaintenanceItemDisposal.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Views\MasterGenBrandGroupMaterial\MasterGenBrandGroupMaterial.id.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>MasterGenBrandGroupMaterial.id.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Views\MasterGenBrandGroupMaterial\MasterGenBrandGroupMaterial.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>MasterGenBrandGroupMaterial.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Views\EquipmentRequest\EquipmentRequest.id.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>EquipmentRequest.id.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Views\EquipmentRequest\EquipmentRequest.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>EquipmentRequest.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Views\MasterGenBrandGroup\MasterGenBrandGroup.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>MasterGenBrandGroup.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Views\MasterGenBrandGroup\MasterGenBrandGroup.id.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>MasterGenBrandGroup.id.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Views\MasterGenBrandPackageItem\MasterGenBrandPackageItem.id.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>MasterGenBrandPackageItem.id.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Views\MasterGenBrandPackageItem\MasterGenBrandPackageItem.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>MasterGenBrandPackageItem.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Views\MasterGenBrandPackageMapping\MasterGenBrandPackageMapping.id.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>MasterGenBrandPackageMapping.id.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Views\MasterGenBrandPackageMapping\MasterGenBrandPackageMapping.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>MasterGenBrandPackageMapping.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Views\MasterGenBrand\MasterGenBrand.id.resx" />
+    <EmbeddedResource Include="Resources\Views\MasterGenBrand\MasterGenBrand.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>MasterGenBrand.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Views\MasterGenHoliday\MasterGenHoliday.id..resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>MasterGenHoliday.id..Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Views\MasterGenHoliday\MasterGenHoliday.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>MasterGenHoliday.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Views\MasterGenList\MasterGenList.id.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>MasterGenList.id.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Views\MasterGenList\MasterGenList.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>MasterGenList.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Views\MasterGenLocation\MasterGenLocation.id.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>MasterGenLocation.id.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Views\MasterGenLocation\MasterGenLocation.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>MasterGenLocation.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Views\MasterGenProcessSetting\MasterGenProcessSetting.id.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>MasterGenProcessSetting.id.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Views\MasterGenProcessSetting\MasterGenProcessSetting.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>MasterGenProcessSetting.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Views\MasterGenProcess\MasterGenProcess.id.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>MasterGenProcess.id.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Views\MasterGenProcess\MasterGenProcess.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>MasterGenProcess.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Views\MasterGenStandardHour\MasterGenStandardHour.id.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>MasterGenStandardHour.id.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Views\MasterGenStandardHour\MasterGenStandardHour.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>MasterGenStandardHour.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Views\MasterMaintenanceConvert\MasterMaintenanceConvert.id.resx" />
+    <EmbeddedResource Include="Resources\Views\MasterMaintenanceConvert\MasterMaintenanceConvert.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>MasterMaintenanceConvert.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Views\MasterMntcItemLocation\MasterMntcItemLocation.id.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>MasterMntcItemLocation.id.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Views\MasterMntcItemLocation\MasterMntcItemLocation.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>MasterMntcItemLocation.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Views\MasterMntcItem\MasterMntcItem.id.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>MasterMntcItem.id.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Views\MasterMntcItem\MasterMntcItem.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>MasterMntcItem.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Views\MasterPlantEmployeeJobData\MasterPlantEmployeeJobData.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>MasterPlantEmployeeJobData.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Views\MasterPlantAbsentType\MasterPlantAbsentType.id.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>MasterPlantAbsentType.id.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Views\MasterPlantAbsentType\MasterPlantAbsentType.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>MasterPlantAbsentType.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Views\MasterPlantProductionGroup\MasterPlantProductionGroup.id.resx" />
+    <EmbeddedResource Include="Resources\Views\MasterPlantProductionGroup\MasterPlantProductionGroup.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>MasterPlantProductionGroup.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Views\MasterPlantUnit\MasterPlantUnit.id.resx" />
+    <EmbeddedResource Include="Resources\Views\MasterPlantUnit\MasterPlantUnit.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>MasterPlantUnit.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Views\MasterTPOFeeRate\MasterTPOFeeRate.id.resx" />
+    <EmbeddedResource Include="Resources\Views\MasterTPOFeeRate\MasterTPOFeeRate.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>MasterTPOFeeRate.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Views\MasterTPOInfo\MasterTPOInfo.id.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>MasterTPOInfo.id.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Views\MasterTPOInfo\MasterTPOInfo.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>MasterTPOInfo.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Views\MasterTPOPackage\MasterTPOPackage.id.resx" />
+    <EmbeddedResource Include="Resources\Views\MasterTPOPackage\MasterTPOPackage.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>MasterTPOPackage.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Views\MasterTPOProductionGroup\MasterTPOProductionGroup.id.resx" />
+    <EmbeddedResource Include="Resources\Views\MasterTPOProductionGroup\MasterTPOProductionGroup.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>MasterTPOProductionGroup.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Views\PlanningTPOTPK\PlanningTPOTPK.id.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>PlanningTPOTPK.id.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Views\PlanningTPOTPK\PlanningTPOTPK.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>PlanningTPOTPK.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Views\PlantGroupShift\PlantGroupShift.id.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>PlantGroupShift.id.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Views\PlantGroupShift\PlantGroupShift.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>PlantGroupShift.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Views\News\News.id.resx" />
+    <EmbeddedResource Include="Resources\Views\News\News.resx" />
+    <EmbeddedResource Include="Resources\Views\PlanningWPP\PlanningWPP.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>PlanningWPP.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Views\UtilSecurityFunctions\UtilSecurityFunctions.id.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>UtilSecurityFunctions.id.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Views\UtilSecurityFunctions\UtilSecurityFunctions.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>UtilSecurityFunctions.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Views\UtilSecurityResponsibilities\UtilSecurityResponsibilities.id.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>UtilSecurityResponsibilities.id.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Views\UtilSecurityResponsibilities\UtilSecurityResponsibilities.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>UtilSecurityResponsibilities.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Views\UtilSecurityRules\UtilSecurityRules.id.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>UtilSecurityRules.id.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Views\UtilSecurityRules\UtilSecurityRules.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>UtilSecurityRules.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Views\UtilSecurityRoles\UtilSecurityRoles.id.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>UtilSecurityRoles.id.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Views\UtilSecurityRoles\UtilSecurityRoles.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>UtilSecurityRoles.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Views\WagesProductionCardApprovalDetail\WagesProductionCardApprovalDetail.id.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>WagesProductionCardApprovalDetail.id.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Views\WagesProductionCardApprovalDetail\WagesProductionCardApprovalDetail.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>WagesProductionCardApprovalDetail.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Views\WagesProductionCardApproval\WagesProductionCardApproval.id.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>WagesProductionCardApproval.id.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Views\WagesProductionCardApproval\WagesProductionCardApproval.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>WagesProductionCardApproval.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

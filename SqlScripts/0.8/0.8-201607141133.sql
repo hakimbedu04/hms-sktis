@@ -1,0 +1,68 @@
+-- Description: Change varchar length
+-- Ticket: http://tp.voxteneo.co.id/entity/8372
+-- Author: Dwi Yudha
+
+CREATE TABLE dbo.Tmp_MstADTemp
+	(
+	UserAD varchar(64) NOT NULL,
+	Name varchar(100) NULL,
+	Email varchar(100) NULL,
+	StatusActive bit NULL,
+	CreatedDate datetime NOT NULL,
+	CreatedBy varchar(64) NOT NULL,
+	UpdatedDate datetime NOT NULL,
+	UpdatedBy varchar(64) NOT NULL
+	)  ON [PRIMARY]
+GO
+ALTER TABLE dbo.Tmp_MstADTemp SET (LOCK_ESCALATION = TABLE)
+GO
+IF EXISTS(SELECT * FROM dbo.MstADTemp)
+	 EXEC('INSERT INTO dbo.Tmp_MstADTemp (UserAD, Name, Email, StatusActive, CreatedDate, CreatedBy, UpdatedDate, UpdatedBy)
+		SELECT UserAD, Name, Email, StatusActive, CreatedDate, CreatedBy, UpdatedDate, UpdatedBy FROM dbo.MstADTemp WITH (HOLDLOCK TABLOCKX)')
+GO
+ALTER TABLE dbo.UtilDelegation
+	DROP CONSTRAINT FK_UTILDELEGATION_RELATIONSHIP_105_MSTADTEMP
+GO
+ALTER TABLE dbo.UtilUsersResponsibility
+	DROP CONSTRAINT FK_UTILUSERSRESPONSIBILITY_RELATIONSHIP_104_MSTADTEMP
+GO
+DROP TABLE dbo.MstADTemp
+GO
+EXECUTE sp_rename N'dbo.Tmp_MstADTemp', N'MstADTemp', 'OBJECT' 
+GO
+ALTER TABLE dbo.MstADTemp ADD CONSTRAINT
+	PK_MSTADTEMP PRIMARY KEY NONCLUSTERED 
+	(
+	UserAD
+	) WITH( STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+
+GO
+ALTER TABLE dbo.UtilUsersResponsibility WITH NOCHECK ADD CONSTRAINT
+	FK_UTILUSERSRESPONSIBILITY_RELATIONSHIP_104_MSTADTEMP FOREIGN KEY
+	(
+	UserAD
+	) REFERENCES dbo.MstADTemp
+	(
+	UserAD
+	) ON UPDATE  NO ACTION 
+	 ON DELETE  NO ACTION 
+	
+GO
+ALTER TABLE dbo.UtilUsersResponsibility
+	NOCHECK CONSTRAINT FK_UTILUSERSRESPONSIBILITY_RELATIONSHIP_104_MSTADTEMP
+GO
+ALTER TABLE dbo.UtilUsersResponsibility SET (LOCK_ESCALATION = TABLE)
+GO
+ALTER TABLE dbo.UtilDelegation ADD CONSTRAINT
+	FK_UTILDELEGATION_RELATIONSHIP_105_MSTADTEMP FOREIGN KEY
+	(
+	UserADTo
+	) REFERENCES dbo.MstADTemp
+	(
+	UserAD
+	) ON UPDATE  NO ACTION 
+	 ON DELETE  NO ACTION 
+	
+GO
+ALTER TABLE dbo.UtilDelegation SET (LOCK_ESCALATION = TABLE)
+GO

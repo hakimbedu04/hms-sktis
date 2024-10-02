@@ -1,0 +1,580 @@
+﻿@model SKTISWebsite.Models.ExeTPOActualWorkHours.InitExeTPOActualWorkHoursViewModel
+@using HMS.SKTIS.Application.Resources
+@using SKTISWebsite.Helper
+@{ Html.SetPageTitle(" Actual Work Hours"); }
+
+<div class="container-fluid" data-bind="with: gridView">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="col-lg-6">
+                <div class="row">
+                    <label class="form-label col-lg-3">
+                        Location
+                    </label>
+                    <div class="col-lg-3">
+                        @*@Html.DropDownList("ddlFilterLocationCode", new SelectList(Model.TpoLocationLookupLists, "LocationCode", "LocationCode"),
+                            new
+                            {
+                                @class = "selectpicker show-tick form-control",
+                                id = "ddlFilterLocationCode",
+                                data_live_search = "true",
+                                data_bind = "value:$root.filterLocationCode, event : { change : $root.onLocationCodeChange}"
+                            })*@
+
+                        <select id="ddlFilterLocationCode"
+                                class="selectpicker show-tick form-control"
+                                data-live-search="true"
+                                data-bind="selectPicker:$root.filterLocationCode, optionsText: 'LocationCode', optionsValue : 'LocationCode', optionsAfterRender: locationDesc, selectPickerOptions: { optionsArray: $root.itemLocations }, event : { change : $root.onLocationCodeChange}"></select>
+                    </div>
+                    <div class="col-lg-5">
+                        <input type="text" class="form-control" readonly="readonly" data-bind="value:$root.filterLocationName">
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="form-label col-lg-3">
+                        Brand
+                    </label>
+                    <div class="col-lg-5">
+                        <select class="selectpicker show-tick form-control" id="ddlBrandFilter"
+                                data-live-search="true"
+                                data-bind="selectPicker: $root.filterBrand, optionsText: 'Text', optionsValue : 'Value', selectPickerOptions: { optionsArray: $root.brandSelectList }, event: {change: $root.onBrandCodeChange}"></select>
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="form-label col-lg-3">
+                        Employee Status
+                    </label>
+                    <div class="col-lg-5">
+                        <select class="selectpicker show-tick form-control" id="ddlEmpStatus"
+                                data-live-search="true"
+                                data-bind="selectPicker: $root.filterEmpStatus, optionsText: 'Text', optionsValue : 'Value', selectPickerOptions: { optionsArray: $root.empStatusSelectList }"></select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="row">
+                    <label class="form-label col-lg-3">
+                        Year
+                    </label>
+                    <div class="col-lg-4">
+                        @Html.DropDownList("filterYear", Model.YearSelectList,
+                             new Dictionary<string, object> { { "data-bind", "value:$root.filterYear, event : { change : $root.onYearSelectedChange}" },
+                        { "class", "selectpicker show-tick form-controlt" },
+                        {"data-live-search","true"},{"id","filterYear"} })
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="form-label col-lg-3">
+                        Week
+                    </label>
+                    <div class="col-lg-4">
+                        <select id="filterWeek" class="selectpicker show-tick form-control" data-live-search="true"
+                                data-bind="selectPicker: $root.filterWeek, optionsText: 'Value', optionsValue : 'Text', selectPickerOptions: { optionsArray: $root.WeekFromSelectList },  event : { change : $root.onWeekFilterChange }"></select>
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="form-label col-lg-3">
+                        Date
+                    </label>
+                    <div class="col-lg-4">
+                        <div id="filterDate" class='input-group date time' data-bind="dateTimePicker: $root.filterDate, value: $root.filterDate, dateTimePickerOptions: {widgetPositioning: {vertical: 'bottom'}, showClear: true, ignoreReadonly: true}, dateChange: $root.onDateChange">
+                            <input class="form-control" readonly="readonly" />
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="action-btn">
+                        @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.View.ToString()))
+                        {
+                            <button type="button" class="btn btn-primary" data-bind="click:$root.search">View</button>
+                        }
+                        @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.Save.ToString()))
+                        {
+                            <button type="button" class="btn btn-primary" data-bind="click:$root.saveData">Save</button>
+                        }
+                        @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.Excel.ToString()))
+                        {
+                            using (Html.BeginForm("GenerateExcel", "ExeTPOActualWorkHours", FormMethod.Post, new { @data_bind = "submit: $root.generateExcel" }))
+                            {
+                                <input type="hidden" name="locationCode">
+                                <input type="hidden" name="brand">
+                                <input type="hidden" name="year">
+                                <input type="hidden" name="week">
+                                <input type="hidden" name="date">
+                            <input type="hidden" name="empStatus">
+                                <button type="submit" class="btn btn-primary">Excel</button>
+                            }
+                        }
+                        
+                        @Html.Partial("GridViewPageSizeSelector")
+                    </div>
+                </div>
+            </div>
+            <div class="table-overflow">
+                <table class="table table-striped" id="employeeabsent">
+                    <thead>
+                        <tr class="head">
+                            <th>Process</th>
+                            <th>In</th>
+                            <th>Break</th>
+                            <th>Out</th>
+                        </tr>
+                    </thead>
+                    <tbody data-bind="foreach: listDataItems, visible: listDataItems().length">
+                        @*insert template*@
+                        <tr data-bind="if: ($parent.editingRowIndex() !== $index()),
+                                   click: $parent.editInline3.bind($data,$index())">
+                            <td width="25%"><span data-bind="text:$data.ProcessGroup"></span></td>
+                            <td width="25%" class="center current"><span data-bind="text:$data.TimeIn"></span></td>
+                            <td width="25%" class="center current"><span data-bind="text:$data.BreakTime"></span></td>
+                            <td width="25%" class="center current"><span data-bind="text:$data.TimeOut"></span></td>
+                        </tr>
+                        @*edit template*@
+                        <tr data-bind="validationOptions: {insertMessages: false, showTooltip:true, decorateInputElement: true, errorElementClass: 'input-error'}, inlineProccess:[$parent,$data],
+                                   if:($parent.editingRowIndex() === $index()),
+                                   click: $parent.selectRow.bind($data, $index())">
+                            <td width="25%">
+                                <span data-bind="text:$data.ProcessGroup"></span>
+                            </td>
+                            <td width="25%" class="current">
+                                <div class="input-group bootstrap-timepicker timepicker">
+                                    <input type="text" class="form-control input-small" data-bind="value:$data.TimeIn, valueUpdate: 'afterkeydown', timePicker:$data.TimeIn, timePickerOptions:{ showMeridian: false, minuteStep: 5}">
+                                    <span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span>
+                                </div>
+                            </td>
+                            <td width="25%" class="current">
+                                <div class="input-group bootstrap-timepicker timepicker">
+                                    <input type="text" class="form-control input-small" data-bind="value:$data.BreakTime, valueUpdate: 'afterkeydown', timePicker:$data.BreakTime, timePickerOptions:{ showMeridian: false, minuteStep: 5}">
+                                    <span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span>
+                                </div>
+                            </td>
+                            <td width="25%" class="current">
+                                <div class="input-group bootstrap-timepicker timepicker">
+                                    <input type="text" class="form-control input-small" data-bind="value:$data.TimeOut, valueUpdate: 'afterkeydown', timePicker:$data.TimeOut, timePickerOptions:{ showMeridian: false, minuteStep: 5}">
+                                    <span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tbody data-bind="visible: !listDataItems().length">
+                        <tr>
+                            <td colspan="4" class="empty-row-message"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div data-bind="if: (listDataItems() != null && listDataItems().length !== 0)">
+                @Html.Partial("GridViewFooter")
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script src="~/Scripts/app/globalfunctions.js" type="text/javascript"></script>
+    <script src="~/Scripts/common/app.GridViewModel.js" type="text/javascript"></script>
+    <script src="~/Scripts/common/app.Extenders.js" type="text/javascript"></script>
+    <script type="text/javascript">
+    (function(app) {
+        app.EditGrid = function() {
+            var self = this;
+            //self.itemLocations = @Html.Raw(Json.Encode(@Model.TpoLocationLookupLists));
+            self.itemLocations = ko.observableArray(@Html.Raw(Json.Encode(@Model.TpoLocationLookupLists)));
+
+            self.filterLocationCode = ko.observable($("#ddlFilterLocationCode").val());
+            self.filterLocationName = ko.observable('');
+            self.filterBrand = ko.observable('');
+            self.filterEmpStatus = ko.observable('');
+            self.filterYear = ko.observable('@Model.DefaultYear');
+            self.filterWeek = ko.observable('@Model.DefaultWeek');
+            self.filterDate = ko.observable(moment().toDate());
+            self.initDate = false;
+            self.firstLoad = true;
+            self.isLoading = ko.observable(true);
+
+            self.newData = {
+                BreakTime: ko.observable(''),
+                TimeIn: ko.observable(''),
+                TimeOut: ko.observable('')
+            };
+
+            //event on location dropdown change
+            self.onLocationCodeChange = function() {
+                if (self.firstLoad || self.isLoading()) return;
+
+                self.isLoading(true);
+
+                async.series([
+                    function(cb) {
+                        self.getLocationNameFilter(cb);
+                    },
+                    function(cb) {
+                        self.getBrandFromExePlantProductionEntryVerificationByLocation(cb);
+                    },
+                    function(cb) {
+                        self.getEmpStatusFromExeTPOProduction(cb);
+                    }
+                ], function() {
+                    self.isLoading(false);
+                });
+            };
+
+            self.onBrandCodeChange = function() {
+                if (self.firstLoad || self.isLoading()) return;
+
+                self.isLoading(true);
+
+                async.series([
+                    function(cb) {
+                        self.getEmpStatusFromExeTPOProduction(cb);
+                    }
+                ], function() {
+                    self.isLoading(false);
+                });
+            }
+
+            self.onWeekFilterChange = function() {
+                if (self.firstLoad || self.isLoading()) return;
+
+                self.isLoading(true);
+
+                async.series([
+                    function(cb) {
+                        self.setDateRange(cb);
+                    },
+                    function(cb) {
+                        self.getBrandFromExePlantProductionEntryVerificationByLocation(cb);
+                    },
+                    function(cb) {
+                        self.getEmpStatusFromExeTPOProduction(cb);
+                    }
+                ], function() {
+                    self.isLoading(false);
+                });
+            }
+
+            self.onDateChange = function() {
+                if (self.firstLoad || self.isLoading()) return;
+
+                self.isLoading(true);
+
+                async.series([
+                    function(cb) {
+                        self.getBrandFromExePlantProductionEntryVerificationByLocation(cb);
+                    },
+                    function(cb) {
+                        self.getEmpStatusFromExeTPOProduction(cb);
+                    }
+                ], function() {
+                    self.isLoading(false);
+                });
+            }
+
+            self.onYearSelectedChange = function() {
+                if (self.firstLoad || self.isLoading()) return;
+
+                self.isLoading(true);
+
+                async.series([
+                    function(cb) {
+                        self.GetWeekFromSelectList(cb);
+                    },
+                    function(cb) {
+                        self.setDateRange(cb);
+                    },
+                    function(cb) {
+                        self.getBrandFromExePlantProductionEntryVerificationByLocation(cb);
+                    },
+                    function(cb) {
+                        self.getEmpStatusFromExeTPOProduction(cb);
+                    }
+                ], function() {
+                    self.isLoading(false);
+                });
+            };
+
+            //get location name by location code
+            self.getLocationNameFilter = function(cb) {
+                self.itemLocations().map(function(v) {
+                    if (typeof v.LocationCode !== 'undefined' && v.LocationCode == self.filterLocationCode()) {
+                        self.filterLocationName(v.LocationName);
+
+                        if (typeof cb != 'undefined') cb();
+                    }
+                });
+            };
+
+            self.brandSelectList = ko.observableArray([]);
+            self.getBrandFromExePlantProductionEntryVerificationByLocation = function(cb) {
+                $.ajax({
+                    url: @Html.BaseUrl("ExeTPOActualWorkHours/GetBrandFromExeTPOProductionEntryVerificationByLocation"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: {
+                        locationCode: self.filterLocationCode(),
+                        date: self.filterDate()
+                    },
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#ddlBrandFilter').find('option').remove();
+                        $('#ddlBrandFilter').selectpicker('refresh');
+                        var brandCodeModel = [];
+                        $.each(data, function(index, value) {
+                            brandCodeModel.push({ "Text": value, "Value": value });
+                        });
+                        self.brandSelectList(brandCodeModel);
+
+                    }
+                }).done(function() {
+                    if (typeof cb != 'undefined') cb();
+                });
+            };
+
+                self.empStatusSelectList = ko.observableArray([]);
+                self.getEmpStatusFromExeTPOProduction = function(cb) {
+                    $.ajax({
+                        url: @Html.BaseUrl("ExeTPOActualWorkHours/GetEmpStatusNested"),
+                        type: 'GET',
+                        contentType: 'application/json',
+                        data: {
+                            locationCode: self.filterLocationCode(),
+                            brandCode: self.filterBrand(),
+                            date: self.filterDate()
+                        },
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#ddlEmpStatus').find('option').remove();
+                            $('#ddlEmpStatus').selectpicker('refresh');
+                            var empStatusModel = [];
+                            $.each(data, function(index, value) {
+                                empStatusModel.push({ "Text": value, "Value": value });
+                            });
+                            self.empStatusSelectList(empStatusModel);
+                        }
+                    }).done(function() {
+                        if (typeof cb != 'undefined') cb();
+                    });
+                };
+
+                self.WeekFromSelectList = ko.observableArray([]);
+                self.GetWeekFromSelectList = function(cb) {
+                    $.ajax({
+                        url: @Html.BaseUrl("ExeTPOActualWorkHours/GetWeekByYear"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: { year: self.filterYear() },
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#filterWeek').find('option').remove();
+                        $('#filterWeek').selectpicker('refresh');
+                        var kpsWeekModel = [];
+                        $.each(data, function(index, value) {
+                            kpsWeekModel.push({ "Text": value, "Value": value });
+                        });
+                        self.WeekFromSelectList(kpsWeekModel);
+                        self.filterWeek('@Model.DefaultWeek');
+                    }
+                    }).done(function() {
+                        if (typeof cb != 'undefined') cb();
+                    });
+            };
+
+            self.setDateRange = function(cb) {
+                $.ajax({
+                    url: @Html.BaseUrl("ExeTPOActualWorkHours/GetDateByYearWeek"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: { year: self.filterYear(), week: self.filterWeek() },
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#filterDate').data("DateTimePicker").options({
+                            maxDate: moment(data.EndDate),
+                            minDate: moment(data.StartDate).subtract(1, 'days')
+                        });
+
+                        if ((moment(self.filterDate(), "DD-MM-YYYY").diff(moment(data.StartDate), 'days') < 0) || (moment(self.filterDate(), "DD-MM-YYYY").diff(moment(data.EndDate), 'days') > 0)) {
+                                    
+                            var now = moment();
+                            if(moment(now, "DD-MM-YYYY").diff(moment(data.StartDate), 'days') > 0 && (moment(now, "DD-MM-YYYY").diff(moment(data.EndDate), 'days') < 0))
+                            {
+                                self.filterDate(now);
+                            }else{
+                                self.filterDate(moment(data.StartDate));
+                            }
+                        }
+                    }
+                }).done(function() {
+                    if (typeof cb != 'undefined') cb();
+                });
+            };
+
+            // TODO
+            self.gridView = new app.GridViewModel({
+                Criteria: {
+                    PageSize: 10,
+                    PageIndex: 1,
+                    SortExpression: "ProcessOrder",
+                    SortOrder: "ASC",
+                    LocationCode: self.filterLocationCode,
+                    Year: self.filterYear,
+                    Week: self.filterWeek,
+                    Date: self.filterDate,
+                    Brand: self.filterBrand,
+                    StatusEmp: self.filterEmpStatus
+                },
+                DataSourceUrl: @Html.BaseUrl("ExeTPOActualWorkHours/GetExeTPOActualWorkHours"),
+                InlineEdit: true,
+                InsertRowFocusedControlIndex: 1
+            });
+
+            // TODO
+            self.gridView.applyValidationRules = function(row) {
+                //console.log(row);
+                var dtIn =  moment(row.TimeIn(),'HH:mm').format('HH:mm');
+                var dtOut =  moment(row.TimeOut(),'HH:mm').format('HH:mm');
+                console.log(typeof dtIn);
+                console.log(dtOut == "Invalid date");
+                console.log(dtIn > dtOut);
+                if (dtIn > dtOut){
+                    SKTIS.Helper.Notification("<strong>Out can't less than IN</strong>", "error");
+                    //row.TimeIn("0:00");
+                    //row.TimeOut("0:00");
+                    //row.BreakTime("0:00");
+                }else if(dtOut == "Invalid date" || dtIn == "Invalid date"){
+                    SKTIS.Helper.Notification("<strong>Invalid Date</strong>", "error");
+                    //row.TimeIn("0:00");
+                    //row.TimeOut("0:00");
+                    //row.BreakTime("0:00");
+                }
+                else{
+                    self.RemoveNotification();
+                }
+            };
+
+            //description : generateExcel
+            self.generateExcel = function(formElement) {
+                $(formElement).find("input[name=locationCode]").val($('#ddlFilterLocationCode').val());
+                $(formElement).find("input[name=brand]").val($('#ddlBrandFilter').val());
+                $(formElement).find("input[name=empStatus]").val($('#ddlEmpStatus').val());
+                $(formElement).find("input[name=year]").val($('#filterYear').val());
+                $(formElement).find("input[name=week]").val($('#filterWeek').val());
+                $(formElement).find("input[name=date]").val($('#filterDate').val());
+                return true;
+            };
+
+            // TODO description: save bulk data
+            self.saveData = function() {
+                if (self.gridView.editingRowIndex() !== -1)
+                    return;
+
+                var datas = {
+                    "Parameters": { "LocationCode": self.filterLocationCode(), "Date" : self.filterDate(), "StatusEmp" : self.filterEmpStatus() },
+                    "Edit": self.gridView.listEditItems(),
+                    "New": self.gridView.listDataItems()
+                };
+
+                datas = ko.myToJSON(datas);
+                $.ajax({
+                    url: @Html.BaseUrl("ExeTPOActualWorkHours/SaveAllExeTPOActualWorkHours"),
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: datas,
+                    dataType: 'json',
+                    success: function(data) {
+                        
+                        if (data.New) {
+                            $.each(data.New, function(k, value) {
+                                if (value)
+                                    SKTIS.Helper.ResponseNotification(value, "Save Actual Work Hours", value.ProcessGroup);
+                            });
+                        }else if (data.Edit) {
+                            $.each(data.Edit, function(k, value) {
+                                if (value)
+                                    SKTIS.Helper.ResponseNotification(value, "Edit Actual Work Hours", value.ProcessGroup);
+                            });
+                        }
+
+                        self.gridView.reload();
+                        self.gridView.listNewItems.removeAll();
+                        self.gridView.listEditItems.removeAll();
+                    }
+                });
+            };
+
+            //self.onLocationCodeChange();
+
+            // Load Data
+            self.search = function() {
+                $('.empty-row-message').html('<div class="loader"></div>'); // Reset New and Edit row
+                // Check whether New or Edit data is existing and not saved to database yet (on Ajax Action)
+                if (SKTIS.Checker.modifiedDataExistsForAjax([self.gridView.listNewItems, self.gridView.listEditItems]) === true) {
+                    return;
+                } else {
+                    self.gridView.listNewItems.removeAll();
+                    self.gridView.listEditItems.removeAll();
+                }
+
+                //self.filterExcelListGroup = self.filterListGroup();
+                self.gridView.search({}, function(response) {
+                    if (response.status === 'KO') {
+                        SKTIS.Helper.Notification(response.message, 'error');
+                        $('.empty-row-message').html(response.message);
+                    } else if (response.status === 'Empty') {
+
+                        self.RemoveNotification();
+
+                        //SKTIS.Helper.Notification(response.message,'warning');
+                        $('.empty-row-message').html('@CommonLabel.lblDataEmpty');
+                    }
+                });
+
+                self.RemoveNotification = function() {
+                    if ($('#noty_top_layout_container').length > 0) {
+                        $('#noty_top_layout_container').remove();
+                    }
+                };
+            };
+            $(document).ready(function(){
+                self.init();
+            });
+
+            self.init = function() {
+                
+                self.isLoading(true);
+
+                async.series([
+                    function(cb) {
+                        self.getLocationNameFilter(cb);
+                    },
+                    function(cb) {
+                        self.GetWeekFromSelectList(cb);
+                    },
+                    function(cb) {
+                        self.setDateRange(cb);
+                    },
+                    function(cb) {
+                        self.getBrandFromExePlantProductionEntryVerificationByLocation(cb);
+                    },
+                    function(cb) {
+                        self.getEmpStatusFromExeTPOProduction(cb);
+                    },
+                    
+                ], function() {
+                    self.firstLoad = false;
+                    self.isLoading(false);
+                    self.search();
+                });
+            };
+
+        };
+        ko.applyBindings(new app.EditGrid());
+    })(app = this.app || {});
+
+    </script>
+}

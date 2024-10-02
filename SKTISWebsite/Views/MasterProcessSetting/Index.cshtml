@@ -1,0 +1,194 @@
+﻿<div class="container-fluid">
+    <div class="row">
+        <ul class="breadcrumb">
+            <li><a href="#">Master</a></li>
+            <li><a class="active">Master Process Setting</a></li>
+        </ul>
+        <div class="col-lg-12">
+            <div class="table">
+                <!--<div class="row">
+                        <label class="form-label col-lg-2">
+                            Brand Code
+                        </label>
+                        <div class="col-lg-10">
+                            <select class="form-control" id="dropdown-table">
+                                <option></option>
+                                <option>SKT PAS12SR-20</option>
+                                <option>DSS16SR-20</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label class="form-label col-lg-2">
+                            FA Code
+                        </label>
+                        <div class="col-lg-10">
+                            <select class="form-control" id="dropdown-table">
+                                <option></option>
+                                <option>PASS</option>
+                                <option>DSS</option>
+                                <option>SKT</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label class="form-label col-lg-2">
+                            Process
+                        </label>
+                        <div class="col-lg-10">
+
+                            <select class="form-control" id="dropdown-table">
+                                <option></option>
+                                <option>GILING</option>
+                                <option>GUNTING</option>
+                                <option>BANDROLING</option>
+                                <option>PAKING</option>
+                            </select>
+                        </div>
+                    </div>-->
+                <div id="master-process-setting"></div>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-primary">New</button>
+                </div>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-primary">Excel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+
+    <script type="text/javascript">
+        $(function () {
+            $('#datetimepicker1').datetimepicker();
+            var MyDateField = function (config) {
+                jsGrid.Field.call(this, config);
+            };
+
+            MyDateField.prototype = new jsGrid.Field({
+                sorter: function (date1, date2) {
+                    return new Date(date1) - new Date(date2);
+                },
+
+                itemTemplate: function (value) {
+                    return new Date(value).toDateString();
+                },
+
+                insertTemplate: function (value) {
+                    return this._insertPicker = $("<input>").datepicker({ defaultDate: new Date() });
+                },
+
+                editTemplate: function (value) {
+                    return this._editPicker = $("<input>").datepicker().datepicker("setDate", new Date(value));
+                },
+
+                insertValue: function () {
+                    return this._insertPicker.datepicker("getDate").toISOString();
+                },
+
+                editValue: function () {
+                    return this._editPicker.datepicker("getDate").toISOString();
+                }
+            });
+
+            jsGrid.fields.myDateField = MyDateField;
+
+            $("#master-process-setting").jsGrid({
+                height: "90%",
+                width: "100%",
+
+                inserting: true,
+                editing: true,
+                filtering: true,
+                sorting: true,
+                paging: true,
+                /*autoload: true,*/
+                pageSize: 15,
+                deleteConfirm: "Do you really want to delete this?",
+                /*controller: db,
+                data: db.masterlocation,*/
+                data: [
+                    {
+                        "BrandCode": 1,
+                        "ProcessClass": 1,
+                        "ProcessDescription": 2,
+                        "EntryConversion": 2,
+                        "StandardStick": "1000",
+                        "MinStick": "1000",
+                        "RollingWorkerPackage": " ",
+                        "Active": true,
+                        "UserUpdate": "PMI/pherlukijanto",
+                        "UpdateDate": "04/02/2015",
+                        "UpdateTime": "8:32:04"
+                    },
+                    {
+                        "BrandCode": 1,
+                        "ProcessClass": 1,
+                        "ProcessDescription": 3,
+                        "EntryConversion": 2,
+                        "StandardStick": "1000",
+                        "MinStick": "2000",
+                        "RollingWorkerPackage": " ",
+                        "Active": true,
+                        "UserUpdate": "PMI/pherlukijanto",
+                        "UpdateDate": "11/02/2015",
+                        "UpdateTime": "14:38:21"
+                    },
+                    {
+                        "BrandCode": 1,
+                        "ProcessClass": 1,
+                        "ProcessDescription": 1,
+                        "EntryConversion": 2,
+                        "StandardStick": "1000",
+                        "MinStick": "1000",
+                        "RollingWorkerPackage": " ",
+                        "Active": true,
+                        "UserUpdate": "PMI/mnatalia",
+                        "UpdateDate": "05/02/2015",
+                        "UpdateTime": "12:12:47"
+                    },
+                    {
+                        "BrandCode": 0,
+                        "ProcessClass": 0,
+                        "ProcessDescription": 0,
+                        "EntryConversion": 2,
+                        "StandardStick": "325",
+                        "MinStick": "400",
+                        "RollingWorkerPackage": " ",
+                        "Active": true,
+                        "UserUpdate": "PMI/mnatalia",
+                        "UpdateDate": "06/02/2015",
+                        "UpdateTime": "7:12:48"
+                    }
+                ],
+
+                fields: [
+                    { type: "control", editButton: false, modeSwitchButton: false, class: "headcol" },
+                    {
+                        name: "BrandCode", type: "select", title: "Brand Code", items: [{ Name: "PAS12SR-20", Id: 0 }, { Name: "DSS12HR-20", Id: 1 }], valueField: "Id",
+                        textField: "Name"
+                    },
+                    {
+                        name: "ProcessClass", type: "select", title: "Process Class", items: [{ Name: "Proc1", Id: 0 }, { Name: "Proc2", Id: 1 }], valueField: "Id",
+                        textField: "Name"
+                    },
+                    {
+                        name: "ProcessDescription", type: "select", title: "Process Description", items: [{ Name: "GILING", Id: 0 }, { Name: "GUNTING", Id: 1 }, { Name: "BANDROL", Id: 2 }, { Name: "PAK", Id: 3 }], valueField: "Id",
+                        textField: "Name"
+                    },
+                    { name: "EntryConversion", title: "Entry Conversion" },
+                    { name: "StandardStick", title: "Standard Stick" },
+                    { name: "MinStick", title: "Min Stick" },
+                    { name: "RollingWorkerPackage", title: "Rolling Worker Package" },
+                    { name: "Active", type: "checkbox", title: "Active" },
+                    { name: "UserUpdate", title: "User Update", width: 120 },
+                    { name: "UpdateDate", title: "Update Date", align: "center" },
+                    { name: "UpdateDate", title: "Update Time", align: "center" }
+                ]
+            });
+        });
+    </script>
+}

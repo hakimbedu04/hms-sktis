@@ -1,0 +1,552 @@
+﻿@model SKTISWebsite.Models.TPOFeeExeGLAccrued.InitTPOFeeExeGLAccruedViewModel
+@using SKTISWebsite.Helper
+@{ Html.SetPageTitle(" TPO Fee GL Accrued"); }
+@using HMS.SKTIS.Application.Resources
+
+<div class="col-lg-12" data-bind="with: gridView">
+    <div class="col-lg-6">
+        <div class="row">
+            <label class="form-label col-lg-3">
+                Regional
+            </label>
+            <div class="col-lg-3">
+                @Html.DropDownList("filterRegional", new SelectList(Model.Regional, "Value", "Text"),
+                    new
+                    {
+                        @class = "selectpicker show-tick form-control",
+                        id = "filterRegional",
+                        data_live_search = "true",
+                        data_bind = "value:$root.filterRegional, event : { change : $root.LocationCodeSelectListChange}"
+                    })
+                @*<select id="filterRegional"
+                        class="selectpicker show-tick form-control"
+                        data-live-search="true"
+                        data-bind="selectPicker:$root.filterRegional, optionsText: 'Text', optionsValue : 'Value',  optionsAfterRender : $root.afterRender, selectPickerOptions: { optionsArray: $root.modelRegional }, event : { change : $root.LocationCodeSelectListChange}"></select>*@
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="row">
+            <label class="form-label col-lg-3">
+                KPS Year
+            </label>
+            <div class="col-lg-4">
+                @Html.DropDownList("filterYear", Model.YearSelectList,
+                             new Dictionary<string, object> { { "data-bind", "value:$root.filterYear, event : { change : $root.onYearSelectedChange }" },
+                        {"class", "selectpicker show-tick form-control" },
+                        {"data-live-search","true"},
+                        {"id","filterYear"} })
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-3">
+                KPS Week
+            </label>
+            <div class="col-lg-4">
+                <select id="spFilterWeek" class="selectpicker show-tick form-control" data-live-search="true"
+                        data-bind="selectPicker: $root.filterWeek, optionsText: 'Value', optionsValue : 'Text', selectPickerOptions: { optionsArray: $root.WeekSelectList }, event: { change: $root.onWeekChange }"></select>
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-3">
+                Closing Date
+            </label>
+            <div class="col-lg-4">
+                @*<select id="filterClosingDate" class="selectpicker show-tick form-control" data-live-search="true" data-bind="selectPicker: $root.filterClosingDate, optionsText: 'Value', optionsValue : 'Text', selectPickerOptions: { optionsArray: $root.ClosingDateSelectList }"></select>*@
+                <div id="filterClosingDate"class='input-group date time' data-bind="dateTimePicker: $root.dateValuePieceRate, value: $root.dateValuePieceRate, dateTimePickerOptions: {widgetPositioning: {vertical: 'bottom'}, showClear: true, ignoreReadonly: true}">
+                    <input id="dtpDateInput" class="form-control" readonly="readonly" />
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="action-btn">
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.View.ToString()))
+                {
+                    <button type="button" class="btn btn-primary" data-bind="click:$root.search, enable: !$root.isBusy() ">View</button>
+                }
+                @*@if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.P1Template.ToString()))
+                {
+                    <button type="button" class="btn btn-primary" data-bind="click:$root.printP1Template">P1 Template</button>
+                }*@
+                
+                @*@if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.P1Template.ToString()))
+                {
+                    using (Html.BeginForm("GenerateP1T", "TPOFeeExeGLAccrued", FormMethod.Post, new { @id = "printp1", @data_bind = "click: $root.printP1Template" }))
+                    {
+                        <button type="submit" class="btn btn-primary" data-bind="enable: !$root.isBusy()">P1Template</button>
+                    }
+                }*@
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.P1Template.ToString()))
+                {
+                    using (Html.BeginForm("GenerateP1", "TPOFeeExeGLAccrued", FormMethod.Post, new { @data_bind = "submit: $root.generateP1Template" }))
+                    {
+                        <input type="hidden" name="Location" />
+                        <input type="hidden" name="KpsWeek" />
+                        <input type="hidden" name="KpsYear" />   
+                        <input type="hidden" name="ClosingDate" />
+                        <button type="submit" class="btn btn-primary" id="P1" data-bind="enable :  !$root.isBusy() ">P1Template</button>
+                    }
+                }
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.Excel.ToString()))
+                {
+                    using (Html.BeginForm("GenerateExcel", "TPOFeeExeGLAccrued", FormMethod.Post, new { @data_bind = "submit: $root.generateExcel" }))
+                    {
+                        <input type="hidden" name="Regional">
+                        <input type="hidden" name="KpsYear">
+                        <input type="hidden" name="KpsWeek">
+                        <input type="hidden" name="ClosingDate">
+                        <button type="submit" class="btn btn-primary" data-bind="enable: !$root.isBusy()">Excel</button>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+    <div class="table-overflow">
+        <table class="table table-striped">
+            <thead>
+                <tr class="head">
+                    @*<th><input type="checkbox" id="checkboxAll" /></th>*@
+                    <th>Location</th>
+                    <th class="fifteen">Location Name</th>
+                    <th class="widthsmall">Brand</th>
+                    <th>Note</th>
+                    <th>JKN Box</th>
+                    <th>JL1 Box</th>
+                    <th>JL2 Box</th>
+                    <th>JL3 Box</th>
+                    <th>JL4 Box</th>
+                    <th>Biaya Produksi</th>
+                    <th>Jasa Maklon</th>
+                </tr>
+            </thead>
+            <tbody data-bind="foreach: listDataItems">
+                
+                <tr>
+
+                    @*<td class="column-check"><input type="checkbox" name=""></td>*@
+
+                    <td class="last" data-bind="if: ($parent.editingRowIndex() !== $index()), event: { click : $root.onGridClick } ">
+                        <span data-bind="text: $data.Location"></span>
+                    </td>
+
+                    <td class="last" data-bind="if: ($parent.editingRowIndex() !== $index()), event: { click : $root.onGridClick } ">
+                        <span data-bind="text: $data.LocationName"></span>
+                    </td>
+
+                    <td class="last" data-bind="if: ($parent.editingRowIndex() !== $index()), event: { click : $root.onGridClick } ">
+                        <span data-bind="text: $data.Brand"></span>
+                    </td>
+
+                    <td class="last" data-bind="if: ($parent.editingRowIndex() !== $index()), event: { click : $root.onGridClick } ">
+                        <span data-bind="text: $data.Note"></span>
+                    </td>
+
+                    <td class="last" data-bind="if: ($parent.editingRowIndex() !== $index()), event: { click : $root.onGridClick } ">
+                        <span data-bind="decimal: $data.JknBox"></span>
+                    </td>
+
+                    <td class="last" data-bind="if: ($parent.editingRowIndex() !== $index()), event: { click : $root.onGridClick } ">
+                        <span data-bind="decimal: $data.Jl1Box"></span>
+                    </td>
+
+                    <td class="last" data-bind="if: ($parent.editingRowIndex() !== $index()), event: { click : $root.onGridClick } ">
+                        <span data-bind="decimal: $data.Jl2Box"></span>
+                    </td>
+
+                    <td class="last" data-bind="if: ($parent.editingRowIndex() !== $index()), event: { click : $root.onGridClick } ">
+                        <span data-bind="decimal: $data.Jl3Box"></span>
+                    </td>
+
+                    <td class="last" data-bind="if: ($parent.editingRowIndex() !== $index()), event: { click : $root.onGridClick } ">
+                        <span data-bind="decimal: $data.Jl4Box"></span>
+                    </td>
+
+                    <td class="last" data-bind="if: ($parent.editingRowIndex() !== $index()), event: { click : $root.onGridClick } ">
+                        <span data-bind="money: $data.BiayaProduksi"></span>
+                    </td>
+
+                    <td class="last" data-bind="if: ($parent.editingRowIndex() !== $index()), event: { click : $root.onGridClick } ">
+                        <span data-bind="money: $data.JasaManagemen"></span>
+                    </td>
+                    @*<tr data-bind="click:$root.proceed.bind($data)">*@
+                    @*<td class="column-check"><input type="checkbox" name=""></td>
+                    <td><span data-bind="text:$data.Location"></span></td>
+                    <td><span data-bind="text:$data.LocationName"></span></td>
+                    <td><span data-bind="text:$data.Brand"></span></td>
+                    <td><span data-bind="text:$data.Note"></span></td>
+                    <td><span data-bind="text:$data.JknBox"></span></td>
+                    <td><span data-bind="text:$data.Jl1Box"></span></td>
+                    <td><span data-bind="text:$data.Jl2Box"></span></td>
+                    <td><span data-bind="text:$data.Jl3Box"></span></td>
+                    <td><span data-bind="text:$data.Jl4Box"></span></td>
+                    <td><span data-bind="text:$data.BiayaProduksi"></span></td>
+                    <td><span data-bind="text:$data.JasaManagemen"></span></td>*@
+                </tr>
+            </tbody>
+            <tbody data-bind="visible: !listDataItems().length">
+                <tr>
+                    <td colspan="13" class="empty-row-message"><div class="loader"></div></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div data-bind="if: (listDataItems() != null && listDataItems().length !== 0)">
+        @Html.Partial("GridViewFooter")
+    </div>
+</div>
+
+@section Scripts
+{
+    <script src="~/Scripts/app/globalfunctions.js" type="text/javascript"></script>
+    <script src="~/Scripts/common/app.GridViewModel.js" type="text/javascript"></script>
+    <script src="~/Scripts/common/app.Extenders.js" type="text/javascript"></script>
+    <script type="text/javascript">
+
+    (function(app) {
+        app.EditGrid = function() {
+            var self = this;
+
+            //self.isBusy = ko.observable(true);
+            self.modelRegional = ko.observableArray(@Html.Raw(Json.Encode(@Model.Regional)));
+
+            self.dateValuePieceRate = ko.observable(moment());
+
+            self.isLoading = ko.observable(true);
+            self.firstLoad = ko.observable(true);
+
+            var DefaultYear = '@Model.DefaultYear';
+            var DefaultWeek= '@Model.DefaultWeek';
+            var DefaultRegional = '@Model.DefaultRegional';
+            //var DefaultRegional = self.modelRegional()[0].Value;
+            if(!!getCookie('KPSYear')) {
+                DefaultYear = getCookie('KPSYear');
+            }
+
+            if(!!getCookie('KPSWeek')) {
+                DefaultWeek = getCookie('KPSWeek');
+            }
+
+            if(!!getCookie('Regional')) {
+                DefaultRegional = getCookie('Regional');
+            }
+
+            // ======================== Filter Variable ======================== \\
+            self.filterRegional = ko.observable(DefaultRegional);
+            self.filterYear = ko.observable(DefaultYear);
+            self.filterWeek = ko.observable(DefaultWeek);
+            self.filterClosingDate = ko.observable('');
+
+            // ======================== Filter Select List ======================== \\
+            self.WeekSelectList = ko.observableArray([]);
+            self.ClosingDateSelectList = ko.observableArray([]);
+
+            //================= busy button state ================//
+            self.isBusy = ko.observable(true);
+
+            $(document).ajaxComplete(function () {
+                if ($.active <= 1) {
+                    self.isBusy(false);
+                }
+            });
+
+            $(document).ajaxStart(function () {
+                if (!self.isBusy()) self.isBusy(true);
+            });
+            //================= busy button state ================//
+
+            
+
+            // ======================== Event Handler ======================== \\
+            self.onYearSelectedChange = function() {
+                if (self.isLoading() && self.firstLoad()) return;
+
+                self.isLoading(true);
+
+                async.series([
+                    function(cb) {
+                        self.getWeeks(cb);
+                    },
+                    function(cb) {
+                        self.getClosingDates(cb);
+                    }
+                ], function() {
+                    self.isLoading(false);
+                });
+
+                //self.getWeeks();
+                //self.getClosingDates();
+            };
+
+            self.LocationCodeSelectListChange = function(){
+                self.modelRegional().map(function(v) {
+                    if (typeof v.Value !== 'undefined' && v.Value == self.filterRegional()) {
+                        setCookie("Regional",v.Value,0.1);
+                    }
+                });
+            };
+
+
+            $('#checkboxAll').change(function(e) {
+                if (this.checked) {
+                    $('table tbody tr input:checkbox').prop('checked', true);
+                    $('table tbody tr input:checkbox').change();
+                } else {
+                    $('table tbody tr input:checkbox').prop('checked', false);
+                    $('table tbody tr input:checkbox').change();
+                }
+
+            });
+
+            // ======================== Functions ======================== \\
+            self.getWeeks = function(cb) {
+                $.ajax({
+                    url: @Html.BaseUrl("TPOFeeExeGLAccrued/GetWeeks"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    data: { year: self.filterYear() },
+                    success: function(data) {
+                        $('#spFilterWeek').find('option').remove();
+                        $('#spFilterWeek').selectpicker('refresh');
+                        var kpsWeekModel = [];
+                        $.each(data, function(index, value) {
+                            kpsWeekModel.push({ "Text": value, "Value": value });
+                        });
+                        self.WeekSelectList(kpsWeekModel);
+                        self.filterWeek('@Model.DefaultWeek');
+                    },
+                    complete : function() {
+                        if (typeof cb == 'function') cb();
+                    }
+                });
+            };
+
+            self.getClosingDates = function(cb) {
+                $.ajax({
+                    url: @Html.BaseUrl("TPOFeeExeGLAccrued/GetClosingDates"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    data: { year: self.filterYear(), week: self.filterWeek() },
+                    success: function(data) {
+                        $('#filterClosingDate').data("DateTimePicker").options({
+                            maxDate: moment(data.EndDate),
+                            minDate: moment(data.StartDate)
+                        });
+
+                        self.dateValuePieceRate(moment(data.EndDate).format("DD/MM/YYYY"));
+                    },
+                    complete : function() {
+                        if (typeof cb == 'function') cb();
+                    }
+                });
+            };
+
+            self.afterRender = function(options, item)
+            {
+                if (typeof(item) === 'undefined') return;
+                $(options).attr('title', item.Value);
+            }
+
+            self.onWeekChange = function()
+            {
+                if (self.isLoading() && self.firstLoad()) return;
+
+                self.isLoading(true);
+
+                async.series([
+                    function(cb) {
+                        self.getClosingDates(cb);
+                    }
+                ], function() {
+                    self.isLoading(false);
+                });
+                //self.getClosingDates();
+            }
+
+            self.viewTPOFeeExeGLAccruedList = function(cb) {
+                var date = moment(self.filterClosingDate(), 'DD/MM/YYYY');
+                $.ajax({
+                    url: @Html.BaseUrl("TPOFeeExeGLAccrued/GetTPOFeeExeGLAccruedViewList"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: { regional: self.filterRegional(), kpsYear: self.filterYear(), kpsWeek: self.filterWeek(), closingDate: new Date(date).toISOString() },
+                    success: function(data) {
+                        $("#TPOFeeExeGLAccruedGridList").html('');
+                        $("#TPOFeeExeGLAccruedGridList").html(data);
+                    },
+                    complete : function() {
+                        if (typeof cb == 'function') cb();
+                    }
+                });
+            };
+
+            self.generateExcel = function(formElement) {
+                $(formElement).find("input[name=Regional]").val($('#filterRegional').val());
+                $(formElement).find("input[name=KpsYear]").val($('#filterYear').val());
+                $(formElement).find("input[name=KpsWeek]").val($('#spFilterWeek').val());
+                $(formElement).find("input[name=ClosingDate]").val($('#filterClosingDate').val());
+                return true;
+            };
+
+            self.generateP1Template = function (formElement) {
+                $(formElement).find("input[name=Location]").val(self.filterRegional());
+                $(formElement).find("input[name=KpsWeek]").val(self.filterWeek());
+                $(formElement).find("input[name=KpsYear]").val(self.filterYear());
+                $(formElement).find("input[name=ClosingDate]").val(self.dateValuePieceRate());
+                return true;
+            };
+
+            @*self.proceed = function(data) {
+                var date = $('#filterClosingDate').val();
+                var criteria = self.filterRegional() + "$" + self.filterYear() + "$" + self.filterWeek() + "$" + (date.replace('/', '-')).replace('/', '-')  + "$" + data.Location() + "$" + data.Brand();
+                location.href = "@Url.Action("Index", "TPOFeeExeGLAccruedDetail", new { id = "ID" })".replace('ID', criteria);
+            };*@
+
+            self.onGridClick = function(e) {
+                setCookie("KPSYear",self.filterYear(),0.1);
+                setCookie("KPSWeek",self.filterWeek(),0.1);
+                var date = $('#filterClosingDate').val();
+                var criteria = self.filterRegional() + "$" + self.filterYear() + "$" + self.filterWeek() + "$" + (date.replace('/', '-')).replace('/', '-')  + "$" + e.Location() + "$" + e.Brand();
+                location.href = "@Url.Action("Index", "TPOFeeExeGLAccruedDetail", new { id = "ID" })".replace('ID', criteria);
+            };
+
+            self.gridView = new app.GridViewModel({
+                Criteria: {
+                    PageSize: 9999,
+                    PageIndex: 1,
+                    SortExpression: "Location",
+                    SortOrder: "ASC",
+                    Regional: self.filterRegional,
+                    KpsYear: self.filterYear,
+                    KpsWeek: self.filterWeek,
+                    ClosingDate: self.dateValuePieceRate
+                },
+                DataSourceUrl: @Html.BaseUrl("TPOFeeExeGLAccrued/GetTPOFeeExeGLAccruedViewList"),
+                InlineEdit: true
+            });
+
+            function MappingCheckbox(data) {
+                ko.mapping.fromJS(data, {}, this);
+                this.Checkbox = ko.observable(false);
+            }
+
+            self.gridView.mapping = {
+                create: function(options) {
+                    return new MappingCheckbox(options.data);
+                }
+            };
+
+            self.gridView.applyValidationRules = function(entity) {
+
+            };
+
+            self.printP1Template = function() {
+                //clear data before generate or refill
+                $('#printp1').find('input').remove();
+
+                //count how many checkbox is true
+                var count = self.gridView.listDataItems().filter(function(value){
+                    return value.Checkbox() === true;
+                }).length
+
+                //prevent form to send null data
+                if(count>0){
+                    $.each(self.gridView.listDataItems(), function(i, v) {
+                        $.each(v, function(ii, vv) {
+                            var input = $('<input>', {
+                                type: 'hidden',
+                                id: 'DataId',
+                                name: 'Data['+i+']['+ii+']',
+                                value: ko.utils.unwrapObservable(vv)
+                            });
+                        
+                            $('#printp1').append(input);
+                        }); 
+                    });
+
+                    $('#printp1').submit();
+                    return false;
+                }else{
+                    SKTIS.Helper.Notification("Cannot generate <strong>P1Template</strong> without selected data!", "error");
+                }
+            };
+
+            
+
+            // Load Data
+            self.search = function() {
+                $('#printp1').find('input').remove();
+                $('.empty-row-message').html('<div class="loader"></div>'); // Reset New and Edit row
+                // Check whether New or Edit data is existing and not saved to database yet (on Ajax Action)
+                if (SKTIS.Checker.modifiedDataExistsForAjax([self.gridView.listNewItems, self.gridView.listEditItems]) == true) {
+                    return;
+                } else {
+                    self.gridView.listNewItems.removeAll();
+                    self.gridView.listEditItems.removeAll();
+                }
+
+                self.gridView.search({}, function(response) {
+                    if (response.status == 'KO') {
+                        SKTIS.Helper.Notification(response.message, 'error');
+                        $('.empty-row-message').html(response.message);
+                    } else if (response.status == 'Empty') {
+
+                        self.RemoveNotification();
+
+                        //SKTIS.Helper.Notification(response.message,'warning');
+                        $('.empty-row-message').html('@CommonLabel.lblDataEmpty');
+                    }
+                });
+            };
+
+            self.RemoveNotification = function() {
+                if ($('#noty_top_layout_container').length > 0) {
+                    $('#noty_top_layout_container').remove();
+                }
+            };
+
+            $(document).on('change', 'table tbody tr input[type=checkbox]', function() {
+                var thisChk = $(this);
+                var context1 = ko.dataFor(this);
+                //console.log(thisChk.prop('checked'));
+                context1.Checkbox(thisChk.prop('checked'));
+            });
+
+            // ======================== Initial Call ======================== \\
+            //self.gridView.isBusy.subscribe(function(value) { self.isBusy(value);});
+            $('#filterRegional option').each(function(){
+                $(this).attr('title',this.value);
+            });
+
+            self.init = (function() {
+                //Asynch setting
+                self.isLoading(true);
+
+                async.series([
+                    function(cb) {
+                        self.getWeeks(cb);
+                    },
+                    function(cb) {
+                        self.getClosingDates(cb);
+                    }
+                ], function() {
+                    self.search();
+                    self.firstLoad(false);
+                    self.isLoading(false);
+                });
+            })();
+
+            
+
+        };
+        ko.applyBindings(new app.EditGrid());
+    })(app = this.app || {});
+
+</script>
+}

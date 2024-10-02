@@ -1,0 +1,95 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{F26065C9-42CC-4254-AB01-472CB8B4DC2E}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>HMS.SKTIS.Contracts</RootNamespace>
+    <AssemblyName>HMS.SKTIS.Contracts</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Excel, Version=2.1.2.3, Culture=neutral, PublicKeyToken=93517dbe6a4012fa, processorArchitecture=MSIL">
+      <HintPath>..\packages\ExcelDataReader.2.1.2.3\lib\net45\Excel.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="IEmailApprovalsBLL.cs" />
+    <Compile Include="IExecutionOtherBLL.cs" />
+    <Compile Include="IExecutionPlantBLL.cs" />
+    <Compile Include="IExecutionTPOBLL.cs" />
+    <Compile Include="IExeReportBLL.cs" />
+    <Compile Include="IExeReportByStatusBLL.cs" />
+    <Compile Include="IExeReportProdStockProcessBLL.cs" />
+    <Compile Include="IGeneralBLL.cs" />
+    <Compile Include="IGenericRepository.cs" />
+    <Compile Include="IMaintenanceBLL.cs" />
+    <Compile Include="IMasterDataBLL.cs" />
+    <Compile Include="IPlanningBLL.cs" />
+    <Compile Include="IPlantWagesExecutionBLL.cs" />
+    <Compile Include="ISelectListBLL.cs" />
+    <Compile Include="ISqlSPRepository.cs" />
+    <Compile Include="ISSISPackageService.cs" />
+    <Compile Include="ITPOFeeBLL.cs" />
+    <Compile Include="ITPOFeeExeGLAccruedBLL.cs" />
+    <Compile Include="IUnitOfWork.cs" />
+    <Compile Include="IUserBLL.cs" />
+    <Compile Include="IUtilitiesBLL.cs" />
+    <Compile Include="IVTLogger.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\HMS.SKTIS.BusinessObjects\HMS.SKTIS.BusinessObjects.csproj">
+      <Project>{d09928d1-f7e1-4c8a-ad81-da808f82b918}</Project>
+      <Name>HMS.SKTIS.BusinessObjects</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\HMS.SKTIS.Core\HMS.SKTIS.Core.csproj">
+      <Project>{a6a6706f-9385-4f85-b9b6-5dfd4ef88db8}</Project>
+      <Name>HMS.SKTIS.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

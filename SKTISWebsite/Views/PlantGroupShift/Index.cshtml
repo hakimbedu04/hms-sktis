@@ -1,0 +1,440 @@
+﻿@model SKTISWebsite.Models.PlantGroupShift.InitPlantGroupShift
+@using HMS.SKTIS.Application.Resources
+@using HMS.SKTIS.Application.Resources.Views.PlantGroupShift
+@using SKTISWebsite.Helper
+
+@{ Html.SetPageTitle(@PlantGroupShift.PageTitle); }
+
+<div class="col-lg-12">
+    <div class="col-lg-6">
+        <div class="row">
+            <label class="form-label col-lg-4">
+                Location
+            </label>
+            <div class="col-lg-3">
+                @*@Html.DropDownList("ddlFilterLocation", new SelectList(Model.Location, "LocationCode", "LocationCode"),
+                new
+                {
+                    @class = "selectpicker show-tick form-control",
+                    id = "ddlFilterLocation",
+                    data_live_search = "true",
+                    data_bind = "value:$root.filterLocation, event : { change : $root.onLocationCodeChange}"
+                })*@
+                <select class="selectpicker show-tick form-control" data-live-search="true" id="ddlFilterLocation"
+                        data-bind="selectPicker: $root.filterLocation, optionsText: 'LocationCompat', optionsValue : 'LocationCode', optionsAfterRender : $root.afterRender, selectPickerOptions: { optionsArray: $root.ListLocation }, event : { change : $root.onLocationCodeChange}"></select>
+            </div>
+            <div class="col-lg-5">
+                <input data-bind="value: $root.filterLocationName" type="text" class="form-control" readonly="readonly">
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-4">
+                Unit
+            </label>
+            <div class="col-lg-4">
+                <select id="ddlFilterUnitCode" class="selectpicker show-tick form-control" data-live-search="true" data-bind="selectPicker: $root.filterUnitCode, optionsText: 'Name', optionsValue : 'Name', selectPickerOptions: { optionsArray: $root.unitCodeSelectList }"></select>
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label nopadding col-lg-4">
+                KPS Year
+            </label>
+            <div class="col-lg-4">
+                @Html.DropDownList("ddlYearFilter", Model.YearSelectList,
+                    new Dictionary<string, object> { { "data-bind", "value:$root.filterYear, event : { change : $root.onFilterYearChange}" },
+                        { "class", "selectpicker show-tick form-controlt" },
+                        {"data-live-search","true"},{"id","ddlFilterYear"} })
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-4">
+                KPS Week
+            </label>
+            <div class="col-lg-4">
+                <select id="ddlWeekFilter" class="selectpicker show-tick form-control" data-live-search="true"
+                        data-bind="selectPicker: $root.filterWeek, optionsText: 'Value', optionsValue : 'Text', selectPickerOptions: { optionsArray: $root.weekSelectList },  event : { change : $root.SetDateRange}"></select>
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-4">
+                Start Date
+            </label>
+            <div class="col-lg-4">
+                <div id="dtpStartDate" class='input-group date notime' data-bind="dateTimePicker: $root.startDate, value:$root.startDate, dateTimePickerOptions: {widgetPositioning: {vertical: 'bottom'}, showClear: true, ignoreReadonly: true, useCurrent:false}">
+                    <input type='text' class="form-control" autocomplete="off" readonly="readonly" />
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-4">
+                End Date
+            </label>
+            <div class="col-lg-4">
+                <div id="dtpEndDate" class='input-group date notime' data-bind="dateTimePicker: $root.endDate, value:$root.endDate, dateTimePickerOptions: {widgetPositioning: {vertical: 'bottom'}, showClear: true, ignoreReadonly: true, useCurrent:false}">
+                    <input type='text' class="form-control" autocomplete="off" readonly="readonly" />
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>    
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="action-btn">                
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.View.ToString()))
+                {
+                    <button type="button" class="btn btn-primary" data-bind="click: $root.view">View</button>
+                }
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.Save.ToString()))
+                {
+                    <button type="button" class="btn btn-primary" data-bind="click: $root.save">Save</button>
+                }
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.Excel.ToString()))
+                {
+                    using (Html.BeginForm("GenerateExcel", "PlantGroupShift", FormMethod.Post, new { @data_bind = "submit: $root.generateExcel" }))
+                    {
+                        <input type="hidden" name="locationCode" data-bind="value: $root.filterLocation" />
+                        <input type="hidden" name="unitCode" data-bind="value: $root.filterUnitCode" />
+                        <input type="hidden" name="startDate" data-bind="value: $root.startDate" />
+                        <input type="hidden" name="endDate" data-bind="value: $root.endDate" />
+                        <button type="submit" class="btn btn-primary">@CommonLabel.btnExcel</button>
+                    } 
+                }           
+            </div>
+        </div>
+    </div>
+    <div class="row" id="PlantGroupShiftMultiselect">
+        @Html.Partial("_PlantGroupShiftPartial")
+    </div>
+</div>
+
+@section Scripts
+{
+    <script src="~/Scripts/jquery.unobtrusive-ajax.min.js" type="text/javascript"></script>
+    <script src="~/Scripts/common/app.GridViewModel.js" type="text/javascript"></script>
+    <script type="text/javascript" src="~/Scripts/vendors/multiselect.js"></script>
+    <script type="text/javascript">
+
+    (function (app) {
+        app.EditGrid = function () {
+            var self = this;
+
+            self.locations = @Html.Raw(Json.Encode(@Model.Location));
+
+            //var startOfWeek = moment().startOf('isoweek').toDate();
+            //var endOfWeek   = moment().endOf('isoweek').toDate();
+            var startOfWeek = moment().day(1).isoWeek(moment().isoWeek()).toDate();
+            var endOfWeek   = moment().day(7).isoWeek(moment().isoWeek()).toDate();
+            //console.log(startOfWeek);
+            //console.log(endOfWeek);
+            // description filter
+            self.startDate = ko.observable(startOfWeek);
+            self.endDate = ko.observable(endOfWeek);
+            self.filterLocation = ko.observableArray([]);
+            self.filterLocationName = ko.observable();
+            self.filterUnitCode = ko.observableArray([]);
+            self.filterYear = ko.observable(@Model.DefaultYear);
+            self.filterWeek = ko.observable(moment().isoWeek());
+
+            self.isListModified = ko.observable(false);
+
+            // description : selectPicker datasource ( chain selectPicker )
+            self.ListLocation = ko.observableArray([]);
+            self.unitCodeSelectList = ko.observableArray([]);
+            self.weekSelectList = ko.observableArray([]);
+
+            // description : multi select
+            self.multiSelectFrom = ko.observableArray([]);
+            self.multiSelectTo = ko.observableArray([]);
+            self.groupCodeList = ko.observableArray([]);
+
+            //get location name by location code
+            self.getLocationNameFilter = function() {
+                for (var i = 0; i < self.locations.length; i++) {
+                    if (self.locations[i].LocationCode == self.filterLocation()) {
+                        self.filterLocationName(self.locations[i].LocationName);
+                        break;
+                    }
+                }
+            };
+
+            //After render select box
+            self.afterRender = function(options, item)
+            {
+                if (typeof(item) === 'undefined') return;
+
+                $(options).attr('title', item.LocationCode);
+                $(options).attr(
+                    'data-content',
+                    "<span class='text'><span style='width: 35px; display: inline-block;'>"+item.LocationCode+"</span> - "+item.LocationName+"</span>"
+                );
+            }
+
+            // description : function re-bind selectpicker data source
+            self.onLocationCodeChange = function() {
+                self.getLocationNameFilter();
+                $('#ddlFilterUnitCode').find("option[value!='']").remove();
+                $('#ddlFilterUnitCode').selectpicker('refresh');
+
+                $.ajax({
+                    url: @Html.BaseUrl("PlantGroupShift/GetUnitCode"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: {locationCode : self.filterLocation()},
+                    dataType: 'json',
+                    success: function (data) {
+                        var listUnitCode = [];
+                        $.each(data, function (index, value) {
+                            listUnitCode.push({ "Name": value.UnitCode });
+                        });
+                        self.unitCodeSelectList(listUnitCode);
+                    }
+                });
+            };
+
+            // description : get week list by year data source
+            self.onFilterYearChange = function() {
+                $.ajax({
+                    url: @Html.BaseUrl("PlantGroupShift/GetWeekByYear"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: { year: self.filterYear() },
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#ddlWeekFilter').find('option').remove();
+                        $('#ddlWeekFilter').selectpicker('refresh');
+                        var listWeek = [];
+                        $.each(data, function(index, value) {
+                            //listWeek.push({ "Week": value });
+                            listWeek.push({ "Text": value, "Value": value });
+                        });
+                        self.weekSelectList(listWeek);
+                        self.filterWeek(moment().isoWeek());
+                        self.SetDateRange();
+                    }
+                });
+            };
+
+            self.SetDateRange = function() {
+                var start = moment().day(7).isoWeek(self.filterWeek() - 1).toDate(-1);
+                var start_real = moment().day(1).isoWeek(self.filterWeek()).toDate();
+                var end   = moment().day(7).isoWeek(self.filterWeek()).toDate();
+                $('#dtpStartDate').data("DateTimePicker").options({
+                    maxDate: moment(end),
+                    minDate: moment(start)
+                });
+                $('#dtpEndDate').data("DateTimePicker").options({
+                    //maxDate: moment(end),
+                    minDate: moment(start)
+                });
+                
+                self.startDate(start_real);
+                self.endDate(end);
+            };
+
+            self.view = function() {
+
+                if (self.isListModified()) {
+                    var result = confirm('Changes have not been saved, continue to move the page?');
+                    if(result)
+                    { 
+                        self.isListModified(false);
+                    }else{
+                        
+                        return;
+                    }
+                }
+
+                self.multiSelectFrom([]);
+                self.multiSelectTo([]);
+
+                var datas =
+                {                        
+                    LocationCode : self.filterLocation(),
+                    UnitCode : self.filterUnitCode(),
+                    StartDate : self.startDate(),
+                    EndDate : self.endDate()
+                }
+                datas = JSON.stringify(datas);
+                $.ajax({
+                    url: @Html.BaseUrl("PlantGroupShift/GetPlanPlantGroupShifts"),
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: datas,
+                    dataType: 'html',
+                    success: function (data) {                        
+                        $('#PlantGroupShiftMultiselect').html(data);
+                        self.multiSelectFrom($("#multiselect option"));
+                        self.multiSelectTo($("#multiselect_to option"));
+                        //console.log(self.multiSelectFrom());
+                    }
+                });
+            };
+
+           
+
+            function groupCodeViewModel() {
+                this.StartDate = ko.observable();
+                this.EndDate = ko.observable();
+                this.LocationCode = ko.observable();
+                this.ProcessGroup = ko.observable();
+                this.UnitCode = ko.observable();
+                this.GroupCode = ko.observable();
+                this.Shift = ko.observable();
+            }
+
+            self.save = function() {                
+                self.groupCodeList([]);
+                self.RemoveNotification();
+                if(self.startDate() == "")
+                    SKTIS.Helper.Notification("Please specified the <strong>Start Date</strong> before saving!","warning");
+                else if(self.endDate() == "")
+                    SKTIS.Helper.Notification("Please specified the <strong>End Date</strong> before saving!","warning");
+                else{
+                    var startDate = $('#dtpStartDate').data("DateTimePicker").date();
+                    var endDate = $('#dtpEndDate').data("DateTimePicker").date();
+                    var diffInSeconds = startDate.diff(endDate,'seconds');                    
+                    if(diffInSeconds > 0)
+                    {
+                        SKTIS.Helper.Notification("<strong>Start Date</strong> cannot be greated than <strong>End Date</strong>!","warning");
+                    }else{             
+                        
+                        // Bundle the Data
+                        $.each($('#multiselect option'), function(value, groupItem) {
+                            var obj = new groupCodeViewModel();
+                            obj.StartDate = self.startDate();
+                            obj.EndDate = self.endDate();
+                            obj.LocationCode = $(groupItem).data('locationcode');
+                            obj.ProcessGroup = $(groupItem).data('processgroup');
+                            obj.UnitCode = $(groupItem).data('unitcode');
+                            obj.GroupCode = $(groupItem).val();
+                            obj.Shift = 1;
+                            self.groupCodeList.push(obj);
+                        });                
+                        $.each($('#multiselect_to option'), function(value, groupItem) {
+                            var obj = new groupCodeViewModel();
+                            obj.StartDate = self.startDate();
+                            obj.EndDate = self.endDate();
+                            obj.LocationCode = $(groupItem).data('locationcode');
+                            obj.ProcessGroup = $(groupItem).data('processgroup');
+                            obj.UnitCode = $(groupItem).data('unitcode');
+                            obj.GroupCode = $(groupItem).val();
+                            obj.Shift = 2;
+                            self.groupCodeList.push(obj);
+                        });
+
+                        if (self.groupCodeList().length == 0) {
+                            SKTIS.Helper.Notification("<strong>Data</strong> is empty!", "warning");
+                        } else {
+                            var data = JSON.stringify(self.groupCodeList());
+                            $.ajax({
+                                url: @Html.BaseUrl("PlantGroupShift/SavePlantGroupShift"),
+                                type: 'POST',
+                                contentType: 'application/json',
+                                data: data,
+                                dataType: 'json',
+                                success: function (data) { 
+                                    //console.log(data);
+                                    //$.each(data, function (k, value) {
+                                    //    if (value)
+                                    //        SKTIS.Helper.ResponseNotification(value, "Save Plant Group Shift", value.GroupCode);
+                                    //});    
+                                    SKTIS.Helper.ResponseNotification(data[0], "Save Plant Group Shift", "");
+                                    self.multiSelectFrom([]);
+                                    self.multiSelectTo([]);
+                                    self.isListModified(false);
+                                }
+                            });
+                        }
+                    }
+                }                
+            };
+
+            self.getPlantLocationCodes = function(){
+                $.ajax({
+                    url: @Html.BaseUrl("PlantGroupShift/GetPlantLocationCode"),
+                    type: 'GET',
+                    cache: false,
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    success: function(data) {
+                        var listGroupModel = [];
+                        $.each(data, function (index, value) {
+                            listGroupModel.push({
+                                LocationCode: value.LocationCode,
+                                LocationName: value.LocationName,
+                                LocationCompat: value.LocationCompat
+                            });
+                        });
+                        self.ListLocation(listGroupModel);
+                    }
+                });
+            };
+
+            self.generateExcel = function (formElement) {                
+                return true;
+            };
+            
+            self.RemoveNotification = function() {
+                if ($('#noty_top_layout_container').length > 0) {
+                    $('#noty_top_layout_container').remove();
+                }
+            };
+
+            $(document).ready(function() {
+                self.getPlantLocationCodes();
+                // Trigger on-change event on both filters
+                $('#ddlFilterLocation').change();
+                $('#ddlFilterYear').change();
+                $('#dtpStartDate').data("DateTimePicker").options({
+                    maxDate: moment(endOfWeek),
+                    minDate: moment(startOfWeek)
+                });
+                $('#dtpEndDate').data("DateTimePicker").options({
+                    //maxDate: moment(endOfWeek)
+                    minDate: moment(startOfWeek)
+                });
+
+                $(document).off('click','#multiselect_swap');
+                $(document).on('click','#multiselect_swap',function () {
+                    var optionFrom = $("#multiselect option");
+                    var optionTo = $("#multiselect_to option");
+                    $("#multiselect").html(optionTo);
+                    $("#multiselect_to").html(optionFrom);
+                });
+
+                $(document).off('click','.group-shift-action button');
+                $(document).on('click','.group-shift-action button',function(){
+                    self.isListModified(true);
+                });
+            });
+
+            // Reset knockout date observable, for clearing post variable on view
+            $('#dtpStartDate').on('dp.change', function (e) {
+                self.startDate('')
+            });
+            $('#dtpEndDate').on('dp.change', function (e) {
+                self.endDate('')
+            });
+            window.onbeforeunload = function(e) {
+                if (self.isListModified()) {
+                    // Issue: Original browser message did not overided successfuly but the functionality working properly, please try another solutions!
+                    var message = "Changes have not been saved, continue to move the page?",
+                    e = e || window.event;
+                    // For IE and Firefox
+                    if (e) {
+                        e.returnValue = message;
+                    }
+                    // For Safari
+                    return message;
+                }
+            };
+        };
+        ko.applyBindings(new app.EditGrid());
+    })(app = this.app || {});
+    </script>
+}

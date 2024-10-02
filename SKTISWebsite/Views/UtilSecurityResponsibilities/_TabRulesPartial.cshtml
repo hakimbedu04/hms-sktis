@@ -1,0 +1,37 @@
+﻿@model SKTISWebsite.Models.UtilSecurityResponsibilities.InitUtilSecurityResponsibilities
+<div class="col-xs-5">
+    <label>List Rules</label>
+    <select name="from" id="multiselectRules" class="form-control" size="8" multiple="multiple">
+        @foreach (var data in Model.ListAllRules)
+        {
+            <option value="@data.IDRule" data-idrule="@data.IDRule" data-unit="@data.Unit" data-location="@data.Location" data-rulesname="@data.RulesName">@data.RulesName</option>
+        }
+    </select>
+</div>
+<div class="col-xs-2 group-shift-action">
+    <label>&nbsp;</label>
+    @*<button type="button" id="multiselectRules_rightAll" class="btn btn-block"><i class="glyphicon glyphicon-forward"></i></button>*@
+    <button type="button" id="multiselectRules_rightSelected" class="btn btn-block"><i class="glyphicon glyphicon-chevron-right"></i></button>
+    <button type="button" id="multiselectRules_leftSelected" class="btn btn-block"><i class="glyphicon glyphicon-chevron-left"></i></button>
+    @*<button type="button" id="multiselectRules_leftAll" class="btn btn-block"><i class="glyphicon glyphicon-backward"></i></button>*@
+    @*<button type="button" id="multiselectRules_swap" class="btn btn-block"><i class="glyphicon glyphicon-transfer"></i></button>*@
+</div>
+<div class="col-xs-5">
+    <label>Active Rules</label>
+    <select name="to" id="multiselectRules_to" class="form-control" size="8" multiple="multiple">
+        @foreach (var data in Model.ListActiveRules)
+        {
+            <option value="@data.IDRule" data-idrule="@data.IDRule" data-unit="@data.Unit" data-location="@data.Location" data-rulesname="@data.RulesName">@data.RulesName</option>
+        }
+    </select>
+</div>
+<script>
+    $(document).ready(function () {
+        $('#multiselectRules').multiselect({
+            search: {
+                left: '<input type="text" name="q" class="form-control" placeholder="Search..." />',
+                right: '<input type="text" name="q" class="form-control" placeholder="Search..." />',
+            }
+        });
+    });
+</script>

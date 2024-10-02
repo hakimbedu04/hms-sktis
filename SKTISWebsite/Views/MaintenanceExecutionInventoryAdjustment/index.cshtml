@@ -1,0 +1,1051 @@
+﻿@model SKTISWebsite.Models.MaintenanceExecutionInventoryAdjustment.InitMaintenanceExecutionInventoryAdjustment
+@using HMS.SKTIS.Application.Resources
+@using SKTISWebsite.Helper
+@{ Html.SetPageTitle("Inventory Adjustment"); }
+<div class="col-lg-12" data-bind="with: gridView">
+    <div class="col-lg-6">
+        <div class="row">
+            <label class="form-label col-lg-4">
+                Location
+            </label>
+            <div class="col-lg-4">
+                @*@Html.DropDownList("ddlFilterLocation", new SelectList(Model.LocationLookupList, "LocationCode", "LocationCode"),
+                    new
+                    {
+                        @class = "selectpicker show-tick form-control",
+                        id = "ddlFilterLocation",
+                        data_live_search = "true",
+                        data_bind = "value:$root.filterLocation, event : { change : $root.onLocationChange }",
+                        data_size = "15"
+                    })*@
+
+                <select id="ddlFilterLocation"
+                        class="selectpicker show-tick form-control"
+                        data-live-search="true"
+                        data-bind="enable: !$root.isBusy(), selectPicker:$root.filterLocation, optionsText: 'LocationCode', optionsValue : 'LocationCode', optionsAfterRender: locationDesc, selectPickerOptions: { optionsArray: $root.menuItemLocations}, event : { change : $root.onLocationChange}"></select>
+
+            </div>
+            <div class="col-lg-4">
+                <input type="text" class="form-control" readonly="readonly" data-bind="value:$root.filterLocationName">
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-4">
+                Unit
+            </label>
+            <div class="col-lg-4">
+                <select id="ddlFilterUnitCode" class="show-tick form-control" data-live-search="true"
+                        data-bind="enable: !$root.isBusy(), selectPicker: $root.filterUnitCode, optionsText: 'Text', optionsValue : 'Value',
+                        selectPickerOptions: { optionsArray: $root.UnitCodeSelectList }, event: {change: $root.onUnitCodeChange}"></select>
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label nopadding col-lg-4">
+                KPS Year
+            </label>
+            <div class="col-lg-4">
+                @Html.DropDownList("ddlKPSYearFilter", Model.YearSelectList,
+                                new Dictionary<string, object> { { "data-bind", "value:$root.filterKPSYear, event : { change : $root.onKPSYearChange}" },
+                                    { "class", "selectpicker show-tick form-controlt" },
+                                    {"data-live-search","true"},{"id","ddlKPSYearFilter"},{"disabled","disabled"} })
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-4">
+                KPS Week
+            </label>
+            <div class="col-lg-4">
+                <select id="ddlKPSWeekFilter" class="selectpicker show-tick form-control" data-live-search="true"
+                        data-bind="enable: !$root.isBusy(), selectPicker: $root.filterKPSWeek, optionsText: 'Value', optionsValue : 'Text', selectPickerOptions: { optionsArray: $root.KPSWeekSelectList },  event : { change : $root.onKPSWeekChange}"></select>
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-4">
+                Transaction Date
+            </label>
+            <div class="col-lg-4">
+                <div id="filterDate" class='input-group date time' data-bind="dateTimePicker: $root.filterDate, value: $root.filterDate, dateTimePickerOptions: {widgetPositioning: {vertical: 'bottom'}, showClear: true, ignoreReadonly: true}">
+                    <input id="filterDateInput" class="form-control" readonly="readonly" data-bind="enable: !$root.isBusy()" />
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--<div class="col-lg-6">
+        <div class="row">
+            <label class="form-label col-lg-12">
+                Period
+            </label>
+            <div class="col-lg-3">
+                <label class="form-label nopadding">
+                    <input type="radio">
+                    Daily
+                </label>
+            </div>
+            <div class="col-lg-4">
+                <div class='input-group date notime'>
+                    <input type='text' class="form-control" />
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+            </div>
+            <div class="col-lg-1">
+                <label class="form-label nopadding">
+                    To
+                </label>
+            </div>
+            <div class="col-lg-4">
+                <div class='input-group date notime'>
+                    <input type='text' class="form-control" />
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-3">
+                <label class="form-label nopadding">
+                    <input type="radio">
+                    Weekly
+                </label>
+            </div>
+            <div class="col-lg-4">
+                <select class="form-control">
+                    <option>5</option>
+                    <option>6</option>
+                    <option>7</option>
+                </select>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-3">
+                <label class="form-label nopadding">
+                    <input type="radio">
+                    Monthly
+                </label>
+            </div>
+            <div class="col-lg-4">
+                <select class="form-control">
+                    <option>January</option>
+                    <option>February</option>
+                    <option>March</option>
+                </select>
+            </div>
+        </div>
+    </div>-->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="action-btn">
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.View.ToString()))
+                {
+                    <button type="button" class="btn btn-primary" data-bind="enable: !$root.isBusy(), click:$root.search">@CommonLabel.btnView</button>
+                }
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.Save.ToString()))
+                {
+                    <button type="button" class="btn btn-primary" data-bind="enable: !$root.isBusy(), click:$root.saveData">@CommonLabel.btnSave</button>
+                }
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.Excel.ToString())) { 
+                    using (Html.BeginForm("GenerateExcel", "MaintenanceExecutionInventoryAdjustment", FormMethod.Post, new { @data_bind = "submit: $root.getExcelParameters" }))
+                    {
+                        <input type="hidden" name="locationCode" />
+                        <input type="hidden" name="unitCode" />
+                        <input type="hidden" name="createDate" />
+                        <button type="submit" class="btn btn-primary" data-bind="enable: !$root.isBusy()" >@CommonLabel.btnExcel</button>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+    <div class="table-overflow">
+        <table class="table table-striped-default">
+            <thead>
+                <tr class="head">
+                    <th>Location Owner</th>
+                    <th>Unit Owner</th>
+                    <th>Unit Destination</th>
+                    <th>Inv Type From</th>
+                    <th>Inv Type To</th>
+                    <th>Item Code</th>
+                    <th class="widthmedium">Description</th>
+                    <th>Adjustment Date</th>
+                    <th class="widthsmall">Adjustment Value</th>
+                    <th>Adjustment Type</th>
+                    <th>Remark</th>
+                    <th></th>
+                </tr>
+                <tr class="insertRow" data-bind="clickx: cancelInline.bind(),inlineAddProccess:[$data, $root.newData]">
+                    <th>
+                        <span data-bind="text: $root.filterLocationName"></span>
+                    </th>
+                    <th>
+                        <span data-bind="text: $root.filterUnitCode"></span>
+                    </th>
+                    <th>
+                        <select id="ddlUnitCodeDestination" class="show-tick form-control" data-live-search="true"
+                                data-bind="enable: !$root.isBusy(), selectPicker: $root.newData.UnitCodeDestination, optionsText: 'Text', optionsValue : 'Value',
+                                selectPickerOptions: { optionsArray: $root.UnitCodeSelectList, container: 'body' }, event: {change: $root.InventoryStatusCondition}"></select>
+                    </th>
+                    <th>
+                        <select id="ddlInsertRowInventoryStatusFrom" class="show-tick form-control" data-live-search="true"
+                                data-bind="enable: !$root.isBusy(), selectPicker: $root.newData.ItemStatusFrom, optionsText: 'Text', optionsValue : 'Value',
+                                selectPickerOptions: { optionsArray: $root.insertRowInventoryTypeFromList, container: 'body' }, event: {change: $root.getInventoryItems}"></select>
+                    </th>
+                    <th>
+                        <select id="ddlInsertRowInventoryStatusTo" class="show-tick form-control" data-live-search="true"
+                                data-bind="enable: !$root.isBusy(), selectPicker: $root.newData.ItemStatusTo, optionsText: 'Text', optionsValue : 'Value',
+                                selectPickerOptions: { optionsArray: $root.insertRowInventoryTypeToList, container: 'body' }"></select>
+                    </th>
+                    <th>
+                        <select id="ddlItemCode" class="selectpicker show-tick form-control" data-live-search="true" data-dropup-auto="false"
+                                data-bind="enable: !$root.isBusy(), selectPicker: $root.newData.ItemCode, optionsText: 'Text', optionsValue : 'Value',
+                                selectPickerOptions: { optionsArray: $root.itemCodeList, container: 'body' }, optionsAfterRender: $root.afterRender, event: {change: $root.getItemInformations}"></select>
+                    </th>
+                    <th><span data-bind="text: $root.newData.ItemCodeDescription"></span></th>
+                    <th>
+                        <div id="dtpAdjustmentDate" class="input-group date time insidetable" data-bind="dateTimePicker: $root.newData.AdjustmentDate, value:$root.newData.AdjustmentDate, dateTimePickerOptions: {widgetPositioning: {vertical: 'bottom'}, showClear: true, ignoreReadonly: true, useCurrent: false, appendToBody: true }">
+                            <input type="text" class="form-control" readonly="readonly" data-bind="enable: !$root.isBusy()" />
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                        </div>                        
+                    </th>
+                    <th class="widthsmall"><input type="text" data-bind="value: $root.newData.AdjustmentValue, valueUpdate: 'afterkeydown'" class="form-control" data-sktis-validation="integer" /></th>
+                    <th>
+                        <select id="ddlAdjustmentType" class="show-tick form-control" data-live-search="true"
+                                data-bind="enable: !$root.isBusy(), selectPicker: $root.newData.AdjustmentType,value: $root.newData.AdjustmentType, optionsText: 'Text', optionsValue : 'Value',
+                                selectPickerOptions: { optionsArray: $root.adjustmentTypeListFiltered, container: 'body' }"></select>
+                    </th>
+                    <th>
+                        <input type="text" data-bind="value: $root.newData.Remark" class="form-control" />
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody data-bind="foreach: listDataItems">
+                @*edit template*@
+                <tr data-bind="if: ($parent.editingRowIndex() !== $index() && !$root.ValidateDateIsPast($data.UpdatedDate)),
+                                   click: $parent.editInline3.bind($data,$index())">
+                    <td><span data-bind="text: $data.LocationCode"></span></td>
+                    <td><span data-bind="text: $data.UnitCode"></span></td>
+                    <td><span data-bind="text: $data.UnitCodeDestination"></span></td>
+                    <td><span data-bind="text: $data.ItemStatusFrom"></span></td>
+                    <td><span data-bind="text: $data.ItemStatusTo"></span></td>
+                    <td><span data-bind="text: $data.ItemCode"></span></td>
+                    <td><span data-bind="text: $data.ItemCodeDescription"></span></td>
+                    <td><span data-bind="text: $data.AdjustmentDate"></span></td>
+                    <td class="current"><span data-bind="text: $data.AdjustmentValue"></span></td>
+                    <td class="current"><span data-bind="text: $data.AdjustmentType"></span></td>
+                    <td class="current"><span data-bind="text: $data.Remark"></span></td>
+                    <td>
+                        <button type="button" class="btn btn-danger" disabled="disabled">Delete</button>
+                    </td>
+                </tr>
+                <tr data-bind="if: ($parent.editingRowIndex() !== $index() && $root.ValidateDateIsPast($data.UpdatedDate)),
+                                   click: $parent.editInline3.bind($data,$index())">
+                    <td><span data-bind="text: $data.LocationCode"></span></td>
+                    <td><span data-bind="text: $data.UnitCode"></span></td>
+                    <td><span data-bind="text: $data.UnitCodeDestination"></span></td>
+                    <td><span data-bind="text: $data.ItemStatusFrom"></span></td>
+                    <td><span data-bind="text: $data.ItemStatusTo"></span></td>
+                    <td><span data-bind="text: $data.ItemCode"></span></td>
+                    <td><span data-bind="text: $data.ItemCodeDescription"></span></td>
+                    <td><span data-bind="text: $data.AdjustmentDate"></span></td>
+                    <td><span data-bind="text: $data.AdjustmentValue"></span></td>
+                    <td><span data-bind="text: $data.AdjustmentType"></span></td>
+                    <td><span data-bind="text: $data.Remark"></span></td>
+                    <td>
+                        <button type="button" class="btn btn-danger" disabled>Delete</button>
+                    </td>
+                </tr>    
+                @*edit template*@
+                <tr data-bind="validationOptions: {insertMessages: false, showTooltip:true, decorateInputElement: true, errorElementClass: 'input-error'}, inlineProccess:[$parent,$data],
+                                                   if:($parent.editingRowIndex() === $index() && !$root.ValidateDateIsPast($data.UpdatedDate)),
+                                                   click: $parent.selectRow.bind($data, $index())">
+                    <td><span data-bind="text: $data.LocationCode"></span></td>
+                    <td><span data-bind="text: $data.UnitCode"></span></td>
+                    <td><span data-bind="text: $data.UnitCodeDestination"></span></td>
+                    <td><span data-bind="text: $data.ItemStatusFrom"></span></td>
+                    <td><span data-bind="text: $data.ItemStatusTo"></span></td>
+                    <td><span data-bind="text: $data.ItemCode"></span></td>
+                    <td><span data-bind="text: $data.ItemCodeDescription"></span></td>
+                    <td><span data-bind="text: $data.AdjustmentDate"></span></td>
+                    <td class="current"><input type="number" data-sktis-validation="integer" data-bind="value: $data.AdjustmentValue,tabToNext:[$parent,$data], valueUpdate: 'afterkeydown'" class="form-control transparent" /></td>
+                    <td class="current">
+                        <select id="ddlAdjustmentTypeEdit" class="selectpicker show-tick form-control" data-live-search="true" data-bind="value: $data.AdjustmentType, optionsText: 'Value', optionsValue : 'Text', options: $root.getAdjustmentTypeListEdit($data.ItemCode), isSelectPicker: true"></select>
+                    </td>
+                    <td class="current"><input type="text" data-bind="value: $data.Remark,tabToNext:[$parent,$data], valueUpdate: 'afterkeydown'" class="form-control" /></td>
+                    <td>
+                        <button data-bind="attr:{'data-adjustmentdate':$data.AdjustmentDate,'data-locationcode':$data.LocationCode,'data-unitcode':$data.UnitCode,'data-unitcodedestination':$data.UnitCodeDestination,'data-itemcode':$data.ItemCode, 'data-itemstatusfrom': $data.ItemStatusFrom, 'data-itemstatusto': $data.ItemStatusTo}" type="button" class="btn btn-danger row-delete">Delete</button>
+                    </td>
+                </tr>  
+                <tr data-bind="validationOptions: {insertMessages: false, showTooltip:true, decorateInputElement: true, errorElementClass: 'input-error'}, inlineProccess:[$parent,$data],
+                                                   if:($parent.editingRowIndex() === $index() && $root.ValidateDateIsPast($data.UpdatedDate)),
+                                                   click: $parent.selectRow.bind($data, $index())">
+                    <td><span data-bind="text: $data.LocationCode"></span></td>
+                    <td><span data-bind="text: $data.UnitCode"></span></td>
+                    <td><span data-bind="text: $data.UnitCodeDestination"></span></td>
+                    <td><span data-bind="text: $data.ItemStatusFrom"></span></td>
+                    <td><span data-bind="text: $data.ItemStatusTo"></span></td>
+                    <td><span data-bind="text: $data.ItemCode"></span></td>
+                    <td><span data-bind="text: $data.ItemCodeDescription"></span></td>
+                    <td><span data-bind="text: $data.AdjustmentDate"></span></td>
+                    <td><span data-bind="text: $data.AdjustmentValue"></span></td>
+                    <td><span data-bind="text: $data.AdjustmentType"></span></td>
+                    <td><span data-bind="text: $data.Remark"></span></td>
+                    <td>
+                        <button type="button" class="btn btn-danger" disabled>Delete</button>
+                    </td>
+                </tr>              
+            </tbody>
+            <tbody data-bind="visible: !listDataItems().length">
+                <tr>
+                    <td colspan="12" class="empty-row-message"><div class="loader"></div></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div data-bind="if: (listDataItems() != null && listDataItems().length !== 0)">
+        @Html.Partial("GridViewFooter")
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="transfereq" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Item Detail</h4>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-striped" id="ws">
+                        <thead>
+                            <tr class="head">
+                                <th>Item Code</th>
+                                <th>Description</th>
+                                <th>UOM</th>
+                                <th>Quantity</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>PPD-024</td>
+                                <td>Alas Meja Produksi</td>
+                                <td>EA</td>
+                                <td>99</td>
+                            </tr>
+                            <tr>
+                                <td>PPD-039</td>
+                                <td>Bak Pasok</td>
+                                <td>EA</td>
+                                <td>366</td>
+                            </tr>
+                            <tr>
+                                <td>GLX-004</td>
+                                <td>Ban Giling (90x10cm)</td>
+                                <td>EA</td>
+                                <td>778</td>
+                            </tr>
+                            <tr>
+                                <td>GNX-004</td>
+                                <td>Bantalan Stempel</td>
+                                <td>EA</td>
+                                <td>28</td>
+                            </tr>
+                            <tr>
+                                <td>PPD-003</td>
+                                <td>Cetakan DSS-12/PNK-12/SAH-12</td>
+                                <td>EA</td>
+                                <td>79</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Save</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Modal -->
+</div>
+
+@section Scripts
+{    
+    <script src="~/Scripts/app/globalfunctions.js" type="text/javascript"></script>
+    <script src="~/Scripts/common/app.GridViewModel.js" type="text/javascript"></script>
+    <script type="text/javascript">
+    (function (app) {
+        app.EditGrid = function () {
+            var self = this;
+            self.itemLocations = @Html.Raw(Json.Encode(Model.LocationLookupList));
+            self.masterItems = @Html.Raw(Json.Encode(@Model.ItemsList));
+
+            self.menuItemLocations = ko.observableArray(@Html.Raw(Json.Encode(@Model.LocationLookupList)));
+            self.filterLocation = ko.observable('@Model.DefaultLocation');
+
+            self.filterLocationName = ko.observable();
+            self.filterUnitCode = ko.observable('@Model.DefaultUnitCode');
+            self.filterKPSYear = ko.observable(@Model.DefaultYear);
+            self.filterKPSWeek = ko.observable(@Model.DefaultWeek);
+            self.filterDate = ko.observable('@Model.TodayDate');
+            self.initWeek = ko.observable(true);
+            self.itemCodeDescription = ko.observable();
+            self.itemCodeType = ko.observable();
+            self.UnitCodeSelectList = ko.observableArray([]);
+            self.KPSWeekSelectList = ko.observableArray([]);
+            self.insertRowInventoryTypeFromList = ko.observableArray([]);
+            self.insertRowInventoryTypeToList = ko.observableArray([]);
+            self.itemCodeList = ko.observableArray([]);
+            self.adjustmentTypeList = ko.observableArray([]);
+            self.adjustmentTypeListFiltered = ko.observableArray([]);
+            self.filterItemType = ko.observable('');
+            self.isLoading = ko.observable(false);
+            self.firstLoad = true;
+
+
+            //================= busy button state ================//
+            self.isBusy = ko.observable(true);
+
+            $(document).ajaxComplete(function () {
+                if ($.active <= 1) {
+                    self.isBusy(false);
+                    $("#ddlKPSYearFilter").removeAttr("disabled");
+                    $('#ddlKPSYearFilter').selectpicker('refresh');
+                }
+            });
+
+            $(document).ajaxStart(function () {
+                if (!self.isBusy()){
+                    self.isBusy(true);
+                    $("#ddlKPSYearFilter").attr("disabled", "disabled");
+                    $('#ddlKPSYearFilter').selectpicker('refresh');
+                }
+            });
+            //================= busy button state ================//
+            
+            self.afterRender = function(options, item)
+            {
+                var itemDesc;
+                for (var i = 0; i < self.masterItems.length; i++) {
+                    if (self.masterItems[i].ItemCode == item.Value) {
+                        itemDesc = self.masterItems[i].ItemDescription;
+                        break;
+                    }
+                }
+
+                $(options).attr('title', item.Value);
+                $(options).attr(
+                    'data-content',
+                    "<span class='text'>"+ itemDesc +" - "+"<span style='width: 60px; display: inline-block;'>" + item.Value + "</span>" +  "</span>"
+                );
+
+            }
+
+            self.newData = {
+                LocationCode: ko.observable('@Model.DefaultLocation'),
+                UnitCode: ko.observable(''),
+                UnitCodeDestination: ko.observable('@Model.DefaultUnitCode'),
+                ItemCode: ko.observable(''),
+                ItemStatusFrom: ko.observable(''),
+                ItemStatusTo: ko.observable(''),
+                AdjustmentValue: ko.observable(''),
+                AdjustmentDate: ko.observable(''),
+                AdjustmentType: ko.observable(''),
+                ItemCodeDescription: ko.observable(self.itemCodeDescription()),
+                Remark: ko.observable('')
+            };
+
+            //get location name by location code
+            function getLocationNameFilter(cb) {
+                for (var i = 0; i < self.itemLocations.length; i++) {
+                    if (self.itemLocations[i].LocationCode == self.filterLocation()) {
+                        //return self.itemLocations[i].LocationName;
+                        self.filterLocationName(self.itemLocations[i].LocationName);
+                    }
+                }
+                //return '';
+                if (typeof cb == 'function') cb();
+            };
+
+            //get unit code
+            self.getUnitCodeList = function(cb) {
+                $.ajax({
+                    url: @Html.BaseUrl("MaintenanceExecutionInventoryAdjustment/GetUnitCodeByLocationCode"),
+                    type: 'GET',
+                    cache: false,
+                    contentType: 'application/json',
+                    data: { locationCode: self.filterLocation() },
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#ddlFilterUnitCode').find('option').remove();
+                        $('#ddlFilterUnitCode').selectpicker('refresh');
+                        var unitCodeModel = [];
+                        $.each(data, function(index, value) {
+                            unitCodeModel.push({ "Text": value.Text, "Value": value.Value });
+                        });
+                        self.UnitCodeSelectList(unitCodeModel);
+
+                        //set default
+                        if(self.UnitCodeSelectList().length>0)
+                            self.filterUnitCode(self.UnitCodeSelectList()[0].Value);
+
+                        self.newData.UnitCode(self.filterUnitCode());
+                    },
+                    complete: function() {
+                        if (typeof cb == 'function') cb();
+                    }
+                });
+            };
+
+            function InventoryStatusObj(value){
+                this.Text = value;
+                this.Value = value;
+            }
+
+            self.InventoryStatusCondition = function(cb){
+                var unitOwner = self.filterUnitCode();
+                var unitDestination = self.newData.UnitCodeDestination();
+                // IN TRANSIT, BAD STOCK, ON REPAIR, ON USED, READY TO USE, QUALITY INSPECTION
+                var inventoryType = ["In Transit","Quality Inspection","Ready To Use","On Used","On Repair","Bad Stock"];
+
+                var itemTypeList = "PROD EQUIPMENT";
+                var ownerList = [];
+                var destinationList = [];
+                
+                if((unitOwner == SKTIS.Constant.UnitCodeDefault.MTNC && unitDestination == SKTIS.Constant.UnitCodeDefault.MTNC)) {
+                    itemTypeList = "All";
+                    ownerList.push(new InventoryStatusObj(inventoryType[1]));
+                    ownerList.push(new InventoryStatusObj(inventoryType[0]));
+                    ownerList.push(new InventoryStatusObj(inventoryType[2]));
+                    ownerList.push(new InventoryStatusObj(inventoryType[5]));
+                    destinationList.push(new InventoryStatusObj(inventoryType[1]));
+                    destinationList.push(new InventoryStatusObj(inventoryType[0]));
+                    destinationList.push(new InventoryStatusObj(inventoryType[2]));
+                    destinationList.push(new InventoryStatusObj(inventoryType[5]));
+                }else if((unitOwner == SKTIS.Constant.UnitCodeDefault.MTNC && unitDestination != SKTIS.Constant.UnitCodeDefault.MTNC)){
+                    ownerList.push(new InventoryStatusObj(inventoryType[2]));
+                    destinationList.push(new InventoryStatusObj(inventoryType[3]));
+                }else if((unitOwner != SKTIS.Constant.UnitCodeDefault.MTNC && unitDestination != SKTIS.Constant.UnitCodeDefault.MTNC)){
+                    itemTypeList = "All";
+                    //ownerList.push(new InventoryStatusObj(inventoryType[3]));
+                    //destinationList.push(new InventoryStatusObj(inventoryType[3]));
+                    ownerList.push(new InventoryStatusObj(inventoryType[0]));
+                    ownerList.push(new InventoryStatusObj(inventoryType[2]));
+                    destinationList.push(new InventoryStatusObj(inventoryType[0]));
+                    destinationList.push(new InventoryStatusObj(inventoryType[2]));
+                }else if((unitOwner != SKTIS.Constant.UnitCodeDefault.MTNC && unitDestination == SKTIS.Constant.UnitCodeDefault.MTNC)){
+                    ownerList.push(new InventoryStatusObj(inventoryType[3]));
+                    destinationList.push(new InventoryStatusObj(inventoryType[2]));
+                    destinationList.push(new InventoryStatusObj(inventoryType[5]));
+                }
+                self.filterItemType(itemTypeList);
+                self.insertRowInventoryTypeFromList(ownerList);
+                if(ownerList[0].Value != ''){
+                    $('#ddlInsertRowInventoryStatusFrom').selectpicker('val',ownerList[0].Value);
+                    $('#ddlInsertRowInventoryStatusFrom').change();
+                }
+                self.insertRowInventoryTypeToList(destinationList);
+
+                if(typeof cb =='function') cb();
+            };
+
+            //get inventory item
+            self.getInventoryItems = function() {
+                if((! self.firstLoad) && (! self.isLoading())){
+                    self.getInventoryItemsData();
+                }
+            };
+
+            self.getInventoryItemsData = function(cb) {
+                self.newData.ItemCodeDescription('');
+                //console.log(self.filterDate());
+                $.ajax({
+                    url: @Html.BaseUrl("MaintenanceExecutionInventoryAdjustment/GetInventoryItems"),
+                    type: 'GET',
+                    cache: false,
+                    contentType: 'application/json',
+                    data: { locationCode: self.filterLocation(), unitCode: self.filterUnitCode(), inventoryStatus: self.newData.ItemStatusFrom(), itemType: self.filterItemType(), inventoryDate:self.filterDate() },
+                    dataType: 'json',
+                    success: function(data) {
+                        
+                        var newData = [];
+                        for (var j = 0; j < data.length; j++) {
+                            for (var i = 0; i < self.masterItems.length; i++) {
+                                //console.log();
+                                if (self.masterItems[i].ItemCode == data[j].Value) {
+                                    newData.push({ 
+                                        Disabled: data[j].Disabled,
+                                        Group: data[j].Group,
+                                        Selected: data[j].Selected,
+                                        Text: data[j].Text,
+                                        Value: data[j].Value,
+                                        ItemDescription: self.masterItems[i].ItemDescription,
+                                        ItemCompact: self.masterItems[i].ItemCode + ' - ' + self.masterItems[i].ItemDescription,
+                                        UOM: self.masterItems[i].UOM
+                                    });
+                                    break;
+                                }
+                            }
+                        }
+
+                        //sorting
+                        for (var j = 0; j < newData.length; j++) {
+                            for (var i = j; i < newData.length; i++) {
+                                if (newData[i].ItemDescription<newData[j].ItemDescription){
+                                    var temp = newData[i];
+                                    newData[i] = newData[j];
+                                    newData[j] = temp;
+                                }
+                                
+                            }
+                        }
+
+                        //self.itemCodeList(data);
+                        self.itemCodeList(newData);
+                    },
+                    complete: function() {
+                        if(typeof cb == 'function') cb();
+                    }
+                });
+            }
+
+            //get Adjustment Type
+            self.getAdjustmentTypeList = function(cb) {
+                $.ajax({
+                    url: @Html.BaseUrl("MaintenanceExecutionInventoryAdjustment/GetAdjustmentType"),
+                    type: 'GET',
+                    cache: false,
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#ddlAdjustmentType').find('option').remove();
+                        $('#ddlAdjustmentType').selectpicker('refresh');
+                        //var adjustmentModel = [];
+                        //$.each(data, function(index, value) {
+                        //    adjustmentModel.push({ "Text": value.Text, "Value": value.Value });
+                        //});
+                        self.adjustmentTypeList(data);
+                    },
+                    complete: function() {
+                        if(typeof cb == 'function') cb();
+                    }
+                });
+            };
+
+            self.getAdjustmentTypeListEdit = function(code) {
+                var items = [];
+                $.ajax({
+                    url: @Html.BaseUrl("MaintenanceExecutionInventoryAdjustment/GetItemInformations"),
+                    type: 'GET',
+                    cache: false,
+                    async: false,
+                    contentType: 'application/json',
+                    data: { itemCode: code },
+                    dataType: 'json',
+                    success: function(data) {
+                        if(data.ItemType == 'CONSUMABLE'){
+                            items = ko.utils.arrayFilter(self.adjustmentTypeList(), function(item) {
+                                return item.Text.indexOf('Reduce') > -1;
+                            });
+                        }else{
+                            items = ko.utils.arrayFilter(self.adjustmentTypeList(), function(item) {
+                                return item.Text.indexOf('Reduce') <= -1;
+                            });
+                        }
+                    }
+                });
+                return items;
+                $("#ddlAdjustmentTypeEdit").selectpicker('refresh');
+            };
+
+            //get item information
+            self.getItemInformations = function() {
+                $.ajax({
+                    url: @Html.BaseUrl("MaintenanceExecutionInventoryAdjustment/GetItemInformations"),
+                    type: 'GET',
+                    cache: false,
+                    contentType: 'application/json',
+                    data: { itemCode: self.newData.ItemCode() },
+                    dataType: 'json',
+                    success: function(data) {
+                        self.itemCodeDescription(data.ItemDescription);
+                        //self.itemCodeType(data.ItemType);
+                        self.newData.ItemCodeDescription(data.ItemDescription);
+                        var items = [];
+                        if(data.ItemType == 'CONSUMABLE'){
+                            items = ko.utils.arrayFilter(self.adjustmentTypeList(), function(item) {
+                                return item.Text.indexOf('Reduce') > -1;
+                            });
+                        }else{
+                            items = ko.utils.arrayFilter(self.adjustmentTypeList(), function(item) {
+                                return item.Text.indexOf('Reduce') <= -1;
+                            });
+                        }
+                        self.adjustmentTypeListFiltered(items);
+                    }
+                });
+            };
+
+            self.onLocationChange = function() {
+                if((! self.firstLoad) && (! self.isLoading())){
+                    self.isLoading(true);
+                    async.series([
+                        function(callback) {
+                            getLocationNameFilter(callback);
+                        },
+                        function(callback) {
+                            self.getUnitCodeList(callback);
+                        },
+                        function(callback) {
+                            self.InventoryStatusCondition(callback);
+                        },
+                        function(callback) {
+                            self.getInventoryItemsData(callback);
+                        },
+                    ], function() {
+                        self.newData.LocationCode(self.filterLocation());
+                        self.newData.UnitCode(self.filterUnitCode());
+                        self.isLoading(false);
+                    });
+                    //getLocationNameFilter();
+                    //self.getUnitCodeList();
+                    //self.newData.LocationCode(self.filterLocation());
+                }
+            };
+
+            self.onUnitCodeChange = function(){
+                if((! self.firstLoad) && (! self.isLoading())){
+                    self.isLoading(true);
+                    async.series([
+                        function(callback) {
+                            self.InventoryStatusCondition(callback);
+                        },
+                        function(callback) {
+                            self.getInventoryItemsData(callback);
+                        },
+                    ], function() {
+                        self.newData.UnitCode(self.filterUnitCode());
+                        self.isLoading(false);
+                    });
+                    //self.InventoryStatusCondition();
+                    //self.newData.UnitCode(self.filterUnitCode());
+                    //self.getInventoryItems();
+                }
+            }
+
+            self.onKPSYearChange = function() {
+                self.getWeek();
+            };
+
+            self.getWeek = function(cb) {
+                $.ajax({
+                    url: @Html.BaseUrl("MaintenanceExecutionInventoryAdjustment/GetWeekByYear"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: { year: self.filterKPSYear() },
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#ddlKPSWeekFilter').find('option').remove();
+                        $('#ddlKPSWeekFilter').selectpicker('refresh');
+                        var kpsWeekModel = [];
+                        $.each(data, function(index, value) {
+                            kpsWeekModel.push({ "Text": value, "Value": value });
+                        });
+                        self.KPSWeekSelectList(kpsWeekModel);
+                        self.filterKPSWeek(@Model.DefaultWeek);
+                    },
+                    complete: function() {
+                        if(typeof cb == 'function') cb();
+                    }
+                });
+            };
+
+            self.onKPSWeekChange = function(){
+                if(self.initWeek()){
+                    self.initWeek(false);
+                }
+                if((! self.firstLoad) && (! self.isLoading())){
+                    self.SetDateRange();
+                }
+            };
+
+            self.ValidateDateIsPast= function(date) {
+                if(ko.utils.unwrapObservable(date) === '' || typeof ko.utils.unwrapObservable(date) === 'undefined') return false;
+                return moment(moment(ko.utils.unwrapObservable(date), 'DD/MM/YYYY').format('YYYY-MM-DD')).isBefore(moment().format('YYYY-MM-DD'));
+            };
+
+            self.SetDateRange = function(cb) {
+                $.ajax({
+                    url: @Html.BaseUrl("MaintenanceExecutionInventoryAdjustment/GetDateByYearWeek"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data: { year: self.filterKPSYear(), week: self.filterKPSWeek() },
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#filterDate').data("DateTimePicker").options({
+                            //date: moment(data.StartDate),
+                            maxDate: moment(data.EndDate),
+                            minDate: moment(data.StartDate).subtract(1, 'days')
+                        });
+                        var today = moment();
+                        var setDate;
+                        if(today.isAfter(data.StartDate) && today.isBefore(data.EndDate))
+                            setDate = moment();
+                        else
+                            setDate = moment(data.StartDate);
+                        self.filterDate(setDate);
+                        //if((moment(self.filterTransactionDateSS(),"DD-MM-YYYY").diff(moment(data.StartDate), 'days') < 0) || (moment(self.filterTransactionDateSS(),"DD-MM-YYYY").diff(moment(data.EndDate), 'days') > 0)){
+                        //    self.filterTransactionDateSS(moment(data.StartDate));
+                        //}
+                        //self.search();
+                    },
+                    complete: function() {
+                        if(typeof cb == 'function') cb();
+                    }
+                });
+            };
+
+            // Gridview Initialization
+            self.gridView = new app.GridViewModel({
+                Criteria: {
+                    PageSize: 10,
+                    PageIndex: 1,
+                    SortExpression: "LocationCode",
+                    SortOrder: "DESC",
+                    LocationCode: self.filterLocation,
+                    UnitCode: self.filterUnitCode,
+                    CreatedDate: self.filterDate
+                },
+                DataSourceUrl: @Html.BaseUrl("MaintenanceExecutionInventoryAdjustment/GetMaintenanceExecutionInventoryAdjustment"),
+                InlineEdit: true,
+                InsertRowFocusedControlIndex: 0
+            });
+
+
+            // Field Validations
+            self.gridView.applyValidationRules = function (entity) {
+                self.RemoveNotification();
+                entity.AdjustmentDate.extend({
+                    required: {
+                        message: "<strong>Adjustment Date</strong> cannot be empty!"
+                    }
+                });
+                entity.AdjustmentValue.extend({
+                    required: {
+                        message: "<strong>Adjustment Value</strong> cannot be empty!"
+                    }
+                });
+            };
+
+            // Reset Fields for Insert Row
+            self.gridView.resetDefault = function (viewModel) {
+                viewModel.AdjustmentDate('');
+                viewModel.AdjustmentValue('');
+                viewModel.Remark('');
+                $('.insertRow .input-group.date input').val('');
+                $('#dtpAdjustmentDate').data('DateTimePicker').clear();
+            };
+
+            // Load Data
+            self.search = function() {
+                $('.empty-row-message').html('<div class="loader"></div>'); // Reset New and Edit row
+                // Check whether New or Edit data is existing and not saved to database yet (on Ajax Action)
+                if (SKTIS.Checker.modifiedDataExistsForAjax([self.gridView.listNewItems, self.gridView.listEditItems]) == true) {
+                    return;
+                } else {
+                    self.gridView.listNewItems.removeAll();
+                    self.gridView.listEditItems.removeAll();
+                }
+
+                self.gridView.search({}, function(response) {
+                    if (response.status == 'KO') {
+                        SKTIS.Helper.Notification(response.message, 'error');
+                        $('.empty-row-message').html(response.message);
+                    } else if (response.status == 'Empty') {
+
+                        //SKTIS.Helper.Notification(response.message,'warning');
+                        $('.empty-row-message').html('@CommonLabel.lblDataEmpty');
+                    }
+                });
+            };
+
+            self.getExcelParameters = function(formElement) {
+                $(formElement).find("input[name=locationCode]").val(self.filterLocation()),
+                $(formElement).find("input[name=unitCode]").val(self.filterUnitCode());
+                $(formElement).find("input[name=createDate]").val(self.filterDate());
+                return true;
+            };
+
+            self.RemoveNotification = function() {
+                if ($('#noty_top_layout_container').length > 0) {
+                    $('#noty_top_layout_container').remove();
+                }
+            };
+
+            //description: save bulk data
+            self.saveData = function() {
+                if (self.gridView.editingRowIndex() !== -1)
+                    return;
+
+                // Prevent Edited new Row data for triggering Edited message
+                var newItemLength = self.gridView.listNewItems().length;
+                $.each(self.gridView.listNewItems(),function(k,v){
+                    var shouldBeAsNew = ko.utils.arrayFirst(self.gridView.listEditItems(),function(editItem){
+                        if(editItem){
+                            return editItem['AdjustmentDate'] == v['AdjustmentDate'] && editItem['LocationCode'] == v['LocationCode'] && editItem['UnitCode'] == v['UnitCode'] && editItem['UnitCodeDestination'] == v['UnitCodeDestination'] && editItem['ItemCode'] == v['ItemCode'];
+                        }
+                    });
+                    if(shouldBeAsNew){
+                        self.gridView.listNewItems()[k] = shouldBeAsNew;
+                    }
+                    self.gridView.listEditItems.remove(function(data) {
+                        if(data){
+                            return data['AdjustmentDate'] == v['AdjustmentDate'] && data['LocationCode'] == v['LocationCode'] && data['UnitCode'] == v['UnitCode'] && data['UnitCodeDestination'] == v['UnitCodeDestination'] && data['ItemCode'] == v['ItemCode'];
+                        }
+                    });
+                });
+
+                var datas = {
+                    //"Parameters": { "LocationCode": self.LocationCode },
+                    "New": self.gridView.listNewItems(),
+                    "Edit": self.gridView.listEditItems()
+                };
+                datas = JSON.stringify(datas);
+                $.ajax({
+                    url:  @Html.BaseUrl("MaintenanceExecutionInventoryAdjustment/SaveInventoryAdjustment"),
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: datas,
+                    dataType: 'json',
+                    success: function(data) {
+                        if (data.New) {
+                            $.each(data.New, function (k, value) {
+                                if (value)
+                                    SKTIS.Helper.ResponseNotification(value, "Insert Inventory Adjustment", value.LocationCode);
+                            });
+                        }
+
+                        if (data.Edit) {
+                            $.each(data.Edit, function (k, value) {
+                                if (value)
+                                    SKTIS.Helper.ResponseNotification(value, "Edit Inventory Adjustment", value.LocationCode);
+                            });
+                        }
+
+                        self.gridView.sort('UpdatedDate', 'DESC');
+                        self.gridView.listNewItems.removeAll();
+                        self.gridView.listEditItems.removeAll();
+                    }
+                });
+            };
+
+            // Reset observable variable also when picker clear event
+            $('#dtpAdjustmentDate').on('dp.change', function (e) {
+                self.newData.AdjustmentDate('');
+            });
+
+            $(document).ready(function() {
+            //    //self.onLocationChange();
+            //    //self.onKPSYearChange();
+            //    self.getAdjustmentTypeList();
+                $(document).off('click','.row-delete');
+                $(document).on('click','.row-delete',function(e){
+                    e.preventDefault();
+                    e.stopPropagation();
+                    var $self = this;
+
+                    var confirm = window.confirm("Are you sure ?");
+
+                    if (!confirm) return false;
+
+                    // Check whether New or Edit data is existing and not saved to database yet (on Request action)
+                    if (SKTIS.Checker.checkmodifiedDataExists([self.gridView.listNewItems, self.gridView.listEditItems])) {
+                        var confirm = window.confirm("Changes have not been saved, continue to delete the data?");
+                        if (confirm) deleteRow($self);
+                    } else {
+                        deleteRow($self);
+                    }
+                });
+
+            });
+            //INIT METHOD BOTH
+            self.init = (function() {
+                //Asynch setting
+                self.isLoading(true);
+                async.series([
+                    function(callback) {
+                        getLocationNameFilter(callback);
+                    },
+                    function(callback) {
+                        self.getUnitCodeList(callback)
+                    },
+                    function(callback) {
+                        self.getWeek(callback);
+                    },
+                    function(callback) {
+                        self.SetDateRange(callback);
+                    },
+                    function(callback) {
+                        self.getAdjustmentTypeList(callback);
+                    },
+                    function(callback) {
+                        self.getInventoryItemsData(callback);
+                    }
+                ], function() {
+                    self.getItemInformations();
+                    self.isLoading(false);
+                    self.firstLoad = false;
+                    self.search();
+                });
+
+            }());
+            
+            function deleteRow(caller) {
+                
+                var adjustmentDate = $(caller).attr('data-adjustmentdate');
+                var locationCode = $(caller).attr('data-locationcode');
+                var unitCode = $(caller).attr('data-unitcode');
+                var unitCodeDestination = $(caller).attr('data-unitcodedestination');
+                var itemCode = $(caller).attr('data-itemcode');
+                var itemStatusFrom = $(caller).attr('data-itemstatusfrom');
+                var itemStatusTo = $(caller).attr('data-itemstatusto');
+
+                $.ajax({
+                    url:  @Html.BaseUrl("MaintenanceExecutionInventoryAdjustment/DeleteInventoryAdjustment"),
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        AdjustmentDate:adjustmentDate,
+                        LocationCode: locationCode,
+                        UnitCode: unitCode,
+                        UnitCodeDestination: unitCodeDestination,
+                        ItemCode: itemCode,
+                        ItemStatusFrom: itemStatusFrom,
+                        ItemStatusTo: itemStatusTo
+                    }),
+                    dataType: 'json',
+                    success: function(data) {
+                        SKTIS.Helper.ResponseNotification(data, "Delete Inventory Adjustment", data.LocationCode);
+                        
+                        self.gridView.listNewItems.removeAll();
+                        self.gridView.listEditItems.removeAll();
+
+                        self.search();
+                        self.gridView.editingRowIndex(-1);
+                    }
+                });
+            }
+
+        };
+        ko.applyBindings(new app.EditGrid());
+    })(app = this.app || {});
+
+</script>
+}

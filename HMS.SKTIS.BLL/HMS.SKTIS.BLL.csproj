@@ -1,0 +1,152 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{33240099-8B3A-4912-AAC7-441E58E13243}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>HMS.SKTIS.BLL</RootNamespace>
+    <AssemblyName>HMS.SKTIS.BLL</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="AutoMapper, Version=3.3.1.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
+      <HintPath>..\packages\AutoMapper.3.3.1\lib\net40\AutoMapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="AutoMapper.Net4, Version=3.3.1.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
+      <HintPath>..\packages\AutoMapper.3.3.1\lib\net40\AutoMapper.Net4.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Excel, Version=2.1.2.3, Culture=neutral, PublicKeyToken=93517dbe6a4012fa, processorArchitecture=MSIL">
+      <HintPath>..\packages\ExcelDataReader.2.1.2.3\lib\net45\Excel.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="FastMember, Version=1.0.0.9, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\FastMember.1.0.0.10\lib\net40\FastMember.dll</HintPath>
+    </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="BLLMapper.cs" />
+    <Compile Include="EmailApprovalsBLL.cs" />
+    <Compile Include="ExecutionBLL\ExecutionPlantBLL.cs" />
+    <Compile Include="ExecutionBLL\ExecutionOtherBLL.cs" />
+    <Compile Include="ExecutionBLL\ExeReportBLL.cs" />
+    <Compile Include="ExecutionBLL\ExeReportByStatusBLL.cs" />
+    <Compile Include="ExecutionBLL\ExeReportProdStockProcessBLL.cs" />
+    <Compile Include="ExecutionBLL\WorkerBalancingBLL.cs" />
+    <Compile Include="ExecutionBLL\ExecutionTPOBLL.cs" />
+    <Compile Include="GeneralBLL.cs" />
+    <Compile Include="MaintenanceBLL.cs" />
+    <Compile Include="MaintenanceBLL\EquipmentRepairPlantBLL.cs" />
+    <Compile Include="MaintenanceBLL\EquipmentRepairTPOBLL.cs" />
+    <Compile Include="MasterDataBLL.cs" />
+    <Compile Include="MasterDataBLL\MasterGeneralBLL.cs" />
+    <Compile Include="MasterDataBLL\MasterMaintenanceBLL.cs" />
+    <Compile Include="MasterDataBLL\MasterPlantBLL.cs" />
+    <Compile Include="MasterDataBLL\MasterTPOBLL.cs" />
+    <Compile Include="PlanningBLL.cs" />
+    <Compile Include="PlanningBLL\PlanningPlantBLL.cs" />
+    <Compile Include="PlanningBLL\PlanningTPOBLL.cs" />
+    <Compile Include="PlantWagesBLL\PlantWagesExecutionBLL.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SelectListBLL.cs" />
+    <Compile Include="SSISService.cs" />
+    <Compile Include="TPOFeeBLL\TPOFeeBLL.cs" />
+    <Compile Include="TPOFeeBLL\TPOFeeExeGLAccruedBLL.cs" />
+    <Compile Include="UserBLL.cs" />
+    <Compile Include="UtilitiesBLL\UtilitiesBLL.cs" />
+    <Compile Include="VTLogger.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\HMS.SKTIS.AutoMapperExtensions\HMS.SKTIS.AutoMapperExtensions.csproj">
+      <Project>{44a78d43-860d-4feb-aa07-69de6ecabc50}</Project>
+      <Name>HMS.SKTIS.AutoMapperExtensions</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\HMS.SKTIS.BusinessObjects\HMS.SKTIS.BusinessObjects.csproj">
+      <Project>{d09928d1-f7e1-4c8a-ad81-da808f82b918}</Project>
+      <Name>HMS.SKTIS.BusinessObjects</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\HMS.SKTIS.Contracts\HMS.SKTIS.Contracts.csproj">
+      <Project>{f26065c9-42cc-4254-ab01-472cb8b4dc2e}</Project>
+      <Name>HMS.SKTIS.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\HMS.SKTIS.Core\HMS.SKTIS.Core.csproj">
+      <Project>{a6a6706f-9385-4f85-b9b6-5dfd4ef88db8}</Project>
+      <Name>HMS.SKTIS.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\HMS.SKTIS.DAL\HMS.SKTIS.DAL.csproj">
+      <Project>{6bd6412e-49db-432b-85f2-bdf660ba20dc}</Project>
+      <Name>HMS.SKTIS.DAL</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\HMS.SKTIS.Utils\HMS.SKTIS.Utils.csproj">
+      <Project>{42afcba1-cf31-40df-ba30-8a225747cf92}</Project>
+      <Name>HMS.SKTIS.Utils</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\packages\AutoMapper.3.3.1\tools\AutoMapper.targets" Condition="Exists('..\packages\AutoMapper.3.3.1\tools\AutoMapper.targets')" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

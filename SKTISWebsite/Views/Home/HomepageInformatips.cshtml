@@ -1,0 +1,22 @@
+﻿@model SKTISWebsite.Models.Home.InformatipsNewsInfoViewModel
+
+@if (Model != null)
+{
+    <div class="informatips">
+        <div class="banner-title"><i class="fa fa-info-circle"></i> Informatips</div>
+        <div class="informatips-img">
+            <img src="~/@Model.Image">
+        </div>
+        <div class="informatips-decription">
+            <p class="title">
+                @Model.Title
+            </p>
+            <p class="text-date">
+                @Model.ShortDescription
+            </p>
+            <a class="readmore" href="@Url.Action("Details", "News", new { id = Model.NewsId })">
+                Selengkapnya <i class="fa fa-long-arrow-right"></i>
+            </a>
+        </div>
+    </div>
+}

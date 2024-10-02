@@ -1,0 +1,312 @@
+﻿@model SKTISWebsite.Models.MaintenanceReportEquipmentStock.InitMaintenanceReportEquipmentStock
+@using HMS.SKTIS.Application.Resources
+@using SKTISWebsite.Helper
+@{ Html.SetPageTitle("Equipment Stock"); }
+<div class="col-lg-12" data-bind="with: gridView">
+    <div class="col-lg-6">
+        <div class="row">
+            <label class="form-label col-lg-3">
+                Location
+            </label>
+            <div class="col-lg-4">
+                @*@Html.DropDownList("ddlFilterLocationCode", new SelectList(Model.PLNTChildLocationLookupList, "LocationCode", "LocationCode"),
+                new
+                {
+                    @class = "selectpicker show-tick form-control",
+                    id = "ddlFilterLocationCode",
+                    data_live_search = "true",
+                    data_bind = "value:$root.filterLocationCode, event : { change : $root.onLocationCodeChange}"
+                })*@
+
+                <select id="ddlFilterLocationCode"
+                        class="selectpicker show-tick form-control"
+                        data-live-search="true"
+                        data-bind="enable: !$root.isBusy(), selectPicker:$root.filterLocationCode, optionsText: 'LocationCode', optionsValue : 'LocationCode', optionsAfterRender: locationDesc, selectPickerOptions: { optionsArray: $root.menuItemLocations}, event : { change : $root.onLocationCodeChange}"></select>
+
+            </div>
+            <div class="col-lg-5">
+                <input type="text" class="form-control" readonly="readonly" data-bind="value:$root.filterLocationName">
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-3">
+                Unit
+            </label>
+            <div class="col-lg-4">
+                <select id="ddlFilterUnitCode" class="show-tick form-control" data-live-search="true"
+                        data-bind="enable: !$root.isBusy(), selectPicker: $root.filterUnitCode, optionsText: 'Text', optionsValue : 'Value',
+                        selectPickerOptions: { optionsArray: $root.UnitCodeSelectList }"></select>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="row">
+            <label class="form-label col-lg-3">                
+                KPS Year
+            </label>
+            <div class="col-lg-4">
+                <input id="filterYear" type="text" class="form-control" readonly="readonly" data-bind="value:$root.filterYear"/>
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-3">                
+                KPS Week
+            </label>
+            <div class="col-lg-4">
+                <input id="filterWeek" type="text" class="form-control" readonly="readonly" data-bind="value:$root.filterWeek" />
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-3">                
+                Date
+            </label>
+            <div class="col-lg-4">
+                <div id="filterDateFrom" class='input-group date time' data-bind="dateTimePicker: $root.filterDateFrom, value: $root.filterDateFrom, dateTimePickerOptions: {widgetPositioning: {vertical: 'bottom'}, ignoreReadonly: true, useCurrent:false}">
+                    <input id="dtFilterFrom" class="form-control" readonly="readonly" data-bind="enable: !$root.isBusy()" />
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="action-btn">
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.View.ToString()))
+                {
+                    <button type="button" class="btn btn-primary" data-bind="enable: !$root.isBusy(), click:$root.search">@CommonLabel.btnView</button>
+                }
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.Excel.ToString())) { 
+                    using (Html.BeginForm("GenerateExcel", "MaintenanceReportEquipmentStock", FormMethod.Post, new { @data_bind = "submit: $root.generateExcel" }))
+                    {
+                        <input type="hidden" name="LocationCode" data-bind="value:self.filterLocationCode" />
+                        <input type="hidden" name="UnitCode" data-bind="value:self.filterUnitCode" />
+                        <input type="hidden" name="InventoryDate" data-bind="value:self.filterDateFrom" />
+                        <button type="submit" class="btn btn-primary" data-bind="enable: !$root.isBusy()" >@CommonLabel.btnExcel</button>
+                    }
+                }
+                @Html.Partial("GridViewPageSizeSelector")                
+            </div>
+        </div>
+    </div>
+
+    <div class="table-overflow">
+        <table class="table table-striped-default">
+            <thead>
+                <tr class="head">
+                    <th rowspan="2">No</th>
+                    <th rowspan="2">Item Code</th>
+                    <th rowspan="2">Item Description</th>
+                    <th colspan="5">Stock [MTNC]</th>
+                    <th colspan="3">Stock [PROD]</th>
+                </tr>
+                <tr class="head">
+                    <th>In Transit</th>
+                    <th>QI</th>
+                    <th>Ready To Use</th>
+                    <th>Bad Stock</th>
+                    <th>Total</th>
+                    <th>Used</th>
+                    <th>Repair</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+            <tbody data-bind="foreach: listDataItems">
+                <tr>
+                    <td><span data-bind="text:($index()+1)"></span></td>
+                    <td><span data-bind="text:$data.ItemCode"></span></td>
+                    <td><span data-bind="text:$data.ItemDescription"></span></td>
+                    <td class="right"><span data-bind="decimal:$data.InTransit"></span></td>
+                    <td class="right"><span data-bind="decimal:$data.QI"></span></td>
+                    <td class="right"><span data-bind="decimal:$data.ReadyToUse"></span></td>
+                    <td class="right"><span data-bind="decimal:$data.BadStock"></span></td>
+                    <td class="right"><span data-bind="decimal:$data.TotalStockMntc"></span></td>
+                    <td class="right"><span data-bind="decimal:$data.Used"></span></td>
+                    <td class="right"><span data-bind="decimal:$data.Repair"></span></td>
+                    <td class="right"><span data-bind="decimal:$data.TotalStockProd"></span></td>
+                </tr>
+            </tbody>
+            <tbody data-bind="visible: !listDataItems().length">
+                <tr>
+                    <td colspan="41" class="empty-row-message">
+                        <div class="loader"></div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div data-bind="if: (listDataItems() != null && listDataItems().length !== 0)">
+        @Html.Partial("GridViewFooter")
+    </div>
+
+        
+</div>
+
+@section Scripts
+{
+    <script src="~/Scripts/app/globalfunctions.js" type="text/javascript"></script>
+    <script src="~/Scripts/common/app.GridViewModel.js" type="text/javascript"></script>
+    <script type="text/javascript">
+
+        (function(app) {
+            app.EditGrid = function () {
+                var self = this;
+                //Filter
+                self.menuItemLocations = ko.observableArray(@Html.Raw(Json.Encode(@Model.LocationLookupList)));
+                self.itemLocations = @Html.Raw(Json.Encode(@Model.LocationLookupList));
+                self.filterLocationCode = ko.observable($("#ddlFilterLocationCode").val());
+                self.filterLocationName = ko.observable();
+                self.filterUnitCode = ko.observable('@Model.DefaultUnitCode');
+                self.filterYear = ko.observable(@Model.DefaultYear );
+                self.filterWeek = ko.observable(@Model.DefaultWeek);
+                self.filterDateFrom = ko.observable('@Model.DefaultDate');                
+                self.UnitCodeSelectList = ko.observableArray([]);
+                self.firstLoad = true;
+
+                //================= busy button state ================//
+                self.isBusy = ko.observable(true);
+
+                $(document).ajaxComplete(function () {
+                    if ($.active <= 1) {
+                        self.isBusy(false);
+                    }
+                });
+
+                $(document).ajaxStart(function () {
+                    if (!self.isBusy()) self.isBusy(true);
+                });
+                //================= busy button state ================//
+                
+                //event on location dropdown change
+                self.onLocationCodeChange = function() {
+                    self.getLocationNameFilter();
+                    self.getUnitCodeList();                    
+                };                
+
+                //get location name by location code
+                self.getLocationNameFilter = function() {
+                    for (var i = 0; i < self.itemLocations.length; i++) {
+                        if (self.itemLocations[i].LocationCode == self.filterLocationCode()) {
+                            self.filterLocationName(self.itemLocations[i].LocationName);
+                            break;
+                        }
+                    }
+                };
+
+                //get shift by location
+                self.getUnitCodeList = function() {
+                    $.ajax({
+                        url: @Html.BaseUrl("MaintenanceReportEquipmentStock/GetUnitCodeByLocationCode"),
+                        type: 'GET',
+                        cache: false,
+                        contentType: 'application/json',
+                        data: { locationCode: self.filterLocationCode() },
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#ddlFilterUnitCode').find('option').remove();
+                            $('#ddlFilterUnitCode').selectpicker('refresh');
+                            var unitCodeModel = [];
+                            unitCodeModel.push({ "Text": "All", "Value": "%" });
+                            $.each(data, function(index, value) {
+                                unitCodeModel.push({ "Text": value.Text, "Value": value.Value });
+                            });
+                            self.UnitCodeSelectList(unitCodeModel);
+
+                            //set default
+                            if(self.UnitCodeSelectList().length>0)
+                                self.filterUnitCode(self.UnitCodeSelectList()[0].Value);
+
+                            if (self.firstLoad) {
+                                self.firstLoad = false;
+                                self.search();
+                            }
+                        }
+                    });
+                };                
+
+                self.search = function() {
+                    
+                    self.gridView.search({}, function(response) {
+                        if (response.status == 'KO') {
+                            SKTIS.Helper.Notification(response.message, 'error');
+                            $('.empty-row-message').html(response.message);
+                        } else if (response.status == 'Empty') {
+
+                            self.RemoveNotification();
+
+                            //SKTIS.Helper.Notification(response.message,'warning');
+                            $('.empty-row-message').html('@CommonLabel.lblDataEmpty');
+                        }
+                    });
+
+                    self.RemoveNotification = function() {
+                        if ($('#noty_top_layout_container').length > 0) {
+                            $('#noty_top_layout_container').remove();
+                        }
+                    };
+                };
+
+                self.generateExcel = function(formElement) {
+                    $(formElement).find("input[name=LocationCode]").val(self.filterLocationCode());
+                    $(formElement).find("input[name=UnitCode]").val(self.filterUnitCode());
+                    $(formElement).find("input[name=InventoryDate]").val(self.filterDateFrom());
+                    return true;
+                };
+
+                // Trigger on first load
+                self.onLocationCodeChange();
+
+
+                // Gridview Initialization
+                self.gridView = new app.GridViewModel({
+                    Criteria: {
+                        PageSize: 10,
+                        PageIndex: 1,
+                        SortExpression: "InventoryDate",
+                        SortOrder: "DESC",
+                        LocationCode: self.filterLocationCode,
+                        UnitCode: self.filterUnitCode,
+                        InventoryDate: self.filterDateFrom
+                    },
+                    DataSourceUrl: @Html.BaseUrl("MaintenanceReportEquipmentStock/GetMaintenanceEquipmentReport"),
+                    InlineEdit: true,
+                });
+
+                // Wait for Document Ready
+                $(document).ready(function(){
+                    
+                    $('#filterDateFrom').on('dp.change',function(){
+                        $.ajax({
+                            url: @Html.BaseUrl("MaintenanceReportEquipmentStock/GetWeekAndYearByDate"),
+                            type: 'POST',
+                            cache: false,
+                            contentType: 'application/json',
+                            data: JSON.stringify({
+                                date: self.filterDateFrom()
+                            }),
+                            dataType: 'json',
+                            success: function(data) {
+                                self.filterYear(data.Year);
+                                self.filterWeek(data.Week);
+                            }
+                        });
+                    });
+                   
+                });
+               
+                $(document).ready(function(){
+
+                    self.onLocationCodeChange();
+
+                });
+
+            };
+
+            ko.applyBindings(new app.EditGrid());
+        })(app = this.app || {});
+
+    </script>
+}

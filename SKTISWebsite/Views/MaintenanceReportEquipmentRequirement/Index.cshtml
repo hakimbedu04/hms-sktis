@@ -1,0 +1,546 @@
+﻿@using HMS.SKTIS.Application.Resources
+@using SKTISWebsite.Helper
+@{ Html.SetPageTitle("Equipment Requirement"); }
+<div class="col-lg-12" >
+    <div class="tabs" role="tabpanel">
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs" role="tablist" id="eqrequest">
+            <li role="presentation" class="active"><a href="#package1" aria-controls="home" role="tab" data-toggle="tab" title="Calculate requirement of entered package with reference Package Equipments">Calculate requirement of entered package with reference Package Equipments</a></li>
+            <li role="presentation"><a href="#package2" aria-controls="profile" role="tab" data-toggle="tab" title="Calculate requirement of entered package with reference Package Equipments and Brand Package Mapping">Calculate requirement of entered package with reference Package Equipments and Brand Package Mapping</a></li>
+            <li role="presentation"><a href="#summarystock" aria-controls="profile" role="tab" data-toggle="tab" title="Summary stock all location of selected Brand">Summary stock all location of selected Brand</a></li>
+        </ul>
+
+        <!-- Tab panes -->
+        <div class="tab-content">
+            <!--Entered package - reference Package Equipments-->
+            <div role="tabpanel" class="tab-pane fade in active" id="package1" data-bind="with: gridViewPackage1">
+                <div class="col-lg-6">
+                    <div class="row">
+                        <label class="form-label col-lg-4">
+                            Location
+                        </label>
+                        <div class="col-lg-4">
+                            @*@Html.DropDownList("ddlFilterLocationCode", new SelectList(Model.RegionalChildLocation, "LocationCode", "LocationCode"),
+                            new
+                            {
+                                @class = "selectpicker show-tick form-control",
+                                id = "ddlFilterLocationCode",
+                                data_live_search = "true",
+                                data_bind = "value: $root.filterLocationCode, event : { change : $root.onLocationCodeChange}"
+                            })*@
+
+                            <select id="ddlFilterLocationCode"
+                                    class="selectpicker show-tick form-control"
+                                    data-live-search="true"
+                                    data-bind="selectPicker:$root.filterLocationCode, optionsText: 'LocationCode', optionsValue : 'LocationCode', optionsAfterRender: locationDesc, selectPickerOptions: { optionsArray: $root.menuItemLocations}, event : { change : $root.onLocationCodeChange}"></select>
+
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label class="form-label col-lg-4">
+                            Brand Group
+                        </label>
+                        <div class="col-lg-4">
+                            <select id="ddlFilterBrandGroupCode" class="selectpicker show-tick form-control" data-live-search="true"
+                                    data-bind="selectPicker: $root.BrandGroupCode, optionsText: 'Value',optionsValue : 'Text', selectPickerOptions: { optionsArray: $root.BrandGroupCodeSelectList }, event : { change : $root.onBrandGroupCodeChange}"></select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label class="form-label col-lg-4">
+                            Package
+                        </label>
+                        <div class="col-lg-3">
+                            <input type="text" class="form-control" data-bind="value: $root.TPOPackage" readonly="readonly"/>
+                        </div>
+                        <label class="form-label col-lg-1">
+                            To
+                        </label>
+                        <div class="col-lg-3">
+                            <input type="text" class="form-control" data-bind="value: $root.UserPackage">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="action-btn">
+                            @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.Calculate.ToString())) { 
+                            <button type="button" class="btn btn-primary" data-bind="click:$root.searchPackage1">@CommonLabel.btnCalculate</button>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="table-overflow">                    
+                    <table class="table table-striped-default">
+                        <thead>
+                            <tr class="head">
+                                <th colspan="2">Real Stock</th>
+                                <th>Current Package</th>
+                                <th>Calculate Package</th>
+                                <th>Variace</th>
+                            </tr>
+                            <tr class="head">
+                                <th>Item</th>
+                                <th>Qty</th>
+                                <th>Qty</th>
+                                <th>Qty</th>
+                                <th>Qty</th>
+                            </tr>
+                        </thead>                        
+                        <tbody data-bind="foreach: listDataItems">
+                            <tr>
+                                <td><span data-bind="text: $data.ItemCode"></span></td>
+                                <td class="right"><span data-bind="decimal: $data.realStockQty"></span></td>
+                                <td class="right"><span data-bind="decimal: $data.currentQty"></span></td>
+                                <td class="right"><span data-bind="decimal: $data.calculateQty"></span></td>
+                                <td class="right"><span data-bind="decimal: $data.varianceQty"></span></td>
+                            </tr>                            
+                        </tbody>
+                    </table>
+                </div>
+                <div data-bind="if: (listDataItems() != null && listDataItems().length !== 0)">
+                    @Html.Partial("GridViewFooter")
+                </div>
+            </div>
+
+            <!--Entered package - reference Package Equipments and Brand Package Mapping-->
+            <div role="tabpanel" class="tab-pane fade" id="package2" data-bind="with: gridViewPackage2">
+                <div class="col-lg-6">
+                    <div class="row">
+                        <label class="form-label col-lg-4">
+                            Location
+                        </label>
+                        <div class="col-lg-4">
+                            @*@Html.DropDownList("ddlFilterLocationCode2", new SelectList(Model.RegionalChildLocation, "LocationCode", "LocationCode"),
+                            new
+                            {
+                                @class = "selectpicker show-tick form-control",
+                                id = "ddlFilterLocationCode2",
+                                data_live_search = "true",
+                                data_bind = "value: $root.filterLocationCode2, event : { change : $root.onLocationCodeChange2}"
+                            })*@
+
+                            <select id="ddlFilterLocationCode2"
+                                    class="selectpicker show-tick form-control"
+                                    data-live-search="true"
+                                    data-bind="selectPicker:$root.filterLocationCode2, optionsText: 'LocationCode', optionsValue : 'LocationCode', optionsAfterRender: locationDesc, selectPickerOptions: { optionsArray: $root.menuItemLocations2}, event : { change : $root.onLocationCodeChange2}"></select>
+
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label class="form-label col-lg-4">
+                            From Brand Group
+                        </label>
+                        <div class="col-lg-4">
+                            <select id="ddlFilterBrandGroupCode2From" class="selectpicker show-tick form-control" data-live-search="true"
+                                    data-bind="selectPicker: $root.BrandGroupCode2From, optionsText: 'Value',optionsValue : 'Text', selectPickerOptions: { optionsArray: $root.BrandGroupCodeSelectList2 }, event : { change : $root.onBrandGroupCodeChange2}"></select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label class="form-label col-lg-4">
+                            To Brand Group
+                        </label>
+                        <div class="col-lg-4">
+                            <select id="ddlFilterBrandGroupCode2To" class="selectpicker show-tick form-control" data-live-search="true"
+                                    data-bind="selectPicker: $root.BrandGroupCode2To, optionsText: 'Value',optionsValue : 'Text', selectPickerOptions: { optionsArray: $root.BrandGroupCodeSelectList2To }"></select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="action-btn">
+                            @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.Calculate.ToString())) { 
+                            <button type="button" class="btn btn-primary" data-bind="click:$root.searchPackage2">@CommonLabel.btnCalculate</button>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="table-overflow">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr class="head">
+                                <th colspan="2">Real Stock</th>
+                                <th>Current Package</th>
+                                <th>Calculate Package</th>
+                                <th>Variace</th>
+                            </tr>
+                            <tr class="head">
+                                <th>Item</th>
+                                <th>Qty</th>
+                                <th>Qty</th>
+                                <th>Qty</th>
+                                <th>Qty</th>
+                            </tr>
+                        </thead>
+                        <tbody data-bind ="foreach: listDataItems">
+                            <tr>
+                                <td><span data-bind="text: $data.ItemCode"></span></td>
+                                <td class="right"><span data-bind="decimal: $data.realStockQty"></span></td>
+                                <td class="right"><span data-bind="decimal: $data.currentQty"></span></td>
+                                <td class="right"><span data-bind="decimal: $data.calculateQty"></span></td>
+                                <td class="right"><span data-bind="decimal: $data.varianceQty"></span></td>
+                            </tr>                         
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!--Summary stock all location of selected Brand-->
+            <div role="tabpanel" class="tab-pane fade" id="summarystock" data-bind="with: gridViewPackage3">
+                <div class="col-lg-6">
+                    <div class="row">
+                        <label class="form-label col-lg-4">
+                            Location
+                        </label>
+                        <div class="col-lg-4">
+                            @*@Html.DropDownList("ddlFilterLocationCode3", new SelectList(Model.PLNTAndRegionalChildLocation, "LocationCode", "LocationCode"),
+                            new
+                            {
+                                @class = "selectpicker show-tick form-control",
+                                id = "ddlFilterLocationCode3",
+                                data_live_search = "true",
+                                data_bind = "value: $root.filterLocationCode3, event : { change : $root.onLocationCodeChange3}"
+                            })*@
+
+                            <select id="ddlFilterLocationCode3"
+                                    class="selectpicker show-tick form-control"
+                                    data-live-search="true"
+                                    data-bind="selectPicker:$root.filterLocationCode3, optionsText: 'LocationCode', optionsValue : 'LocationCode', optionsAfterRender: locationDesc, selectPickerOptions: { optionsArray: $root.menuItemLocations3}, event : { change : $root.onLocationCodeChange3}"></select>
+
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label class="form-label col-lg-4">
+                            Brand Group
+                        </label>
+                        <div class="col-lg-4">
+                            <select id="ddlFilterBrandGroupCode3" class="selectpicker show-tick form-control" data-live-search="true"
+                                    data-bind="selectPicker: $root.BrandGroupCode3, optionsText: 'Value',optionsValue : 'Text', selectPickerOptions: { optionsArray: $root.BrandGroupCodeSelectList3 }"></select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="action-btn">
+                            @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.Calculate.ToString())) { 
+                            <button type="button" class="btn btn-primary" data-bind="click:$root.searchPackage3">@CommonLabel.btnCalculate</button>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="table-overflow">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr class="head">
+                                <th>Location</th>
+                                <th class="normal" data-bind="visible: $root.SummaryLocationList().length <= 0"></th>
+                                <!-- ko foreach: $root.SummaryLocationList -->
+                                    <th class="normal" data-bind="text: $data.LocationCode"></th>
+                                <!-- /ko -->
+                            </tr>
+                            <tr class="head">
+                                <th>Package</th>
+                                <th class="normal" data-bind="visible: $root.SummaryLocationList().length <= 0"></th>
+                                <!-- ko foreach: $root.SummaryLocationList -->
+                                <th class="normal right" data-bind="text: $data.Package">10</th>
+                                <!-- /ko -->
+                            </tr>
+                            <tr class="head">
+                                <th>Item</th>
+                                <th class="normal right" data-bind="attr:{colspan:$root.SummaryLocationList().length}"></th>
+                            </tr>
+                        </thead>
+                        <tbody data-bind="foreach: listDataItems">
+                            <tr>
+                                <td data-bind="text: $data.ItemDescription"></td>                                
+                                <!-- ko foreach: $data.Quantity -->
+                                <td class="right" data-bind="text: $data">0</td>
+                                <!-- /ko -->
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script src="~/Scripts/app/globalfunctions.js" type="text/javascript"></script>
+    <script src="~/Scripts/common/app.GridViewModel.js" type="text/javascript"></script>
+    <script type="text/javascript">
+
+        (function(app) {
+            app.EditGrid = function () {
+                self = this;
+                ko.validation.init({insertMessages: false});
+                self.filterLocationCode = ko.observable($('#ddlFilterLocationCode').val());
+                self.filterLocationCode2 = ko.observable($('#ddlFilterLocationCode2').val());
+                self.filterLocationCode3 = ko.observable($('#ddlFilterLocationCode3').val());
+                self.BrandGroupCodeSelectList = ko.observableArray([]);
+                self.BrandGroupCodeSelectList2 = ko.observableArray([]);
+                self.BrandGroupCodeSelectList2To = ko.observableArray([]);
+                self.BrandGroupCodeSelectList3 = ko.observableArray([]);
+                self.SummaryLocationList = ko.observableArray([]);
+                self.BrandGroupCode = ko.observable('');
+                self.BrandGroupCode2From = ko.observable('');
+                self.BrandGroupCode2To = ko.observable('');
+                self.BrandGroupCode3 = ko.observable('');
+                self.TPOPackage = ko.observable('');                
+                self.UserPackage = ko.observable('').extend({ required: true });   
+                self.menuItemLocations = ko.observableArray(@Html.Raw(Json.Encode(@Model.RegionalChildLocation)));
+                self.menuItemLocations2 = ko.observableArray(@Html.Raw(Json.Encode(@Model.RegionalChildLocation)));
+                self.menuItemLocations3 = ko.observableArray(@Html.Raw(Json.Encode(@Model.RegionalChildLocation)));
+                //  repopulate dropdown
+                self.getBrandGroupCodeLists = function() {
+                    $.ajax({
+                        url: @Html.BaseUrl("MaintenanceReportEquipmentRequirement/GetBrandGroupByLocationCode"),
+                        type: 'GET',
+                        contentType: 'application/json',
+                        data: {locationCode : self.filterLocationCode()},
+                        dataType: 'json',
+                        success: function(data) {
+
+                            // repopulate selectpicker
+                            $('#ddlFilterBrandGroupCode').find("option[value!='']").remove();
+                            $('#ddlFilterBrandGroupCode').selectpicker('refresh');
+                            
+                            self.BrandGroupCodeSelectList(data);
+
+                        }
+                    });
+                }
+                self.getBrandGroupCodeLists2 = function() {
+                    $.ajax({
+                        url: @Html.BaseUrl("MaintenanceReportEquipmentRequirement/GetBrandGroupByLocationCode"),
+                        type: 'GET',
+                        contentType: 'application/json',
+                        data: {locationCode : self.filterLocationCode2()},
+                        dataType: 'json',
+                        success: function(data) {
+
+                            // repopulate selectpicker
+                            $('#ddlFilterBrandGroupCode2From').find("option[value!='']").remove();
+                            $('#ddlFilterBrandGroupCode2From').selectpicker('refresh');
+                            
+                            self.BrandGroupCodeSelectList2(data);
+
+                        }
+                    });
+                }
+                self.getBrandGroupCodeLists3 = function() {
+                    $.ajax({
+                        url: @Html.BaseUrl("MaintenanceReportEquipmentRequirement/GetBrandGroupByLocationCode"),
+                        type: 'GET',
+                        contentType: 'application/json',
+                        data: {locationCode : self.filterLocationCode3()},
+                        dataType: 'json',
+                        success: function(data) {
+
+                            // repopulate selectpicker
+                            $('#ddlFilterBrandGroupCode3').find("option[value!='']").remove();
+                            $('#ddlFilterBrandGroupCode3').selectpicker('refresh');
+                            
+                            self.BrandGroupCodeSelectList3(data);
+
+                        }
+                    });
+                }
+
+                self.getTPOPackages = function() {
+                    self.TPOPackage('');
+                    $.ajax({
+                        url: @Html.BaseUrl("MaintenanceReportEquipmentRequirement/GetTPOPackage"),
+                        type: 'GET',
+                        contentType: 'application/json',
+                        data: {LocationCode: self.filterLocationCode(),BrandGroupCode: self.BrandGroupCode()},
+                        dataType: 'json',
+                        success: function(data) {                                         
+                            self.TPOPackage(data.Package);                            
+                        }
+                    });
+                }
+
+                self.getBrandTo = function(){
+                    $.ajax({
+                        url: @Html.BaseUrl("MaintenanceReportEquipmentRequirement/GetBrandGroupTo"),
+                        type: 'GET',
+                        contentType: 'application/json',
+                        data: {BrandFrom : self.BrandGroupCode2From()},
+                        dataType: 'json',
+                        success: function(data) {
+
+                            // repopulate selectpicker
+                            $('#ddlFilterBrandGroupCode2To').find("option[value!='']").remove();
+                            $('#ddlFilterBrandGroupCode2To').selectpicker('refresh');
+                            
+                            self.BrandGroupCodeSelectList2To(data);
+                        }
+                    });
+                };
+
+                self.getSummaryLocations = function(){
+                    $.ajax({
+                        url: @Html.BaseUrl("MaintenanceReportEquipmentRequirement/GetSummaryLocations"),
+                        type: 'GET',
+                        contentType: 'application/json',
+                        data: {BrandGroupCode : self.BrandGroupCode3()},
+                        dataType: 'json',
+                        success: function(data) {                            
+                            self.SummaryLocationList(data);
+                        }
+                    });
+                };
+
+                // Ajax Event Handler
+                self.onLocationCodeChange = function () {
+                    self.getBrandGroupCodeLists();
+                };
+                self.onLocationCodeChange2 = function () {
+                    self.getBrandGroupCodeLists2();
+                };
+                self.onLocationCodeChange3 = function () {
+                    self.getBrandGroupCodeLists3();
+                };
+
+                self.onBrandGroupCodeChange = function(){
+                    self.getTPOPackages();
+                };
+                self.onBrandGroupCodeChange2 = function(){
+                    self.getBrandTo();
+                };
+
+                self.getBrandGroupCodeLists();
+                self.getBrandGroupCodeLists2();
+                self.getBrandGroupCodeLists3();
+
+                self.searchPackage1 = function() {  
+                    if(!self.UserPackage.isValid()) {
+                        
+                        self.RemoveNotification();
+                        SKTIS.Helper.Notification('Please insert the <strong>destination package</strong>!','warning');
+                        return;
+                    }                        
+                    self.gridViewPackage1.search({}, function(response) {
+                        if (response.status == 'KO') {
+                            SKTIS.Helper.Notification(response.message, 'error');
+                            $('.empty-row-message').html(response.message);
+                        } else if (response.status == 'Empty') {
+
+                            self.RemoveNotification();
+
+                            //SKTIS.Helper.Notification(response.message,'warning');
+                            $('.empty-row-message').html('@CommonLabel.lblDataEmpty');
+                        }
+                    });
+
+                    self.RemoveNotification = function() {
+                        if ($('#noty_top_layout_container').length > 0) {
+                            $('#noty_top_layout_container').remove();
+                        }
+                    };
+                };
+                self.searchPackage2= function() {  
+                                        
+                    self.gridViewPackage2.search({}, function(response) {
+                        if (response.status == 'KO') {
+                            SKTIS.Helper.Notification(response.message, 'error');
+                            $('.empty-row-message').html(response.message);
+                        } else if (response.status == 'Empty') {
+
+                            self.RemoveNotification();
+
+                            //SKTIS.Helper.Notification(response.message,'warning');
+                            $('.empty-row-message').html('@CommonLabel.lblDataEmpty');
+                        }
+                    });
+
+                    self.RemoveNotification = function() {
+                        if ($('#noty_top_layout_container').length > 0) {
+                            $('#noty_top_layout_container').remove();
+                        }
+                    };
+                };
+                self.searchPackage3= function() {  
+
+                    self.getSummaryLocations(self.BrandGroupCode3());
+                    
+                    self.gridViewPackage3.search({}, function(response) {
+                        if (response.status == 'KO') {
+                            SKTIS.Helper.Notification(response.message, 'error');
+                            $('.empty-row-message').html(response.message);
+                        } else if (response.status == 'Empty') {
+
+                            self.RemoveNotification();
+
+                            //SKTIS.Helper.Notification(response.message,'warning');
+                            $('.empty-row-message').html('@CommonLabel.lblDataEmpty');
+                        }
+                    });
+
+                    self.RemoveNotification = function() {
+                        if ($('#noty_top_layout_container').length > 0) {
+                            $('#noty_top_layout_container').remove();
+                        }
+                    };
+                };
+
+                
+                // Gridview Initialization
+                self.gridViewPackage1 = new app.GridViewModel({
+                    Criteria: {
+                        PageSize: 10,
+                        PageIndex: 1,
+                        SortExpression: "ItemCode",
+                        SortOrder: "DESC",
+                        LocationCode: self.filterLocationCode,
+                        BrandGroupCode: self.BrandGroupCode,
+                        UserPackage: self.UserPackage
+                    },
+                    DataSourceUrl: @Html.BaseUrl("MaintenanceReportEquipmentRequirement/GetEquipmentRequirementReport"),
+                    InlineEdit: true,
+                });
+                self.gridViewPackage2 = new app.GridViewModel({
+                    Criteria: {
+                        PageSize: 10,
+                        PageIndex: 1,
+                        SortExpression: "ItemCode",
+                        SortOrder: "DESC",
+                        LocationCode: self.filterLocationCode,
+                        BrandGroupCodeFrom: self.BrandGroupCode2From,
+                        BrandGroupCodeTo: self.BrandGroupCode2To
+                    },
+                    DataSourceUrl: @Html.BaseUrl("MaintenanceReportEquipmentRequirement/GetEquipmentRequirementReport2"),
+                    InlineEdit: true,
+                });
+                self.gridViewPackage3 = new app.GridViewModel({
+                    Criteria: {
+                        PageSize: 10,
+                        PageIndex: 1,
+                        SortExpression: "ItemCode",
+                        SortOrder: "DESC",                        
+                        LocationCode: self.filterLocationCode3,
+                        BrandGroupCode: self.BrandGroupCode3                        
+                    },
+                    DataSourceUrl: @Html.BaseUrl("MaintenanceReportEquipmentRequirement/GetEquipmentRequirementReportSummary"),
+                    InlineEdit: true,
+                });
+                
+                self.RemoveNotification = function() {
+                    if ($('#noty_top_layout_container').length > 0) {
+                        $('#noty_top_layout_container').remove();
+                    }
+                };
+
+                $(document).ready(function(){
+                    //self.searchPackage1();
+                });
+
+            };
+
+            ko.applyBindings(new app.EditGrid());
+        })(app = this.app || {});
+
+    </script>
+}

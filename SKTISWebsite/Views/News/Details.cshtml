@@ -1,0 +1,25 @@
+﻿@model SKTISWebsite.Models.News.NewsInfoDetailsViewModel
+@using SKTISWebsite.Helper
+@using HMS.SKTIS.Core
+@{ Html.SetPageTitle("News Info Detail"); }
+
+@if(Model != null)
+{
+    <div class="col-lg-12">
+        <div class="detail-content">
+            <div class="content-header">
+                <h3 class="title-text">@Model.Title</h3>
+                <p class="text-muted">Posted on @Model.UpdatedDate, Posted by @Model.UpdateBy </p>
+            </div>
+            <div class="content-image">
+                <img src="@Url.Content(Constants.UploadPathNews + Model.Image)" class="img-responsive">
+            </div>
+            <div class="content-entry">
+                <p class="short-description">
+                    @Model.ShortDescription
+                </p>
+                @Html.Raw(Model.Content)
+            </div>
+        </div>
+    </div>
+}

@@ -1,0 +1,53 @@
+﻿@using HMS.SKTIS.Application.Resources.Views.PlanningWPP
+@model SKTISWebsite.Models.PlanningWPP.WPPResultModel
+
+
+
+<table class="table table-striped-default" id="tblWPP">
+    <thead>
+        <tr class="head">
+            <th data-sort="BrandCode" id="thBrandCode" class="custom-sort">@PlanningWPP.lblTitleBrand</th>
+            <th data-sort="LocationCode" id="thLocationCode" class="custom-sort">@PlanningWPP.lblTitleLocation</th>
+            @foreach (var week in @Model.Weeks)
+            {
+                <th>@week</th>
+            }
+        </tr>
+    </thead>
+    @if (@Model.WeeklyProductionPlannings.Count != 0)
+    {
+        <tbody>
+            @foreach (var wpp in @Model.WeeklyProductionPlannings)
+            {
+
+                <tr @if (!wpp.IsValid) { @: class="wrong" data-container="body" data-toggle="tooltip" title="@wpp.Message"
+                                                            } else { if (wpp.IsValid && wpp.IsWarning) { @: class="warning" data-container="body" data-toggle="tooltip" title="@wpp.Message"
+                                                                }  }>
+                    <td>@wpp.BrandCode</td>
+                    <td>@wpp.LocationCode</td>
+                    <td>@String.Format(new System.Globalization.CultureInfo(Culture), "{0:G29}", wpp.Value1)</td>
+                    <td>@String.Format(new System.Globalization.CultureInfo(Culture), "{0:G29}", wpp.Value2)</td>
+                    <td>@String.Format(new System.Globalization.CultureInfo(Culture), "{0:G29}", wpp.Value3)</td>
+                    <td>@String.Format(new System.Globalization.CultureInfo(Culture), "{0:G29}", wpp.Value4)</td>
+                    <td>@String.Format(new System.Globalization.CultureInfo(Culture), "{0:G29}", wpp.Value5)</td>
+                    <td>@String.Format(new System.Globalization.CultureInfo(Culture), "{0:G29}", wpp.Value6)</td>
+                    <td>@String.Format(new System.Globalization.CultureInfo(Culture), "{0:G29}", wpp.Value7)</td>
+                    <td>@String.Format(new System.Globalization.CultureInfo(Culture), "{0:G29}", wpp.Value8)</td>
+                    <td>@String.Format(new System.Globalization.CultureInfo(Culture), "{0:G29}", wpp.Value9)</td>
+                    <td>@String.Format(new System.Globalization.CultureInfo(Culture), "{0:G29}", wpp.Value10)</td>
+                    <td>@String.Format(new System.Globalization.CultureInfo(Culture), "{0:G29}", wpp.Value11)</td>
+                    <td>@String.Format(new System.Globalization.CultureInfo(Culture), "{0:G29}", wpp.Value12)</td>
+                    <td>@String.Format(new System.Globalization.CultureInfo(Culture), "{0:G29}", wpp.Value13)</td>
+                </tr>
+            }
+        </tbody>
+    }
+    else
+    {
+        <tbody>
+            <tr>
+                <td colspan="15" class="empty-row-message">No data found (id).</td>
+            </tr>
+        </tbody>
+    }
+</table>

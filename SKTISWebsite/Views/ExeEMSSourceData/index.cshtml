@@ -1,0 +1,317 @@
+﻿@model SKTISWebsite.Models.ExeEMSSourceData.InitExeEMSSourceDataViewModel
+@using HMS.SKTIS.Application.Resources
+@using SKTISWebsite.Helper
+@{ Html.SetPageTitle("EMS Source Data"); }
+
+<div class="container-fluid" data-bind="with: gridView">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="row">
+                        <label class="form-label col-lg-4">
+                            Location Code
+                        </label>
+                        <div class="col-lg-4">
+                            @*@Html.DropDownList("ddlFilterLocationCode", Model.PLNTChildLocation,
+                                                      new Dictionary<string, object> { { "data-bind", "value:$root.filterLocationCode, event : { change : $root.onLocationCodeChange}" },
+                                                                     { "class", "selectpicker show-tick form-controlt" },
+                                                                     {"data-live-search","true"},{"id","ddlFilterLocationCode"} })*@
+                            <select id="ddlFilterLocationCode"
+                                    class="selectpicker show-tick form-control"
+                                    data-live-search="true"
+                                    data-bind="selectPicker:$root.filterLocationCode, optionsText: 'LocationCode', optionsValue : 'LocationCode', optionsAfterRender: locationDesc, selectPickerOptions: { optionsArray: $root.itemLocations }, event : { change : $root.onLocationCodeChange}"></select>
+                        </div>
+                        <div class="col-lg-4">
+                            <input type="text" class="form-control" readonly="readonly" data-bind="value:$root.filterLocationName">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="row">
+                        <label class="form-label col-sm-1">
+                            Date
+                        </label>
+                        <div class="col-md-4">
+                            <div id="filterDateFrom" class='input-group date time' data-bind="dateTimePicker: $root.filterDateFrom, value: $root.filterDateFrom, dateTimePickerOptions: {widgetPositioning: {vertical: 'bottom'}, showClear: true, ignoreReadonly: true}, dateChange: $root.onDateChangeFrom">
+                                <input id="filterDateFrom" class="form-control" readonly="readonly" />
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                            </div>
+                        </div>
+                        <label class="form-label col-sm-1 ">
+                            To
+                        </label>
+                        <label class="form-label col-sm-1">
+                            Date
+                        </label>
+                        <div class="col-md-4">
+                            <div id="filterDateTo" class='input-group date time' data-bind="dateTimePicker: $root.filterDateTo, value: $root.filterDateTo, dateTimePickerOptions: {widgetPositioning: {vertical: 'bottom'}, showClear: true, ignoreReadonly: true}, dateChange: $root.onDateChangeTo">
+                                <input id="filterDateTo" class="form-control" readonly="readonly" />
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="row">
+                        <label class="form-label col-lg-4">
+                            Brand
+                        </label>
+                        <div class="col-lg-4">
+                            <select class="selectpicker show-tick form-control" id="ddlbrandFilter"
+                                    data-live-search="true"
+                                    data-bind="selectPicker: $root.filterBrand, optionsText: 'Text', optionsValue : 'Value', selectPickerOptions: { optionsArray: $root.brandSelectList }"></select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="action-btn">
+                        @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.View.ToString()))
+                        {
+                            <button type="button" class="btn btn-primary" data-bind="click:$root.search">@CommonLabel.btnView</button>
+                        }
+                        @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.Excel.ToString()))
+                        {
+                            using (Html.BeginForm("GenerateExcel", "ExeEMSSourceData", FormMethod.Post, new { @data_bind = "submit: $root.GenerateExcel" }))
+                            {
+                                <input type="hidden" name="locationCode">
+                                <input type="hidden" name="brandCode" />
+                                <input type="hidden" name="datefrom" />
+                                <input type="hidden" name="dateto" />
+                                <button type="submit" class="btn btn-primary">@CommonLabel.btnExcel</button>
+                            }
+                        }
+
+                        @Html.Partial("GridViewPageSizeSelector")
+                    </div>
+                </div>
+            </div>
+            <div class="table-overflow">
+                <table class="table table-striped">
+                    <thead>
+                        <tr class="head">
+                            <th rowspan="2">Company</th>
+                            <th rowspan="2">Plant</th>
+                            <th rowspan="2">Finish Goods</th>
+                            <th rowspan="2">Brand Group</th>
+                            <th rowspan="2">Brand Description</th>
+                            <th rowspan="2">Package QTY</th>
+                            <th rowspan="2">Produced QTY</th>
+                            <th rowspan="2">UOM</th>
+                            <th rowspan="2">Production Date CK-4C</th>
+                        </tr>
+                    </thead>
+                    <tbody data-bind="foreach: listDataItems">
+                        <tr>
+                            <td class="center"><span data-bind="text:$data.Company"></span></td>
+                            <td class="center"><span data-bind="text:$data.LocationCode"></span></td>
+                            <td class="center"><span data-bind="text:$data.BrandCode"></span></td>
+                            <td class="center"><span data-bind="text:$data.BrandGroupCode"></span></td>
+                            <td class="center"><span data-bind="text:$data.Description"></span></td>
+                            @*<td class="right"><span data-bind="text:$data.PackageQTY"></span></td>
+                                <td class="right"><span data-bind="text:$data.ProducedQTY"></span></td>*@
+                            <td class="right"><span data-bind="decimal:$data.PackageQTY, precision:2"></span></td>
+                            <td class="right"><span data-bind="decimal:$data.ProducedQTY, precision:2"></span></td>
+                            <td class="center"><span data-bind="text:$data.UOM"></span></td>
+                            <td class="center"><span data-bind="text:$data.ProductionDate"></span></td>
+                        </tr>
+                    </tbody>
+                    <tbody data-bind="visible: !listDataItems().length">
+                        <tr>
+                            <td colspan="9" class="empty-row-message"><div class="loader"></div></td>
+                        </tr>
+                    </tbody>
+
+                </table>
+            </div>
+            <div data-bind="if: (listDataItems() != null && listDataItems().length !== 0)">
+                @Html.Partial("GridViewFooter")
+            </div>
+        </div>
+    </div>
+</div>
+            @section Scripts
+{
+                <script src="~/Scripts/app/globalfunctions.js" type="text/javascript"></script>
+                <script src="~/Scripts/common/app.GridViewModel.js" type="text/javascript"></script>
+                <script src="~/Scripts/common/app.Extenders.js" type="text/javascript"></script>
+                <script type="text/javascript">
+
+
+                    (function(app) {
+                        app.EditGrid = function() {
+                            var self = this;
+                            self.itemLocations = ko.observableArray(@Html.Raw(Json.Encode(@Model.LocationNameLookupList)));
+                            self.filterLocation = ko.observable('@Model.defaultLocation');
+                            self.filterLocationName = ko.observable('');
+                            self.filterLocationCode = ko.observable(self.filterLocation());
+                           
+                            self.filterBrand = ko.observable('-');
+                            self.filterDateFrom = ko.observable(moment().toDate());
+                            self.filterDateTo = ko.observable(moment().toDate());
+
+                            self.firstLoad = true;
+                            self.isLoading = ko.observable(false);
+
+                            self.onLocationCodeChange = function() {
+                                if ((! self.firstLoad) && (! self.isLoading())) {
+                                    self.getLocationNameFilter();
+                                    self.getBrandFromByLocationAndDate();
+                                }
+
+                            };
+
+                            self.getLocationNameFilter = function(cb) {
+                                self.itemLocations().map(function(v) {
+                                    if (typeof v.LocationCode !== 'undefined' && v.LocationCode == self.filterLocationCode()) {
+                                        self.filterLocationName(v.LocationName);
+                                    }
+                                });
+
+                                if (typeof cb == 'function') cb();
+                            };
+
+                            self.onDateChangeFrom = function() {
+                                if ((! self.firstLoad) && (! self.isLoading())) {
+                                    self.getBrandFromByLocationAndDate();
+                                }
+                            };
+
+                            self.onDateChangeTo = function() {
+                                if ((! self.firstLoad) && (! self.isLoading())) {
+                                    self.getBrandFromByLocationAndDate();
+                                }
+                            };
+
+                            self.brandSelectList = ko.observableArray();
+                            self.getBrandFromByLocationAndDate = function(cb) {
+
+                                $.ajax({
+                                    url: @Html.BaseUrl("ExeEMSSourceData/GetBrandCodeByLocationCode"),
+                                    type: 'GET',
+                                    async: false,
+                                    contentType: 'application/json',
+                                    data: { locationCode: self.filterLocationCode(), DateFrom: moment(self.filterDateFrom(), "DD/MM/YYYY").format("MM/DD/YYYY"),DateTo: moment(self.filterDateTo(), "DD/MM/YYYY").format("MM/DD/YYYY") },
+                                    dataType: 'json',
+                                    success: function(data) {
+                                        $('#ddlbrandFilter').find('option').remove();
+                                        $('#ddlbrandFilter').selectpicker('refresh');
+                                        var brandgroupcodeList  = [];
+                                        if (data.length > 1) {
+                                            brandgroupcodeList.push({ "Text": "All", "Value": "All" });
+                                        }
+                                        $.each(data, function(index, value) {
+                                            brandgroupcodeList.push({ "Text": value, "Value": value });
+                                        });
+                                        self.brandSelectList(brandgroupcodeList);
+                                        if (data.length === 0)
+                                            self.filterBrand('');
+                                        else
+                                            self.filterBrand(brandgroupcodeList[0].Value);
+                                    },
+                                    complete: function() {
+                                        if (typeof cb == 'function') cb();
+                                    }
+                                });
+                            };
+                           
+                            self.gridView = new app.GridViewModel({
+                                Criteria:
+                                {
+                                    PageSize: 10,
+                                    PageIndex: 1,
+                                    SortExpression: "LocationCode",
+                                    SortOrder: "ASC",
+                                    LocationCode: self.filterLocationCode,
+                                    BrandCode: self.filterBrand,
+                                    DateFrom : self.filterDateFrom,
+                                    DateTo : self.filterDateTo
+                                },
+                                DataSourceUrl: @Html.BaseUrl("ExeEMSSourceData/GetExeEMSSourceData"),
+                                InlineEdit: true,
+                                InsertRowFocusedControlIndex: 1
+                            });
+
+                            self.search = function() {
+                                if (self.filterBrand() == "" || typeof self.filterBrand() === "undefined") {
+                                    SKTIS.Helper.Notification("<strong>BrandCode</strong> cannot be empty!", 'error');
+                                    return;
+                                }
+                                $('.empty-row-message').html('<div class="loader"></div>'); // Reset New and Edit row
+                                // Check whether New or Edit data is existing and not saved to database yet (on Ajax Action)
+                                if (SKTIS.Checker.modifiedDataExistsForAjax([self.gridView.listNewItems, self.gridView.listEditItems]) == true) {
+                                    return;
+                                } else {
+                                    self.gridView.listNewItems.removeAll();
+                                    self.gridView.listEditItems.removeAll();
+                                }
+
+                                self.gridView.search({}, function(response) {
+                                    if (response.status == 'KO') {
+                                        SKTIS.Helper.Notification(response.message, 'error');
+                                        $('.empty-row-message').html(response.message);
+                                    } else if (response.status == 'Empty') {
+
+                                        self.RemoveNotification();
+
+                                        //SKTIS.Helper.Notification(response.message,'warning');
+                                        $('.empty-row-message').html('@CommonLabel.lblDataEmpty');
+                                    }
+
+                                    //self.RepopulateItemCode();
+                                });
+
+                            };
+                            //self.search();
+
+                            self.RemoveNotification = function() {
+                                if ($('#noty_top_layout_container').length > 0) {
+                                    $('#noty_top_layout_container').remove();
+                                }
+                            };
+
+                            // Check whether New or Edit data is existing and not saved to database yet (on Request action)
+                            SKTIS.Checker.modifiedDataExists([self.gridView.listNewItems, self.gridView.listEditItems]);
+
+                            self.GenerateExcel = function(formElement) {
+                                $(formElement).find("input[name=locationCode]").val($('#ddlFilterLocationCode').val());
+                                $(formElement).find("input[name=brandCode]").val($('#ddlbrandFilter').val());
+                                $(formElement).find("input[name=datefrom]").val($('#filterDateFrom').val());
+                                $(formElement).find("input[name=dateto]").val($('#filterDateTo').val());
+                                return true;
+                            };
+
+                            //self.onLocationCodeChange();
+                            //self.getLocationNameFilter();
+                            self.filterLocation =  $("#ddlFilterLocationCode").val();
+                            self.init = (function() {
+                                //Asynch setting
+                                self.isLoading(true);
+                                async.series([
+                                    function(callback) {
+                                        self.getLocationNameFilter(callback);
+                                    },
+                                    function(callback) {
+                                        self.getBrandFromByLocationAndDate(callback);
+                                    }
+                                ], function() {
+                                    self.search();
+                                    self.firstLoad = false;
+                                    self.isLoading(false);
+                                });
+
+                            }());
+                        };
+                        ko.applyBindings(new app.EditGrid());
+                    })(app = this.app || {});
+
+</script>
+            }

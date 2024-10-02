@@ -1,0 +1,154 @@
+﻿@page {
+    size: auto;
+    margin: 0px 0px 0px 0px; 
+}
+
+@media print {
+    .print-xs {
+        margin-top: 0px !important;
+        font-size: 6px !important;
+    }
+
+        .print-xs #test td, .print-xs #test th {
+            padding: 0 !important;
+        }
+
+        .print-xs label {
+            margin-bottom: 0px !important;
+        }
+
+            .print-xs label * {
+                margin-bottom: 0px !important;
+                padding-bottom: 0px !important;
+            }
+
+    header, .navbar, #sidebar, .breadcrumb, .not-print, .action-btn, footer {
+        display: none;
+    }
+
+    .print {
+        display: block !important;
+        background-color: #000 !important;
+    }
+
+    .col-lg-12, .col-lg-10, .col-lg-6, .col-lg-2, .col-lg-3, .col-lg-9 {
+        float: left !important;
+    }
+
+    .col-lg-12, .col-lg-6 {
+        margin-bottom: 10px !important;
+    }
+
+    .col-lg-2 {
+        width: 16.666666666666664% !important;
+    }
+
+    .col-lg-3 {
+        width: 30% !important;
+    }
+
+    .col-lg-9 {
+        width: 60% !important;
+    }
+
+    .col-lg-4 {
+        width: 33.33333333333333% !important;
+    }
+
+    .col-lg-6 {
+        width: 50% !important;
+    }
+
+        .col-lg-6.nomargin {
+            margin: 0 !important;
+        }
+
+    .col-lg-12 {
+        width: 100% !important;
+    }
+
+    .row {
+        display: block !important;
+        clear: both !important;
+    }
+
+    #main {
+        margin-left: 0 !important;
+        margin-top: 0 !important;
+        margin: 0 !important;
+    }
+
+    .page-break {
+        display: block;
+        page-break-before: always;
+        background-color: #000 !important;
+    }
+
+    .tablePrint {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+        border-color: #000000;
+        vertical-align: middle !important;
+        font-size: 10px;
+    }
+
+    table thead tr th {
+        border-top: 2px solid #000 !important;
+        border-bottom: 2px solid #000 !important;
+        border-left: 2px solid #000 !important;
+        border-right: 2px solid #000 !important;
+    }
+
+    table tbody tr, table tbody tr td {
+        border-top: 1px solid #000 !important;
+        border-bottom: 1px solid #000 !important;
+        border-left: 1px solid #000 !important;
+        border-right: 1px solid #000 !important;
+    }
+
+    table tr th.text-left, table tr td.text-left {
+        text-align: left !important;
+    }
+
+    table thead tr th,
+    table tbody tr td {
+        text-align: center !important;
+    }
+
+    table thead tr th.shrink,
+    table tbody tr td.shrink {
+        width: 11% !important;
+        padding-right: 0px !important;
+    }
+
+    table thead tr th.expand,
+    table tbody tr td.expand {
+        width: 3.03% !important;
+    }
+
+    table tr.mediumheight {
+        border-width: 0.2pt !important;
+        height: 20px !important;
+    }
+
+    table tr.bigheight {
+        height: 38px !important;
+    }
+
+    table tr.ket {
+        height: 38px !important;
+    }
+
+    table tr td.bold {
+        font-weight: bold !important;
+    }
+
+    label.form-label.larger {
+        font-size: 16px !important;
+    }
+
+    label.form-label {
+        font-size: 8px !important;
+    }
+}

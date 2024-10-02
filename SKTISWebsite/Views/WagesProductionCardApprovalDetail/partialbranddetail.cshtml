@@ -1,0 +1,138 @@
+﻿<div class="table-overflow" id="productionCardDetailGrid">
+    <table class="table table-striped">
+        <thead>
+            <tr class="head">
+                @*<th></th>*@
+                <th>Process</th>
+                <th>Group</th>
+                <th>Worker</th>
+                <th>Produksi</th>
+                <th>Upah Lain</th>
+                <th>A</th>
+                <th>C</th>
+                <th>CH</th>
+                <th>CT</th>
+                <th>I</th>
+                <th>LL</th>
+                <th>LO</th>
+                <th>LP</th>
+                <th>MO</th>
+                <th>PG</th>
+                <th>S</th>
+                <th>SB</th>
+                <th>SKR</th>
+                <th>SL4</th>
+                <th>SLP</th>
+                <th>SLS</th>
+                <th>T</th>
+                <th>TL</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- ko foreach: gridView.listDataItems -->
+            <!-- ko foreach: $data.ProdCardApprovalList -->
+            <tr>
+                @*<td class="center"><input type="checkbox" data-bind="checked: $data.Selected" /></td>*@
+                <!-- ko if: $index() == 0 -->
+                <td data-bind="text: $data.ProcessGroup"></td>
+                <!-- /ko -->
+                <!-- ko if: $index() != 0 -->
+                <td></td>
+                <!-- /ko -->
+
+                <!-- ko if: $root.filterBrand() ==  $root.globalBrandCode() -->
+                <td class="right" data-bind="text: $data.GroupCode"></td>
+                <!-- /ko -->
+                <!-- ko if: $root.filterBrand() !==  $root.globalBrandCode() -->
+                <td class="right"><a href="#" data-bind="text: $data.GroupCode, attr: { 'data-groupcode': $data.GroupCode}" data-toggle="modal" data-target="#groupModal" data-groupcode=""></a></td>
+                <!-- /ko -->
+                <td class="right" data-bind="text: $data.Worker"></td>
+                <td class="right" data-bind="decimal: $data.Production"></td>
+                <td class="right" data-bind="decimal: $data.UpahLain"></td>
+                <td class="right" data-bind="text: $data.A"></td>
+                <td class="right" data-bind="text: $data.C"></td>
+                <td class="right" data-bind="text: $data.CH"></td>
+                <td class="right" data-bind="text: $data.CT"></td>
+                <td class="right" data-bind="text: $data.I"></td>
+                <td class="right" data-bind="text: $data.LL"></td>
+                <td class="right" data-bind="text: $data.LO"></td>
+                <td class="right" data-bind="text: $data.LP"></td>
+                <td class="right" data-bind="text: $data.MO"></td>
+                <td class="right" data-bind="text: $data.PG"></td>
+                <td class="right" data-bind="text: $data.S"></td>
+                <td class="right" data-bind="text: $data.SB"></td>
+                <td class="right" data-bind="text: $data.SKR"></td>
+                <td class="right" data-bind="text: $data.SL4"></td>
+                <td class="right" data-bind="text: $data.SLP"></td>
+                <td class="right" data-bind="text: $data.SLS"></td>
+                <td class="right" data-bind="text: $data.T"></td>
+                <td class="right" data-bind="text: $data.TL"></td>
+            </tr>
+            <!-- /ko -->
+            <tr class="total">
+                <td>Total</td>
+                <td class="right" data-bind="text: $data.TotalGroup"></td>
+                <td class="right" data-bind="text: $data.TotalWorker"></td>
+                <td class="right" data-bind="decimal: $data.TotalProduksi"></td>
+                <td class="right" data-bind="decimal: $data.TotalUpahLain"></td>
+                <td class="right" data-bind="decimal: $data.Total_A"></td>
+                <td class="right" data-bind="decimal: $data.Total_C"></td>
+                <td class="right" data-bind="decimal: $data.Total_CH"></td>
+                <td class="right" data-bind="decimal: $data.Total_CT"></td>
+                <td class="right" data-bind="decimal: $data.Total_I"></td>
+                <td class="right" data-bind="decimal: $data.Total_LL"></td>
+                <td class="right" data-bind="decimal: $data.Total_LO"></td>
+                <td class="right" data-bind="decimal: $data.Total_LP"></td>
+                <td class="right" data-bind="decimal: $data.Total_MO"></td>
+                <td class="right" data-bind="decimal: $data.Total_PG"></td>
+                <td class="right" data-bind="decimal: $data.Total_SS"></td>
+                <td class="right" data-bind="decimal: $data.Total_SB"></td>
+                <td class="right" data-bind="decimal: $data.Total_SKR"></td>
+                <td class="right" data-bind="decimal: $data.Total_SL4"></td>
+                <td class="right" data-bind="decimal: $data.Total_SLP"></td>
+                <td class="right" data-bind="decimal: $data.Total_SLS"></td>
+                <td class="right" data-bind="decimal: $data.Total_T"></td>
+                <td class="right" data-bind="decimal: $data.Total_TL"></td>
+                @*<td class="right" colspan="18"></td>*@
+
+            </tr>
+            <!-- /ko -->
+        </tbody>
+        <tbody data-bind="visible: !gridView.listDataItems().length">
+            <tr>
+                <td colspan="22" class="empty-row-message"><div class="loader"></div></td>
+            </tr>
+        </tbody>
+        <tfoot data-bind="visible: gridView.listDataItems().length">
+            <tr class="total">
+                <td colspan="1">Total</td>
+                <td class="right" data-bind="text: $root.countGroup"></td>
+                <td class="right" data-bind="text: $root.totalWorker"></td>
+                <td class="right" data-bind="decimal: $root.totalProduksi"></td>
+                <td class="right" data-bind="decimal: $root.totalUpahLain"></td>
+                <td class="right" data-bind="decimal: $root.totalA"></td>
+                <td class="right" data-bind="decimal: $root.totalC"></td>
+                <td class="right" data-bind="decimal: $root.totalCH"></td>
+                <td class="right" data-bind="decimal: $root.totalCT"></td>
+                <td class="right" data-bind="decimal: $root.totalI"></td>
+                <td class="right" data-bind="decimal: $root.totalLL"></td>
+                <td class="right" data-bind="decimal: $root.totalLO"></td>
+                <td class="right" data-bind="decimal: $root.totalLP"></td>
+                <td class="right" data-bind="decimal: $root.totalMO"></td>
+                <td class="right" data-bind="decimal: $root.totalPG"></td>
+                <td class="right" data-bind="decimal: $root.totalSS"></td>
+                <td class="right" data-bind="decimal: $root.totalSB"></td>
+                <td class="right" data-bind="decimal: $root.totalSKR"></td>
+                <td class="right" data-bind="decimal: $root.totalSL4"></td>
+                <td class="right" data-bind="decimal: $root.totalSLP"></td>
+                <td class="right" data-bind="decimal: $root.totalSLS"></td>
+                <td class="right" data-bind="decimal: $root.totalT"></td>
+                <td class="right" data-bind="decimal: $root.totalTL"></td>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+
+<script>
+    ko.applyBindings(prodCardBinding, document.getElementById("productionCardDetailGrid"));
+</script>

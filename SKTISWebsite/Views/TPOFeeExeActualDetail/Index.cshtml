@@ -1,0 +1,907 @@
+﻿@model SKTISWebsite.Models.TPOFeeExeActualDetail.InitTPOFeeExeActualDetailViewModel
+@using HMS.SKTIS.Core
+@using SKTISWebsite.Helper
+@{ Html.SetPageTitle(" TPO Fee Detail"); }
+@using HMS.SKTIS.Application.Resources
+
+<div class="col-lg-12">
+    <!-- Actual Detail -->
+    <div class="col-lg-6">
+        <div class="row">
+            <label class="form-label col-lg-3">
+                Regional
+            </label>
+            <div class="col-lg-2 offset-right">
+                @Html.TextBoxFor(m => m.Regional, new { Value = Model.Regional ?? "", @class = "form-control", disabled = "disabled" })
+            </div>
+            <div class="col-lg-4">
+                @Html.TextBoxFor(m => m.RegionalName, new { Value = Model.RegionalName ?? "", @class = "form-control", disabled = "disabled" })
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-3">
+                Location
+            </label>
+            <div class="col-lg-2 offset-right">
+                @Html.TextBoxFor(m => m.LocationCode, new { Value = Model.LocationCode ?? "", @class = "form-control", disabled = "disabled" })
+            </div>
+            <div class="col-lg-4">
+                @Html.TextBoxFor(m => m.LocationName, new { Value = Model.LocationName ?? "", @class = "form-control", disabled = "disabled" })
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-3">
+                Cost Center
+            </label>
+            <div class="col-lg-6">
+                @Html.TextBoxFor(m => m.CostCenter, new { Value = Model.CostCenter ?? "", @class = "form-control", disabled = "disabled" })
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="row">
+            <label class="form-label col-lg-3">
+                KPS Year
+            </label>
+            <div class="col-lg-4">
+                @Html.TextBoxFor(m => m.KPSYear, new { Value = Model.KPSYear, @class = "form-control", disabled = "disabled" })
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-3">
+                KPS Week
+            </label>
+            <div class="col-lg-4">
+                @Html.TextBoxFor(m => m.KPSWeek, new { Value = Model.KPSWeek, @class = "form-control", disabled = "disabled" })
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-12 break-filter-button">
+        <div class="row">
+            <div class="col-lg-3">
+                <div class="row">
+                    <label class="form-label col-lg-3">
+                        Brand
+                    </label>
+                    <div class="col-lg-5">
+                        @Html.TextBoxFor(m => m.Brand, new { Value = Model.Brand, @class = "form-control", disabled = "disabled" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3">
+                <div class="row">
+                    <label class="form-label col-lg-4">
+                        Stick/ Box
+                    </label>
+                    <div class="col-lg-5">
+                        @*@Html.TextBoxFor(m => m.StickPerBox, new { Value = Model.StickPerBox, @class = "form-control", disabled = "disabled" })@Html.TextBoxFor(m => m.StickPerBox, new { Value = Model.StickPerBox, @class = "form-control", disabled = "disabled" })*@
+                        @Html.TextBoxFor(m => m.StickPerBox, new { Value = String.Format(new System.Globalization.CultureInfo(Culture), "{0:N}", Model.StickPerBox), @class = "form-control", disabled = "disabled" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3">
+                <div class="row">
+                    <label class="form-label col-lg-3">
+                        Paket
+                    </label>
+                    <div class="col-lg-5">
+                        <input type="text" class="form-control" value="@Model.Paket" disabled>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="action-btn">
+                @{ string controllerName = "";}
+                @{
+                    switch (@Model.PageFrom)
+                    {
+                        case "approval":
+                            controllerName = "TPOFeeApproval";
+                            break;
+                        case "open":
+                            controllerName = "TPOFeeExeAPOpen";
+                            break;
+                        case "close":
+                            controllerName = "TPOFeeAPClose";
+                            break;
+                        case "list":
+                            controllerName = "TPOFeeExeActual";
+                            break;
+                        default:
+                            controllerName = "TPOFeeExeActual";
+                            break;
+                    }
+                }
+                @Html.ActionLink("Back to List", "Index", new { controller = controllerName }, new { @class = "btn btn-primary" })
+                <button type="button" class="btn btn-primary" data-bind="enable: $root.isButtonEnable('COMPLETE') , click: $root.Complete">Complete</button>
+                <button type="button" class="btn btn-primary" data-bind="enable: $root.isButtonEnable('APPROVE'), click:$root.approval">Approve</button>
+                <button type="button" class="btn btn-primary" data-bind="enable: $root.isButtonEnable('AUTHORIZE'), click:$root.authorize">Authorize</button>
+                <button type="button" class="btn btn-primary" data-bind="enable: $root.isButtonEnable('REVISE'), click:$root.revise">Revise</button>
+                <button type="button" class="btn btn-primary" data-bind="enable: $root.isButtonEnable('SAVE'), click: $root.save">Save</button>
+                <button type="button" class="btn btn-primary" data-bind="enable: $root.isButtonEnable('SUBMIT'), click: $root.submit">Submit</button>
+                <button type="button" class="btn btn-primary" data-bind="enable: $root.isButtonEnable('SENDNOTIFICATION'), click: $root.sendNotif ">Send Notification</button>
+                <button type="button" class="btn btn-primary" data-bind="enable: $root.isButtonEnable('APPROVALPAGE') , click: $root.approvalPage">Approval Page</button>
+                @using (Html.BeginForm("GenerateExcel", "TPOFeeExeActualDetail", FormMethod.Post, new { @data_bind = "submit: $root.generateExcel" }))
+                {
+                    <input type="hidden" name="id" />
+                    <input type="hidden" name="pageFrom" />
+                    <button type="submit" class="btn btn-primary" data-bind="enable: $root.isButtonEnable('BTNEXCEL') ">@CommonLabel.btnExcel</button>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="table-overflow">
+        <table class="table table-striped">
+            <thead>
+                <tr class="head">
+                    <th rowspan="2">Hari</th>
+                    <th rowspan="2">Tanggal</th>
+                    <th colspan="2">Output per Hari</th>
+                    <th colspan="3">Klasifikasi berdasarkan Kategori Aktif</th>
+                </tr>
+                <tr class="head">
+                    <th>Batang</th>
+                    <th>Box</th>
+                    <th>JKN</th>
+                    <th>JL1</th>
+                    <th>JL2</th>
+                    @*<th>JL3</th>
+                        <th>JL4</th>*@
+                </tr>
+            </thead>
+            <tbody data-bind="foreach: $root.daily">
+                <tr data-bind="style: { 'font-weight': ($root.isHoliday($data.FeeDate)||$root.isMinggu($data.Hari)) ? 'bold' : 'normal'}">
+                    <td><span data-bind="text: $data.Hari"></span></td>
+                    <td class="right"><span data-bind="text: $data.FeeDate"></span></td>
+                    <td class="right"><span data-bind="money: $data.OuputSticks"></span></td>
+                    <td class="right"><span data-bind="moneyJkn: $data.OutputBox"></span></td>
+                    <td class="right"><span data-bind="moneyJkn: $data.JKN"></span></td>
+                    <td class="right"><span data-bind="moneyJkn: $data.JL1"></span></td>
+                    <td class="right"><span data-bind="moneyJkn: $data.Jl2"></span></td>
+
+                    @*<td class="right"><span data-bind="text: $data.Jl3"></span></td>
+            <td class="right"><span data-bind="text: $data.Jl4"></span></td>*@
+                </tr>
+            </tbody>
+            <tbody>
+                <tr style="font-weight: bold">
+                    <td colspan="2">Total Produksi</td>
+                    <td class="right">@String.Format(new System.Globalization.CultureInfo(Culture), "{0:n}", Model.TotalProdStick)</td>
+                    <td class="right">@String.Format(new System.Globalization.CultureInfo(Culture), "{0:n}", Model.TotalProdBox)</td>
+                    <td class="right">@String.Format(new System.Globalization.CultureInfo(Culture), "{0:n}", Model.TotalProdJKN)</td>
+                    <td class="right">@String.Format(new System.Globalization.CultureInfo(Culture), "{0:n}", Model.TotalProdJl1)</td>
+                    <td class="right">@String.Format(new System.Globalization.CultureInfo(Culture), "{0:n}", Model.TotalProdJl2)</td>
+                    @*<td class="right">@Model.TotalProdJl3</td>
+                        <td class="right">@Model.TotalProdJl4</td>*@
+                </tr>
+                <tr style="font-weight: bold">
+                    <td colspan="2">Total Dibayar</td>
+                    <td class="right"></td>
+                    <td class="right"></td>
+                    <td class="right">@String.Format(new System.Globalization.CultureInfo(Culture), "{0:n}", Model.TotalDibayarJKN)</td>
+                    <td class="right">@String.Format(new System.Globalization.CultureInfo(Culture), "{0:n}", Model.TotalDibayarJL1)</td>
+                    <td class="right">@String.Format(new System.Globalization.CultureInfo(Culture), "{0:n}", Model.TotalDibayarJL2)</td>
+                    @*<td class="right">0</td>
+            <td class="right">0</td>*@
+                </tr>
+                <tr style="font-weight: bold">
+                    <td colspan="5"></td>
+                    <td class="right">JL3 (Box)</td>
+                    <td class="right">@String.Format(new System.Globalization.CultureInfo(Culture), "{0:n}", Model.TotalDibayarJL3)</td>
+                </tr>
+                <tr style="font-weight: bold">
+                    <td colspan="5"></td>
+                    <td class="right">JL4 (Box)</td>
+                    <td class="right">@String.Format(new System.Globalization.CultureInfo(Culture), "{0:n}", Model.TotalDibayarJL4)</td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table table-striped">
+            <thead>
+                <tr class="head" style="background-color: #1f4e78; border-right: 1px solid #fff; color: #fff">
+                    <td colspan="1">Perhitungan Biaya Produksi</td>
+                    <td colspan="2">Output Produksi yg Dibayar</td>
+                    <td colspan="2">Biaya Produksi per Box (rupiah)</td>
+                    <td colspan="2">Total Biaya Produksi per Box (rupiah)</td>
+                </tr>
+            </thead>
+            <tbody data-bind="foreach: $root.calculation">
+                <tr data-bind="style: {fontWeight: ko.utils.unwrapObservable($data.ProductionFeeType).indexOf('Pajak') >= 0 || ko.utils.unwrapObservable($data.ProductionFeeType).indexOf('PPN') >= 0 ? 'bold' : {fontWeight: ko.utils.unwrapObservable($data.ProductionFeeType).indexOf('PPN') >= 0 ? 'bold' : ''}} ">
+                    <td colspan="1"><span data-bind="text: $data.ProductionFeeType"></span></td>
+                    <!-- ko if: ($data.OrderFeeType < 8) -->
+                    <td colspan="2" class="right"><span data-bind="money: $data.OutputProduction"></span></td>
+                    <td colspan="2" class="right">
+                        <!-- ko if: ($data.OrderFeeType != 6) -->
+                        <span data-bind="money: $data.OutputBiaya"></span>
+                        <!-- /ko -->
+                    </td>
+                    <!-- /ko -->
+                    <!-- ko if: ($data.OrderFeeType >= 8) -->
+                    <td colspan="2" class="right"></td>
+                    <td colspan="2" class="right"></td>
+                    <!-- /ko -->
+                    <td colspan="2" class="right"><span data-bind="money: $data.Calculate"></span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="row">
+            <label class="form-label col-lg-12">
+                Pengiriman Ke
+            </label>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-5">
+                @Model.PengirimanL1 <br />
+                @Model.PengirimanL2<br />
+                @Model.PengirimanL3<br />
+                @Model.PengirimanL4<br /><br />
+            </label>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="row">
+            <label class="form-label col-lg-12">
+                No Seri Faktur Pajak
+            </label>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-3">
+                Biaya Produksi
+            </label>
+            <div class="col-lg-4">
+                <input type="text" class="form-control" data-bind="value: $root.biayaProduksi, valueUpdate: 'afterkeydown', enable: $root.isButtonEnable('SAVE')">
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-3">
+                Jasa Manajemen
+            </label>
+            <div class="col-lg-4">
+                <input type="text" class="form-control" data-bind="value: $root.jasaMaklun, valueUpdate: 'afterkeydown', enable: $root.isButtonEnable('SAVE')">
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-12">
+        <div class="row">
+            <div class="col-lg-4">
+                <label class="form-label">
+                    Prepared By
+                </label>
+                @Html.TextBoxFor(m => m.PreparedBy, new { Value = Model.PreparedBy, @class = "form-control", disabled = "disabled" })
+                <label class="form-label">
+                    Supervisor Logistic TPO (SLT)
+                </label>
+            </div>
+            <div class="col-lg-4">
+                <label class="form-label">
+                    Approved By
+                </label>
+                @Html.TextBoxFor(m => m.ApprovedBy, new { Value = Model.ApprovedBy, @class = "form-control", disabled = "disabled" })
+                <label class="form-label">
+                    Regional Manager
+                </label>
+            </div>
+            <div class="col-lg-4">
+                <label class="form-label">
+                    Authorized By
+                </label>
+                @Html.TextBoxFor(m => m.AuthorizedBy, new { Value = Model.AuthorizedBy, @class = "form-control", disabled = "disabled" })
+                <label class="form-label">
+                    Head of Hand Rolled Mnf
+                </label>
+            </div>
+        </div>
+    </div>
+    <br />
+    @*<div class="tabs" role="tabpanel">
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs" role="tablist" id="historyflow">
+            <li role="presentation" class="active"><a href="#history" aria-controls="home" role="tab" data-toggle="tab">History</a></li>
+            <li role="presentation"><a href="#flow" aria-controls="profile" role="tab" data-toggle="tab">Flow</a></li>
+        </ul>
+
+        <!-- Tab panes -->
+        <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade in active" id="history">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Role</th>
+                            <th>Action</th>
+                            <th>Date</th>
+                            <th>Note</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @*<tr>
+                                <td>PMI/YAstutik</td>
+                                <td>Administrative Assistant</td>
+                                <td>Send for approval</td>
+                                <td>12/06/2015 7:39</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>PMI/YAstutik</td>
+                                <td>Administrative Assistant</td>
+                                <td>Send for approval</td>
+                                <td>12/06/2015 7:39</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>PMI/YBasiah</td>
+                                <td>Production Plan</td>
+                                <td>Send for approval</td>
+                                <td>12/06/2015 7:39</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>PMI/YBasiah</td>
+                                <td>Production Plan</td>
+                                <td>Send for approval</td>
+                                <td>12/06/2015 7:39</td>
+                                <td></td>
+                            </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="flow">
+
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Role</th>
+                            <th>Note</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                                <td>1</td>
+                                <td>Administrative Assistant</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>Administrative Assistant</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>Production Plan</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td>Production Plan</td>
+                                <td></td>
+                            </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>*@
+    <div class="row">
+        <div class="col-lg-12">
+            @Html.Partial("TransactionHistory")
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script src="~/Scripts/app/globalfunctions.js" type="text/javascript"></script>
+    <script src="~/Scripts/common/app.GridViewModel.js" type="text/javascript"></script>
+    <script src="~/Scripts/common/app.Extenders.js" type="text/javascript"></script>
+    <script type="text/javascript">
+    (function (app) {
+        app.EditGrid = function () {
+            var self = this;
+            self.firstLoad = true;
+            self.notPushAnyButton = ko.observable(true);
+            self.isLoading = ko.observable(true);
+            self.isBusy = ko.observable(true);
+            self.daily = @Html.Raw(Json.Encode(@Model.Daily));
+            self.calculation = @Html.Raw(Json.Encode(@Model.Calculations));
+            self.biayaProduksi = ko.observable('@Model.TaxtNoProd');
+            self.jasaMaklun = ko.observable('@Model.TaxtNoMgmt');
+            self.holidayArray = ko.observableArray(@Html.Raw(Json.Encode(@Model.HolidayDay)));
+
+            // ROLE BTN STATE
+            self.roleBtnSave = ko.observable(@Model.RoleSave);
+            self.roleBtnSubmit = ko.observable(@Model.RoleSubmit);
+            self.roleBtnApprove = ko.observable(@Model.RoleApprove);
+            self.roleBtnAuthorize = ko.observable(@Model.RoleAuthorize);
+            self.roleBtnRevise = ko.observable(@Model.RoleRevise);
+            self.roleBtnComplete = ko.observable(@Model.RoleComplete);
+            self.roleBtnReturn = ko.observable(@Model.RoleReturn);
+
+            //untuk translog
+            self.transactionCode = ko.observable('@Model.TPOFeeCode');
+            var transcode = (self.transactionCode().split('/'));
+            //console.log(self.pageFrom());
+            // IF Page From = open
+            // Show Button Complete and Hide Button Save and Submit
+            self.visibleButtonComplete = ko.observable('@Model.PageFrom' == 'open');
+            self. enableSendNotifBtn = ko.observable(false);
+            // Hide button save & submit (ref: bug/273)
+            self.visibleButtonSaveSubmit = ko.observable('@Model.PageFrom' != 'open' && '@Model.PageFrom' != 'approval');
+            //self.btnApprovalState = ko.observable('@Model.PageFrom' == 'approval');
+            //self.btnAuthorizeState = ko.observable('@Model.PageFrom' == 'approval');
+            //console.log("page from = "+'@Model.PageFrom');
+
+            self.btnApprovalVisibility = self.btnAuthorizeVisibility = ko.observable('@Model.PageFrom' == 'approval');
+
+            self.btnReviseOpenVisibility = ko.observable('@Model.PageFrom' == 'open');
+
+            self.disableBtnApproval = function() {
+                self.btnApprovalState( !self.btnApprovalState() );
+            }
+
+            self.disableBtnAuthorize = function() {
+                self.btnAuthorizeState( !self.btnAuthorizeState() );
+            }
+
+            self.disableBtnRevise = function(){
+                self.btnReviseState( !self.btnReviseState() );
+            }
+            self.enableApprovalPageBtn = ko.observable( '@Model.Status'.toLowerCase() != 'open' );
+
+            self.enableBtnSave = ko.observable('@Model.Status'.toLowerCase() == 'draft' || '@Model.Status'.toLowerCase() == 'revised');
+
+            self.approvalPage = function() {
+                window.document.location = @Html.BaseUrl("TPOFeeApproval") + "/index/detail/" +"@Model.TPOFeeCode.Replace('/','_')";
+            };
+
+            self.save = function() {
+                var datas = {
+                    "tpoFeeCode": '@Model.TPOFeeCode',
+                    "TaxtNoProd": self.biayaProduksi(),
+                    "TaxtNoMgmt": self.jasaMaklun()
+                };
+                datas = JSON.stringify(datas);
+                $.ajax({
+                    url: @Html.BaseUrl("TPOFeeExeActualDetail/SaveDatas"),
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: datas,
+                    dataType: 'json',
+                    success: function (data) {
+                        SKTIS.Helper.Notification(data);
+                        self.disableBtnSubmit(true);
+                        self.checkBtnSave();
+                        self.loadHistory();
+                    }
+                });
+            };
+
+            self.submit = function() {
+                var datas = {
+                    "tpoFeeCode": '@Model.TPOFeeCode',
+                    "regional": '@Model.Regional'
+                };
+                datas = JSON.stringify(datas);
+                $.ajax({
+                    url: @Html.BaseUrl("TPOFeeExeActualDetail/SubmitedDatas"),
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: datas,
+                    dataType: 'json',
+                    success: function (data) {
+                        if(data.length > 1){
+                            SKTIS.Helper.Notification(data[0]);
+                            SKTIS.Helper.Notification(data[1], 'error');
+                        }else{
+                            SKTIS.Helper.Notification(data[0]);
+                        }
+                        self.checkBtnSubmit();
+                        self.disableBtnSubmit(false);
+                        self.enableBtnSave(false);
+                        self.loadHistory();
+                        self.roleBtnSave(false);
+                    }
+                });
+            };
+            self.Complete = function() {
+                var datas = {
+                    "tpoFeeCode": '@Model.TPOFeeCode'
+                };
+                datas = JSON.stringify(datas);
+                $.ajax({
+                    url: @Html.BaseUrl("TPOFeeExeActualDetail/CompleteDatas"),
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: datas,
+                    dataType: 'json',
+                    success: function (data) {
+                        SKTIS.Helper.Notification(data);
+                        self.checkBtnSubmit();
+                        self.loadHistory();
+                        self.notPushAnyButton(false);
+
+                        self.roleBtnComplete(false);
+                    }
+                });
+            };
+            self.disableBtnSubmit = ko.observable(false);
+            self.checkBtnSave = function() {
+                var data = {
+                    "tpoFeeCode": '@Model.TPOFeeCode',
+                    "pageName": '@Enums.PageName.TPOFeeActualDetail',
+                    "btnName": '@Enums.ButtonName.Save'
+                };
+                data = JSON.stringify(data);
+                $.ajax({
+                    url: @Html.BaseUrl("TPOFeeExeActualDetail/CheckButtonDisable"),
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: data,
+                    dataType: 'json',
+                    success: function (data) {
+                        //self.disableBtnSubmit(data && '@Model.Status'.toLowerCase() == 'draft');
+                        self.dataAlreadyApproved();
+                    }
+                });
+            };
+
+            function checkStatus(st) {
+                return ko.computed({
+                    read: function() {
+                        return '@Model.Status'.toUpperCase() == st;
+                    },
+                    write: function(value) {
+                        //alert(value);
+                    }
+                });
+            };
+
+            self.btnApprovalState = checkStatus('SUBMITTED');
+            self.btnAuthorizeState = checkStatus('APPROVED');
+            self.enableBtnRevise = checkStatus('COMPLETED');
+
+            self.enableBtnReviseOpen = checkStatus('REVISED');
+            self.enableBtnCompleteOpen = checkStatus('AUTHORIZED');
+
+            self.approval = function() {
+                transactionLog('Approval');
+                self.roleBtnRevise(false);
+                self.roleBtnApprove(false);
+                self.notPushAnyButton(false);
+                self.loadHistory();
+            }
+
+            self.authorize = function() {
+                self.roleBtnRevise(false);
+                transactionLog('Authorize');
+                self.roleBtnAuthorize(false);
+                self.notPushAnyButton(false);
+                self.loadHistory();
+            }
+
+            self.revise = function() {
+                transactionLog('Revise');
+                self.roleBtnRevise(false);
+                self.roleBtnApprove(false);
+                self.roleBtnAuthorize(false);
+                self.notPushAnyButton(false);
+                self.loadHistory();
+            }
+
+            self.sendNotif = function() {
+                var datas = {
+                    "status": '@Model.Status',
+                    "tpoFeeCode": '@Model.TPOFeeCode',
+                    "pageFrom": '@Enums.PageName.TPOFeeActualDetail',
+                    "regional": '@Model.Regional'
+                };
+                datas = JSON.stringify(datas);
+                $.ajax({
+                    url: @Html.BaseUrl("TPOFeeExeActualDetail/sendNotif"),
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: datas,
+                    dataType: 'json',
+                    success: function (data) {
+                        if(data.length > 1){
+                            SKTIS.Helper.Notification(data[0]);
+                            SKTIS.Helper.Notification(data[1], 'error');
+                        }else{
+                            SKTIS.Helper.Notification(data[0]);
+                        }
+                    }
+                });
+            };
+
+            self.isTaxEmpty = function()
+            {
+                return (ko.utils.unwrapObservable(self.biayaProduksi) == '' ||
+                        ko.utils.unwrapObservable(self.jasaMaklun) == '');
+            }
+
+            self.isButtonEnable = function(name)
+            {
+                //console.log('@Model.Status');
+                //console.log(self.roleBtnApprove()+' = approve');
+                //console.log(self.roleBtnApprove());
+                switch (name)
+                {
+                    case "APPROVE":
+                        return ('@Model.Status'.toLowerCase() == 'submitted' || '@Model.Status'.toLowerCase() == 'revised' ) && self.roleBtnApprove() && !self.isBusy() && self.notPushAnyButton();
+                        break;
+                    case "REVISE":
+                        return self.roleBtnRevise() && (self.isButtonEnable('APPROVE') || self.isButtonEnable('AUTHORIZE') || self.isButtonEnable('COMPLETE')) && !self.isBusy() && self.notPushAnyButton();// && !self.isButtonEnable('COMPLETE');
+                        break;
+                    case "SAVE":
+                        var enableByStatus = '@Model.Status'.toLowerCase() == 'draft' || '@Model.Status'.toLowerCase() == 'revised' || '@Model.Status'.toLowerCase() == 'returned';
+                        return enableByStatus && !self.isBusy() && self.roleBtnSave();
+                        break;
+                    case "SUBMIT":
+                        return self.disableBtnSubmit() && !self.isBusy() && self.roleBtnSubmit() && !self.isTaxEmpty();
+                        break;
+                    case "AUTHORIZE":
+                        return self.btnAuthorizeState() && self.roleBtnAuthorize() && !self.isBusy() && self.notPushAnyButton();
+                        break;
+                    case "SENDNOTIFICATION":
+                        return self.enableSendNotifBtn && !self.isBusy();
+                        break;
+                    case "APPROVALPAGE":
+                        return self.enableApprovalPageBtn && !self.isBusy() && self.roleBtnApprove();
+                        break;
+                    case "BTNEXCEL":
+                        return !self.isBusy();
+                        break;
+                    case "COMPLETE":
+                        //console.log(self.enableBtnCompleteOpen() , self.roleBtnComplete() , !self.isBusy());
+                        return self.enableBtnCompleteOpen() && self.roleBtnComplete() && !self.isBusy() && self.notPushAnyButton();
+                        break;
+                }
+
+                return false;
+            }
+
+            function transactionLog(methodName) {
+                var payload = {
+                    TPOFeeCode: '@Model.TPOFeeCode',
+                    Regional: '@Model.Regional'
+                };
+
+                $.ajax({
+                    url: @Html.BaseUrl("TPOFeeExeActualDetail/") + methodName,
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(payload),
+                    dataType: 'json',
+                    success: function(data) {
+                        SKTIS.Helper.Notification(data);
+                        getStatus();
+                        //console.log('test');
+                        //window.location.reload();
+                        //tentukan state button
+                        //self.checkBtnApproval();
+                        //self.checkBtnAuthorize();
+                        //self.checkBtnRevise();
+                    }
+                });
+            };
+
+            function getStatus() {
+                var data = {
+                    "tpoFeeCode": '@Model.TPOFeeCode'
+                };
+                data = JSON.stringify(data);
+                $.ajax({
+                    url: @Html.BaseUrl("TPOFeeExeActualDetail/GetStatus"),
+                    type: 'POST',
+                    data: data,
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    success: function(data) {
+                        //console.log(data);
+                        self.btnApprovalState(data.toUpperCase() == 'SUBMITTED');
+                        self.btnAuthorizeState(data.toUpperCase() == 'APPROVED');
+                        self.enableBtnRevise(data.toUpperCase() == 'COMPLETED');
+                        self.enableBtnReviseOpen(data.toUpperCase() == 'REVISED');
+                        self.enableBtnCompleteOpen(data.toUpperCase() == 'AUTHORIZED');
+                    }
+                });
+            };
+
+            self.dataAlreadyApproved = function() {
+                var data = {
+                    "tpoFeeCode": '@Model.TPOFeeCode',
+                    "pageName": '@Enums.PageName.ApprovalPage',
+                    "btnName": '@Enums.ButtonName.Approve'
+                };
+                data = JSON.stringify(data);
+                $.ajax({
+                    url: @Html.BaseUrl("TPOFeeExeActualDetail/CheckButtonDisable"),
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: data,
+                    dataType: 'json',
+                    success: function (data) {
+                        //console.log('@Model.Status'.toLowerCase());
+                        //self.disableBtnSubmit(!data && '@Model.Status'.toLowerCase() != 'open');
+                    }
+                });
+            };
+
+            self.dataAlreadySubmited = ko.observable(false);
+            self.checkBtnSubmit = function() {
+                var data = {
+                    "tpoFeeCode": '@Model.TPOFeeCode',
+                    "pageName": '@Enums.PageName.TPOFeeActualDetail',
+                    "btnName": '@Enums.ButtonName.Submit'
+                };
+                data = JSON.stringify(data);
+                $.ajax({
+                    url: @Html.BaseUrl("TPOFeeExeActualDetail/CheckButtonDisable"),
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: data,
+                    dataType: 'json',
+                    success: function (data) {
+                        self.dataAlreadySubmited(data);
+                        self.enableSendNotifBtn(data);
+                    }
+                });
+            };
+
+            //self.gridView.isBusy.subscribe(function(value) { self.isBusy(value);});
+
+            $(document).ajaxComplete(function () {
+                if ($.active <= 1) {
+                    self.isBusy(false);
+                }
+            });
+
+            $(document).ajaxStart(function () {
+                if (!self.isBusy()) self.isBusy(true);
+            });
+
+            self.generateExcel = function (formElement) {
+                $(formElement).find("input[name=id]").val('@Model.TPOFeeCode');
+                $(formElement).find("input[name=pageFrom]").val('@Model.PageFrom');
+                return true;
+            };
+
+            self.checkBtnApproval = function() {
+                checkBtnState('Approve').then(function(result) {
+                    self.btnApprovalState( !result );
+                });
+            }
+
+            self.checkBtnAuthorize = function() {
+                checkBtnState('Authorize').then(function(result) {
+                    self.btnAuthorizeState( !result );
+                });
+            }
+
+            self.checkBtnRevise = function() {
+                checkBtnState('Revise').then(function(result) {
+                    //console.log(result);
+                    self.enableBtnRevise( result );
+                });
+            }
+
+            function checkBtnState(btnName)
+            {
+                var data = {
+                    TPOFeeCode  : '@Model.TPOFeeCode',
+                    pageName    : '@Enums.PageName.TPOFeeActual',
+                    btnName     : btnName
+                };
+
+                return $.ajax({
+                    url: @Html.BaseUrl("TPOFeeExeActualDetail/CheckButtonDisable"),
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(data),
+                    dataType: 'json'
+                });
+            }
+
+
+            // TRANSACTION HISTORY AND FLOW
+            self.historyGridView = new app.GridViewModel({
+                Criteria: {
+                    PageSize: 10,
+                    PageIndex: 1,
+                    SortExpression: "UpdatedDate",
+                    SortOrder: "DESC",
+                    code_1: 'FEE',
+                    code_2: transcode[1],
+                    code_3: transcode[2],
+                    code_4: transcode[3],
+                    code_5: transcode[4]
+                },
+                DataSourceUrl: @Html.BaseUrl("TPOFeeExeActualDetail/GetHistory"),
+                InlineEdit: true,
+                InsertRowFocusedControlIndex: 1
+            });
+            self.flowGridView = new app.GridViewModel({
+                Criteria: {
+                    PageSize: 10,
+                    PageIndex: 1,
+                    SortExpression: "IDFlow",
+                    SortOrder: "ASC",
+                    FunctionName: 'PlantProductionEntry'
+                },
+                DataSourceUrl: @Html.BaseUrl("TPOFeeExeActualDetail/GetFlow"),
+                InlineEdit: true,
+                InsertRowFocusedControlIndex: 1
+            });
+
+            self.loadHistory = function(cb){
+                self.historyGridView.search({}, function (response) {
+                    if (response.status == 'KO') {
+                        SKTIS.Helper.Notification(response.message,'error');
+                        $('.empty-row-message').html(response.message);
+                    }else if (response.status == 'Empty') {
+
+                        self.RemoveNotification();
+
+                        //SKTIS.Helper.Notification(response.message,'warning');
+                        $('.empty-row-message').html('@CommonLabel.lblDataEmpty');
+                    }
+                    if (typeof cb != 'undefined') cb();
+                });
+            };
+            self.loadFlow = function(cb){
+                self.flowGridView.search({}, function (response) {
+                    if (response.status == 'KO') {
+                        SKTIS.Helper.Notification(response.message,'error');
+                        $('.empty-row-message').html(response.message);
+                    }else if (response.status == 'Empty') {
+
+                        self.RemoveNotification();
+
+                        //SKTIS.Helper.Notification(response.message,'warning');
+                        $('.empty-row-message').html('@CommonLabel.lblDataEmpty');
+                    }
+
+                    if (typeof cb != 'undefined') cb();
+                });
+            };
+            // END OF TRANSACTION HISTORY AND FLOW
+
+
+            self.isHoliday = function(date) {
+                    return self.holidayArray.indexOf(date) != -1;
+            };
+
+            self.isMinggu = function(day) {
+                return day=='Minggu';
+            };
+
+            self.RemoveNotification = function() {
+                if ($('#noty_top_layout_container').length > 0) {
+                    $('#noty_top_layout_container').remove();
+                }
+            };
+
+            //if (!self.firstLoad || !self.isLoading()){
+            self.loadHistory();
+            self.loadFlow();
+            //}
+
+            self.checkBtnSave();
+            self.checkBtnSubmit();
+            //self.checkBtnRevise();
+
+            if ( '@Model.PageFrom' == 'approval' ) {
+                //self.checkBtnApproval();
+                //self.checkBtnAuthorize();
+            }
+        };
+
+        ko.applyBindings(new app.EditGrid());
+    })(app = this.app || {});
+</script>
+}

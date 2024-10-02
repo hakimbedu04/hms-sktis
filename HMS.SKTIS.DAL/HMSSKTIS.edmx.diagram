@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="fa140b264c244748b29ad902ec8a297d" Name="Diagram1" ZoomLevel="39">
+        <EntityTypeShape EntityType="Model.ExeActualWorkHour" Width="1.5" PointX="17.25" PointY="139.75" />
+        <EntityTypeShape EntityType="Model.ExeTPOActualWorkHour" Width="1.5" PointX="14.25" PointY="142.5" />
+        <EntityTypeShape EntityType="Model.ExeTPOProduction" Width="1.5" PointX="11" PointY="10.625" />
+        <EntityTypeShape EntityType="Model.MntcEquipmentFulfillment" Width="1.5" PointX="19.5" PointY="82.25" />
+        <EntityTypeShape EntityType="Model.MntcEquipmentItemConvert" Width="1.5" PointX="14.25" PointY="91.875" />
+        <EntityTypeShape EntityType="Model.MntcEquipmentItemDisposal" Width="1.5" PointX="17.25" PointY="87" />
+        <EntityTypeShape EntityType="Model.MntcEquipmentMovement" Width="1.5" PointX="12" PointY="84.75" />
+        <EntityTypeShape EntityType="Model.MntcEquipmentQualityInspection" Width="1.5" PointX="12" PointY="90.25" />
+        <EntityTypeShape EntityType="Model.MntcEquipmentRepair" Width="1.5" PointX="12" PointY="79.25" />
+        <EntityTypeShape EntityType="Model.MntcInventory" Width="1.5" PointX="17.25" PointY="90.625" />
+        <EntityTypeShape EntityType="Model.MntcRequestToLocation" Width="1.5" PointX="21.75" PointY="85.5" />
+        <EntityTypeShape EntityType="Model.MstADTemp" Width="1.5" PointX="6" PointY="13.125" />
+        <EntityTypeShape EntityType="Model.MstClosingPayroll" Width="1.5" PointX="0.75" PointY="2.625" />
+        <EntityTypeShape EntityType="Model.MstGenBrand" Width="1.5" PointX="3" PointY="130.5" />
+        <EntityTypeShape EntityType="Model.MstGenBrandGroup" Width="1.5" PointX="0.75" PointY="101.125" />
+        <EntityTypeShape EntityType="Model.MstGenBrandPackageItem" Width="1.5" PointX="9" PointY="103.625" />
+        <EntityTypeShape EntityType="Model.MstGenBrandPkgMapping" Width="1.5" PointX="3" PointY="108.25" />
+        <EntityTypeShape EntityType="Model.MstGenEmpStatu" Width="1.5" PointX="7.5" PointY="152.5" />
+        <EntityTypeShape EntityType="Model.MstGenHoliday" Width="1.5" PointX="3.75" PointY="72" />
+        <EntityTypeShape EntityType="Model.MstGenList" Width="1.5" PointX="2.75" PointY="13.625" />
+        <EntityTypeShape EntityType="Model.MstGenLocation" Width="1.5" PointX="1.5" PointY="84.125" />
+        <EntityTypeShape EntityType="Model.MstGenLocStatu" Width="1.5" PointX="9.75" PointY="152.5" />
+        <EntityTypeShape EntityType="Model.MstGenMaterial" Width="1.5" PointX="3" PointY="144.25" />
+        <EntityTypeShape EntityType="Model.MstGenProcess" Width="1.5" PointX="3.75" PointY="76.5" />
+        <EntityTypeShape EntityType="Model.MstGenStandardHour" Width="1.5" PointX="11.75" PointY="5.625" />
+        <EntityTypeShape EntityType="Model.MstGenWeek" Width="1.5" PointX="13.75" PointY="5.625" />
+        <EntityTypeShape EntityType="Model.MstMntcConvert" Width="1.5" PointX="9" PointY="86.875" />
+        <EntityTypeShape EntityType="Model.MstMntcItem" Width="1.5" PointX="6.75" PointY="85.5" />
+        <EntityTypeShape EntityType="Model.MstMntcItemLocation" Width="1.5" PointX="15" PointY="85.75" />
+        <EntityTypeShape EntityType="Model.MstPlantUnit" Width="1.5" PointX="3.75" PointY="82.5" />
+        <EntityTypeShape EntityType="Model.MstTPOFeeRate" Width="1.5" PointX="3" PointY="96.375" />
+        <EntityTypeShape EntityType="Model.MstTPOInfo" Width="1.5" PointX="0.75" PointY="93.375" />
+        <EntityTypeShape EntityType="Model.MstTPOPackage" Width="1.5" PointX="6" PointY="108" />
+        <EntityTypeShape EntityType="Model.MstTPOProductionGroup" Width="1.5" PointX="12" PointY="152" />
+        <EntityTypeShape EntityType="Model.PlanPlantIndividualCapacityReference" Width="1.5" PointX="6" PointY="97.875" />
+        <EntityTypeShape EntityType="Model.PlanPlantLineBalancing" Width="1.5" PointX="3" PointY="121.375" />
+        <EntityTypeShape EntityType="Model.PlanPlantTargetProductionKelompok" Width="1.5" PointX="5.25" PointY="126.25" />
+        <EntityTypeShape EntityType="Model.PlanPlantWorkerBalancing" Width="1.5" PointX="13" PointY="108.875" />
+        <EntityTypeShape EntityType="Model.PlanTargetProductionUnit" Width="1.5" PointX="16.5" PointY="105.5" />
+        <EntityTypeShape EntityType="Model.ProductAdjustment" Width="1.5" PointX="8.25" PointY="131.375" />
+        <EntityTypeShape EntityType="Model.TPOFeeGLAccount" Width="1.5" PointX="10.75" PointY="15.625" />
+        <EntityTypeShape EntityType="Model.UtilDelegation" Width="1.5" PointX="13.5" PointY="0.875" />
+        <EntityTypeShape EntityType="Model.UtilFlow" Width="1.5" PointX="3" PointY="4.875" />
+        <EntityTypeShape EntityType="Model.UtilFunction" Width="1.5" PointX="0.75" PointY="4.875" />
+        <EntityTypeShape EntityType="Model.UtilResponsibility" Width="1.5" PointX="6" PointY="0.75" />
+        <EntityTypeShape EntityType="Model.UtilResponsibilityRule" Width="1.5" PointX="11.25" PointY="1.125" />
+        <EntityTypeShape EntityType="Model.UtilRole" Width="1.5" PointX="3.75" PointY="1.25" />
+        <EntityTypeShape EntityType="Model.UtilRolesFunction" Width="1.5" PointX="6" PointY="5.25" />
+        <EntityTypeShape EntityType="Model.UtilRule" Width="1.5" PointX="9" PointY="5.875" />
+        <EntityTypeShape EntityType="Model.UtilTransactionLog" Width="1.5" PointX="5.25" PointY="9.25" />
+        <EntityTypeShape EntityType="Model.UtilUsersResponsibility" Width="1.5" PointX="8.25" PointY="0.875" />
+        <EntityTypeShape EntityType="Model.WorkerAssignmentRemoval" Width="1.5" PointX="14.75" PointY="15.625" />
+        <EntityTypeShape EntityType="Model.ExePlantCKSubmit" Width="1.5" PointX="8.25" PointY="137.5" />
+        <EntityTypeShape EntityType="Model.ExeReportEMSSubmitted" Width="1.5" PointX="8.25" PointY="143.125" />
+        <EntityTypeShape EntityType="Model.BrandCodeByLocationView" Width="1.5" PointX="15.75" PointY="2.625" />
+        <EntityTypeShape EntityType="Model.EquipmentRequirementView" Width="1.5" PointX="2.75" PointY="17.625" />
+        <EntityTypeShape EntityType="Model.ExePlantWorkerAbsenteeismView" Width="1.5" PointX="16.75" PointY="11.625" />
+        <EntityTypeShape EntityType="Model.GetLocationByResponsibilityView" Width="1.5" PointX="17.75" PointY="2.625" />
+        <EntityTypeShape EntityType="Model.InventoryByStatusView" Width="1.5" PointX="17.75" PointY="5.625" />
+        <EntityTypeShape EntityType="Model.MaintenanceEquipmentFulfillmentItemDetailView" Width="1.5" PointX="12.75" PointY="19.625" />
+        <EntityTypeShape EntityType="Model.MaintenanceEquipmentStockView" Width="1.5" PointX="18.75" PointY="16.625" />
+        <EntityTypeShape EntityType="Model.MaintenanceExecutionInventoryView" Width="1.5" PointX="19.75" PointY="2.625" />
+        <EntityTypeShape EntityType="Model.MntcInventoryAll" Width="1.5" PointX="6.75" PointY="21.625" />
+        <EntityTypeShape EntityType="Model.MntcInventoryDeltaView" Width="1.5" PointX="18.75" PointY="21.625" />
+        <EntityTypeShape EntityType="Model.MntcRepairItemUsageView" Width="1.5" PointX="2.75" PointY="22.625" />
+        <EntityTypeShape EntityType="Model.MstMntcConvertGetItemDestinationView" Width="1.5" PointX="20.75" PointY="10.625" />
+        <EntityTypeShape EntityType="Model.MstPlantProductionGroupView" Width="1.5" PointX="20.75" PointY="13.625" />
+        <EntityTypeShape EntityType="Model.MstPlantUnitView" Width="1.5" PointX="12.75" PointY="22.625" />
+        <EntityTypeShape EntityType="Model.PlanPlantTargetProductionKelompokView" Width="1.5" PointX="21.75" PointY="2.625" />
+        <AssociationConnector Association="Model.FK_ExeActualWorkHours_MstGenBrand" />
+        <AssociationConnector Association="Model.FK_ExeActualWorkHours_MstGenProcess" />
+        <AssociationConnector Association="Model.FK_ExeActualWorkHours_MstPlantUnit" />
+        <AssociationConnector Association="Model.FK_ExeTPOActualWorkHours_MstGenBrand" />
+        <AssociationConnector Association="Model.FK_ExeTPOActualWorkHours_MstGenEmpStatus" />
+        <AssociationConnector Association="Model.FK_ExeTPOActualWorkHours_MstGenProcess" />
+        <AssociationConnector Association="Model.FK_ExeTPOActualWorkHours_MstPlantUnit" />
+        <AssociationConnector Association="Model.FK_MntcRequestToLocation_MntcEquipmentFulfillment" />
+        <AssociationConnector Association="Model.FK_MNTCEQUIPMENTITEMCONVERT_REFERENCE_134_MSTGENLOCATION" />
+        <AssociationConnector Association="Model.FK_MNTCEQUIPMENTITEMCONVERT_RELATIONSHIP_134_MSTMNTCCONVERT" />
+        <AssociationConnector Association="Model.FK_MNTCEQUIPMENTITEMDISPOSA_REFERENCE_129_MSTMNTCITEMLOCATION" />
+        <AssociationConnector Association="Model.FK_MNTCEQUIPMENTMOVEMENT_REFERENCE_132_MSTPLANTUNIT" />
+        <AssociationConnector Association="Model.FK_MNTCEQUIPMENTMOVEMENT_RELATIONSHIP_13_MSTGENLOCATION" />
+        <AssociationConnector Association="Model.FK_MNTCEQUIPMENTMOVEMENT_RELATIONSHIP_26_MSTMNTCITEM" />
+        <AssociationConnector Association="Model.FK_MNTCEQUIPMENTQUALITYINSP_RELATIONSHIP_12_MSTGENLOCATION" />
+        <AssociationConnector Association="Model.FK_MNTCEQUIPMENTQUALITYINSP_RELATIONSHIP_25_MSTMNTCITEM" />
+        <AssociationConnector Association="Model.FK_MNTCEQUIPMENTREPAIR_REFERENCE_127_MSTMNTCITEM" />
+        <AssociationConnector Association="Model.FK_MNTCEQUIPMENTREPAIR_RELATIONSHIP_20_MSTPLANTUNIT" />
+        <AssociationConnector Association="Model.FK_MNTCINVENTORY_REFERENCE_135_MSTMNTCITEMLOCATION" />
+        <AssociationConnector Association="Model.FK_MNTCREQUESTTOLOCATION_RELATIONSHIP_92_MSTGENLOCATION" />
+        <AssociationConnector Association="Model.FK_UTILDELEGATION_RELATIONSHIP_105_MSTADTEMP" />
+        <AssociationConnector Association="Model.FK_UTILUSERSRESPONSIBILITY_RELATIONSHIP_104_MSTADTEMP" />
+        <AssociationConnector Association="Model.FK_EXEPLANTCKSUBMIT_RELATIONSHIP_62_MSTGENBRAND" />
+        <AssociationConnector Association="Model.FK_ExeReportEMSSubmitted_MstGenBrand" />
+        <AssociationConnector Association="Model.FK_MSTGENBRAND_RELATIONSHIP_48_MSTGENBRANDGROUP" />
+        <AssociationConnector Association="Model.FK_PLANPLANTTARGETPRODUCTIO_RELATIONSHIP_61_MSTGENBRAND" />
+        <AssociationConnector Association="Model.FK_PRODUCTADJUSTMENT_RELATIONSHIP_145_MSTGENBRAND" />
+        <AssociationConnector Association="Model.FK_MSTGENBRANDPACKAGEITEM_RELATIONSHIP_30_MSTGENBRANDGROUP" />
+        <AssociationConnector Association="Model.FK_MSTGENBRANDPKGMAPPING_RELATIONSHIP_36_MSTGENBRANDGROUP" />
+        <AssociationConnector Association="Model.FK_MSTGENBRANDPKGMAPPING_RELATIONSHIP_95_MSTGENBRANDGROUP" />
+        <AssociationConnector Association="Model.FK_MSTGENMATERIAL_RELATIONSHIP_37_MSTGENBRANDGROUP" />
+        <AssociationConnector Association="Model.FK_MSTTPOFEERATE_RELATIONSHIP_6_MSTGENBRANDGROUP" />
+        <AssociationConnector Association="Model.FK_MSTTPOPACKAGE_RELATIONSHIP_5_MSTGENBRANDGROUP" />
+        <AssociationConnector Association="Model.FK_PLANPLAN_REFERENCE_MSTGENBR" />
+        <AssociationConnector Association="Model.FK_MSTGENBRANDPACKAGEITEM_RELATIONSHIP_31_MSTMNTCITEM" />
+        <AssociationConnector Association="Model.FK_MSTGENLOCSTATUS_RELATIONSHIP_93_MSTGENEMPSTATUS" />
+        <AssociationConnector Association="Model.FK_ProductAdjustment_MstGenEmpStatus" />
+        <AssociationConnector Association="Model.FK_MSTGENHOLIDAY_RELATIONSHIP_7_MSTGENLOCATION" />
+        <AssociationConnector Association="Model.FK_ExeReportEMSSubmitted_MstGenLocation" />
+        <AssociationConnector Association="Model.FK_MSTGENLOCATION_RELATIONSHIP_8_MSTGENLOCATION" />
+        <AssociationConnector Association="Model.FK_MSTGENLOCSTATUS_RELATIONSHIP_94_MSTGENLOCATION" />
+        <AssociationConnector Association="Model.FK_MSTMNTCITEMLOCATION_RELATIONSHIP_29_MSTGENLOCATION" />
+        <AssociationConnector Association="Model.FK_MSTPLANTUNIT_RELATIONSHIP_19_MSTGENLOCATION" />
+        <AssociationConnector Association="Model.FK_MSTTPOINFO_RELATIONSHIP_9_MSTGENLOCATION" />
+        <AssociationConnector Association="Model.FK_MSTTPOPRODUCTIONGROUP_RELATIONSHIP_128_MSTGENLOCSTATUS" />
+        <AssociationConnector Association="Model.FK_MSTTPOPRODUCTIONGROUP_RELATIONSHIP_126_MSTGENPROCESS" />
+        <AssociationConnector Association="Model.FK_ProductAdjustment_MstGenProcess" />
+        <AssociationConnector Association="Model.FK_MSTMNTCCONVERT_RELATIONSHIP_132_MSTMNTCITEM" />
+        <AssociationConnector Association="Model.FK_MSTMNTCCONVERT_RELATIONSHIP_32_MSTMNTCITEM" />
+        <AssociationConnector Association="Model.FK_MSTMNTCITEMLOCATION_RELATIONSHIP_23_MSTMNTCITEM" />
+        <AssociationConnector Association="Model.FK_EXEPLANTCKSUBMIT_RELATIONSHIP_63_MSTPLANTUNIT" />
+        <AssociationConnector Association="Model.FK_PLANPLAN_REFERENCE_MSTPLANT" />
+        <AssociationConnector Association="Model.FK_PRODUCTADJUSTMENT_RELATIONSHIP_146_MSTPLANTUNIT" />
+        <AssociationConnector Association="Model.FK_MSTTPOFEERATE_RELATIONSHIP_4_MSTTPOINFO" />
+        <AssociationConnector Association="Model.FK_MSTTPOPACKAGE_RELATIONSHIP_3_MSTTPOINFO" />
+        <AssociationConnector Association="Model.FK_PLANPLANTWORKERBALANCING_RELATIONSHIP_120_PLANPLANTLINEBALANCING" />
+        <AssociationConnector Association="Model.FK_UTILDELEGATION_RELATIONSHIP_71_UTILUSERSRESPONSIBILITY" />
+        <AssociationConnector Association="Model.FK_UTILFLOWS_RELATIONSHIP_102_UTILROLESFUNCTION" />
+        <AssociationConnector Association="Model.FK_UTILFLOWS_RELATIONSHIP_103_UTILFUNCTIONS" />
+        <AssociationConnector Association="Model.FK_UTILFLOWS_RELATIONSHIP_78_UTILFUNCTIONS" />
+        <AssociationConnector Association="Model.FK_UTILTRANSACTIONLOGS_RELATIONSHIP_79_UTILFLOWS" />
+        <AssociationConnector Association="Model.FK_UTILFUNCTIONS_RELATIONSHIP_77_UTILFUNCTIONS" />
+        <AssociationConnector Association="Model.FK_UTILROLESFUNCTION_RELATIONSHIP_88_UTILFUNCTIONS" />
+        <AssociationConnector Association="Model.FK_UTILRESPONSIBILITY_RELATIONSHIP_74_UTILROLES" />
+        <AssociationConnector Association="Model.FK_UTILRESPONSIBILITYRULES_RELATIONSHIP_72_UTILRESPONSIBILITY" />
+        <AssociationConnector Association="Model.FK_UTILUSERSRESPONSIBILITY_RELATIONSHIP_90_UTILRESPONSIBILITY" />
+        <AssociationConnector Association="Model.FK_UTILRESPONSIBILITYRULES_RELATIONSHIP_106_UTILRULES" />
+        <AssociationConnector Association="Model.FK_UTILROLESFUNCTION_RELATIONSHIP_75_UTILROLES" />
+        <EntityTypeShape EntityType="Model.TPOFeeCalculation" Width="1.5" PointX="7.5" PointY="93.875" />
+        <EntityTypeShape EntityType="Model.TPOFeeCalculationPlan" Width="1.5" PointX="10.5" PointY="99.125" />
+        <EntityTypeShape EntityType="Model.ExeProductionEntryRelease" Width="1.5" PointX="7.625" PointY="33.875" />
+        <EntityTypeShape EntityType="Model.ExePlantWorkerBalancingSingle" Width="1.5" PointX="0.75" PointY="9.75" />
+        <EntityTypeShape EntityType="Model.ExePlantWorkerBalancingMulti" Width="1.5" PointX="25.375" PointY="15.75" />
+        <EntityTypeShape EntityType="Model.EquipmentRequestView" Width="1.5" PointX="27.375" PointY="5.75" />
+        <EntityTypeShape EntityType="Model.TpoFeePlanView" Width="1.5" PointX="27.625" PointY="10.75" />
+        <EntityTypeShape EntityType="Model.TPOFeeExeGLAccruedListView" Width="1.5" PointX="28.375" PointY="0.75" />
+        <EntityTypeShape EntityType="Model.ExePlantActualWorkHoursView" Width="1.5" PointX="29.375" PointY="5.75" />
+        <EntityTypeShape EntityType="Model.MstProcessBrandView" Width="1.5" PointX="5.375" PointY="17.75" />
+        <EntityTypeShape EntityType="Model.MstTableauReport" Width="1.5" PointX="29.375" PointY="23.75" />
+        <EntityTypeShape EntityType="Model.UtilRolesFunctionView" Width="1.5" PointX="5.375" PointY="25.75" />
+        <EntityTypeShape EntityType="Model.TPOFeeSettingCalculation" Width="1.5" PointX="5.625" PointY="29.75" />
+        <EntityTypeShape EntityType="Model.ExeProductionEntryReleaseTransactLogsView" Width="1.5" PointX="24.375" PointY="0.75" />
+        <EntityTypeShape EntityType="Model.MstGenProcessSetting" Width="1.5" PointX="6" PointY="80.625" />
+        <EntityTypeShape EntityType="Model.MstGenProcessSettingsLocation" Width="1.5" PointX="14.25" PointY="76.875" />
+        <EntityTypeShape EntityType="Model.ProcessSettingsAndLocationView" Width="1.5" PointX="31.375" PointY="16.75" />
+        <AssociationConnector Association="Model.FK_MSTGENPROCESSSETTINGS_RELATIONSHIP_18_MSTGENBRANDGROUP" />
+        <AssociationConnector Association="Model.FK_MSTGENPROCESSSETTINGSLOC_RELATIONSHIP_17_MSTGENLOCATION" />
+        <AssociationConnector Association="Model.FK_MSTGENPROCESSSETTINGS_RELATIONSHIP_40_MSTGENPROCESS" />
+        <AssociationConnector Association="Model.MstGenProcessSettingsMapping" />
+        <EntityTypeShape EntityType="Model.TPOFeeHdr" Width="1.5" PointX="6" PointY="113" />
+        <EntityTypeShape EntityType="Model.TPOFeeHdrPlan" Width="1.5" PointX="20" PointY="98.25" />
+        <AssociationConnector Association="Model.FK_TPOFEEHDR_RELATIONSHIP_137_MSTGENBRANDGROUP" />
+        <AssociationConnector Association="Model.FK_TPOFEEHDRPLAN_RELATIONSHIP_143_MSTGENBRANDGROUP" />
+        <AssociationConnector Association="Model.FK_TPOFEEHDR_RELATIONSHIP_86_MSTTPOINFO" />
+        <AssociationConnector Association="Model.FK_TPOFEEHDRPLAN_RELATIONSHIP_142_MSTTPOINFO" />
+        <AssociationConnector Association="Model.FK_TPOFeeCalculation_TPOFeeHdr" />
+        <AssociationConnector Association="Model.FK_TPOFeeCalculationPlan_TPOFeeHdrPlan" />
+        <EntityTypeShape EntityType="Model.ExeReportByProcess" Width="1.5" PointX="20" PointY="91.75" />
+        <AssociationConnector Association="Model.FK_ExeReportByProcess_MstGenBrand" />
+        <AssociationConnector Association="Model.FK_ExeReportByProcess_MstGenProcess" />
+        <AssociationConnector Association="Model.FK_ExeReportByProcess_MstPlantUnit" />
+        <EntityTypeShape EntityType="Model.NewsInfo" Width="1.5" PointX="3.75" PointY="66.75" />
+        <AssociationConnector Association="Model.FK_NewsInfo_MstGenLocation" />
+        <EntityTypeShape EntityType="Model.ExeReportProdStockProcessView" Width="1.5" PointX="25.375" PointY="30.75" />
+        <EntityTypeShape EntityType="Model.MstPlantAbsentType" Width="1.5" PointX="31.375" PointY="27" />
+        <EntityTypeShape EntityType="Model.TPOTargetProductionKelompokView" Width="1.5" PointX="21.375" PointY="20.75" />
+        <EntityTypeShape EntityType="Model.ProductionCard" Width="1.5" PointX="17" PointY="97.75" />
+        <AssociationConnector Association="Model.FK_PRODUCTIONCARD_RELATIONSHIP_49_MSTGENBRANDGROUP" />
+        <EntityTypeShape EntityType="Model.ExeTPOProductionView" Width="1.5" PointX="27.375" PointY="31.75" />
+        <EntityTypeShape EntityType="Model.PlanTPOTargetProductionKelompok" Width="1.5" PointX="20.25" PointY="136.75" />
+        <EntityTypeShape EntityType="Model.PlanTPOTargetProductionKelompokBox" Width="1.5" PointX="8.25" PointY="107.625" />
+        <AssociationConnector Association="Model.FK_PLANTPOTARGETPRODUCTIONK_REFERENCE_120_MSTGENBRAND" />
+        <AssociationConnector Association="Model.FK_PlanTPOTargetProductionKelompokBox_MstGenBrand" />
+        <AssociationConnector Association="Model.FK_PlanTPOTargetProductionKelompokBox_MstGenLocation" />
+        <AssociationConnector Association="Model.FK_PLANTPOTARGETPRODUCTIONK_RELATIONSHIP_110_MSTTPOPRODUCTIONGROUP" />
+        <EntityTypeShape EntityType="Model.ExeProductionEntryMinimumValue" Width="1.5" PointX="30.375" PointY="0.75" />
+        <EntityTypeShape EntityType="Model.ExeMaterialUsageView" Width="1.5" PointX="10.375" PointY="26.75" />
+        <EntityTypeShape EntityType="Model.WagesProductionCardApprovalView" Width="1.5" PointX="31.375" PointY="4.75" />
+        <EntityTypeShape EntityType="Model.ExeReportByStatusView" Width="1.5" PointX="29.375" PointY="31.75" />
+        <EntityTypeShape EntityType="Model.ExeReportByStatusWeeklyView" Width="1.5" PointX="31.375" PointY="31.75" />
+        <EntityTypeShape EntityType="Model.MntcEquipmentRequest" Width="1.5" PointX="17.25" PointY="82" />
+        <AssociationConnector Association="Model.FK_MNTCEQUIPMENTFULFILLMENT_RELATIONSHIP_81_MNTCEQUIPMENTREQUEST" />
+        <AssociationConnector Association="Model.FK_MNTCEQUIPMENTREQUEST_RELATIONSHIP_91_MSTMNTCITEMLOCATION" />
+        <EntityTypeShape EntityType="Model.TPOFeeProductionDaily" Width="1.5" PointX="8.25" PointY="156.625" />
+        <AssociationConnector Association="Model.FK_TPOFeeProductionDaily_TPOFeeHdr" />
+        <EntityTypeShape EntityType="Model.ExeReportByStatusMonthlyView" Width="1.5" PointX="9.375" PointY="21.75" />
+        <EntityTypeShape EntityType="Model.TPOFeeProductionDailyPlan" Width="1.5" PointX="22.25" PointY="98" />
+        <AssociationConnector Association="Model.FK_TPOFeeProductionDailyPlan_TPOFeeHdrPlan" />
+        <EntityTypeShape EntityType="Model.ExeMaterialUsage" Width="1.5" PointX="8.25" PointY="121.5" />
+        <AssociationConnector Association="Model.FK_EXEMATERIALUSAGE_RELATIONSHIP_125_MSTGENBRANDGROUP" />
+        <AssociationConnector Association="Model.FK_EXEMATERIALUSAGE_RELATIONSHIP_38_MSTGENMATERIAL" />
+        <EntityTypeShape EntityType="Model.WagesProductionCardApprovalDetailView" Width="1.5" PointX="17.375" PointY="25.75" />
+        <EntityTypeShape EntityType="Model.EMSSourceDataBrandView" Width="1.5" PointX="15.375" PointY="19.75" />
+        <EntityTypeShape EntityType="Model.PlanTmpWeeklyProductionPlanning" Width="1.5" PointX="23.375" PointY="20.75" />
+        <EntityTypeShape EntityType="Model.PlanWeeklyProductionPlanning" Width="1.5" PointX="13.25" PointY="114.625" />
+        <AssociationConnector Association="Model.FK_PLANWEEKLYPRODUCTIONPLAN_RELATIONSHIP_35_MSTGENBRAND" />
+        <AssociationConnector Association="Model.FK_PLANWEEKLYPRODUCTIONPLAN_RELATIONSHIP_109_MSTGENLOCATION" />
+        <AssociationConnector Association="Model.FK_PLANTARGETPRODUCTIONUNIT_REFERENCE_125_PLANTMPWEEKLYPRODUCTIONP" />
+        <EntityTypeShape EntityType="Model.TargetProductionUnitPerBoxView" Width="1.5" PointX="12.375" PointY="26.75" />
+        <EntityTypeShape EntityType="Model.TargetProductionUnitView" Width="1.5" PointX="14.375" PointY="26.75" />
+        <EntityTypeShape EntityType="Model.AvailabelPositionNumberGroup" Width="1.5" PointX="23.375" PointY="6.75" />
+        <EntityTypeShape EntityType="Model.UserADResponsibilityRolesView" Width="1.5" PointX="7.375" PointY="17.75" />
+        <EntityTypeShape EntityType="Model.AdjustmentTypeByBrandCode" Width="1.5" PointX="9.375" PointY="18.75" />
+        <EntityTypeShape EntityType="Model.ExeReportByGroupsWeekly" Width="1.5" PointX="20" PointY="116.625" />
+        <AssociationConnector Association="Model.FK_ExeReportByGroupsWeekly_MstGenBrand" />
+        <AssociationConnector Association="Model.FK_ExeReportByGroupsWeekly_MstGenProcess" />
+        <AssociationConnector Association="Model.FK_ExeReportByGroupsWeekly_MstPlantUnit" />
+        <EntityTypeShape EntityType="Model.ExeReportByGroupsMonthly" Width="1.5" PointX="11" PointY="114.625" />
+        <AssociationConnector Association="Model.FK_ExeReportByGroupsMonthly_MstGenBrand" />
+        <AssociationConnector Association="Model.FK_ExeReportByGroupsMonthly_MstGenProcess" />
+        <AssociationConnector Association="Model.FK_ExeReportByGroupsMonthly_MstPlantUnit" />
+        <EntityTypeShape EntityType="Model.MaintenanceItemConversionDestinationView" Width="1.5" PointX="23.375" PointY="26.75" />
+        <EntityTypeShape EntityType="Model.MaintenanceEquipmentFulfillmentDetailView" Width="1.5" PointX="32.375" PointY="11.75" />
+        <EntityTypeShape EntityType="Model.MntcRepairItemUsage" Width="1.5" PointX="9" PointY="69.375" />
+        <AssociationConnector Association="Model.FK_MNTCREPAIRITEMUSAGE_REFERENCE_136_MSTMNTCITEM" />
+        <EntityTypeShape EntityType="Model.MntcInventoryAdjustment" Width="1.5" PointX="9" PointY="81.375" />
+        <AssociationConnector Association="Model.FK_MntcInventoryAdjustment_REFERENCE_142_MSTPLANTUNIT" />
+        <AssociationConnector Association="Model.FK_MntcInventoryAdjustment_REFERENCE_143_MSTMNTCITEM" />
+        <EntityTypeShape EntityType="Model.TPOFeeExeActualView" Width="1.5" PointX="0.75" PointY="26.75" />
+        <EntityTypeShape EntityType="Model.ExePlantProductionEntry" Width="1.5" PointX="33.625" PointY="58.375" />
+        <EntityTypeShape EntityType="Model.ExePlantProductionEntryVerification" Width="1.5" PointX="5.375" PointY="32.125" />
+        <EntityTypeShape EntityType="Model.ExeProductionEntryPrintView" Width="1.5" PointX="33.375" PointY="15.75" />
+        <EntityTypeShape EntityType="Model.PlanPlantIndividualCapacityByReferenceView" Width="1.5" PointX="16.375" PointY="33.75" />
+        <AssociationConnector Association="Model.FK_ExePlantProductionEntry_ExePlantProductionEntryVerification" />
+        <AssociationConnector Association="Model.FK_ExePlantProductionEntry_MstPlantAbsentType" />
+        <AssociationConnector Association="Model.FK_ExeProductionEntryRelease" />
+        <EntityTypeShape EntityType="Model.ExePlantProductionEntryVerificationView" Width="1.5" PointX="33.375" PointY="0.75" />
+        <EntityTypeShape EntityType="Model.ExeTPOProductionEntryVerification" Width="1.5" PointX="8.75" PointY="9.875" />
+        <EntityTypeShape EntityType="Model.ExeTPOProductionEntryVerificationView" Width="1.5" PointX="27.375" PointY="14.75" />
+        <AssociationConnector Association="Model.FK_ExeTPOProduction_ExeTPOProductionEntryVerification" />
+        <EntityTypeShape EntityType="Model.MaintenanceEquipmentFulfillmentView" Width="1.5" PointX="18.375" PointY="33.75" />
+        <EntityTypeShape EntityType="Model.PlanPlantGroupShift" Width="1.5" PointX="33.375" PointY="26.75" />
+        <EntityTypeShape EntityType="Model.ExeReportByProcessView" Width="1.5" PointX="33.375" PointY="30.75" />
+        <EntityTypeShape EntityType="Model.ExePlantWorkerAbsenteeism" Width="1.5" PointX="36.625" PointY="58.875" />
+        <AssociationConnector Association="Model.FK_ExePlantWorkerAbsenteeism_MstPlantAbsentType" />
+        <EntityTypeShape EntityType="Model.ExePlantWorkerAssignment" Width="1.5" PointX="13" PointY="101.875" />
+        <AssociationConnector Association="Model.FK_ExePlantWorkerAssignment_MstGenBrand" />
+        <AssociationConnector Association="Model.FK_ExePlantWorkerAssignment_MstGenBrand1" />
+        <EntityTypeShape EntityType="Model.MstPlantProductionGroup" Width="1.5" PointX="6" PointY="72.5" />
+        <AssociationConnector Association="Model.FK_EXEMATERIALUSAGE_RELATIONSHIP_44_MSTPLANTPRODUCTIONGROUP" />
+        <AssociationConnector Association="Model.FK_MSTPLANTPRODUCTIONGROUP_RELATIONSHIP_147_MSTGENPROCESS" />
+        <AssociationConnector Association="Model.FK_MSTPLANTPRODUCTIONGROUP_RELATIONSHIP_100_MSTPLANTPRODUCTIONGROUP" />
+        <AssociationConnector Association="Model.FK_MSTPLANTPRODUCTIONGROUP_RELATIONSHIP_46_MSTPLANTUNIT" />
+        <AssociationConnector Association="Model.FK_PLANPLANTLINEBALANCING_RELATIONSHIP_118_MSTPLANTPRODUCTIONGROUP" />
+        <AssociationConnector Association="Model.FK_PLANPLANTTARGETPRODUCTIO_RELATIONSHIP_59_MSTPLANTPRODUCTIONGROUP" />
+        <AssociationConnector Association="Model.FK_PLANPLANTWORKERBALANCING_RELATIONSHIP_101_MSTPLANTPRODUCTIONGROUP" />
+        <AssociationConnector Association="Model.FK_PLANPLANTWORKERBALANCING_RELATIONSHIP_57_MSTPLANTPRODUCTIONGROUP" />
+        <AssociationConnector Association="Model.FK_PRODUCTIONCARD_RELATIONSHIP_55_MSTPLANTPRODUCTIONGROUP" />
+        <EntityTypeShape EntityType="Model.MstPlantEmpJobsDataAcv" Width="1.5" PointX="6" PointY="65.875" />
+        <EntityTypeShape EntityType="Model.MstPlantEmpJobsDataAll" Width="1.5" PointX="0.75" PointY="82.5" />
+        <EntityTypeShape EntityType="Model.PlanPlantAllocation" Width="1.5" PointX="12.5" PointY="108.875" />
+        <EntityTypeShape EntityType="Model.PlanPlantIndividualCapacityWorkHour" Width="1.5" PointX="19.25" PointY="76.125" />
+        <AssociationConnector Association="Model.FK_ExePlantProductionEntry_MstPlantEmpJobsDataAll" />
+        <AssociationConnector Association="Model.FK_ExePlantWorkerAbsenteeism_MstPlantEmpJobsDataAcv" />
+        <AssociationConnector Association="Model.FK_ExePlantWorkerAssignment_MstPlantEmpJobsDataAcv" />
+        <AssociationConnector Association="Model.FK_PLANPLANTINDIVIDUALCAPAC_RELATIONSHIP_51_MSTGENBRANDGROUP" />
+        <AssociationConnector Association="Model.FK_MSTPLANTEMPJOBSDATAACV_RELATIONSHIP_68_MSTPLANTEMPJOBSDATAALL" />
+        <AssociationConnector Association="Model.FK_MSTPLANTPRODUCTIONGROUP_RELATIONSHIP_97_MSTPLANTEMPJOBSDATAACV" />
+        <AssociationConnector Association="Model.FK_MSTPLANTPRODUCTIONGROUP_RELATIONSHIP_98_MSTPLANTEMPJOBSDATAACV" />
+        <AssociationConnector Association="Model.FK_MSTPLANTPRODUCTIONGROUP_RELATIONSHIP_99_MSTPLANTEMPJOBSDATAACV" />
+        <AssociationConnector Association="Model.FK_PLANPLAN_RELATIONS_MSTPLANT" />
+        <AssociationConnector Association="Model.FK_PLANPLANTALLOCATION_REFERENCE_141_MSTPLANTEMPJOBSDATAACV" />
+        <AssociationConnector Association="Model.FK_PLANPLANTINDIVIDUALCAPAC_RELATIONSHIP_112_MSTPLANTEMPJOBSDATAACV" />
+        <AssociationConnector Association="Model.FK_PLANPLANTWORKERBALANCING_RELATIONSHIP_85_MSTPLANTEMPJOBSDATAALL" />
+        <AssociationConnector Association="Model.FK_PRODUCTIONCARD_RELATIONSHIP_122_MSTPLANTEMPJOBSDATAALL" />
+        <AssociationConnector Association="Model.FK_PLANPLANTINDIVIDUALCAPAC_RELATIONSHIP_53_MSTPLANTPRODUCTIONGROUP" />
+        <AssociationConnector Association="Model.FK_PLANPLANTALLOCATION_REFERENCE_140_PLANPLANTTARGETPRODUCTIONKELOMPO" />
+        <EntityTypeShape EntityType="Model.UtilUserResponsibilitiesRoleView" Width="1.5" PointX="25.375" PointY="26.75" />
+        <EntityTypeShape EntityType="Model.ExeReportByGroup" Width="1.5" PointX="19" PointY="105.5" />
+        <AssociationConnector Association="Model.FK_ExeReportByGroups_MstGenBrand" />
+        <AssociationConnector Association="Model.FK_ExeReportByGroups_MstGenProcess" />
+        <AssociationConnector Association="Model.FK_ExeReportByGroups_MstPlantUnit" />
+        <EntityTypeShape EntityType="Model.TPOFeeApprovalView" Width="1.5" PointX="35.375" PointY="0.75" />
+        <EntityTypeShape EntityType="Model.PlanPlantWIPDetail" Width="1.5" PointX="13.375" PointY="9.75" />
+        <EntityTypeShape EntityType="Model.TPOFeeReportsProductionDailyView" Width="1.5" PointX="25.375" PointY="19.75" />
+        <EntityTypeShape EntityType="Model.QueueCopyDeltaView" Width="1.5" PointX="16.375" PointY="8.75" />
+        <EntityTypeShape EntityType="Model.TemporaryTableViewInventory" Width="1.5" PointX="27.75" PointY="19.75" />
+        <EntityTypeShape EntityType="Model.ViewInventory" Width="1.5" PointX="0.75" PointY="35.75" />
+        <EntityTypeShape EntityType="Model.TPOGenerateP1TemplateView" Width="1.5" PointX="35.375" PointY="12.75" />
+        <EntityTypeShape EntityType="Model.MntcFulfillmentView" Width="1.5" PointX="27.375" PointY="26.75" />
+        <EntityTypeShape EntityType="Model.TPOFeeReportsProductionWeeklyView" Width="1.5" PointX="35.375" PointY="26.75" />
+        <EntityTypeShape EntityType="Model.WagesProductionCardApprovalDetailViewGroup" Width="1.5" PointX="35.375" PointY="33.75" />
+        </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

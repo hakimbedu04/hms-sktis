@@ -1,0 +1,127 @@
+﻿@model IEnumerable<HMS.SKTIS.BusinessObjects.DTOs.Execution.ExePlantWorkerBalancingProcessPerUnitDTO>
+<div>
+    <div class="table-overflow">
+        <table class="table table-striped">
+            @if (Model.Any())
+            {
+                <thead>
+                    <tr class="head">
+                        <th>Process</th>
+                            @foreach (var item in Model)
+                            {
+                                <th>@item.Process</th>
+                            }
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="head">Attend</td>
+                        @foreach (var item in Model)
+                        {
+                            <td align="center">@item.Attend.ToString("N0")</td>
+                        }
+                    </tr>
+                    <tr>
+                        <td class="head">Recommendation</td>
+                        @foreach (var item in Model)
+                        {
+                            <td align="center">@item.Recommendation.ToString("N0")</td>
+                        }
+                    </tr>
+                    <tr>
+                        <td class="head">After Balancing</td>
+                        @foreach (var item in Model)
+                        {
+                            <td align="center">@item.AfterBalancing.ToString("N0")</td>
+                        }
+                    </tr>
+                </tbody>
+            }
+            else
+            {
+                <thead>
+                    <tr class="head">
+                        <th>Process</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="head">Attend</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="head">Recommendation</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="head">After Balancing</td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            }
+        </table>
+    </div>
+</div>
+<div class="worker-balancing-status">
+    <div class="table-overflow">
+        <table class="table table-bordered">
+            <thead>
+            </thead>
+            <tbody>
+                <tr>
+                    @foreach (var item in Model)
+                    {
+                        <td style="vertical-align: top">
+                            <table class="table table-bordered mini">
+                                <thead>
+                                    <tr class="head">
+                                        <th colspan="3">@item.Process</th>
+                                    </tr>
+                                    <tr class="head">
+                                        <th>Group</th>
+                                        <th>Attend</th>
+                                        <th>After Balancing</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (item.ListBalancingProcessPerGroup.Any())
+                                    {
+                                        foreach (var processPerGroup in item.ListBalancingProcessPerGroup)
+                                        {
+                                            if (processPerGroup.IsBalance)
+                                            {
+                                                <tr>
+                                                    <td>@processPerGroup.GroupCode</td>
+                                                    <td>@processPerGroup.Attend.ToString("N0")</td>
+                                                    <td>@processPerGroup.AfterBalancingPerGroup.ToString("N0")</td>
+                                                </tr>
+                                            }
+                                            else
+                                            {
+                                                <tr>
+                                                    <td>@processPerGroup.GroupCode</td>
+                                                    <td>@processPerGroup.Attend.ToString("N0")</td>
+                                                    <td>@processPerGroup.AfterBalancingPerGroup.ToString("N0")</td>
+                                                </tr>
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            <td>-</td>
+                                            <td>-</td>
+                                            <td>-</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </td>
+                    }
+                    
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

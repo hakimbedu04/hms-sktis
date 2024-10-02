@@ -1,0 +1,1095 @@
+﻿@using HMS.SKTIS.Application.Resources
+@using HMS.SKTIS.Application.Resources.Views.WagesProductionCardApprovalDetail
+@model SKTISWebsite.Models.WagesProductionCardApprovalDetail.InitWagesProductionCardApprovalDetailViewModel
+@using SKTISWebsite.Helper
+@{ Html.SetPageTitle(@WagesProductionCardApprovalDetail.PageTitle); }
+@using HMS.SKTIS.Core
+@using System.Globalization
+
+<div class="col-lg-12">
+    <div class="col-lg-6">
+        <div class="row">
+            <label class="form-label col-lg-4">
+                @WagesProductionCardApprovalDetail.lblLocation
+            </label>
+            <div class="col-lg-2 offset-right">
+                <input id="filterLocation" type="text" class="form-control" readonly="readonly" data-bind="value: $root.filterLocationCode" />
+            </div>
+            <div class="col-lg-4">
+                <input type="text" class="form-control" readonly="readonly" data-bind="value: $root.filterLocationName">
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-4">
+                @WagesProductionCardApprovalDetail.lblUnit
+            </label>
+            <div class="col-lg-6">
+                <input id="filterUnit" type="text" class="form-control" readonly="readonly" data-bind="value: $root.filterUnitCode" />
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-4">
+                @WagesProductionCardApprovalDetail.lblShift
+            </label>
+            <div class="col-lg-6">
+                <input id="filterShift" type="text" class="form-control" readonly="readonly" data-bind="value: $root.filterShift" />
+            </div>
+        </div>
+        <div class="row">
+            <label class="form-label col-lg-4">
+                Brand
+            </label>
+            <div class="col-lg-6">
+                <select class="selectpicker show-tick form-control" id="ddlBrandFilter"
+                        data-live-search="true"
+                        data-bind="selectPicker: $root.filterBrand, optionsText: 'Text', optionsValue : 'Value', selectPickerOptions: { optionsArray: $root.brandSelectList }, event: {change: $root.onBrandGroupSelected}"></select>
+            </div>
+        </div>
+        @*<div class="row">
+            <label class="form-label col-lg-4">
+                Brand
+            </label>
+            <div class="col-lg-6">
+                <input id="filterBrand" type="text" class="form-control" readonly="readonly" data-bind="value: $root.filterBrand" />
+            </div>
+        </div>*@
+    </div>
+    <div class="col-lg-6">
+        @*<div class="row">
+                <label class="form-label col-lg-3">
+                    @WagesProductionCardApprovalDetail.lblKPSYear
+                </label>
+                <div class="col-lg-6">
+                    <input type="text" class="form-control" readonly="readonly" />
+                </div>
+            </div>
+            <div class="row">
+                <label class="form-label col-lg-3">
+                    @WagesProductionCardApprovalDetail.lblKPSWeek
+                </label>
+                <div class="col-lg-6">
+                    <input type="text" class="form-control" readonly="readonly" />
+                </div>
+            </div>*@
+        <div class="row">
+            <label class="form-label col-lg-3">
+                @WagesProductionCardApprovalDetail.lblDate
+            </label>
+            <div class="col-lg-6">
+                <select class="selectpicker show-tick form-control" id="filterDate"
+                        data-live-search="true"
+                        data-bind="selectPicker: $root.filterDate, optionsText: 'Text', optionsValue : 'Value', selectPickerOptions: { optionsArray: $root.filterDateSelectList }, event: {change: $root.onDateSelected}"></select>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="action-btn">
+                @*@Html.ActionLink(
+                       "Back to List",
+                       "Index",
+                       "WagesProductionCardApproval",
+                       new{
+
+                       },
+                       new {
+                           @class = "btn btn-primary"
+                       }
+                    )*@
+                
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.BackToList.ToString()))
+                {
+                    <button type="button" class="btn btn-primary" data-bind="click: $root.BackToList, enable: !$root.isBusy()">Back To List</button>
+                }
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.View.ToString()))
+                {
+                    <button type="button" class="btn btn-primary" data-bind="click: $root.search, enable: !$root.isBusy()">View</button>
+                }
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.Approve.ToString()))
+                {
+                    @*<button type="button" class="btn btn-primary" data-bind="click: $root.onClickActions.bind($root,'Approve'), enable: $root.beforeApprove() && $root.disableBtnApprove() && !$root.isBusy() && $root.RoleApprove()">Approve</button>*@
+                    <button type="button" class="btn btn-primary" data-bind="click: $root.onClickActions.bind($root,'Approve'), enable: $root.beforeApprove() && !$root.isBusy() && $root.RoleApprove()">Approve</button>
+                }
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.Return.ToString()))
+                {
+                    @*<button type="button" class="btn btn-primary" data-bind="click: $root.onClickActions.bind($root, 'Return'), enable: $root.beforeReturn() && $root.disableBtnReturn() && !$root.isBusy() && $root.RoleReturn()">Return</button>*@
+                    <button type="button" class="btn btn-primary" data-bind="click: $root.onClickActions.bind($root, 'Return'), enable: $root.beforeReturn() && !$root.isBusy() && $root.RoleReturn()">Return</button>
+                }
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.Complete.ToString()))
+                {
+                    @*<button type="button" class="btn btn-primary" data-bind="click: $root.onClickActions.bind($root,'Complete'), enable: $root.beforeComplete() && $root.disableBtnComplete() && !$root.isBusy() && $root.RoleCompleteBtn()">Complete</button>*@
+                    <button type="button" class="btn btn-primary" data-bind="click: $root.onClickActions.bind($root,'Complete'), enable: $root.beforeComplete() && !$root.isBusy() && $root.RoleCompleteBtn()">Complete</button>
+                }
+                @if (ViewBag.ButtonAccess.Contains(HMS.SKTIS.Core.Enums.ButtonName.Excel.ToString()))
+                {
+                    using (Html.BeginForm("GenerateExcel", "WagesProductionCardApprovalDetail", FormMethod.Post, new { @data_bind = "submit: $root.generateExcel" }))
+                    {
+                        <input type="hidden" name="LocationCode">
+                        <input type="hidden" name="Unit">
+                        <input type="hidden" name="Shift">
+                        <input type="hidden" name="Brand">
+                        <input type="hidden" name="BrandGroupCode" />
+                        <input type="hidden" name="Date">
+                        <input type="hidden" name="RevisionType">
+                <button type="submit" class="btn btn-primary" data-bind="enable: !$root.isBusy()">Excel</button>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+
+    <div id="brandTabList">
+        @* Load content from Ajax *@
+    </div>
+
+    @*<div class="tabs" role="tabpanel">
+        <!-- Nav tabs -->
+        <div id="carousel-tab" class="carousel tabcarousel" data-ride="carousel" role="tablist">
+
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs carousel-inner tab-long" role="tablist" id="ProductionCardTab">
+                @{int brandNo = 1;}
+                @foreach (var BrandCode in @Model.BrandCodeList)
+                {
+                    //if (dateNo == 5) { continue; }
+                    var elementId = brandNo;
+                    var BrandCodeString = @BrandCode;
+                    <li class="item"><a href="#@elementId" role="tab" data-toggle="tab">@BrandCodeString</a></li>
+                    brandNo++;
+                }
+            </ul>
+            <!-- Controls -->
+            <div class="tab-control">
+                <a class="left carousel-control" href="#carousel-tab" role="button" data-slide="prev">
+                    <i class="fa fa-chevron-left" aria-hidden="true"></i>
+                </a>
+                <a class="right carousel-control" href="#carousel-tab" role="button" data-slide="next">
+                    <i class="fa fa-chevron-right" aria-hidden="true"></i>
+                </a>
+            </div>
+
+        </div>
+        <div class="tab-content">
+            @{brandNo = 1;}
+            @foreach (var ProductionDate in @Model.BrandCodeList)
+            {
+                string elementId = brandNo.ToString();
+                <div role="tabpanel" class="tab-pane fade in @(brandNo == 1 ? "active" : "")" id="@elementId">
+                    @* Load content from Ajax *@
+    @*</div>
+                    brandNo++;
+                }
+            </div>
+
+        </div>*@
+    <div class="row">
+        <div class="col-lg-12">
+            <p class="bg-primary withmargin">Current Approval: </p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            @Html.Partial("TransactionHistory")
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="groupModal" tabindex="-1" role="dialog" aria-labelledby="groupModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Group</h4>
+            </div>
+            <div class="modal-body group-code-list">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts
+{
+    <script src="~/Scripts/app/globalfunctions.js" type="text/javascript"></script>
+    <script src="~/Scripts/common/app.GridViewModel.js" type="text/javascript"></script>
+    <script src="~/Scripts/common/app.Extenders.js" type="text/javascript"></script>
+    <script type="text/javascript">
+
+    function gup(name) {
+        name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+        var regexS = "[\\?&]" + name + "=([^&]*)";
+        var regex = new RegExp(regexS);
+        var results = regex.exec(window.location.href);
+        if (results == null)
+            return "";
+        else {
+            for (i = 0; i < results[1].length; i++) {
+                results[1] = results[1].replace("%20", " ");
+                results[1] = results[1].replace("%27", "'");
+                results[1] = results[1].replace("%3f", "?");
+                results[1] = results[1].replace("%3", "=");
+            }
+            return results[1];
+        }
+    }
+
+    var ViewModel = function() {
+        var self = this;
+
+        //self.filterDate = ko.observable(moment(gup("P5"), "DD/MM/YYYY").format("DD/MM/YYYY"));
+        self.filterDate = ko.observable();
+        self.initDate = false;
+        self.filterBrand = ko.observable(gup('P8'));
+        self.brandGroup = ko.observable('');
+        self.globalProductionDate = ko.observable('');
+        self.globalBrandCode = ko.observable('');
+
+        self.filterLocationCode = ko.observable('@Model.LocationCode');
+        self.filterLocationName = ko.observable('@Model.LocationName');
+        self.filterUnitCode = ko.observable('@Model.UnitCode');
+        self.filterShift = ko.observable('@Model.Shift');
+        self.filterRevisionType = ko.observable('@Model.RevisionType');
+
+        self.countGroup = ko.observable(0);
+        self.totalWorker = ko.observable(0);
+        self.totalProduksi = ko.observable(0);
+        self.totalUpahLain = ko.observable(0);
+        self.totalA = ko.observable(0);
+        self.totalC = ko.observable(0);
+        self.totalCH = ko.observable(0);
+        self.totalCT = ko.observable(0);
+        self.totalI = ko.observable(0);
+        self.totalLL = ko.observable(0);
+        self.totalLO = ko.observable(0);
+        self.totalLP = ko.observable(0);
+        self.totalMO = ko.observable(0);
+        self.totalPG = ko.observable(0);
+        self.totalSS = ko.observable(0);
+        self.totalSB = ko.observable(0);
+        self.totalSKR = ko.observable(0);
+        self.totalSL4 = ko.observable(0);
+        self.totalSLP = ko.observable(0);
+        self.totalSLS = ko.observable(0);
+        self.totalT = ko.observable(0);
+        self.totalTL = ko.observable(0);
+
+        self.disableBtnApprove = ko.observable(false); //getStatusApproval();
+        self.disableBtnComplete = ko.observable(false); //getStatusComplete();
+        self.disableBtnReturn = ko.observable(false);
+        self.beforeApprove = ko.observable(true);
+        self.beforeReturn = ko.observable(true);
+        self.beforeComplete = ko.observable(true);
+        self.isLoading = ko.observable(true);
+        self.RoleApprove = ko.observable(false);
+        self.RoleReturn = ko.observable(false);
+        self.RoleCompleteBtn = ko.observable(false);
+        self.isBusy = ko.observable(true);
+        self.isFirstLoad = ko.observable(false);
+        self.brandCode = ko.observable("");
+        //================ Busy button state =====================//
+        $(document).ajaxComplete(function() {
+            if ($.active <= 1) {
+                self.isBusy(false);
+            }
+        });
+
+        $(document).ajaxStart(function() {
+            if (!self.isBusy()) self.isBusy(true);
+        });
+        //================ Busy button state =====================//
+
+        // TRANSACTION HISTORY AND FLOW
+        self.historyGridView = new app.GridViewModel({
+            Criteria: {
+                PageSize: 10,
+                PageIndex: 1,
+                SortExpression: "UpdatedDate",
+                SortOrder: "DESC",
+                code_1: 'WPC',
+                code_2: self.filterLocationCode,
+                code_3: self.filterShift,
+                code_4: self.filterUnitCode,
+                code_5: self.filterGroup,
+                code_6: self.filterBrand,
+                code_7: self.filterYear,
+                code_8: self.filterWeek,
+                code_9: self.filterDate
+            },
+            DataSourceUrl: @Html.BaseUrl("WagesProductionCardApprovalDetail/GetHistory"),
+            InlineEdit: true,
+            InsertRowFocusedControlIndex: 1
+        });
+        self.flowGridView = new app.GridViewModel({
+            Criteria: {
+                PageSize: 10,
+                PageIndex: 1,
+                SortExpression: "",
+                SortOrder: "",
+                FunctionName: 'ProductionCardApprovalDetail'
+            },
+            DataSourceUrl: @Html.BaseUrl("WagesProductionCardApprovalDetail/GetFlow"),
+            InlineEdit: true,
+            InsertRowFocusedControlIndex: 1
+        });
+
+        self.loadHistory = function(cb){
+            self.historyGridView.search({}, function (response) {
+                if (response.status == 'KO') {
+                    SKTIS.Helper.Notification(response.message,'error');
+                    $('.empty-row-message').html(response.message);
+                }else if (response.status == 'Empty') {
+
+                    self.RemoveNotification();
+
+                    //SKTIS.Helper.Notification(response.message,'warning');
+                    $('.empty-row-message').html('@CommonLabel.lblDataEmpty');
+                }
+
+                if (typeof cb != 'undefined') cb();
+            });
+        };
+        self.loadFlow = function(cb){
+            self.flowGridView.search({}, function (response) {
+                if (response.status == 'KO') {
+                    SKTIS.Helper.Notification(response.message,'error');
+                    $('.empty-row-message').html(response.message);
+                }else if (response.status == 'Empty') {
+
+                    self.RemoveNotification();
+
+                    //SKTIS.Helper.Notification(response.message,'warning');
+                    $('.empty-row-message').html('@CommonLabel.lblDataEmpty');
+                }
+
+                if (typeof cb != 'undefined') cb();
+            });
+        };
+        // END OF TRANSACTION HISTORY AND FLOW
+
+        self.BackToList = function() {
+            var P5 = gup('P9');
+            window.document.location = @Html.BaseUrl("WagesProductionCardApproval") + "/index/?Param3=" + gup('P3') + "&Param4=" + gup('P4') + "&Param5=" + P5 + "&Param6=" + gup('P6')+ "&Param7=" + gup('P7');
+        };
+
+        self.RemoveNotification = function() {
+            if ($('#noty_top_layout_container').length > 0) {
+                $('#noty_top_layout_container').remove();
+            }
+        };
+
+
+        self.filterDateSelectList = ko.observableArray([]);
+        self.getFilterDateSelectList = function(cb) {
+            if (!self.initDate) {
+                $.ajax({
+                    url: @Html.BaseUrl("WagesProductionCardApprovalDetail/GetDateNearestClosingPayrollList"),
+                    type: 'GET',
+                    contentType: 'application/json',
+                    data:
+                    {
+                        locationCode: self.filterLocationCode(),
+                        unitCode: self.filterUnitCode(),
+                        revisionType: self.filterRevisionType(),
+                        URLdate: moment(gup("P5"), "DD/MM/YYYY").format("YYYY-MM-DD")
+                    },
+                    dataType: 'json',
+                    success: function(data) {
+                        self.filterDateSelectList([]);
+                        $('#filterDate').find('option').remove();
+                        $('#filterDate').selectpicker('refresh');
+                        var model = [];
+                        $.each(data, function(index, value) {
+                            if (value.Value == null) {
+                                SKTIS.Helper.Notification(value.Text, 'error');
+                                $('.empty-row-message').html(value.Text);
+                            } else {
+                                model.push({ "Text": value.Text, "Value": value.Text });
+                            }
+                        });
+
+                        self.filterDateSelectList(model);
+                        self.filterDate(moment(gup("P5"), "DD/MM/YYYY").format("DD/MM/YYYY"));
+
+                        if (!self.isLoading() && !self.isFirstLoad()) {
+
+                            self.getBrandSelectList();
+                        }
+
+
+                        //setTimeout(function() {
+                        //    self.filterDate(moment(gup("P5"), "DD/MM/YYYY").format("DD/MM/YYYY"));
+
+                        //    if (!self.isLoading() && !self.isFirstLoad()) {
+                        //        self.getBrandSelectList();
+                        //    }
+
+                        //}, 1000);
+
+                    },
+                    complete: function() {
+                        if (typeof cb == 'function') cb();
+                    }
+                });
+            } else {
+                self.initDate = true;
+            }
+        };
+
+        self.onDateSelected = function() {
+            if (self.isLoading() && !self.isFirstLoad()) return;
+            self.isLoading(true);
+            async.series([
+                    function(cb) {
+                        self.getBrandSelectList(cb);
+                    }
+            ], function() {
+                self.isLoading(false);
+                self.isFirstLoad(false);
+            });
+        };
+
+        self.Checker = function() {
+            //console.log(self.isLoading() +' / '+!self.isFirstLoad());
+            if (self.isLoading() && !self.isFirstLoad()) return;
+            self.isLoading(true);
+            async.series([
+                    //function(cb) {
+                    //    self.getStatusApproval(cb);
+                    //},
+                    //function(cb) {
+                    //    self.getStatusComplete(cb);
+                    //},
+                    //function(cb) {
+                    //    self.getStatusReturn(cb);
+                    //},
+                    //function(cb) {
+                    //    self.getRoleButton(cb);
+                    //}
+            ], function() {
+                self.isLoading(false);
+            });
+        };
+
+        self.onBrandGroupSelected = function() {
+            if (self.isLoading() && !self.isFirstLoad()) return;
+            self.isLoading(true);
+            async.series([
+                    //function(cb) {
+                    //    self.getStatusApproval(cb);
+                    //},
+                    //function(cb) {
+                    //    self.getStatusComplete(cb);
+                    //},
+                    //function(cb) {
+                    //    self.getStatusReturn(cb);
+                    //},
+
+                    function(cb) {
+                        self.getBrandTab(cb);
+                    },
+                    function(cb) {
+                        self.getRoleButton(cb);
+                    }
+                    //function(cb) {
+                    //    self.search();
+                    //}
+            ], function() {
+                self.search();
+                self.isLoading(false);
+                //self.loadHistory();
+                //self.loadFlow();
+            });
+        };
+
+        self.init = function() {
+            self.isLoading(true);
+            //self.filterDate(moment(gup("P5"), "DD/MM/YYYY").format("DD/MM/YYYY"));
+            async.series([
+                    function(cb) {
+                        self.getFilterDateSelectList(cb);
+                    },
+                    function(cb) {
+                        self.getBrandSelectList(cb);
+                    },
+                    function(cb) {
+                        self.getBrandTab(cb);
+                    },
+                    function(cb) {
+                        self.getTotalProcess(cb);
+                    },
+                    //function(cb) {
+                    //    self.getStatusApproval(cb);
+                    //},
+                    //function(cb) {
+                    //    self.getStatusComplete(cb);
+                    //},
+                    //function(cb) {
+                    //    self.getStatusReturn(cb);
+                    //},
+                    function(cb) {
+                        self.RoleButton(cb);
+                    }
+            ], function() {
+                self.search();
+                self.isLoading(false);
+
+                self.isFirstLoad(false);
+                //console.log(self.isFirstLoad()+' <== here');
+            });
+
+        };
+
+        self.getTotalProcess = function(cb) {
+            $.ajax({
+                url: @Html.BaseUrl("WagesProductionCardApprovalDetail/GetTotalDetailProcess"),
+                type: 'GET',
+                contentType: 'application/json',
+                data: {
+                    LocationCode: self.filterLocationCode,
+                    UnitCode: self.filterUnitCode,
+                    ProductionDate: self.filterDate,
+                    BrandCode: self.brandCode(),
+                    BrandGroupCode: self.filterBrand(),
+                    RevisionType: self.filterRevisionType()
+                },
+                dataType: 'json',
+                success: function(data) {
+                    self.countGroup(data.TotalGroupBrand);
+                    self.totalWorker(data.TotalWorkerBrand);
+                    self.totalProduksi(data.TotalProduksiBrand);
+                    self.totalUpahLain(data.TotalUpahLainBrand);
+                    self.totalA(data.TotalA);
+                    self.totalC(data.TotalC);
+                    self.totalCH(data.TotalCH);
+                    self.totalCT(data.TotalCT);
+                    self.totalI(data.TotalI);
+                    self.totalLL(data.TotalLL);
+                    self.totalLO(data.TotalLO);
+                    self.totalLP(data.TotalLP);
+                    self.totalMO(data.TotalMO);
+                    self.totalPG(data.TotalPG);
+                    self.totalSS(data.TotalSS);
+                    self.totalSB(data.TotalSB);
+                    self.totalSKR(data.TotalSKR);
+                    self.totalSL4(data.TotalSL4);
+                    self.totalSLP(data.TotalSLP);
+                    self.totalSLS(data.TotalSLS);
+                    self.totalT(data.TotalT);
+                    self.totalTL(data.TotalTL);
+                },
+                complete: function() {
+                    if (typeof cb == 'function') cb();
+                }
+            });
+        };
+
+        //======================= btn checker ==================================//
+        self.RoleButton = function(cb) {
+            if(gup('P7') == '@Model.IDRole'){
+                if(gup('P6').toUpperCase() == 'SUBMITTED' || gup('P6').toUpperCase() == 'APPROVED'){
+                    self.RoleApprove(true);
+                    self.RoleReturn(true);
+                    self.RoleCompleteBtn(true);
+                }else if(gup('P6').toUpperCase() == 'DRAFT'){
+                    self.RoleApprove(false);
+                    self.RoleReturn(false);
+                    self.RoleCompleteBtn(false);
+                }
+                //else if(gup('P6').toUpperCase() == 'APPROVED' && gup('P7') == ){
+                //    self.RoleApprove(false);
+                //    self.RoleReturn(true);
+                //    self.RoleCompleteBtn(true);
+                //}
+            }
+            if (typeof cb == 'function') cb();
+        };
+
+        //function getRoleButton is unuseable
+        // function is active by this ticket http://tp.voxteneo.co.id/entity/12614
+        self.getRoleButton = function(cb){
+            //console.log(self.brandCode()+' / '+self.filterBrand());
+            $.ajax({
+                url: @Html.BaseUrl("WagesProductionCardApprovalDetail/GetRoleButton"),
+                type: 'GET',
+                contentType: 'application/json',
+                data: {
+                    locationCode: self.filterLocationCode,
+                    unitCode: self.filterUnitCode,
+                    productionDate: self.filterDate,
+                    brandCode: self.brandCode(),
+                    BrandGroupCode: self.filterBrand,
+                    Shift: self.filterShift(),
+                    RoleId: gup('P7'),
+                    revisionType: self.filterRevisionType(),
+                    currentDate: gup('P9')
+                },
+                dataType: 'json',
+                success: function(data) {
+                    self.RoleApprove(data.Approve);
+                    self.RoleReturn(data.Return);
+                    self.RoleCompleteBtn(data.Complete);
+                    //console.log(self.beforeApprove() +' | '+ self.disableBtnApprove() +' | '+ self.RoleApprove());
+                },
+                complete: function() {
+                    if (typeof cb == 'function') cb();
+                }
+            });
+        }
+
+        //======================= btn checker ==================================//
+
+
+        self.getStatusApproval = function(cb) {
+            $.ajax({
+                //async: false,
+                url: @Html.BaseUrl("WagesProductionCardApprovalDetail/GetStatusApproval"),
+                type: 'GET',
+                contentType: 'application/json',
+                data:
+                {
+                    locationCode: self.filterLocationCode(),
+                    unitCode: self.filterUnitCode(),
+                    date: self.filterDate()
+                },
+                dataType: 'json',
+                success: function(data) {
+                    if (data) {
+                        self.disableBtnApprove(true);
+                    } else
+                        self.disableBtnApprove(false);
+                },
+                complete: function() {
+                    if (typeof cb == 'function') cb();
+                }
+            });
+        };
+
+        self.getStatusComplete = function(cb) {
+            $.ajax({
+                //async: false,
+                url: @Html.BaseUrl("WagesProductionCardApprovalDetail/GetStatusComplete"),
+                type: 'GET',
+                contentType: 'application/json',
+                data:
+                {
+                    locationCode: self.filterLocationCode(),
+                    unitCode: self.filterUnitCode(),
+                    date: self.filterDate()
+                },
+                dataType: 'json',
+                success: function(data) {
+                    if (data)
+                        self.disableBtnComplete(true);
+                    else
+                        self.disableBtnComplete(false);
+                },
+                complete: function() {
+                    if (typeof cb == 'function') cb();
+                }
+            });
+        };
+
+        self.getStatusReturn = function(cb) {
+            $.ajax({
+                //async: false,
+                url: @Html.BaseUrl("WagesProductionCardApprovalDetail/GetStatusReturn"),
+                type: 'GET',
+                contentType: 'application/json',
+                data:
+                {
+                    locationCode: self.filterLocationCode(),
+                    unitCode: self.filterUnitCode(),
+                    date: self.filterDate()
+                },
+                dataType: 'json',
+                success: function(data) {
+                    if (data)
+                        self.disableBtnReturn(true);
+                    else
+                        self.disableBtnReturn(false);
+                },
+                complete: function() {
+                    if (typeof cb == 'function') cb();
+                }
+            });
+
+        };
+
+        self.brandSelectList = ko.observableArray([]);
+        self.getBrandSelectList = function(cb) {
+            $.ajax({
+                url: @Html.BaseUrl("WagesProductionCardApprovalDetail/GetBrandCodeByLocationCode"),
+                type: 'GET',
+                contentType: 'application/json',
+                data: { locationCode: self.filterLocationCode(), unit: self.filterUnitCode(), shift: self.filterShift(), date: self.filterDate(), revisiontype: self.filterRevisionType() },
+                dataType: 'json',
+                success: function(data) {
+                    $('#ddlBrandFilter').find('option').remove();
+                    $('#ddlBrandFilter').selectpicker('refresh');
+                    var brandModel = [];
+                    $.each(data, function(index, value) {
+                        brandModel.push({ "Text": value.Text, "Value": value.Text });
+                    });
+                    self.brandSelectList(brandModel);
+                    self.filterBrand(gup('P8'));
+                    if (!self.isLoading() && !self.isFirstLoad()) {
+                        self.filterBrand(self.brandSelectList()[0]);
+                        //self.filterBrand(gup('P8'));
+                    }
+                },
+                complete: function() {
+                    if (typeof cb != 'undefined') cb();
+                }
+            });
+
+        };
+
+        $(document).ready(function() {
+            //self.getFilterDateSelectList();
+            self.init();
+
+            $($('#ProductionCardTab a[data-toggle="tab"]').get(0)).tab('show');
+
+            /* carousel tab */
+            $('#carousel-tab').each(function() {
+                $(this).carousel({
+                    interval: false
+                });
+            });
+
+            var navigation = true;
+            var tabWidth = 0;
+            $('#carousel-tab li.item').each(function() {
+                tabWidth += $(this).outerWidth();
+            });
+            if ($('#carousel-tab').outerWidth() > tabWidth)
+                navigation = false;
+
+            $("#carousel-tab .left.carousel-control").hide();
+
+            if (!navigation)
+                $("#carousel-tab .right.carousel-control").hide();
+
+            $('#carousel-tab a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
+                e.target // newly activated tab
+                e.relatedTarget // previous active tab
+                if (navigation) {
+                    $(".left.carousel-control").show();
+                    $(".right.carousel-control").show();
+
+                    if ($('#carousel-tab li.item.active').is(':first-child')) {
+                        $(".left.carousel-control").hide();
+                        $('#carousel-tab .tab-long').css('left', '0');
+                    } else if ($('#carousel-tab li.item.active').is(':last-child')) {
+                        $(".right.carousel-control").hide();
+
+                    }
+
+                    var decrease = 0;
+                    $('#carousel-tab li.item').each(function() {
+                        if ($(this).hasClass('active')) {
+                            $('#carousel-tab .tab-long').css('left', -decrease)
+                        } else {
+                            decrease += $(this).outerWidth();
+                        }
+                    });
+                }
+            });
+
+            $('#carousel-tab').on('slid.bs.carousel', function() {
+                var data = $(this).find('.item.active a').attr('href');
+                $(this).parent().find('.tab-pane.over').each(function() {
+                    $(this).removeClass('in');
+                    $(this).removeClass('active');
+                });
+                //$(data).addClass('active in');
+
+                if (navigation) {
+                    $(".left.carousel-control").show();
+                    $(".right.carousel-control").show();
+                }
+
+                if ($(this).find('li.item.active').is(':first-child')) {
+                    $(".left.carousel-control").hide();
+                    $('#carousel-tab .tab-long').css('left', '0');
+                } else if ($(this).find('li.item.active').is(':last-child')) {
+                    $(".right.carousel-control").hide();
+                }
+
+            });
+
+            $('#carousel-tab .carousel-control.left').click(function() {
+                var target = $(this).parent().parent().find('li.item.active a');
+                var datali = target.outerWidth();
+                var left = $(this).parent().parent().find('.tab-long').css('left');
+                $(this).parent().parent().find('.tab-long').css('left', parseInt(left) + datali);
+
+            });
+
+            $('#carousel-tab .carousel-control.right').click(function() {
+                var target = $(this).parent().parent().find('li.item.active a');
+                var datali = target.outerWidth();
+                var left = $(this).parent().parent().find('.tab-long').css('left');
+                $(this).parent().parent().find('.tab-long').css('left', parseInt(left) - datali);
+
+            });
+
+        });
+
+        self.getBrandTab = function(cb) {
+            //console.log(self.filterBrand());
+            $('#brandTabList').load(@Html.BaseUrl("WagesProductionCardApprovalDetail/GetBrandListPartial") + "?LocationCode=" + self.filterLocationCode() + "&UnitCode=" + self.filterUnitCode() + "&BrandGroup=" + self.filterBrand() + "&ProductionDate=" + self.filterDate(), function(response, status, xhr) {
+                $('#BrandCodeTab a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
+                    self.brandCode($(e.target).html());
+                    self.globalBrandCode(self.brandCode());
+                    //console.log('1 = '+self.brandCode(),self.globalBrandCode())
+                    var nextTarget = $(e.target).attr('href');
+                    var prevTarget = $(e.relatedTarget).attr('href');
+                    $(prevTarget).html(""); // clear the previous tab content
+
+                    // Production Card Mapping
+
+                    function ProdCardMapping(data) {
+                        selfModel = this;
+                        ko.mapping.fromJS(data, {}, selfModel);
+                    }
+
+                    // Production Card List Mapping
+
+                    function ProdCardItemMapping(data) {
+                        ko.mapping.fromJS(data, {}, this);
+                        this._selected = ko.observable(false);
+                        this.Selected = ko.pureComputed({
+                            read: function() {
+                                return this._selected();
+                            },
+                            write: function(value) {
+                                this._selected(value);
+                            }
+                        }, this);
+                    }
+
+                    // Custom Mapping
+                    self.gridView.mapping = {
+                        create: function(options) {
+                            var parent = new ProdCardMapping(options.data);
+
+                            parent.ProdCardApprovalList = ko.utils.arrayMap(parent.ProdCardApprovalList() || [], function(item) {
+                                return new ProdCardItemMapping(item);
+                            });
+
+                            return parent;
+                        }
+                    };
+
+
+                    //if (!self.isLoading() && !self.isFirstLoad()) {
+                    // Load Partial GridView
+                    $(nextTarget).load(@Html.BaseUrl("WagesProductionCardApprovalDetail/GetBrandListDetailPartial") + "?LocationCode=" + self.filterLocationCode() + "&UnitCode=" + self.filterUnitCode() + "&ProductionDate=" + self.filterDate(), function(response, status, xhr) {
+                        //console.log(self.isFirstLoad());
+                        //console.log('xxx');
+                        //if(!self.isFirstLoad()){
+                        //  //  console.log('yyyy');
+                        //    self.Checker();
+                        //}
+                        //if (self.isLoading() && !self.isFirstLoad()) {
+                        //    //console.log('zzzz');
+                        //    //self.search();
+                        //}
+                    });
+                });
+
+                $($('#BrandCodeTab a[data-toggle="tab"]').get(0)).tab('show');
+            });
+
+            if (typeof cb == 'function') cb();
+        };
+
+
+        // Load Data
+        self.search = function() {
+            $('.empty-row-message').html('<div class="loader"></div>'); // Reset New and Edit row
+
+            self.gridView.search({}, function(response) {
+                if (response.status == 'KO') {
+                    SKTIS.Helper.Notification(response.message, 'error');
+                    $('.empty-row-message').html(response.message);
+                } else if (response.status == 'Empty') {
+                    self.RemoveNotification();
+                    $('.empty-row-message').html('@CommonLabel.lblDataEmpty');
+                }
+            });
+
+            self.RemoveNotification = function() {
+                if ($('#noty_top_layout_container').length > 0) {
+                    $('#noty_top_layout_container').remove();
+                }
+            };
+
+            self.getTotalProcess();
+            //self.RoleButton();
+            self.getRoleButton();
+            self.loadHistory();
+            self.loadFlow();
+        };
+
+        // Gridview Initialization
+        self.gridView = new app.GridViewModel({
+            Criteria: {
+                PageSize: 10,
+                PageIndex: 1,
+                SortExpression: "UpdatedDate",
+                SortOrder: "DESC",
+                LocationCode: self.filterLocationCode,
+                UnitCode: self.filterUnitCode,
+                ProductionDate: self.filterDate,
+                BrandCode: self.brandCode,
+                BrandGroupCode: self.filterBrand,
+                RevisionType: self.filterRevisionType
+            },
+            //async: false,
+            DataSourceUrl: @Html.BaseUrl("WagesProductionCardApprovalDetail/GetProductionCardApprovalDetailList"),
+            InlineEdit: true,
+            InsertRowFocusedControlIndex: 1
+        });
+
+
+        self.generateExcel = function(formElement) {
+            $(formElement).find("input[name=LocationCode]").val($('#filterLocation').val());
+            $(formElement).find("input[name=Unit]").val($('#filterUnit').val());
+            $(formElement).find("input[name=Shift]").val($('#filterShift').val());
+            $(formElement).find("input[name=Brand]").val($('#ddlBrandFilter').val());
+            $(formElement).find("input[name=BrandGroupCode]").val(self.globalBrandCode());
+            $(formElement).find("input[name=Date]").val($('#filterDate').val());
+            $(formElement).find("input[name=RevisionType]").val(@Model.RevisionType);
+            return true;
+        };
+
+        self.onClickActions = function(Action) {
+            //self.disableBtnApprove(false);
+            //self.disableBtnReturn(false);
+            //self.disableBtnComplete(false);
+            if (Action == "Approve") {
+                if(gup('P7') == '@Model.IDRole'){
+                    self.beforeApprove(false);
+                    self.beforeReturn(false);
+                    self.beforeComplete(false);
+                    //gup('P6') = "APPROVE2";
+                    //gup('P7') = 6;
+                }
+            }
+            if (Action == "Return") {
+                self.beforeApprove(false);
+                self.beforeReturn(false);
+                self.beforeComplete(false);
+                //gup('P6') = "DRAFT";
+            }
+            if (Action == "Complete") {
+                self.beforeApprove(false);
+                self.beforeComplete(false);
+                self.beforeReturn(false);
+                //gup('P6') = "COMPLETED";
+            }
+            $.ajax({
+                url: @Html.BaseUrl("WagesProductionCardApprovalDetail/ProductionCardApprovalActions"),
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    "action": Action,
+                    "bulkData": ko.mapping.toJS(self.gridView.listDataItems()),
+                    "locationCode": self.filterLocationCode(),
+                    "unitCode": self.filterUnitCode(),
+                    "brandGroupCode": self.filterBrand(),
+                    "date": self.filterDate(),
+                    "revisiontype" : self.filterRevisionType()
+                }),
+                dataType: 'json',
+                success: function(data) {
+                    if ($('#noty_top_layout_container').children('li').length <= 1 && true)
+                        SKTIS.Helper.Notification(data);
+                    self.isLoading(true);
+                    async.series([
+                            //function(cb) {
+                            //    self.getStatusApproval(cb);
+                            //},
+                            //function(cb) {
+                            //    self.getStatusComplete(cb);
+                            //},
+                            //function(cb) {
+                            //    self.getStatusReturn(cb);
+                            //},
+                            //function(cb) {
+                            //    self.getRoleButton(cb);
+                            //},
+                            function() {
+                                self.gridView.reload();
+                            },function(){
+                                self.loadHistory();
+                            },function(){
+                                self.loadFlow();
+                            }
+                    ], function() {
+                        self.isLoading(false);
+                        if (typeof callback == 'function') callback();
+                    });
+                    //self.getStatusApproval();
+                    //self.getStatusComplete();
+                    //self.getStatusReturn();
+                    //self.gridView.reload();
+                }
+            });
+        };
+
+        $('#groupModal').on('show.bs.modal', function(event) {
+            var button = $(event.relatedTarget);
+            var groupCode = button.data('groupcode');
+
+            var modal = $(this);
+            var container = modal.find('.group-code-list');
+            $(container).html('');
+            $.ajax({
+                url: @Html.BaseUrl("WagesProductionCardApprovalDetail/GetEmployeeList"),
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ LocationCode: self.filterLocationCode(), Unit: self.filterUnitCode(), Date: self.filterDate(), Brand: self.globalBrandCode(), Group: groupCode }),
+                dataType: 'json',
+                success: function(data) {
+                    var content = '<div class="table-responsive"><table class="table table-condensed table-striped">';
+                    content += '<thead>';
+                    content += '<tr>';
+                    content += '<th>Employee ID</th>';
+                    content += '<th>Employee NO</th>';
+                    content += '<th>Produksi</th>';
+                    content += '<th>Upah Lain</th>';
+                    content += '<th>Absen</th>';
+                    content += '<th>Remark</th>';
+                    content += '</tr>';
+                    content += '</thead><tbody>';
+                    $.each(data, function(k, v) {
+                        content += '<tr>';
+                        content += '<td>' + v.EmployeeID + '</td>';
+                        content += '<td>' + v.EmployeeNumber + '</td>';
+                        content += '<td>' + v.Production + '</td>';
+                        content += '<td>' + ((v.UpahLain != null) ? v.UpahLain : '') + '</td>';
+                        content += '<td>' + ((v.Absent != null) ? v.Absent : '') + '</td>';
+                        content += '<td>' + ((v.Remark != null) ? v.Remark : '') + '</td>';
+                        content += '</tr>';
+                    });
+                    content += '</tbody></table></div>';
+                    $(container).html(content);
+                }
+            });
+
+        });
+
+    };
+    var prodCardBinding = new ViewModel();
+    ko.applyBindings(prodCardBinding);
+
+    </script>
+    }

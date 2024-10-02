@@ -1,0 +1,199 @@
+﻿@using SKTISWebsite.Code
+@using SKTISWebsite.Helper
+@* Profile Picture By HMS Team *@
+@*@{string account = Request.ServerVariables["LOGON_USER"];}
+@{var nameAd = @account.Substring(4, @account.Length - 4);}
+@{ var profile = "http://linkup.app.pmi/my/User%20Photos/Profile%20Pictures/pmi_" + nameAd + "_LThumb.jpg"; }*@
+<header>
+    <div class="navbar navbar-default navbar-static-top" role="navigation">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="@Url.Action("Index", "Home")">
+                        <div class="logo-mini">
+                            <img src="@Url.Content("~/content/assets/images/logo-skt.png")" alt="SKT">
+                        </div>
+                        <div class="logo-lg">
+                            <img src="@Url.Content("~/content/assets/images/logo-skt.png")" alt="SKT">
+                            <span>SKT-IS</span>
+                        </div>
+                    </a>
+                    <div id="toggle-hide">
+                        <i class="fa fa-bars"></i>
+                    </div>
+                    
+                    @* Please move this to SASS/CSS version, thanks! *@
+                    @* -- Rob *@
+                    <style>
+                        .navbar-default .navbar-header #myaccount .dropdown-menu li a {
+                            float: none;
+                        }
+
+                        .navbar-default .navbar-header #myaccount .dropdown-menu li.active {
+                            background: #1F4E78;
+                            color: white;
+                        }
+
+                        .navbar-default .navbar-header #myaccount .dropdown-menu li.active span {
+                            display: block;
+                            padding: 10px;
+                        }
+                    </style>
+
+                    <ul id="myaccount" class="nav navbar-nav pull-right">
+                        <li class="account">
+                            <a href="#" role="button" data-toggle="dropdown" aria-expanded="true">
+                                <div class="image">
+                                    <img src="@Url.Content("~/content/assets/images/profil.png")">
+                                    @*<img src="@Url.Content(@profile)">*@
+                                </div>
+                                <p class="name">@Html.Name()</p>
+                                @*<p class="name">@((User as CustomPrincipal).Username)</p>*@
+                            </a>
+                            <ul class="dropdown-menu" role="menu">
+                                @foreach (var res in ViewBag.listResponsibility)
+                                {
+                                    if (res.ResponsibilityName == ViewBag.ResponName)
+                                     {
+                                        <li class="active">
+                                            <span>@res.ResponsibilityName</span>
+                                        </li>                                    
+                                    }else{
+                                        <li>
+                                            <a href="@Url.Action("SettingResponsibilityManual", "Home", new { id = res.IDResponsibility })">@res.ResponsibilityName</a>
+                                        </li>
+                                    }
+                                }
+                                <li>
+                                    <a href="@Url.Action("Logout", "Login")">Sign Out</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li role="presentation" class="dropdown setting">
+                            <a data-toggle="dropdown" role="button" aria-expanded="true">
+                                @Html.CurrentLanguage()
+                            </a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li>
+                                    @Html.LanguageLink(@Url.LanguageUrl("id"), "Indonesia")
+                                </li>
+                                <li>
+                                    @Html.LanguageLink(@Url.LanguageUrl("en"), "English")
+                                </li>
+                            </ul>
+                        </li>
+                        <li role="presentation" class="dropdown setting">
+                            <a href="#" data-toggle="dropdown" role="button" aria-expanded="true">
+                                <i class="fa fa-cogs"></i>
+                            </a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li>
+                                    <a href="#">Slider</a>
+                                </li>
+                                <li>
+                                    <a href="#">News</a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <ul id="main-menu" class="nav navbar-nav pull-right">
+                        <li role="presentation" class="dropdown">
+                            <a href="#" role="button" aria-expanded="true">
+                                Eblek <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li>
+                                    <a href="#">Eblek 1</a>
+                                </li>
+                                <li>
+                                    <a href="#">Eblek 2</a>
+                                </li>
+                                <li>
+                                    <a href="#">Eblek 3</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li role="presentation" class="dropdown">
+                            <a href="#" role="button" aria-expanded="true">
+                                Production Card <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li>
+                                    <a href="#">Production Card 1</a>
+                                </li>
+                                <li>
+                                    <a href="#">Production Card 2</a>
+                                </li>
+                                <li>
+                                    <a href="#">Production Card 3</a>
+                                </li>
+                                <li>
+                                    <a href="#">Production Card 3</a>
+                                </li>
+                                <li>
+                                    <a href="#">Production Card 3</a>
+                                </li>
+                                <li>
+                                    <a href="#">Production Card 3</a>
+                                </li>
+                                <li>
+                                    <a href="#">Production Card 3</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li role="presentation" class="dropdown">
+                            <a href="#" role="button" aria-expanded="true">
+                                Security <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li>
+                                    <a href="#">Security 1</a>
+                                </li>
+                                <li>
+                                    <a href="#">Security 2</a>
+                                </li>
+                                <li>
+                                    <a href="#">Security 3</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li role="presentation" class="dropdown">
+                            <a href="#" role="button" aria-expanded="true">
+                                Extra <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li>
+                                    <a href="#">Extra 1</a>
+                                </li>
+                                <li>
+                                    <a href="#">Extra 2</a>
+                                </li>
+                                <li>
+                                    <a href="#">Extra 3</a>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <li role="presentation" class="dropdown">
+                            <a href="#" role="button" aria-expanded="true">
+                                Utility <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li>
+                                    <a href="#">Utility 1</a>
+                                </li>
+                                <li>
+                                    <a href="#">Utility 2</a>
+                                </li>
+                                <li>
+                                    <a href="#">Utility 3</a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
